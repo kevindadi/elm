@@ -13,3 +13,4 @@ config.status
 depcomp
 install-sh
 stamp-h1
+autom4te.cache
