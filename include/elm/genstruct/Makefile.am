@@ -6,4 +6,6 @@ includeelmgenstruct_HEADERS = \
 	SLList.h \
 	SortedBinMap.h \
 	SortedBinTree.h \
-	Vector.h
+	Vector.h \
+	AVLTree.h
+

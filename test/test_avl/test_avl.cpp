@@ -6,6 +6,7 @@
  */
 
 #include <elm/inhstruct/AVLTree.h>
+#include <elm/genstruct/AVLTree.h>
 #include <elm/io.h>
 
 using namespace elm::inhstruct;
@@ -46,7 +47,19 @@ protected:
 	}
 };
 
+// genstruct::AVLTree<int>::Visitor
+class GenVisitor: public genstruct::AVLTree<int>::Visitor {
+public:
+	virtual int process(int value) {
+		cout << value << '\n';
+		return 1;
+	};
+};
+
+// Entry point
 int main(void) {
+	
+	//************* inhstruct test *****************
 	MyTree tree;
 	MyVisitor visitor;
 	MyNode *nodes[10];
@@ -74,5 +87,26 @@ int main(void) {
 	
 	// Cleanup
 	tree.clean();
+	
+	//**************** genstruct test ********************
+	{
+		genstruct::AVLTree<int> tree;
+		GenVisitor visitor;
+		
+		// Fill the tree
+		for(int i = 0; i < 10; i++)
+			tree.insert(i);
+			
+		// Visit the tree
+		tree.visit(&visitor);
+		
+		// Remove some nodes
+		tree.remove(9);
+		tree.remove(8);
+		tree.remove(5);
+		
+		// Clean up
+		tree.clean();
+	}
 	return 0;
 }
