@@ -33,7 +33,8 @@ public:
 	
 	// Modifiers
 	void insert(Node *node);
-	void remove(Node *node);	
+	void remove(Node *node);
+	inline void clear(void);
 };
 
 
@@ -56,6 +57,10 @@ inline void SortedBinTree::visit(Visitor *visitor) {
 	
 inline void SortedBinTree::search(Visitor *visitor) {
 	BinTree::search(visitor);
+}
+
+inline void SortedBinTree::clear(void) {
+	BinTree::clear();
 }
 
 } } // elm::inhstruct
