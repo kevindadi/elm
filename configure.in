@@ -1,0 +1,27 @@
+AC_INIT(test/test.cc)
+AM_INIT_AUTOMAKE(Elm, 0.1)
+AM_CONFIG_HEADER(config.h)
+
+AC_PROG_CXX
+AC_PROG_RANLIB
+AC_STDC_HEADERS
+AC_HAVE_HEADERS(string.h)
+
+dnl ELM_DEBUG_DEFS=-DELM_DEBUG_AVLTREE
+AC_SUBST(ELM_DEBUG_DEFS)
+
+AC_OUTPUT([
+	Makefile
+	src/Makefile
+	test/Makefile
+	test/test_avl/Makefile
+	include/Makefile
+	include/elm/Makefile
+	include/elm/block/Makefile
+	include/elm/datastruct/Makefile
+	include/elm/genstruct/Makefile
+	include/elm/inhstruct/Makefile
+	include/elm/io/Makefile
+	include/elm/option/Makefile
+	include/elm/string/Makefile
+], [])
