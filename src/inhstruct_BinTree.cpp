@@ -97,7 +97,6 @@ bool BinTree::visitPostOrder(BinTree::Visitor *visitor, BinTree::Node *node) con
 }
 
 /**
- * @fn void BinTree::search(Visitor *visitor) const;
  * Search in the binary tree according the given visitor. If the vistor returns 0, search is stopped.
  * If it returns less than 0, search continue in left subtree else in right subtree.
  * @param visitor Visitor object.
@@ -114,6 +113,19 @@ void BinTree::search(Visitor *visitor, Node *node) const {
 		else
 			search(visitor, node->right());
 	}
+}
+
+
+/**
+ * @fn void BinTree::clear(void);
+ * Remove all nodes from the tree.
+ */
+
+// Private 
+void BinTree::clear(Node *node) {
+	clear(node->left());
+	clear(node->right());
+	delete node;
 }
 
 } }	// elm::inhstruct
