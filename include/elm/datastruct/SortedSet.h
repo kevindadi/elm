@@ -7,7 +7,7 @@
 #ifndef ELM_DATASTRUCT_SORTEDSET_H
 #define ELM_DATASTRUCT_SORTEDSET_H
 
-#include <elm/datastruct/Collection.h>
+#include <elm/Collection.h>
 
 namespace elm { namespace datastruct {
 
