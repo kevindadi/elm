@@ -7,7 +7,7 @@
 #ifndef ELM_DATASTRUCT_VECTOR_H
 #define ELM_DATASTRUCT_VECTOR_H
 
-#include <elm/datastruct/Collection.h>
+#include <elm/Collection.h>
 #include <elm/datastruct/Indexed.h>
 #include <elm/genstruct/Vector.h>
 
