@@ -1,8 +1,8 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004, IRIT UPS.
  *
- * datastruct/vector.h -- embedded vector data structure interface.
+ * elm/genstruct/Vector.h -- Vector class interface.
  */
 #ifndef ELM_GENSTRUCT_VECTOR_H
 #define ELM_GENSTRUCT_VECTOR_H
@@ -12,7 +12,8 @@ namespace elm { namespace genstruct {
 
 
 // EmbedVector class
-template <class T> class Vector {
+template <class T>
+class Vector {
 	T *tab;
 	unsigned short cap, cnt;
 public:
