@@ -22,6 +22,7 @@ libelm_a_SOURCES= \
 	option_BoolOption.cpp \
 	option_Manager.cpp \
 	option_StringOption.cpp \
+	option_ActionOption.cpp \
 	Iterator.cpp \
 	Collection.cpp
 	
