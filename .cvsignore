@@ -14,3 +14,8 @@ depcomp
 install-sh
 stamp-h1
 autom4te.cache
+config.guess
+config.sub
+mkinstalldirs
+stamp-h
+stamp-h.in
