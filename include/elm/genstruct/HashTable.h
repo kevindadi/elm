@@ -37,7 +37,7 @@ class HashTable {
 		inline bool ended(void) const;
 		inline void next(void);
 		inline Iterator& operator++(int _) { next(); return *this; };
-		inline operator bool(void) const { return !atEnd(); };
+		inline operator bool(void) const { return !ended(); };
 	};
 	
 public:
@@ -59,7 +59,7 @@ public:
 	class KeyIterator: public Iterator {
 	public:
 		inline KeyIterator(const HashTable<K, T>& htab): Iterator(htab) { };
-		inline K item(void) const { return node->key; }
+		inline K item(void) const { return this->node->key; }
 		inline K operator*(void) const { return item(); };
 		inline K operator->(void) const { return item(); };
 	};
@@ -68,7 +68,7 @@ public:
 	class ItemIterator: public Iterator {
 	public:
 		inline ItemIterator(const HashTable<K, T>& htab): Iterator(htab) { };
-		inline T item(void) const { return node->value; }
+		inline T item(void) const { return this->node->value; }
 		inline T operator*(void) const { return item(); };
 		inline T operator->(void) const { return item(); };
 	};

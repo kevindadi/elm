@@ -122,7 +122,7 @@ template <class T> bool DLList<T>::contains(const T value) const {
 template <class T> void DLList<T>::clear(void) {
 	DLNode *node;
 	while(node = (DLNode *)list.first()) {
-		list.removeHead();
+		list.removeFirst();
 		delete node;
 	}
 }
@@ -153,16 +153,16 @@ template <class T> T DLList<T>::Iterator::operator*(void) const {
 	return item();
 }
 template <class T> bool DLList<T>::Iterator::begining(void) const {
-	return list.atBegin(cur);
+	return cur == list.first();
 }
 template <class T> void DLList<T>::Iterator::previous(void) {
 	cur = (DLNode *)cur->previous();
 }
 template <class T> void DLList<T>::Iterator::first(void) {
-	cur = (DLNode *)list.head();
+	cur = (DLNode *)list.first();
 }
 template <class T> void DLList<T>::Iterator::last(void) {
-	cur = (DLNode *)list.tail();
+	cur = (DLNode *)list.last();
 }
 
 
@@ -173,27 +173,27 @@ template <class T> inhstruct::DLList& DLList<T>::Editor::elist(void) const {
 template <class T> DLList<T>::Editor::Editor(DLList& list): Iterator(list) {
 };
 template <class T> T& DLList<T>::Editor::item(void) const {
-	return cur->value();
+	return this->cur->value();
 }
 template <class T> T& DLList<T>::Editor::operator*(void) const {
 	return item();
 }
 template <class T> void DLList<T>::Editor::remove(void) {
-	DLNode *to_remove = cur;
-	next();
+	DLNode *to_remove = this->cur;
+	DLList<T>::Iterator::next();
 	to_remove->remove();
 }
 template <class T> void DLList<T>::Editor::removeNext(void) {
-	cur->removeNext();
+	this->cur->removeNext();
 }
 template <class T> void DLList<T>::Editor::removePrevious(void) {
-	cur->removePrevious();
+	this->cur->removePrevious();
 }
 template <class T> void DLList<T>::Editor::insertAfter(const T value) {
-	cur->insertAfter(new DLNode(value));
+	this->cur->insertAfter(new DLNode(value));
 }
 template <class T> void DLList<T>::Editor::insertBefore(const T value) {
-	cur->insertBefore(new DLNode(value));
+	this->cur->insertBefore(new DLNode(value));
 }
 
 

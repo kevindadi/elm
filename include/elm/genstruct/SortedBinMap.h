@@ -39,9 +39,9 @@ public:
 
 private:
 	class TreeVisitor: public inhstruct::SortedBinTree::Visitor {
-		SortedBinMap::Visitor& visitor;
+		Visitor& visitor;
 	public:
-		inline TreeVisitor(SortedBinMap::Visitor& _visitor);
+		inline TreeVisitor(Visitor& _visitor);
 		virtual int process(inhstruct::SortedBinTree::Node *value);
 	};
 		
@@ -89,7 +89,7 @@ inline T& SortedBinMap<K, T>::Node::value(void) {
 
 // TreeVisitor inlines
 template <class K, class T>
-inline SortedBinMap<K, T>::TreeVisitor::TreeVisitor(SortedBinMap::Visitor& _visitor)
+inline SortedBinMap<K, T>::TreeVisitor::TreeVisitor(Visitor& _visitor)
 : visitor(_visitor) {
 }
 

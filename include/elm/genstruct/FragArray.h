@@ -67,7 +67,7 @@ inline FragArray<T>::FragArray(int main_size, int sub_size)
 	assert(sub_size > 0);
 	tab = new T*[main_size];
 	ssize = 1 << shf;
-	mask = ssize - 1;
+	this->mask = ssize - 1;
 	sused = ssize;
 }
 
@@ -113,9 +113,9 @@ inline void FragArray<T>::add(T value) {
 			msize *= 2;
 			T **ntab = new T*[msize];
 			for(int i = 0; i < mused; i++)
-				mtab[i] = tab[i];
+				this->mtab[i] = tab[i];
 			delete [] tab;
-			tab = mtab;
+			tab = this->mtab;
 		}
 		tab[mused++] = new T[ssize];
 	}
