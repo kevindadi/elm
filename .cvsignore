@@ -1,2 +1,15 @@
 html
 latex
+aclocal.m4
+config.h
+configure
+COPYING
+Makefile
+Makefile.in
+missing
+config.h.in
+config.log
+config.status
+depcomp
+install-sh
+stamp-h1
