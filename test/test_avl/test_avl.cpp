@@ -58,6 +58,7 @@ public:
 
 // Entry point
 int main(void) {
+	cout << "<TEST_VAL>\n";
 	
 	//************* inhstruct test *****************
 	MyTree tree;
@@ -108,5 +109,7 @@ int main(void) {
 		// Clean up
 		tree.clean();
 	}
+	
+	cout << "</TEST_VAL>\n";
 	return 0;
 }

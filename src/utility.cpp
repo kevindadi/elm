@@ -19,7 +19,7 @@ class IntHashKey: public HashKey<int> {
 	};
 };
 static IntHashKey int_hkey_obj;
-HashKey<int>& HashKey<int>::def = int_hkey_obj;
+template <> HashKey<int>& HashKey<int>::def = int_hkey_obj;
 
 // pointer_hkey
 class PointerHashKey: public HashKey<void *> {
@@ -31,7 +31,7 @@ class PointerHashKey: public HashKey<void *> {
 	};
 };
 static PointerHashKey pointer_hkey_obj;
-HashKey<void *>& HashKey<void *>::def = pointer_hkey_obj;
+template <> HashKey<void *>& HashKey<void *>::def = pointer_hkey_obj;
 
 // cstring_hkey
 class CStringHashKey: public HashKey<CString> {
@@ -53,7 +53,7 @@ class CStringHashKey: public HashKey<CString> {
 	};
 };
 static CStringHashKey cstring_hkey_obj;
-HashKey<CString>& HashKey<CString>::def = cstring_hkey_obj;
+template <> HashKey<CString>& HashKey<CString>::def = cstring_hkey_obj;
 
 // string_hkey
 class StringHashKey: public HashKey<String> {
@@ -73,7 +73,7 @@ class StringHashKey: public HashKey<String> {
 	};
 };
 static StringHashKey string_hkey_obj;
-HashKey<String>& HashKey<String>::def = string_hkey_obj;
+template <> HashKey<String>& HashKey<String>::def = string_hkey_obj;
 
 // int_comp
 class IntComparator: public Comparator<int> {
@@ -82,7 +82,7 @@ class IntComparator: public Comparator<int> {
 	};
 };
 static IntComparator int_comp_obj;
-Comparator<int>& Comparator<int>::def = int_comp_obj;
+template <> Comparator<int>& Comparator<int>::def = int_comp_obj;
 
 // pointer_comp
 class PointerComparator: public Comparator<void *> {
@@ -91,7 +91,7 @@ class PointerComparator: public Comparator<void *> {
 	};
 };
 static PointerComparator pointer_comp_obj;
-Comparator<void *>& Comparator<void *>::def = pointer_comp_obj;
+template <> Comparator<void *>& Comparator<void *>::def = pointer_comp_obj;
 
 // cstring_comp
 class CStringComparator: public Comparator<CString> {
@@ -100,7 +100,7 @@ class CStringComparator: public Comparator<CString> {
 	};
 };
 static CStringComparator cstring_comp_obj;
-Comparator<CString>& Comparator<CString>::def = cstring_comp_obj;
+template <> Comparator<CString>& Comparator<CString>::def = cstring_comp_obj;
 
 // string_comp
 class StringComparator: public Comparator<String> {
@@ -109,7 +109,7 @@ class StringComparator: public Comparator<String> {
 	};
 };
 static StringComparator string_comp_obj;
-Comparator<String>& Comparator<String>::def = string_comp_obj;
+template <> Comparator<String>& Comparator<String>::def = string_comp_obj;
 
 
 };
