@@ -16,6 +16,11 @@ public:
 	virtual bool ended(void) const = 0;
 	virtual T item(void) const = 0;
 	virtual void next(void) = 0;
+	inline IteratorInst<T>& operator++(int _);
+	inline operator bool(void) const;
+	inline T operator*(void) const;
+	inline T operator->(void) const;
+	inline operator T(void) const;
 };
 
 
@@ -62,6 +67,28 @@ public:
 	inline operator bool(void) const;
 	inline T operator*(void) const;
 };
+
+
+// IteratorInst methods
+template <class T> inline IteratorInst<T>& IteratorInst<T>::operator++(int _) {
+	next(); return *this;
+}
+
+template <class T> inline IteratorInst<T>::operator bool(void) const {
+	return !ended();
+}
+
+template <class T> inline T IteratorInst<T>::operator*(void) const {
+	return item();
+}
+
+template <class T> inline T IteratorInst<T>::operator->(void) const {
+	return item();
+}
+
+template <class T> inline IteratorInst<T>::operator T(void) const {
+	return item();
+}
 
 
 // Iterator methods
