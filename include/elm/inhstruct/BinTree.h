@@ -38,6 +38,7 @@ private:
 	bool visitPreOrder(Visitor *visitor, Node *node) const;
 	bool visitPostOrder(Visitor *visitor, Node *node) const;
 	void search(Visitor *visitor, Node *node) const;
+	void clear(Node *node);
 
 public:
 	inline BinTree(void);
@@ -50,6 +51,7 @@ public:
 	inline void visitPreOrder(Visitor *visitor) const;
 	inline void visitPostOrder(Visitor *visitor) const;
 	void search(Visitor *visitor) const;
+	inline void clear(void);
 };
 
 
@@ -98,6 +100,10 @@ inline void BinTree::visitPreOrder(BinTree::Visitor *visitor) const {
 }
 inline void BinTree::visitPostOrder(BinTree::Visitor *visitor) const {
 	visitPostOrder(visitor, _root);
+}
+
+inline void BinTree::clear(void) {
+	clear(_root);
 }
 
 } }	// elm::inhstruct
