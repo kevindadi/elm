@@ -39,9 +39,9 @@ public:
 
 private:
 	class TreeVisitor: public inhstruct::SortedBinTree::Visitor {
-		Visitor& visitor;
+		typename SortedBinMap<K, T>::Visitor& visitor;
 	public:
-		inline TreeVisitor(Visitor& _visitor);
+		inline TreeVisitor(typename SortedBinMap<K, T>::Visitor& _visitor);
 		virtual int process(inhstruct::SortedBinTree::Node *value);
 	};
 		
@@ -52,7 +52,7 @@ public:
 	inline SortedBinMap(elm::Comparator<K>& comp);
 	inline bool isEmpty(void) const;
 	inline int count(void);
-	inline void visit(Visitor& visitor);
+	inline void visit(SortedBinMap<K, T>::Visitor& visitor);
 	inline Option<T> get(K key);
 	inline T get(K key, T def_value);
 	inline bool exists(K key);
@@ -89,7 +89,7 @@ inline T& SortedBinMap<K, T>::Node::value(void) {
 
 // TreeVisitor inlines
 template <class K, class T>
-inline SortedBinMap<K, T>::TreeVisitor::TreeVisitor(Visitor& _visitor)
+inline SortedBinMap<K, T>::TreeVisitor::TreeVisitor(SortedBinMap<K, T>::Visitor& _visitor)
 : visitor(_visitor) {
 }
 
@@ -167,7 +167,7 @@ inline void SortedBinMap<K, T>::clear(void) {
 }
 
 template <class K, class T>
-inline void SortedBinMap<K, T>::visit(Visitor& visitor) {
+inline void SortedBinMap<K, T>::visit(genstruct::SortedBinMap<K, T>::Visitor& visitor) {
 	TreeVisitor tree_visitor(visitor);
 	inhstruct::SortedBinTree::visit(&tree_visitor);
 }
