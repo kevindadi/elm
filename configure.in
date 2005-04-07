@@ -15,6 +15,7 @@ AC_OUTPUT([
 	src/Makefile
 	test/Makefile
 	test/test_avl/Makefile
+	test/test_BitVector/Makefile
 	include/Makefile
 	include/elm/Makefile
 	include/elm/block/Makefile
@@ -24,4 +25,5 @@ AC_OUTPUT([
 	include/elm/io/Makefile
 	include/elm/option/Makefile
 	include/elm/string/Makefile
+	include/elm/util/Makefile
 ], [])

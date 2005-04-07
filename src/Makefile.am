@@ -24,7 +24,9 @@ libelm_a_SOURCES= \
 	option_StringOption.cpp \
 	option_ActionOption.cpp \
 	Iterator.cpp \
-	Collection.cpp
+	Collection.cpp \
+	util_BitVector.cpp \
+	util_test.cpp
 	
 #	collection.cpp \
 #	list.cc \
