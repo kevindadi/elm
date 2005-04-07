@@ -11,6 +11,57 @@
 namespace elm {
 
 /**
+ * @def CHECK_BEGIN(name)
+ * This is the first statement of a unit test case. Usually, a unit test case
+ * is structured as below:
+ * @code
+ * 	CHECK_BEGIN(test case name);
+ * 	CHECK(test1);
+ * 	CHECK(test2);
+ * 	...
+ * 	CHECK_END;
+ * @endcode
+ * This statement display a state header, each CHECK displays a check status line
+ * and TEST_END a summary of the full test case. A test case defines also
+ * an environment like in C blocks { ... }.
+ * @param name	Name of the test case (string).
+ * @note	These macros definition may be discarded defining the ELM_NO_SHORTCUT
+ * identifier, for avoiding name clashes for example.
+ */
+
+
+/**
+ * @def CHECK(test)
+ * See @ref CHECK_BEGIN.
+ * @param test	Test to check.
+ */
+
+
+/**
+ * @def CHECK_END
+ * See @ref CHECK_END.
+ */
+
+
+/**
+ * @def ELM_CHECK_BEGIN(name)
+ * Same as @ref CHECK_BEGIN.
+ */
+
+
+/**
+ * @def ELM_CHECK(test)
+ * Same as @ref CHECK.
+ */
+
+
+/**
+ * @def ELM_CHECK_END
+ * Same as @ref CHECK_END
+ */
+
+
+/**
  * @class TestCase
  * This class is used for implementing macro for unit tests.
  */
