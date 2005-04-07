@@ -105,7 +105,7 @@
 /**
  * @fn Collection<T> *Collection::meet(const Collection<T> *values) const;
  * Perform the intersection of current collection with argument collection.
- * @param value		Collection to intersect with.
+ * @param values	Collection to intersect with.
  * @return			Intersection result.
  */
 
