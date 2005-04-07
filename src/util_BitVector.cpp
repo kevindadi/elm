@@ -93,7 +93,7 @@ BitVector::BitVector(const BitVector& vec, int new_size): _size(new_size) {
  * @fn bool BitVector::equals(const BitVector& vec) const;
  * Test if two vectors are equals.
  * @param vec	Second vector to test with.
- * @param		True if the vectors are equal, false else.
+ * @return		True if the vectors are equal, false else.
  */
 
 
@@ -117,7 +117,7 @@ BitVector::BitVector(const BitVector& vec, int new_size): _size(new_size) {
 /**
  * @fn void BitVector::clear(int index) const;
  * Set a bit to false.
- * @param Index of the bit to set. It must be higher or equal to vector
+ * @param index Index of the bit to set. It must be higher or equal to vector
  * size.
  */
 
@@ -179,7 +179,7 @@ BitVector::BitVector(const BitVector& vec, int new_size): _size(new_size) {
 
 
 /**
- * @fn BitVector BitVector::makeA,d(const BitVector& vec) const;
+ * @fn BitVector BitVector::makeAnd(const BitVector& vec) const;
  * Build a new vector as the result of operation AND on the current vector and
  * the given one.
  * @param vec	Second vector of operation.

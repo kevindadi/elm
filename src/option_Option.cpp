@@ -34,7 +34,7 @@ void Option::output(io::Output& out) {
 /**
  * @fn char Option::shortName(void);
  * Get the single-character short name of the option.
- * @return	Single character or '\0' if there is no short name.
+ * @return	Single character or '\\0' if there is no short name.
  */
 
 	

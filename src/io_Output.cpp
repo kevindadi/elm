@@ -59,7 +59,7 @@ char *Output::horner(char *p, unsigned long val, int base) {
  */
 
 /**
- * @fn OutStream& Output::stream(void);
+ * @fn OutStream& Output::stream(void) const;
  * Get the stream used by the output.
  * @return Output stream.
  */

@@ -89,14 +89,14 @@ AVLTree::Node *AVLTree::get(Node *node) {
 
 
 /**
- * @fn bool AVLTree::contains(AVLNode *node);
+ * @fn bool AVLTree::contains(Node *node);
  * Test if the given node value is contained in the tree.
  * @return	True if the node is contained, false else.
  */
 
 
 /**
- * @fn void AVL::visit(Visitor *visitor);
+ * @fn void AVLTree::visit(Visitor *visitor);
  * Visit the node of the tree.
  * @param visitor	The method process() of this object is called with each
  * tree node.
@@ -314,7 +314,7 @@ void AVLTree::clean(Node *node) {
 
 
 /**
- * @fn void AVLTree::AVLTree::clean(void)
+ * @fn void AVLTree::clean(void)
  * Remove all nodes from the tree.
  */
 

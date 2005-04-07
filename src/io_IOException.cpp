@@ -17,7 +17,7 @@ namespace elm { namespace io {
  */
 
 /**
- *@fn  IOException::IOException(message);
+ *@fn  IOException::IOException(CString message);
  * Build a new IOException with the given message.
  */
 

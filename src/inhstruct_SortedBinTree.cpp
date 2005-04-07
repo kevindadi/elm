@@ -11,19 +11,19 @@
 namespace elm { namespace inhstruct {
 
 
-/**
+/*
  * @class SortedBinTree::Node
  * Node used in the inherited sorted binary tree.
  */
 
 	
-/**
+/*
  * @fn SortedBinTree::Node::Node(void);
  * Default constructor.
  */
 
 	
-/**
+/*
  * @fn SortedBinTree::Node::Node(Node *left, Node *right);
  * Constructor with left and right children.
  * @param left	Left child.
@@ -31,13 +31,13 @@ namespace elm { namespace inhstruct {
  */
 
 
-/**
+/*
  * @fn SortedBinTree::Node *SortedBinTree::Node::left(void) const;
  * Get the left child of this node.
  */
 
 
-/**
+/*
  * @fn SortedBinTree::Node *SortedBinTree::Node::right(void) const;
  * Get the right child of this node.
  */

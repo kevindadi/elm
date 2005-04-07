@@ -52,7 +52,7 @@ bool BinTree::contains(BinTree::Node *current, Node *node) const {
 }
 
 /**
- * @fn void BinTree::visit(BinTree::Visitor *visitor);
+ * @fn void BinTree::visit(Visitor *visitor) const;
  * Visit the tree in-order, that is, the left sub-tree, the root node and the right sub-tree.
  * @param visitor	Object called for each node in the graph.
  */
@@ -67,7 +67,7 @@ bool BinTree::visit(BinTree::Visitor *visitor, BinTree::Node *node) const {
 }
 
 /**
- * @fn void BinTree::visitPreOrder(BinTree::Visitor *visitor);
+ * @fn void BinTree::visitPreOrder(BinTree::Visitor *visitor) const;
  * Visit the tree in pre-order, that is, visit node, the left sub-tree and then the right sub-tree.
  * @param visitor	Object called for each node in the graph.
  */
@@ -82,7 +82,7 @@ bool BinTree::visitPreOrder(BinTree::Visitor *visitor, BinTree::Node *node) cons
 }
 
 /**
- * @fn void BinTree::visitPostOrder(BinTree::Visitor *visitor);
+ * @fn void BinTree::visitPostOrder(BinTree::Visitor *visitor) const;
  * Visit the tree in post-order, that is, the left sub-tree and then, right sub-tree and the root node.
  * @param visitor	Object called for each node in the graph.
  */

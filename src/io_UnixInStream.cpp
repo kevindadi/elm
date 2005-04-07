@@ -30,8 +30,9 @@ namespace elm { namespace io {
  * @return	File descriptor.
  */
 
-	
-// InStream overload
+
+/**
+ */	
 int UnixInStream::read(char *buffer, int size) {
 	return ::read(_fd, buffer, size);
 }

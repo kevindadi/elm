@@ -18,7 +18,7 @@ namespace elm { namespace io {
  */
 
 /**
- * @fn int Outstream::write(const char *buffer, int size);
+ * @fn int OutStream::write(const char *buffer, int size);
  * This is the main method of an output stream: the given buffer is put on
  * the stream.
  * @param buffer	Byte buffer to write.
