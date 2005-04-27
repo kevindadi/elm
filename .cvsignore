@@ -19,3 +19,4 @@ config.sub
 mkinstalldirs
 stamp-h
 stamp-h.in
+doxygen.log
