@@ -49,8 +49,8 @@ inline bool operator<=(const String& s1, const String& s2) { return s1.compare(s
 inline bool operator>(const String& s1, const String& s2) { return s1.compare(s2) > 0; };
 inline bool operator>=(const String& s1, const String& s2) { return s1.compare(s2) >= 0; };
 
-inline bool operator==(const CString s1, const String& s2) { return s2.compare(s1) != 0; };
-inline bool operator!=(const CString s1, const String& s2) { return s2.compare(s1) == 0; };
+inline bool operator==(const CString s1, const String& s2) { return s2.compare(s1) == 0; };
+inline bool operator!=(const CString s1, const String& s2) { return s2.compare(s1) != 0; };
 inline bool operator<(const CString s1, const String& s2) { return s2.compare(s1) >= 0; };
 inline bool operator<=(const CString s1, const String& s2) { return s2.compare(s1) > 0; };
 inline bool operator>(const CString s1, const String& s2) { return s2.compare(s1) <= 0; };
@@ -70,15 +70,15 @@ inline bool operator<=(const CString s1, const char *s2) { return s1.compare(CSt
 inline bool operator>(const CString s1, const char *s2) { return s1.compare(CString(s2)) > 0; };
 inline bool operator>=(const CString s1, const char *s2) { return s1.compare(CString(s2)) >= 0; };
 
-inline bool operator==(const char *s1, const CString s2) { return s2.compare(CString(s1)) != 0; };
-inline bool operator!=(const char *s1, const CString s2) { return s2.compare(CString(s1)) == 0; };
+inline bool operator==(const char *s1, const CString s2) { return s2.compare(CString(s1)) == 0; };
+inline bool operator!=(const char *s1, const CString s2) { return s2.compare(CString(s1)) != 0; };
 inline bool operator<(const char *s1, const CString s2) { return s2.compare(CString(s1)) >= 0; };
 inline bool operator<=(const char *s1, const CString s2) { return s2.compare(CString(s1)) > 0; };
 inline bool operator>(const char *s1, const CString s2) { return s2.compare(CString(s1)) <= 0; };
 inline bool operator>=(const char *s1, const CString s2) { return s2.compare(CString(s1)) < 0; };
 
-inline bool operator==(const char *s1, const String& s2) { return s2.compare(CString(s1)) != 0; };
-inline bool operator!=(const char *s1, const String& s2) { return s2.compare(CString(s1)) == 0; };
+inline bool operator==(const char *s1, const String& s2) { return s2.compare(CString(s1)) == 0; };
+inline bool operator!=(const char *s1, const String& s2) { return s2.compare(CString(s1)) != 0; };
 inline bool operator<(const char *s1, const String& s2) { return s2.compare(CString(s1)) >= 0; };
 inline bool operator<=(const char *s1, const String& s2) { return s2.compare(CString(s1)) > 0; };
 inline bool operator>(const char *s1, const String& s2) { return s2.compare(CString(s1)) <= 0; };
