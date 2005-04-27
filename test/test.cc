@@ -70,15 +70,20 @@ void test_string(void) {
 	{
 		elm::String s1 = "ok", s2 = "ko";
 		elm::CString c1 = "ok", c2 = "ko";
-		s1 == s2;
-		s1 == c1;
-		s1 == "ok";
-		c1 == s2;
-		c1 == c2;
-		c1 == "ok";
-		"ok" == s1;
-		"ok" == c1;
-		"ok" == "ko";
+		
+		TEST(s1 != s2);
+		TEST(s1 == c1);
+		TEST(s1 == "ok");
+		
+		TEST(c1 == s1);
+		TEST(c1 != s2);
+		TEST(c1 != c2);
+		TEST(c1 == "ok");
+		
+		TEST("ok" == s1);
+		TEST("ok" == c1);
+		TEST("ok" != s2);
+		TEST("ok" != c2);
 	}
 	
 	// Basic information
@@ -136,6 +141,26 @@ void test_string(void) {
 		TEST(s1.compare(s2) > 0);
 		TEST(s1.compare(s3) < 0);
 		TEST(s1.compare(s4) == 0);
+	}
+	
+	// Comparison with substring
+	 {
+		elm::String s("okoko");
+		{
+			elm::String s1 = s.substring(2, 2);
+			elm::String s2("ko"), s3("oko"), s4("ok");
+			TEST(s1.compare(s1) == 0);
+			TEST(s1.compare(s2) > 0);
+			TEST(s1.compare(s3) < 0);
+			TEST(s1.compare(s4) == 0);
+		}
+		{
+			elm::String s1 = s.substring(2, 2);
+			elm::CString s2("ko"), s3("oko"), s4("ok");
+			TEST(s1.compare(s2) > 0);
+			TEST(s1.compare(s3) < 0);
+			TEST(s1.compare(s4) == 0);
+		}
 	}
 	
 	// Assignment
