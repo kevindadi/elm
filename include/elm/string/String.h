@@ -68,7 +68,7 @@ public:
 	inline CString toCString(void) { if(buf[off + len] != '\0') toc(); return chars(); };
 	inline const char *operator&(void) { return toCString().chars(); };
 		
-	inline char charAt(int index) const { return buf[index + zero_off]; };
+	inline char charAt(int index) const { return buf[index + off]; };
 	inline char operator[](int index) const { return charAt(index); };
 	inline String substring(int _off) { return String(buf, off + _off, len - _off); };
 	inline String substring(int _off, int _len) { return String(buf, off + _off, _len); };
