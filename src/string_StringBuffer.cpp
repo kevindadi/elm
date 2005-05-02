@@ -11,7 +11,15 @@
 namespace elm {
 
 /**
- * StringBuffer::StringBuffer(int capacity, int increment);
+ * @class StringBuffer
+ * As the ELM @ref String class is immutable, the big building of strings
+ * may have a prohibitive cost. Instead, this class provides an economic way
+ * of concatenating strings.
+ */
+
+
+/**
+ * @fn StringBuffer::StringBuffer(int capacity, int increment);
  * Build a new string buffer.
  * @param capacity		Initial capacity of the buffer.
  * @param increment	Incrementation size when buffer is enlarged.
@@ -55,7 +63,7 @@ namespace elm {
 
 
 /**
- * @fn void StirngBuffer::put(const String& str);
+ * @fn void StringBuffer::put(const String& str);
  * Put a string in the buffer.
  * @param str	Strint to put in the buffer.
  */
@@ -86,8 +94,25 @@ void StringBuffer::print(const char *fmt, va_list args) {
 	}
 }
 
-/*
-	inline int length(void) const;
-	inline void reset(void);*/
+
+/**
+ * @fn void StringBuffer::print(const char *fmt, ...);
+ * Print a formatted string as does the printf() from C standard IO.
+ * @param fmt	Format string (see printf() manual).
+ * @param ...	Argument for format string.
+ */
+
+
+/**
+ * @fn int StringBuffer::length(void) const;
+ * Get the length of the string stored in the buffer.
+ * @return	String length.
+ */
+
+
+/**
+ * @fn void StringBuffer::reset(void);
+ * Remove all characters from the string buffer.
+ */
 
 } // elm
