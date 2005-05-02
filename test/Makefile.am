@@ -1,4 +1,4 @@
-SUBDIRS = test_avl test_BitVector
+SUBDIRS = test_avl test_BitVector test_SLList
 
 noinst_PROGRAMS=test
 test_SOURCES=test.cc

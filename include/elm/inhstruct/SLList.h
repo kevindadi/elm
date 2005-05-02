@@ -16,7 +16,7 @@ class SLList;
 // SLNode class
 class SLNode {
 	SLNode *nxt;
-	
+	friend class SLList;
 public:
 	inline SLNode(void);
 	inline SLNode *next(void) const;
@@ -61,8 +61,7 @@ inline SLNode *SLList::first(void) const {
 	return fst;
 }
 inline void SLList::addFirst(SLNode *node) {
-	if(fst)
-		node->insertAfter(fst);
+	node->nxt = fst;
 	fst = node;
 }
 inline void SLList::removeFirst(void) {

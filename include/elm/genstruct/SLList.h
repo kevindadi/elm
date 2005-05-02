@@ -45,6 +45,7 @@ public:
 		inline void next(void);
 		inline operator bool(void) const;
 		inline Iterator& operator++(int);
+		inline operator T(void) const;
 		inline T operator*(void) const;
 		inline T *operator->(void) const;
 	};
@@ -120,6 +121,22 @@ template <class T> inline void SLList<T>::Iterator::next(void) {
 	assert(node);
 	node = node->next();
 }
+template <class T> inline SLList<T>::Iterator::operator bool(void) const {
+	return !ended();
+}
+template <class T>
+inline typename SLList<T>::Iterator& SLList<T>::Iterator::operator++(int) {
+	next(); return *this;
+}
+template <class T> inline SLList<T>::Iterator::operator T(void) const {
+	return item();
+}
+template <class T> inline T SLList<T>::Iterator::operator*(void) const {
+	return item();
+}
+template <class T> inline T *SLList<T>::Iterator::operator->(void) const {
+	return &item();
+};
 
 } } // elm::genstruct
 
