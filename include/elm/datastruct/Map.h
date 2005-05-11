@@ -18,8 +18,8 @@ public:
 	virtual const Option<T> get(const K key) = 0;
 	virtual const T get(const K key, const T def) = 0;
 	virtual void remove(const K key) = 0;
-	virtual const Collection<K>& keys(void) = 0;
-	virtual const Collection<T>& items(void) = 0;
+	virtual Collection<K>& keys(void) = 0;
+	virtual Collection<T>& items(void) = 0;
 };
 
 } }	// elm::datastruct
