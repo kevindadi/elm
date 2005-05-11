@@ -122,6 +122,7 @@ template <class T> void Vector<T>::clear(void) {
 	cnt = 0;
 }
 template <class T> void Vector<T>::grow(int new_cap) {
+	assert(new_cap < 65536);
 	if(new_cap < cap)
 		return;
 	cap = new_cap;
