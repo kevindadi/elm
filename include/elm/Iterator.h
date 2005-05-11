@@ -9,7 +9,19 @@
 
 namespace elm {
 
-	
+
+// PreIterator class
+template <class I, class T>
+class PreIterator {
+public:
+	inline operator bool(void) const;
+	inline operator T(void) const;
+	inline I& operator++(int);
+	inline T operator*(void) const;
+	inline T operator->(void) const;
+};
+
+
 // IteratorInst class
 template <class T> class IteratorInst {
 public:
@@ -23,6 +35,18 @@ public:
 	inline operator T(void) const;
 };
 
+
+// IteratorObject class
+template <class I, class T>
+class IteratorObject: public IteratorInst<T> {
+	I iter;
+public:
+	inline IteratorObject(I& _iter);
+	virtual bool ended(void) const;
+	virtual T item(void) const;
+	virtual void next(void);	
+};
+	
 
 // Iterator class
 template <class T> class Iterator {
@@ -91,6 +115,26 @@ template <class T> inline IteratorInst<T>::operator T(void) const {
 }
 
 
+// PreIterator methods
+template <class I, class T>
+inline PreIterator<I, T>::operator bool(void) const {
+	return !((I *)this)->ended();
+};
+template <class I, class T>
+inline PreIterator<I, T>::operator T(void) const {
+	return ((I *)this)->item();
+};
+template <class I, class T>
+inline I& PreIterator<I, T>::operator++(int) {
+	((I *)this)->next();
+	return *(I *)this;
+};
+template <class I, class T>
+inline T PreIterator<I, T>::operator->(void) const {
+	return ((I *)this)->item();
+};
+
+
 // Iterator methods
 template <class T> Iterator<T>::Iterator(IteratorInst<T> *_iter): iter(_iter) {
 }
@@ -122,6 +166,10 @@ template <class T> T Iterator<T>::operator->(void) const {
 template <class T> inline Iterator<T>::operator T(void) const {
 		return item();
 }
+template <class I, class T>
+inline T PreIterator<I, T>::operator*(void) const {
+	return ((I *)this)->item();
+};
 
 
 // MutableIterator methods
@@ -164,6 +212,22 @@ template <class T> T MutableIterator<T>::operator*(void) const {
 };
 
 
+// IteratorObject inlines
+template <class I, class T>
+inline IteratorObject<I, T>::IteratorObject(I& _iter): iter(_iter) {
+};
+template <class I, class T>
+bool IteratorObject<I, T>::ended(void) const {
+	return iter.ended();
+};
+template <class I, class T>
+T IteratorObject<I, T>::item(void) const {
+	return iter.item();
+};
+template <class I, class T>
+void IteratorObject<I, T>::next(void) {
+	iter.next();
+};
 
 } // elm::datastruct
 
