@@ -18,7 +18,8 @@ protected:
 public:
 	inline UnixInStream(int fd): _fd(fd) { };
 	inline int fd(void) const { return _fd; };
-	virtual int UnixInStream::read(char *buffer, int size);
+	virtual int read(char *buffer, int size);
+	virtual int read(void) { return InStream::read(); };
 };
 
 } } // elm::io
