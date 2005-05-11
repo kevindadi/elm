@@ -23,35 +23,35 @@ template <class T> class Collection {
 public:
 	
 	// Simple access
-	virtual int count(void) const;
-	virtual bool isEmpty(void) const;	
-	virtual bool contains(const T value) const;
-	virtual bool containsAll(const Collection<T> *values) const;
-	virtual bool equals(const Collection<T> *values) const;	
+	virtual int count(void);
+	virtual bool isEmpty(void);	
+	virtual bool contains(const T value);
+	virtual bool containsAll(Collection<T> *values);
+	virtual bool equals(Collection<T> *values);	
 
 	// Iteration
-	virtual IteratorInst<T> *visit(void) const = 0;
+	virtual IteratorInst<T> *visit(void) = 0;
 
 	// Building
-	virtual MutableCollection<T> *empty(void) const = 0;
-	virtual MutableCollection<T> *copy(void) const;
-	virtual Collection<T> *merge(const Collection<T> *values) const;
-	virtual Collection<T> *retain(const Collection<T> *values) const;
-	virtual Collection<T> *meet(const Collection<T> *values) const;
+	virtual MutableCollection<T> *empty(void) = 0;
+	virtual MutableCollection<T> *copy(void);
+	virtual Collection<T> *merge(Collection<T> *values);
+	virtual Collection<T> *retain(Collection<T> *values);
+	virtual Collection<T> *meet(Collection<T> *values);
 	
 	// Operators
 	inline operator bool(void);
-	inline operator IteratorInst<T> *(void) const;
-	inline Collection<T>& operator+(const Collection<T>& values);
-	inline Collection<T>& operator-(const Collection<T>& values);
-	inline Collection<T>& operator*(const Collection<T>& values);
-	inline bool operator==(const Collection<T>& values);
-	inline bool operator!=(const Collection<T>& values);
-	inline bool operator<(const Collection<T>& values);
-	inline bool operator<=(const Collection<T>& values);
-	inline bool operator>(const Collection<T>& values);
-	inline bool operator>=(const Collection<T>& values);
-	inline bool operator()(const T value);
+	inline operator IteratorInst<T> *(void);
+	inline Collection<T>& operator+(Collection<T>& values);
+	inline Collection<T>& operator-(Collection<T>& values);
+	inline Collection<T>& operator*(Collection<T>& values);
+	inline bool operator==(Collection<T>& values);
+	inline bool operator!=(Collection<T>& values);
+	inline bool operator<(Collection<T>& values);
+	inline bool operator<=(Collection<T>& values);
+	inline bool operator>(Collection<T>& values);
+	inline bool operator>=(Collection<T>& values);
+	inline bool operator()(T value);
 };
 
 
@@ -64,63 +64,63 @@ public:
 	
 	// Modifiers
 	virtual void add(const T value) = 0;
-	virtual void addAll(const Collection<T> *values);
+	virtual void addAll(Collection<T> *values);
 	virtual void remove(const T value) = 0;
-	virtual void removeAll(const Collection<T> *values);
+	virtual void removeAll(Collection<T> *values);
 	virtual void clear(void) = 0;
 	
 	// Operators
 	inline MutableCollection<T>& operator+=(const T value);
-	inline MutableCollection<T>& operator+=(const Collection<T>& values);
+	inline MutableCollection<T>& operator+=(Collection<T>& values);
 	inline MutableCollection<T>& operator-=(const T value);
-	inline MutableCollection<T>& operator-=(const Collection<T>& values);
+	inline MutableCollection<T>& operator-=(Collection<T>& values);
 };
 
 
 // Collection methods
-template <class T> bool Collection<T>::isEmpty(void) const  {
+template <class T> bool Collection<T>::isEmpty(void)  {
 	return !count();
 }
 
-template <class T> bool Collection<T>::containsAll(const Collection<T> *values) const {
+template <class T> bool Collection<T>::containsAll(Collection<T> *values) {
 	for(Iterator<T> iter(*this); iter; iter++)
 		if(!contains(*iter))
 			return false;
 	return true;
 }
 
-template <class T> bool Collection<T>::equals(const Collection<T> *values) const {
+template <class T> bool Collection<T>::equals(Collection<T> *values) {
 	return containsAll(values) && values->containsAll(this);
 }
 
-template <class T> int Collection<T>::count(void) const {
+template <class T> int Collection<T>::count(void) {
 	int cnt = 0;
 	for(Iterator<T> iter(*this); iter; iter++)
 		cnt++;
 	return cnt;
 } 
 
-template <class T> bool Collection<T>::contains(const T value) const {
+template <class T> bool Collection<T>::contains(const T value) {
 	for(Iterator<T> iter(*this); iter; iter++)
 		if(*iter == value)
 			return true;
 	return false;
 }
 
-template <class T> Collection<T>::operator IteratorInst<T> *(void) const {
+template <class T> Collection<T>::operator IteratorInst<T> *(void) {
 	return visit();
 }
 
 
 template <class T>
-Collection<T> *Collection<T>::merge(const Collection<T> *values) const {
+Collection<T> *Collection<T>::merge(Collection<T> *values) {
 	Collection<T> *result = copy();
 	copy()->addAll(values);
 	return result;
 }
 
 template <class T>
-Collection<T> *Collection<T>::retain(const Collection<T> *values) const {
+Collection<T> *Collection<T>::retain(Collection<T> *values) {
 	MutableCollection<T> *result = empty();
 	for(Iterator<T> iter(*this); iter; iter++)
 		if(!values->contains(*iter))
@@ -129,7 +129,7 @@ Collection<T> *Collection<T>::retain(const Collection<T> *values) const {
 }
 
 template <class T>
-Collection<T> *Collection<T>::meet(const Collection<T> *values) const {
+Collection<T> *Collection<T>::meet(Collection<T> *values) {
 	MutableCollection<T> *result = empty();
 	for(Iterator<T> iter(*this); iter; iter++)
 		if(values->contains(*iter))
@@ -138,7 +138,7 @@ Collection<T> *Collection<T>::meet(const Collection<T> *values) const {
 }
 
 template <class T>
-MutableCollection<T> *Collection<T>::copy(void) const {
+MutableCollection<T> *Collection<T>::copy(void) {
 	MutableCollection<T> *result = empty();
 	result->addAll(this);
 	return result;
@@ -150,47 +150,47 @@ inline Collection<T>::operator bool(void) {
 }
 
 template <class T>
-inline Collection<T>& Collection<T>::operator+(const Collection<T>& values) {
+inline Collection<T>& Collection<T>::operator+(Collection<T>& values) {
 	return *merge(&values);
 }
 
 template <class T>
-inline Collection<T>& Collection<T>::operator-(const Collection<T>& values) {
+inline Collection<T>& Collection<T>::operator-(Collection<T>& values) {
 	return *retain(&values);
 }
 
 template <class T>
-inline Collection<T>& Collection<T>::operator*(const Collection<T>& values) {
+inline Collection<T>& Collection<T>::operator*(Collection<T>& values) {
 	return *meet(&values);
 }
 
 template <class T>
-inline bool Collection<T>::operator==(const Collection<T>& values) {
+inline bool Collection<T>::operator==(Collection<T>& values) {
 	return equals(&values);
 }
 
 template <class T>
-inline bool Collection<T>::operator!=(const Collection<T>& values) {
+inline bool Collection<T>::operator!=(Collection<T>& values) {
 	return !equals(&values);
 }
 
 template <class T>
-inline bool Collection<T>::operator<(const Collection<T>& values) {
+inline bool Collection<T>::operator<(Collection<T>& values) {
 	return values.containsAll(this) && !equals(&values);
 }
 
 template <class T>
-inline bool Collection<T>::operator<=(const Collection<T>& values) {
+inline bool Collection<T>::operator<=(Collection<T>& values) {
 	return values.containsAll(&values);
 }
 
 template <class T>
-inline bool Collection<T>::operator>(const Collection<T>& values) {
+inline bool Collection<T>::operator>(Collection<T>& values) {
 	return containsAll(&values) && !equals(&values);
 }
 
 template <class T>
-inline bool Collection<T>::operator>=(const Collection<T>& values) {
+inline bool Collection<T>::operator>=(Collection<T>& values) {
 	return containsAll(&values);
 }
 
@@ -202,13 +202,13 @@ inline bool Collection<T>::operator()(const T value) {
 
 // MutableCollection methods
 template <class T>
-void MutableCollection<T>::addAll(const Collection<T> *values) {
+void MutableCollection<T>::addAll(Collection<T> *values) {
 	for(Iterator<T> iter(*this); iter; iter++)
 		add(*iter);
 }
 
 template <class T>
-void MutableCollection<T>::removeAll(const Collection<T> *values) {
+void MutableCollection<T>::removeAll(Collection<T> *values) {
 	for(Iterator<T> iter(*this); iter; iter++)
 		remove(*iter);
 }
@@ -220,7 +220,7 @@ inline MutableCollection<T>& MutableCollection<T>::operator+=(const T value) {
 }
 
 template <class T>
-inline MutableCollection<T>& MutableCollection<T>::operator+=(const Collection<T>& values) {
+inline MutableCollection<T>& MutableCollection<T>::operator+=(Collection<T>& values) {
 	addAll(values);
 	return *this;
 }
@@ -232,7 +232,7 @@ inline MutableCollection<T>& MutableCollection<T>::operator-=(const T value) {
 }
 
 template <class T>
-inline MutableCollection<T>& MutableCollection<T>::operator-=(const Collection<T>& values) {
+inline MutableCollection<T>& MutableCollection<T>::operator-=(Collection<T>& values) {
 	removeAll(values);
 	return *this;
 }
