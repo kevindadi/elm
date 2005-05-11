@@ -42,8 +42,8 @@ class HashTable: public Map<K, T> {
 		const HashTable<K, T>& htab;
 	public:
 		inline KeyCollection(const HashTable<K, T>& _htab);
-		virtual IteratorInst<K> *visit(void) const;
-		virtual MutableCollection<K> *empty(void) const;
+		virtual IteratorInst<K> *visit(void);
+		virtual MutableCollection<K> *empty(void);
 	};
 	
 	// ValueCollection class
@@ -51,8 +51,8 @@ class HashTable: public Map<K, T> {
 		const HashTable<K, T>& htab;
 	public:
 		inline ItemCollection(const HashTable<K, T>& _htab);
-		virtual IteratorInst<T> *visit(void) const;
-		virtual MutableCollection<T> *empty(void) const;
+		virtual IteratorInst<T> *visit(void);
+		virtual MutableCollection<T> *empty(void);
 	};
 		
 	genstruct::HashTable<K, T> htab;
@@ -66,8 +66,8 @@ public:
 	virtual const Option<T> get(const K key);
 	virtual const T get(const K key, const T def);
 	virtual void remove(const K key);
-	virtual const Collection<K>& keys(void);
-	virtual const Collection<T>& items(void);
+	virtual Collection<K>& keys(void);
+	virtual Collection<T>& items(void);
 };
 
 
@@ -98,12 +98,12 @@ void HashTable<K, T>::remove(const K key) {
 }
 
 template <class K, class T>
-const Collection<K>& HashTable<K, T>::keys(void) {
+Collection<K>& HashTable<K, T>::keys(void) {
 	return keycol;
 }
 
 template <class K, class T>
-const Collection<T>& HashTable<K, T>::items(void) {
+Collection<T>& HashTable<K, T>::items(void) {
 	return itemcol;
 }
 
@@ -115,12 +115,12 @@ HashTable<K, T>::KeyCollection::KeyCollection(const HashTable<K, T>& _htab)
 }
 
 template <class K, class T>
-IteratorInst<K> *HashTable<K, T>::KeyCollection::visit(void) const {
+IteratorInst<K> *HashTable<K, T>::KeyCollection::visit(void) {
 	return new KeyIterator(htab);
 }
 
 template <class K, class T>
-MutableCollection<K> *HashTable<K, T>::KeyCollection::empty(void) const {
+MutableCollection<K> *HashTable<K, T>::KeyCollection::empty(void) {
 	return new Vector<K>();
 }
 
@@ -132,12 +132,12 @@ HashTable<K, T>::ItemCollection::ItemCollection(const HashTable<K, T>& _htab)
 }
 
 template <class K, class T>
-IteratorInst<T> *HashTable<K, T>::ItemCollection::visit(void) const {
+IteratorInst<T> *HashTable<K, T>::ItemCollection::visit(void) {
 	return new ItemIterator(htab);
 }
 
 template <class K, class T>
-MutableCollection<T> *HashTable<K, T>::ItemCollection::empty(void) const {
+MutableCollection<T> *HashTable<K, T>::ItemCollection::empty(void) {
 	return new Vector<T>();
 }
 
