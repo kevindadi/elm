@@ -27,6 +27,7 @@ public:
 	inline T first(void) const;
 	inline T last(void) const;
 	inline int count(void) const;
+	inline bool isEmpty(void) const;
 
 	inline void addFirst(const T value);
 	inline void addLast(const T value);
@@ -104,6 +105,9 @@ template <class T> inline void SLList<T>::remove(const T value) {
 				prv->removeNext();
 		}
 }
+template <class T> inline bool SLList<T>::isEmpty(void) const {
+	return list.isEmpty();
+};
 
 
 // SLList::Iterator class
