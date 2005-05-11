@@ -7,6 +7,7 @@
 #ifndef ELM_OBJ_DLLIST_H
 #define ELM_OBJ_DLLIST_H
 
+#include <assert.h>
 #include <elm/sequence.h>
 #include <elm/data/dllist.h>
 
@@ -18,15 +19,15 @@ class DLList: public MutableCollection<T>, public data::DLList<T> {
 public:
 
 	// Collection overload
-	virtual int count(void) const;
-	virtual bool isEmpty(void) const;	
-	virtual IteratorInst<T> *visit(void) const;
+	virtual int count(void);
+	virtual bool isEmpty(void);	
+	virtual IteratorInst<T> *visit(void);
 	virtual EditorInst<T> *edit(void);
 	virtual bool contains(const T value) const;	
 	virtual void add(const T value);
 	virtual void remove(const T value);
 	virtual void clear(void);
-	virtual Collection<T> *empty(void) const;
+	virtual Collection<T> *empty(void);
 	
 	// Iterator class
 	class Iterator: public IteratorInst<T> {
@@ -44,19 +45,19 @@ public:
 
 
 // DLList methods
-template <class T> int DLList<T>::count(void) const {
+template <class T> int DLList<T>::count(void) {
 	return data::DLList<T>::count();
 }
-template <class T> bool DLList<T>::isEmpty(void) const {
+template <class T> bool DLList<T>::isEmpty(void) {
 	return data::DLList<T>::isEmpty();
 }
-template <class T> IteratorInst<T> *DLList<T>::visit(void) const {
+template <class T> IteratorInst<T> *DLList<T>::visit(void) {
 	return new Iterator(this);
 }
 template <class T> EditorInst<T> *DLList<T>::edit(void) {
-	return 0;	// !!TODO!!
+	assert(false);	// !!TODO!!
 }
-template <class T> bool DLList<T>::contains(const T value) const {
+template <class T> bool DLList<T>::contains(const T value) {
 	return data::DLList<T>::contains(value);
 }
 template <class T> void DLList<T>::add(const T value) {
@@ -68,7 +69,7 @@ template <class T> void DLList<T>::remove(const T value) {
 template <class T> void DLList<T>::clear(void) {
 	data::DLList<T>::clear();
 }
-template <class T> Collection<T> *DLList<T>::empty(void) const {
+template <class T> Collection<T> *DLList<T>::empty(void) {
 	return new DLList<T>();
 }
 

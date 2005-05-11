@@ -63,16 +63,16 @@ public:
 	virtual T& item(int index);
 
 	// Collection overload
-	virtual IteratorInst<T> *visit(void) const;
+	virtual IteratorInst<T> *visit(void);
 	virtual MutableIteratorInst<T> *edit(void);
 	inline operator IteratorInst<T> *(void) { return visit(); };
 	inline operator MutableIteratorInst<T> *(void) { return edit(); };
-	virtual int count(void) const;
-	virtual bool isEmpty(void) const;	
+	virtual int count(void);
+	virtual bool isEmpty(void);	
 	virtual void add(const T value);
 	virtual void remove(const T value);
 	virtual void clear(void);
-	virtual MutableCollection<T> *empty(void) const;
+	virtual MutableCollection<T> *empty(void);
 };
 
 
@@ -140,16 +140,16 @@ template <class T> T& Vector<T>::item(int index) {
 }
 
 // Vector<T> Collection overload
-template <class T> IteratorInst<T> *Vector<T>::visit(void) const {
+template <class T> IteratorInst<T> *Vector<T>::visit(void) {
 	return new Iterator(*this);
 }
 template <class T> MutableIteratorInst<T> *Vector<T>::edit(void) {
 	return new MutableIterator(*this);
 }
-template <class T> int Vector<T>::count(void) const {
+template <class T> int Vector<T>::count(void) {
 	return vec.length();
 }
-template <class T> bool Vector<T>::isEmpty(void) const {
+template <class T> bool Vector<T>::isEmpty(void) {
 	return vec.isEmpty();
 }
 template <class T> void Vector<T>::add(const T value) {
@@ -161,7 +161,7 @@ template <class T> void Vector<T>::remove(const T value) {
 template <class T> void Vector<T>::clear(void) {
 	vec.clear();
 }
-template <class T> MutableCollection<T> *Vector<T>::empty(void) const {
+template <class T> MutableCollection<T> *Vector<T>::empty(void) {
 	return new Vector<T>(vec.capacity());
 }
 
