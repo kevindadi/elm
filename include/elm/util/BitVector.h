@@ -21,7 +21,7 @@ class BitVector {
 	inline int byte_index(int index) const;
 	inline int bit_index(int index) const;
 public:
-	inline BitVector(int size);
+	inline BitVector(int size, bool set = false);
 	inline BitVector(const BitVector& vec);
 	BitVector(const BitVector& vec, int new_size);
 	inline ~BitVector(void);
@@ -39,6 +39,7 @@ public:
 	
 	inline void copy(const BitVector& bits) const;
 	inline void clear(void);
+	inline void set(void);
 
 	inline void applyNot(void);	
 	inline void applyOr(const BitVector& vec);
@@ -89,11 +90,11 @@ inline int BitVector::bit_index(int index) const {
 	return index % 8;
 }
 
-inline BitVector::BitVector(int size): _size(size) {
+inline BitVector::BitVector(int size, bool set): _size(size) {
 	assert(size > 0);
 	bits = new unsigned char[bytes()];
 	assert(bits);
-	memset(bits, 0, bytes());
+	memset(bits, set ? 0xff : 0, bytes());
 }
 
 inline BitVector::BitVector(const BitVector& vec): _size(vec.size()) {
@@ -179,6 +180,10 @@ inline void BitVector::copy(const BitVector& vec) const {
 
 inline void BitVector::clear(void) {
 	memset(bits, 0, bytes());
+}
+
+inline void BitVector::set(void) {
+	memset(bits, 0xff, bytes());
 }
 
 inline void BitVector::applyNot(void) {
