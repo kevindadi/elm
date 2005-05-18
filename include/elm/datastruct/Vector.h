@@ -55,6 +55,7 @@ public:
 	void removeAt(int index);
 	void insert(int index, const T value);
 	void grow(int new_cap);
+	void setLength(int new_length);
 
 	// Array overload
 	virtual int length(void) const;
@@ -123,6 +124,9 @@ template <class T> void Vector<T>::insert(int index, const T value) {
 }
 template <class T> void Vector<T>::grow(int new_cap) {
 	vec.grow(new_cap);
+}
+template <class T> void Vector<T>::setLength(int new_length) {
+	vec.setLength(new_length);
 }
 
 // Vector<T> Array overload

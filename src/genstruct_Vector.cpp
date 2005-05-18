@@ -174,4 +174,12 @@ namespace elm { namespace genstruct {
  * @param new_cap	Size for enlarging the vector.
  */
 
+
+/**
+ * @fn void Vector::setLength(int new_length);
+ * Set the length of the vector.
+ * @param new_length	New length of the vector (must be less or equal to
+ * the current length of the vector).
+ */
+
 } } // elm::genstruct

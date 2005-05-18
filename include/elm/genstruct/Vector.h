@@ -40,6 +40,7 @@ public:
 	void insert(int index, const T value);
 	inline void clear(void);
 	void grow(int new_cap);
+	void setLength(int new_length);
 };
 
 
@@ -122,15 +123,20 @@ template <class T> void Vector<T>::clear(void) {
 	cnt = 0;
 }
 template <class T> void Vector<T>::grow(int new_cap) {
+	assert(new_cap > 0);
 	assert(new_cap < 65536);
-	if(new_cap < cap)
-		return;
+	assert(new_cap >= cap);
 	cap = new_cap;
 	T *new_tab = new T[cap];
 	for(int i =0; i < cnt; i++)
 		new_tab[i] = tab[i];
 	delete [] tab;
 	tab = new_tab;
+}
+template <class T> void Vector<T>::setLength(int new_length) {
+	assert(new_length >= 0);
+	assert(new_length <= cnt);
+	cnt = new_length;
 }
 
 } }		// elm::genstruct
