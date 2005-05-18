@@ -7,6 +7,7 @@
 #ifndef ELM_GENSTRUCT_VECTOR_H
 #define ELM_GENSTRUCT_VECTOR_H
 
+#include <assert.h>
 
 namespace elm { namespace genstruct {
 
