@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2005, IRIT-UPS <caasse@irit.fr>
  *
  * elm/genstruct/AVLTree.h -- AVL binary tree interface.
  */
@@ -37,16 +37,20 @@ public:
 		virtual int process(T value) = 0;
 	};
 
-	// Methods
+	// Constructors
 	inline AVLTree(void);
 	inline AVLTree(Comparator<T>& comp);
-	inline bool isEmpty(void);
+	
+	// Accessors
 	inline int count(void);
-	inline Option<T> get(const T value);
+	inline bool isEmpty(void);
 	inline bool contains(const T value);
+	inline Option<T> get(const T value);
+	void visit(Visitor *visitor);
+	
+	// Mutators
 	void insert(const T value);
 	void remove(const T value);
-	void visit(Visitor *visitor);
 	void clean(void);
 };
 
