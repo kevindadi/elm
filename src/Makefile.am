@@ -26,7 +26,9 @@ libelm_a_SOURCES= \
 	Iterator.cpp \
 	Collection.cpp \
 	util_BitVector.cpp \
-	util_test.cpp
+	util_test.cpp \
+	io_BlockOutStream.cpp \
+	io_BlockInStream.cpp
 	
 #	collection.cpp \
 #	list.cc \
