@@ -16,9 +16,9 @@ public:
 	static const int ENDED = -2;
 	virtual ~InStream(void) { };
 	virtual int read(char *buffer, int size) = 0;
-	virtual int read(void);
+	virtual int read(void) = 0;
 };
-	
+
 } }	// elm::io
 
 #endif // ELM_IO_INSTREAM_H

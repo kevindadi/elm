@@ -34,18 +34,9 @@ namespace elm { namespace io {
 
 
 /**
+ * @fn int InStream::read(void);
  * Read one byte from the stream.
  * @return	Read byte, ERROR for an error, END for end of stream.
   */
-int InStream::read(void) {
-	char buffer[1];
-	int result = read(buffer, 1);
-	if(result < 0)
-		return FAILED;
-	else if(!result)
-		return ENDED;
-	else
-		return (unsigned char)buffer[0];
-}
 
 } } // elm::io
