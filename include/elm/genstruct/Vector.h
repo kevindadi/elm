@@ -8,6 +8,7 @@
 #define ELM_GENSTRUCT_VECTOR_H
 
 #include <assert.h>
+#include <elm/Iterator.h>
 
 namespace elm { namespace genstruct {
 
@@ -21,10 +22,10 @@ public:
 	inline Vector(int _cap = 8);
 	inline ~Vector(void);
 	
+	// Accessors
 	inline int capacity(void) const;
 	inline int length(void) const;
-	inline bool isEmpty(void) const;
-	
+	inline bool isEmpty(void) const;	
 	inline T get(int index) const;
 	inline T& item(int index);
 	inline void set(int index, const T value);
@@ -35,6 +36,7 @@ public:
 	int lastIndexOf(const T value, int start = -1) const;
 	inline operator bool(void) const;
 	
+	// Mutators
 	inline void add(const T value);
 	void removeAt(int index);
 	inline void remove(const T value);
@@ -42,6 +44,18 @@ public:
 	inline void clear(void);
 	void grow(int new_cap);
 	void setLength(int new_length);
+	
+	// Iterator
+	class Iterator: public PreIterator<Iterator, T> {
+		const Vector<T>& _vec;
+		int i;
+	public:
+		inline Iterator(const Vector& vec);
+		inline Iterator(Iterator& iter);
+		inline bool ended(void) const;
+		inline T item(void) const;
+		inline void next(void);
+	};
 };
 
 
@@ -138,6 +152,28 @@ template <class T> void Vector<T>::setLength(int new_length) {
 	assert(new_length >= 0);
 	assert(new_length <= cnt);
 	cnt = new_length;
+}
+
+
+// Vector<T>::Iterator class
+template <class T>
+inline Vector<T>::Iterator::Iterator(const Vector& vec): _vec(vec), i(0) {
+}
+template <class T>
+inline Vector<T>::Iterator::Iterator(Vector<T>::Iterator& iter)
+: _vec(iter._vec), i(iter.i) {
+}
+template <class T>
+inline bool Vector<T>::Iterator::ended(void) const {
+	return i >= _vec.length();
+}
+template <class T>
+inline T Vector<T>::Iterator::item(void) const {
+	return _vec[i];
+}
+template <class T>
+inline void Vector<T>::Iterator::next(void) {
+	i++;
 }
 
 } }		// elm::genstruct
