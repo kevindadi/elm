@@ -19,19 +19,6 @@ namespace elm { namespace datastruct {
 template <class T>
 class Vector: public Indexed<T>, public MutableCollection<T> {
 
-	// Iterator class
-	class Iterator: public IteratorInst<T> {
-		const Vector<T> vec;
-		int i;
-	public:
-		inline Iterator(const Vector<T>& vec);
-		
-		// IteratorInst overload
-		virtual bool ended(void) const;
-		virtual T item(void) const;
-		virtual void next(void);		
-	};
-	
 	// Editor class
 	class MutableIterator: public MutableIteratorInst<T> {
 		Vector<T> vec;
@@ -74,22 +61,20 @@ public:
 	virtual void remove(const T value);
 	virtual void clear(void);
 	virtual MutableCollection<T> *empty(void);
+	
+	// Iterator class
+	class Iterator: public genstruct::Vector<T>::Iterator {
+	public:
+		inline Iterator(const Vector<T>& vec);
+	};
 };
 
 
 // Vector<T>::Iterator methods
-template <class T> Vector<T>::Iterator::Iterator(const Vector<T>& _vec)
-: vec(_vec), i(0) {
-}
-template <class T> bool Vector<T>::Iterator::ended(void) const {
-	return i >= vec.length();
-}
-template <class T> T Vector<T>::Iterator::item(void) const {
-	return vec[i];
-}
-template <class T> void Vector<T>::Iterator::next(void) {
-	i++;
-}
+template <class T>
+inline Vector<T>::Iterator::Iterator(const Vector<T>& vec)
+: genstruct::Vector<T>::Iterator(vec.vec) {
+};
 
 
 // Vector<T>::Editor class
@@ -145,7 +130,8 @@ template <class T> T& Vector<T>::item(int index) {
 
 // Vector<T> Collection overload
 template <class T> IteratorInst<T> *Vector<T>::visit(void) {
-	return new Iterator(*this);
+	Iterator iter(*this);
+	return new IteratorObject<Iterator, T>(iter);
 }
 template <class T> MutableIteratorInst<T> *Vector<T>::edit(void) {
 	return new MutableIterator(*this);
