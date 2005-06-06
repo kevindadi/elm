@@ -7,6 +7,7 @@
 #ifndef ELM_GENSTRUCT_DLLIST_H
 #define ELM_GENSTRUCT_DLLIST_H
 
+#include <elm/Iterator.h>
 #include <elm/inhstruct/DLList.h>
 
 namespace elm { namespace genstruct {
@@ -39,18 +40,16 @@ public:
 	inline void clear(void);
 	
 	// Iterator class
-	class Iterator {
+	class Iterator: public PreIterator<Iterator, T> {
 	protected:
 		const inhstruct::DLList& list;
 		DLNode *cur;
 	public:
 		inline Iterator(const DLList& _list);
+		inline Iterator(const Iterator& iter);
 		inline bool ended(void) const;
 		inline T item(void) const;
 		inline void next(void);
-		inline Iterator& operator++(int _);
-		inline operator bool(void) const;
-		inline T operator*(void) const;		
 		inline bool begining(void) const;
 		inline void previous(void);
 		inline void first(void);
@@ -133,6 +132,12 @@ template <class T> DLList<T>::Iterator::Iterator(const DLList<T>& _list)
 : list(_list.list) {
 	cur = (DLNode *)list.first();
 }
+
+template <class T>
+inline DLList<T>::Iterator::Iterator(const DLList<T>::Iterator& iter)
+: list(iter.list), cur(iter.cur) {
+}
+
 template <class T> bool DLList<T>::Iterator::ended(void) const {
 	return cur->atEnd();
 }
@@ -141,16 +146,6 @@ template <class T> T DLList<T>::Iterator::item(void) const {
 }
 template <class T> void DLList<T>::Iterator::next(void) {
 	cur = (DLNode *)cur->next();
-}
-template <class T> typename DLList<T>::Iterator& DLList<T>::Iterator::operator++(int _) {
-	next();
-	return *this;
-}
-template <class T> DLList<T>::Iterator::operator bool(void) const {
-	return ended();
-}
-template <class T> T DLList<T>::Iterator::operator*(void) const {
-	return item();
 }
 template <class T> bool DLList<T>::Iterator::begining(void) const {
 	return cur == list.first();

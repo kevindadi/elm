@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2005, IRIT-UPS.
  *
  * sllist.h -- single link list interface.
  */
@@ -8,6 +8,8 @@
 #define ELM_GENSTRUCT_SLLIST_H
 
 #include <assert.h>
+#include <elm/Iterator.h>
+
 #include <elm/inhstruct/SLList.h>
 namespace elm { namespace genstruct {
 
@@ -36,7 +38,7 @@ public:
 	inline void remove(const T value);
 
 	// Iterator class
-	class Iterator {
+	class Iterator: public PreIterator<Iterator, T> {
 		const SLList& list;
 		const Node *node;
 	public:
@@ -44,11 +46,6 @@ public:
 		inline bool ended(void) const;
 		inline T item(void) const;
 		inline void next(void);
-		inline operator bool(void) const;
-		inline Iterator& operator++(int);
-		inline operator T(void) const;
-		inline T operator*(void) const;
-		inline T *operator->(void) const;
 	};
 
 	// Editor class
@@ -125,22 +122,6 @@ template <class T> inline void SLList<T>::Iterator::next(void) {
 	assert(node);
 	node = node->next();
 }
-template <class T> inline SLList<T>::Iterator::operator bool(void) const {
-	return !ended();
-}
-template <class T>
-inline typename SLList<T>::Iterator& SLList<T>::Iterator::operator++(int) {
-	next(); return *this;
-}
-template <class T> inline SLList<T>::Iterator::operator T(void) const {
-	return item();
-}
-template <class T> inline T SLList<T>::Iterator::operator*(void) const {
-	return item();
-}
-template <class T> inline T *SLList<T>::Iterator::operator->(void) const {
-	return &item();
-};
 
 } } // elm::genstruct
 
