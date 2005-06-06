@@ -7,6 +7,7 @@
 #ifndef ELM_GENSTRUCT_HASHTABLE_H
 #define ELM_GENSTRUCT_HASHTABLE_H
 
+#include <elm/Iterator.h>
 #include <elm/utility.h>
 
 namespace elm { namespace genstruct {
@@ -36,8 +37,6 @@ class HashTable {
 		inline Iterator(const HashTable<K, T>& htab);
 		inline bool ended(void) const;
 		inline void next(void);
-		inline Iterator& operator++(int _) { next(); return *this; };
-		inline operator bool(void) const { return !ended(); };
 	};
 	
 public:
@@ -56,21 +55,17 @@ public:
 	void clear(void);
 
 	// KeyIterator
-	class KeyIterator: public Iterator {
+	class KeyIterator: public Iterator, public PreIterator<KeyIterator, K> {
 	public:
 		inline KeyIterator(const HashTable<K, T>& htab): Iterator(htab) { };
 		inline K item(void) const { return this->node->key; }
-		inline K operator*(void) const { return item(); };
-		inline K operator->(void) const { return item(); };
 	};
 
 	// ItemIterator
-	class ItemIterator: public Iterator {
+	class ItemIterator: public Iterator, public PreIterator<ItemIterator, T> {
 	public:
 		inline ItemIterator(const HashTable<K, T>& htab): Iterator(htab) { };
 		inline T item(void) const { return this->node->value; }
-		inline T operator*(void) const { return item(); };
-		inline T operator->(void) const { return item(); };
 	};
 };
 
