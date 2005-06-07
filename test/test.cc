@@ -11,6 +11,7 @@
 #include <elm/utility.h>
 #include <elm/io.h>
 #include <elm/options.h>
+#include <elm/util/test.h>
 
 #include <elm/inhstruct/SLList.h>
 #include <elm/genstruct/SLList.h>
@@ -30,6 +31,7 @@
 #include <elm/datastruct/Indexed.h>
 #include <elm/datastruct/Vector.h>
 #include <elm/datastruct/HashTable.h>
+#include <elm/datastruct/DLList.h>
 
 #include <elm/genstruct/FragArray.h>
 
@@ -53,14 +55,6 @@ public:
 	~LockTest(void) { *alloc = false; };
 	inline bool getAlloc(void) const { return *alloc; };
 };
-
-// DList class
-/*class MyDLNode: public inhstruct::DLNode {
-public:
-	int v;
-	inline MyDLNode(int _v): v(_v) {
-	};
-};*/
 
 // String test
 void test_string(void) {
@@ -619,57 +613,78 @@ static void test_vector(void) {
 
 // test_hashtable()
 static void test_hashtable(void) {
-	TEST_UNIT("HashTable");
+	CHECK_BEGIN("HashTable");
 	
 	// Simple key
 	{
 		genstruct::HashTable<int, int> htab;
-		TEST(htab.isEmpty() == true);
-		TEST(htab.count() == 0);
+		CHECK(htab.isEmpty() == true);
+		CHECK(htab.count() == 0);
 		htab.put(666, 111);
-		TEST(htab.isEmpty() == false);
-		TEST(htab.count() == 1);
-		TEST(htab.get(666, 0) == 111);
-		TEST(htab.get(111, 0) == 0);
+		CHECK(htab.isEmpty() == false);
+		CHECK(htab.count() == 1);
+		CHECK(htab.get(666, 0) == 111);
+		CHECK(htab.get(111, 0) == 0);
 		htab.put(777, 222);
-		TEST(htab.isEmpty() == false);
-		TEST(htab.count() == 2);
-		TEST(htab.get(666, 0) == 111);
-		TEST(htab.get(777, 0) == 222);
-		TEST(htab.get(111, 0) == 0);
+		CHECK(htab.isEmpty() == false);
+		CHECK(htab.count() == 2);
+		CHECK(htab.get(666, 0) == 111);
+		CHECK(htab.get(777, 0) == 222);
+		CHECK(htab.get(111, 0) == 0);
 		htab.remove(666);
-		TEST(htab.count() == 1);
-		TEST(htab.get(666, 0) == 0);
-		TEST(htab.get(777, 0) == 222);
+		CHECK(htab.count() == 1);
+		CHECK(htab.get(666, 0) == 0);
+		CHECK(htab.get(777, 0) == 222);
 	}
 	
 	// Complex key
 	{
 		genstruct::HashTable<String, int> htab;
 		String k1("key1"), k2("key2"), k3("key3");
-		TEST(htab.isEmpty() == true);
-		TEST(htab.count() == 0);
+		CHECK(htab.isEmpty() == true);
+		CHECK(htab.count() == 0);
 		htab.put(k1, 111);
-		TEST(htab.isEmpty() == false);
-		TEST(htab.count() == 1);
-		TEST(htab.get(k1, 0) == 111);
-		TEST(htab.get(k3, 0) == 0);
+		CHECK(htab.isEmpty() == false);
+		CHECK(htab.count() == 1);
+		CHECK(htab.get(k1, 0) == 111);
+		CHECK(htab.get(k3, 0) == 0);
 		htab.put(k2, 222);
-		TEST(htab.isEmpty() == false);
-		TEST(htab.count() == 2);
-		TEST(htab.get(k1, 0) == 111);
-		TEST(htab.get(k2, 0) == 222);
-		TEST(htab.get(k3, 0) == 0);
+		CHECK(htab.isEmpty() == false);
+		CHECK(htab.count() == 2);
+		CHECK(htab.get(k1, 0) == 111);
+		CHECK(htab.get(k2, 0) == 222);
+		CHECK(htab.get(k3, 0) == 0);
 		htab.remove(k1);
-		TEST(htab.count() == 1);
-		TEST(htab.get(k1, 0) == 0);
-		TEST(htab.get(k2, 0) == 222);
+		CHECK(htab.count() == 1);
+		CHECK(htab.get(k1, 0) == 0);
+		CHECK(htab.get(k2, 0) == 222);
+	}
+	
+	// Iterator test
+	{
+		genstruct::HashTable<int, int> tab;
+		for(int i = 0; i < 10; i++)
+			tab.put(i, 9 - i);
+		int mask = 0x3ff;
+		for(genstruct::HashTable<int, int>::KeyIterator key(tab); key; key++) {
+			CHECK(mask & (1 << key));
+			mask &= ~(1 << key);
+		}
+		CHECK(!mask);
+		mask = 0x3ff;
+		for(genstruct::HashTable<int, int>::ItemIterator item(tab); item; item++) {
+			CHECK(mask & (1 << item));
+			mask &= ~(1 << item);
+		}
+		CHECK(!mask);
 	}
 	
 	// datastruct test
 	{
 		datastruct::HashTable<int, int> htab;
 	}
+	
+	CHECK_END;
 }
 
 
@@ -750,204 +765,46 @@ static void test_lock(void) {
 }	
 
 
-// test_dllist()
-/*static void test_dllist(void) {
-	TEST_UNIT("DLList");
-	
-	// Base tests
-	{
-		obj::DLList<int> l;
-		TEST(l.isEmpty());
-		l.addLast(666);
-		TEST(!l.isEmpty());
-		TEST(l.count() == 1);
-		TEST(l.contains(666));
-		TEST(!l.contains(111));
-		l.addLast(111);
-		TEST(!l.isEmpty());
-		TEST(l.count() == 2);
-		TEST(l.contains(666));
-		TEST(l.contains(111));
-	}
-	
-	// Removal tests
-	{
-		obj::DLList<int> l;
-		l.addLast(0);
-		l.addLast(1);
-		l.addLast(2);
-		TEST(l.count() == 3);
-		l.remove(1);
-		TEST(l.count() == 2);
-		TEST(l.contains(0));
-		TEST(!l.contains(1));
-		TEST(l.contains(2));
-		l.remove(2);
-		TEST(l.count() == 1);
-		TEST(l.contains(0));
-		TEST(!l.contains(1));
-		TEST(!l.contains(2));
-		l.remove(0);
-		TEST(l.count() == 0);
-		TEST(!l.contains(0));
-		TEST(!l.contains(1));
-		TEST(!l.contains(2));
-	}
-	
-	// Iterator test
-	{
-		obj::DLList<int> l;
-		l.addLast(0);
-		l.addLast(1);
-		l.addLast(2);
-		l.addLast(3);
-		l.addLast(4);
-		TEST(l.count() == 5);
-		int i = 0;
-		for(Iterator<int> iter(l); iter; iter++, i++)
-			TEST(*iter == i);
-	}
-	
-	// Bi-directionnal walk test
-	{
-		inh::DLList list;
-		list.addLast(new MyDLNode(0));
-		list.addLast(new MyDLNode(1));
-		list.addLast(new MyDLNode(2));
-		TEST(list.count() == 3);
-		int cnt = 0;
-		for(MyDLNode *node = (MyDLNode *)list.first(); !node->atEnd();
-		node = (MyDLNode *)node->next(), cnt++)
-			TEST(node->v == cnt);
-		TEST(cnt == 3);
-		cnt--;
-		for(MyDLNode *node = (MyDLNode *)list.last(); !node->atBegin();
-		node = (MyDLNode *)node->previous(), cnt--)
-			TEST(node->v == cnt);
-		TEST(cnt == -1);
-	}
-	
-	// Insert before and efter tests
-	{
-		inh::DLList list;
-		list.addLast(new MyDLNode(0));
-		list.addLast(new MyDLNode(2));
-		list.addLast(new MyDLNode(4));
-		inh::DLNode *node = list.first();
-		TEST(!node->atEnd());
-		node = node->next();
-		TEST(!node->atEnd());
-		node->insertBefore(new MyDLNode(1));
-		node->insertAfter(new MyDLNode(3));
-		int cnt = 0;
-		for(MyDLNode *node = (MyDLNode *)list.first(); !node->atEnd();
-		node = (MyDLNode *)node->next(), cnt++)
-			TEST(node->v == cnt);
-		TEST(cnt == 5);
-		cnt--;
-		for(MyDLNode *node = (MyDLNode *)list.last(); !node->atBegin();
-		node = (MyDLNode *)node->previous(), cnt--)
-			TEST(node->v == cnt);
-		TEST(cnt == -1);		
-	}
-}*/
+// Prototypes
+void test_string_buffer(void);
+void test_sorted_bintree(void);
+void test_dllist(void);
 
-// test_sorted_bintree()
-class MyVisitor: public genstruct::SortedBinTree<int>::Visitor {
-	int count;
-public:
-	inline MyVisitor(void): count(0) {
-	};
-	virtual int process(int value) {
-		TEST(count <= 5);
-		TEST(count == value);
-		count++;
-	};
+
+// List of tests
+struct test_t {
+	CString name;
+	void (*fun)(void);
+} tests[] = {
+	{ "string", test_string },
+	{ "utility", test_utility },
+	{ "vector", test_vector },
+	{ "hashtable", test_hashtable },
+	{ "lock", test_lock },
+	{ "sorted_bintree", test_sorted_bintree },
+	{ "string_buffer", test_string_buffer },
+	{ "dllist", test_dllist },
+	{ "", 0 }
 };
-static void test_sorted_bintree(void) {
-	TEST_UNIT("SortedBinTree");
-	
-	// Base test
-	{
-		genstruct::SortedBinTree<int> tree;
-		tree.insert(5);
-		tree.insert(0);
-		tree.insert(1);
-		tree.insert(2);
-		tree.insert(4);
-		tree.insert(3);
-		TEST(!tree.contains(10));
-		TEST(tree.contains(0));
-		TEST(tree.contains(1));
-		TEST(tree.contains(2));
-		TEST(tree.contains(3));
-		TEST(tree.contains(4));
-		TEST(tree.contains(5));
-		MyVisitor visitor;
-		tree.visit(&visitor);
-	}
-}
-
-
-// StringBuffer test
-static void test_string_buffer(void) {
-	TEST_UNIT("StringBuffer");
-	
-	// Empty string
-	{
-		StringBuffer buffer;
-		TEST(buffer.length() == 0);
-		String str = buffer.toString();
-		TEST(str == "");
-	}
-	
-	// C String puts
-	{
-		StringBuffer buffer;
-		buffer.put("0123");
-		TEST(buffer.length() == 4);
-		buffer.put("");
-		TEST(buffer.length() == 4);
-		buffer.put("4567");
-		TEST(buffer.length() == 8);
-		String str = buffer.toString();
-		TEST(str == "01234567");
-	}
-	
-	// Different put types
-	{
-		StringBuffer buffer;
-		buffer.put('0');
-		buffer.put("1");
-		CString cstr("2");
-		buffer.put(cstr);
-		String str("3");
-		buffer.put(str);
-		String res = buffer.toString();
-		TEST(res == "0123");
-	}
-	
-	// Formatted test
-	{
-		StringBuffer buffer;
-		buffer.print("%s%s%s%s", "0", "1", "2", "3");
-		String str = buffer.toString();
-		TEST(str == "0123");
-	}
-}
-
 
 // Entry point
-int main(void) {
-	test_string();
-	test_utility();
-	//test_list();
-	test_vector();
-	test_hashtable();
-	test_lock();
-	//test_dllist();
-	test_sorted_bintree();
-	test_string_buffer();
-	TEST_END;
-	return failures ? EXIT_FAILURE : EXIT_SUCCESS;
+int main(int argc, char *argv[]) {
+	
+	// Test all
+	if(argc == 1)
+		for(struct test_t *test = tests; test->fun; test++)
+			test->fun();
+	
+	// Test some
+	else 
+		for(int i = 1; i < argc; i++) {
+			bool found = false;
+			for(struct test_t *test = tests; test->fun; test++)
+				if(test->name == argv[i]) {
+					test->fun();
+					found = true;
+				}
+			if(!found)
+				cerr << "ERROR: no test called \"" << argv[i] << "\"\n";
+		}
 }
