@@ -17,26 +17,6 @@ namespace elm { namespace datastruct {
 template <class K, class T>
 class HashTable: public Map<K, T> {
 
-	// KeyIterator class
-	class KeyIterator: public IteratorInst<K> {
-		typename genstruct::HashTable<K, T>::KeyIterator iter;
-	public:
-		inline KeyIterator(const HashTable<K, T>& htab): iter(htab.htab) { };
-		virtual bool ended(void) const { return iter.ended(); };
-		virtual K item(void) const { return iter.item(); };
-		virtual void next(void) { iter.next(); };
-	};
-	
-	// ItemIterator class
-	class ItemIterator: public IteratorInst<T> {
-		typename genstruct::HashTable<K, T>::ItemIterator iter;
-	public:
-		inline ItemIterator(const HashTable<K, T>& htab): iter(htab.htab) { };
-		virtual bool ended(void) const { return iter.ended(); };
-		virtual T item(void) const { return iter.item(); };
-		virtual void next(void) { iter.next(); };
-	};
-	
 	// KeyCollection class
 	class KeyCollection: public Collection<K> {
 		const HashTable<K, T>& htab;
@@ -116,7 +96,8 @@ HashTable<K, T>::KeyCollection::KeyCollection(const HashTable<K, T>& _htab)
 
 template <class K, class T>
 IteratorInst<K> *HashTable<K, T>::KeyCollection::visit(void) {
-	return new KeyIterator(htab);
+	typename genstruct::HashTable<K, T>::KeyIterator iter(htab.htab);
+	return new IteratorObject<typename genstruct::HashTable<K, T>::KeyIterator, K>(iter);
 }
 
 template <class K, class T>
@@ -133,7 +114,8 @@ HashTable<K, T>::ItemCollection::ItemCollection(const HashTable<K, T>& _htab)
 
 template <class K, class T>
 IteratorInst<T> *HashTable<K, T>::ItemCollection::visit(void) {
-	return new ItemIterator(htab);
+	typename genstruct::HashTable<K, T>::ItemIterator iter(htab.htab);
+	return new IteratorObject<typename genstruct::HashTable<K, T>::ItemIterator, T>(iter);
 }
 
 template <class K, class T>
