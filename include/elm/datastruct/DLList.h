@@ -1,78 +1,118 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2005, IRIT-UPS.
  *
  * obj/dllist.h -- vector object structure interface.
  */
-#ifndef ELM_OBJ_DLLIST_H
-#define ELM_OBJ_DLLIST_H
+#ifndef ELM_DATASTRUCT_DLLIST_H
+#define ELM_DATASTRUCT_DLLIST_H
 
 #include <assert.h>
-#include <elm/sequence.h>
-#include <elm/data/dllist.h>
+#include <elm/Iterator.h>
+#include <elm/Collection.h>
+#include <elm/genstruct/DLList.h>
 
-namespace elm { namespace obj {
+namespace elm { namespace datastruct {
 
 // DLList class
 template <class T>
-class DLList: public MutableCollection<T>, public data::DLList<T> {
+class DLList: public Collection<T> {
+	genstruct::DLList<T> list;
 public:
 
+	// Accessors
+	inline T first(void) const;
+	inline T last(void) const;
+
+	// Mutators
+	inline void remove(const T value);
+	inline void addFirst(const T value);
+	inline void addLast(const T value);
+	inline void removeFirst(void);
+	inline void removeLast(void);
+	inline void clear(void);
+	
 	// Collection overload
 	virtual int count(void);
 	virtual bool isEmpty(void);	
+	virtual bool contains(const T value);
 	virtual IteratorInst<T> *visit(void);
-	virtual EditorInst<T> *edit(void);
-	virtual bool contains(const T value) const;	
-	virtual void add(const T value);
-	virtual void remove(const T value);
-	virtual void clear(void);
-	virtual Collection<T> *empty(void);
+	virtual MutableCollection<T> *empty(void);
 	
 	// Iterator class
-	class Iterator: public IteratorInst<T> {
-		typename data::DLList<T>::Iterator iter;
+	class Iterator: public genstruct::DLList<T>::Iterator {
 	public:
-		inline Iterator(const DLList<T>& list): iter(list) {
-		};
-		inline Iterator(const DLList<T> *list): iter(*list) {
-		};
-		virtual bool ended(void) const { return iter.ended(); };
-		virtual T item(void) const { return iter.item(); };
-		virtual void next(void) { iter.next(); };		
+		inline Iterator(const DLList<T>& list);
+		inline Iterator(const Iterator& iter);
 	};
 };
 
+// DLList<T>::Iterator class
+template <class T>
+inline DLList<T>::Iterator::Iterator(const DLList<T>& list)
+: genstruct::DLList<T>::Iterator(list.list) {
+}
+
+template <class T>
+inline DLList<T>::Iterator::Iterator(const DLList<T>::Iterator::Iterator& iter)
+: genstruct::DLList<T>::Iterator(iter) {
+}
+
 
 // DLList methods
-template <class T> int DLList<T>::count(void) {
-	return data::DLList<T>::count();
-}
-template <class T> bool DLList<T>::isEmpty(void) {
-	return data::DLList<T>::isEmpty();
-}
-template <class T> IteratorInst<T> *DLList<T>::visit(void) {
-	return new Iterator(this);
-}
-template <class T> EditorInst<T> *DLList<T>::edit(void) {
-	assert(false);	// !!TODO!!
-}
-template <class T> bool DLList<T>::contains(const T value) {
-	return data::DLList<T>::contains(value);
-}
-template <class T> void DLList<T>::add(const T value) {
-	data::DLList<T>::addLast(value);
-}
-template <class T> void DLList<T>::remove(const T value) {
-	data::DLList<T>::remove(value);
-}
-template <class T> void DLList<T>::clear(void) {
-	data::DLList<T>::clear();
-}
-template <class T> Collection<T> *DLList<T>::empty(void) {
-	return new DLList<T>();
+template <class T> inline T DLList<T>::first(void) const {
+	return list.first();
 }
 
-} }	// elm::obj
+template <class T> inline T DLList<T>::last(void) const {
+	return list.last();
+}
+
+template <class T> inline void DLList<T>::remove(const T value) {
+	list.remove(value);
+}
+
+template <class T> inline void DLList<T>::addFirst(const T value) {
+	list.addFirst(value);
+}
+
+template <class T> inline void DLList<T>::addLast(const T value) {
+	list.addLast(value);
+}
+
+template <class T> inline void DLList<T>::removeFirst(void) {
+	list.removeFirst();
+}
+
+template <class T> inline void DLList<T>::removeLast(void) {
+	list.removeLast();
+}
+
+template <class T> inline void DLList<T>::clear(void) {
+	list.clear();
+}
+
+template <class T> int DLList<T>::count(void) {
+	return list.count();
+}
+
+template <class T> bool DLList<T>::isEmpty(void) {
+	return list.isEmpty();
+}
+
+template <class T> bool DLList<T>::contains(const T value) {
+	return list.contains(value);
+}
+
+template <class T> IteratorInst<T> *DLList<T>::visit(void) {
+	Iterator iter(*this);
+	return new IteratorObject<Iterator, T>(iter);
+}
+
+template <class T> MutableCollection<T> *DLList<T>::empty(void) {
+	return 0 /*new DLList<T>*/;
+}
+
+} }	// elm::datastruct
 
 #endif	// ELM_OBJ_DLLIST_H
