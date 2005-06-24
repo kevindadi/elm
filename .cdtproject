@@ -19,7 +19,7 @@
 <target name="all" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildTarget>all</buildTarget>
-<stopOnError>false</stopOnError>
+<stopOnError>true</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>
 </buildTargets>
