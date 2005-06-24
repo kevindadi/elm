@@ -7,6 +7,7 @@
 #ifndef ELM_IO_OUTPUT_H
 #define ELM_IO_OUTPUT_H
 
+#include <stdarg.h>
 #include <elm/utility.h>
 #include <elm/io/OutStream.h>
 
@@ -30,6 +31,8 @@ public:
 	inline void print(const char *str) { print(CString(str)); };
 	void print(const CString str);
 	void print(const String& str);
+	void format(const char *fmt, ...);
+	void formatArg(const char *fmt, va_list args);
 	void flush(void);
 	
 	inline Output& operator<<(bool value) { print(value); return *this; };
