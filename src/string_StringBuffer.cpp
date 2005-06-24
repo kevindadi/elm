@@ -70,36 +70,18 @@ namespace elm {
 
 
 /**
- * Put a formatted string in the buffer.
- * @param fmt		Format string as passed to vsprintf().
- * @param args	Arguments as passed to vsprintf().
- */
-void StringBuffer::print(const char *fmt, va_list args) {
-	
-	// Allocate remaining memory
-	int rem = buf.capacity() - buf.size();
-	char *mem = buf.alloc(rem);
-	int size = vsnprintf(mem, rem - 1, fmt, args);
-	
-	// Ok, fix the used size.
-	if(size < rem)
-		buf.setSize(buf.size() - (rem - size));
-	
-	// Else restart with enough place
-	else {
-		buf.setSize(buf.size() - rem);
-		mem = buf.alloc(size + 1);
-		vsnprintf(mem, size, fmt, args);
-		buf.setSize(buf.size() - 1);
-	}
-}
-
-
-/**
- * @fn void StringBuffer::print(const char *fmt, ...);
+ * @fn void StringBuffer::format(const char *fmt, ...);
  * Print a formatted string as does the printf() from C standard IO.
  * @param fmt	Format string (see printf() manual).
  * @param ...	Argument for format string.
+ */
+
+
+/**
+ * @fn void StringBuffer::formatArg(const char *fmt, va_list args);
+ * Print a formatted string as does the printf() from C standard IO.
+ * @param fmt	Format string (see printf() manual).
+ * @param args	Arguments for format string.
  */
 
 
