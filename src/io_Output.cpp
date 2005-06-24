@@ -7,6 +7,7 @@
 
 #include <string.h>
 #include <errno.h>
+#include <stdio.h>
 #include <elm/io/io.h>
 
 namespace elm { namespace io {
@@ -175,6 +176,44 @@ void Output::print(const String& str) {
 void Output::flush(void) {
 	if(strm.flush() < 0)
 		throw IOException();
+}
+
+
+/**
+ * Print a formatted string a-la C prinf().
+ * @param fmt	Format string.
+ * @param ...	Other arguments.
+ */
+void Output::format(const char *fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	format(fmt, args);
+	va_end(args);
+}
+
+
+/**
+ * Print a formatted string a-la C prinf().
+ * @param fmt	Format string.
+ * @param args	Other arguments.
+ */
+void Output::formatArg(const char *fmt, va_list args) {
+	char buf[256];
+	
+	// Allocate remaining memory
+	int size = vsnprintf(buf, sizeof(buf), fmt, args);
+	
+	// It's ok
+	if(size <= sizeof(buf))
+		strm.write(buf, size);
+	
+	// Else use a bigger one
+	else {
+		char newbuf[size + 1];
+		size = vsnprintf(newbuf, sizeof(newbuf), fmt, args);
+		assert(size <= sizeof(newbuf));
+		strm.write(newbuf, size);
+	}
 }
 
 } // io
