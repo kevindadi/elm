@@ -23,11 +23,11 @@ void test_string_buffer(void) {
 	// C String puts
 	{
 		StringBuffer buffer;
-		buffer.put("0123");
+		buffer.print("0123");
 		CHECK(buffer.length() == 4);
-		buffer.put("");
+		buffer.print("");
 		CHECK(buffer.length() == 4);
-		buffer.put("4567");
+		buffer.print("4567");
 		CHECK(buffer.length() == 8);
 		String str = buffer.toString();
 		CHECK(str == "01234567");
@@ -36,12 +36,12 @@ void test_string_buffer(void) {
 	// Different put types
 	{
 		StringBuffer buffer;
-		buffer.put('0');
-		buffer.put("1");
+		buffer.print('0');
+		buffer.print("1");
 		CString cstr("2");
-		buffer.put(cstr);
+		buffer.print(cstr);
 		String str("3");
-		buffer.put(str);
+		buffer.print(str);
 		String res = buffer.toString();
 		CHECK(res == "0123");
 	}
@@ -49,7 +49,7 @@ void test_string_buffer(void) {
 	// Formatted test
 	{
 		StringBuffer buffer;
-		buffer.print("%s%s%s%s", "0", "1", "2", "3");
+		buffer.format("%s%s%s%s", "0", "1", "2", "3");
 		String str = buffer.toString();
 		CHECK(str == "0123");
 	}
