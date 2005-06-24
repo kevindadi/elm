@@ -8,22 +8,20 @@
 #define ELM_IO_BLOCK_OUT_STREAM_H
 
 #include <elm/io/OutStream.h>
+#include <elm/block/DynBlock.h>
 
 namespace elm { namespace io {
 
 // BlockOutStream class
 class BlockOutStream: public OutStream {
-	char *_block;
-	int _size, max;
-	void enlarge(int min_size);
+	block::DynBlock _block;
 public:
-	BlockOutStream(int size = 4096);
-	virtual ~BlockOutStream(void);
-	inline char *block(void) const;
+	inline BlockOutStream(int size = 4096, int inc = 256);
+	inline const char *block(void) const;
 	inline int size(void) const;
-	void detach(void);
-	void clear(void);
-	void restart(void);
+	inline char *detach(void);
+	inline void clear(void);
+	inline void setSize(int size);
 	
 	// OutStream overload
 	virtual int write(const char *buffer, int size);
@@ -34,11 +32,22 @@ public:
 
 
 // Inlines
-inline char *BlockOutStream::block(void) const {
-	return _block;
+inline BlockOutStream::BlockOutStream(int size, int inc): _block(size, inc) {
+}
+inline const char *BlockOutStream::block(void) const {
+	return _block.base();
 }
 inline int BlockOutStream::size(void) const {
-	return _size;
+	return _block.size();
+}
+inline char *BlockOutStream::detach(void) {
+	return _block.detach();
+}
+inline void BlockOutStream::clear(void) {
+	_block.reset();
+}
+inline void BlockOutStream::setSize(int size) {
+	_block.setSize(size);
 }
 
 } } // elm::io
