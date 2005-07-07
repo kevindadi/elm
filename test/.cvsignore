@@ -2,3 +2,6 @@ Makefile
 Makefile.in
 test
 .deps
+.libs
+myplugin.la
+plugin.lo
