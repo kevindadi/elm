@@ -2,3 +2,4 @@ test_BitVector
 Makefile
 Makefile.in
 .deps
+.libs

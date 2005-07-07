@@ -3,9 +3,10 @@ AM_INIT_AUTOMAKE(Elm, 0.1)
 AM_CONFIG_HEADER(config.h)
 
 AC_PROG_CXX
-AC_PROG_RANLIB
 AC_STDC_HEADERS
 AC_HAVE_HEADERS(string.h)
+AC_LIBTOOL_DLOPEN
+AC_PROG_LIBTOOL
 
 dnl ELM_DEBUG_DEFS=-DELM_DEBUG_AVLTREE
 AC_SUBST(ELM_DEBUG_DEFS)
@@ -27,4 +28,5 @@ AC_OUTPUT([
 	include/elm/option/Makefile
 	include/elm/string/Makefile
 	include/elm/util/Makefile
+	include/elm/system/Makefile
 ], [])

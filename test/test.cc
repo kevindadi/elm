@@ -769,6 +769,7 @@ static void test_lock(void) {
 void test_string_buffer(void);
 void test_sorted_bintree(void);
 void test_dllist(void);
+void test_plugin(void);
 
 
 // List of tests
@@ -784,6 +785,7 @@ struct test_t {
 	{ "sorted_bintree", test_sorted_bintree },
 	{ "string_buffer", test_string_buffer },
 	{ "dllist", test_dllist },
+	{ "plugin", test_plugin },
 	{ "", 0 }
 };
 

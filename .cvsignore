@@ -20,3 +20,5 @@ mkinstalldirs
 stamp-h
 stamp-h.in
 doxygen.log
+libtool
+ltmain.sh
