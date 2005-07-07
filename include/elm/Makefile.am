@@ -6,7 +6,8 @@ SUBDIRS = \
 	io \
 	option \
 	string \
-	util
+	util \
+	system
 
 includeelmdir=$(includedir)/elm
 includeelm_HEADERS = \

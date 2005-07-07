@@ -28,12 +28,15 @@ libelm_a_SOURCES= \
 	util_BitVector.cpp \
 	util_test.cpp \
 	io_BlockOutStream.cpp \
-	io_BlockInStream.cpp
+	io_BlockInStream.cpp \
+	util_Version.cpp \
+	system_Plugin.cpp \
+	system_Plugger.cpp
 	
 #	collection.cpp \
 #	list.cc \
 #	sequence.cpp
 
 INCLUDES=-I../include
-CXXFLAGS=-g3
+AM_CXXFLAGS=-g3
 DEFS=@ELM_DEBUG_DEFS@
