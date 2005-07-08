@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004, IRIT-UPS.
  *
  * src/inhstruct_AVLTree.cpp -- AVLTree implementation.
  */
@@ -254,18 +254,40 @@ AVLTree::Node *AVLTree::remap(Node *left, Node *right) {
 	
 	/* Remap with left down */
 	if(left->h < right->h) {
-		right->insertRight(remap(right->_left(), right->_right()));
-		right->insertLeft(left);
-		computeHeight(right);
+		if(!right->_left()) {
+			right->insertLeft(left);
+			computeHeight(right);
+			return right;
+		}
+		else {
+			Node *root = right->_left();
+			right->insertLeft(remap(root->_left(), root->_right()));
+			computeHeight(right);
+			root->insertLeft(left);
+			root->insertRight(right);
+			computeHeight(root);
+			return root;
+		}
 		return right;
 	}
 	
 	/* Remap with right down */
 	else {
-		left->insertLeft(remap(left->_left(), left->_right()));
-		left->insertRight(right);
-		computeHeight(left);
-		return left;
+		if(!left->_right()) {
+			left->insertRight(right);
+			computeHeight(left);
+			return left;
+		}
+		else {
+			Node *root = left->_right();
+			left->insertRight(remap(root->_left(), root->_right()));
+			computeHeight(left);
+			root->insertLeft(left);
+			root->insertRight(right);
+			computeHeight(root);
+			return root;
+		}
+		return right;
 	}
 }
 
