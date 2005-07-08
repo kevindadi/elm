@@ -21,6 +21,9 @@ class AVLTree: private inhstruct::AVLTree {
 	public:
 		T val;
 		inline Node(const T value);
+		#ifdef ELM_DEBUG_AVLTREE
+			virtual void dump(void)  { };
+		#endif
 	};
 	
 	Comparator<T>& comp;
