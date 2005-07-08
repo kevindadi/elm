@@ -15,9 +15,6 @@ AC_OUTPUT([
 	Makefile
 	src/Makefile
 	test/Makefile
-	test/test_avl/Makefile
-	test/test_BitVector/Makefile
-	test/test_SLList/Makefile
 	include/Makefile
 	include/elm/Makefile
 	include/elm/block/Makefile
