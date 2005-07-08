@@ -7,7 +7,15 @@ test_SOURCES		=\
 						test_string_buffer.cpp \
 						test_sorted_bintree.cpp \
 						test_dllist.cpp \
-						test_plugin.cpp
+						test_plugin.cpp \
+						test_avl.cpp \
+						test_sllist.cpp \
+						test_bitvector.cpp \
+						test_string.cpp \
+						test_utility.cpp \
+						test_vector.cpp \
+						test_hashtable.cpp \
+						test_lock.cpp
 test_LDFLAGS		= -rdynamic
 test_LDADD			= -L../src -lelm -ldl
 test_DEPENDENCIES	= ../src/libelm.a
