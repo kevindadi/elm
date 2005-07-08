@@ -187,7 +187,7 @@ void Output::flush(void) {
 void Output::format(const char *fmt, ...) {
 	va_list args;
 	va_start(args, fmt);
-	format(fmt, args);
+	formatArg(fmt, args);
 	va_end(args);
 }
 
