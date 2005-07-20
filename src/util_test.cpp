@@ -107,4 +107,20 @@ void TestCase::complete(void) {
 }
 
 
+/**
+ * Same as check but also returns value and specific message for ending the
+ * test due to main failure.
+ * @param file		File containing the test source.
+ * @param line		Line where the test is implemented.
+ * @param text		Text describing the test.
+ * @param result	Result of the test.
+ * @return			Result of the test.
+ */
+bool TestCase::require(CString file, int line, CString text, bool result) {
+	check(file, line, text, result);
+	if(!result)
+		cout << "\x1b[1;31mMain failure: test must be interrupted.\x1b[0m\n";
+	return result;
+}
+
 } //elm
