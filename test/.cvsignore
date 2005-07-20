@@ -5,3 +5,4 @@ test
 .libs
 myplugin.la
 plugin.lo
+myplugin.so

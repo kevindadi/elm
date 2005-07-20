@@ -1,6 +1,5 @@
-#SUBDIRS = test_avl test_BitVector test_SLList
 
-noinst_PROGRAMS	=	test
+noinst_PROGRAMS	=	test myplugin.so
 
 test_SOURCES		=\
 						test.cc \
@@ -20,12 +19,9 @@ test_LDFLAGS		= -rdynamic
 test_LDADD			= -L../src -lelm -ldl
 test_DEPENDENCIES	= ../src/libelm.a
 
-pkglib_LTLIBRARIES			= myplugin.la
-myplugin_la_SOURCES			= plugin.cpp
-#myplugin_la_LIBADD			= -L../src -lelm
-myplugin_la_LDFLAGS			= -module -export-dynamic
-myplugin_la_DEPENDENCIES	= ../src/libelm.a
+myplugin_so_SOURCES	= plugin.cpp
+myplugin_so_LDFLAGS	= -shared
 
 INCLUDES	= -I../include
-AM_CXXFLAGS	= -g3
+AM_CXXFLAGS	= -g3 
 

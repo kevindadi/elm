@@ -19,9 +19,9 @@ void test_plugin(void) {
 	CHECK_BEGIN("Plugin");
 	
 	// Simple open
-	Plugger plugger("my_plugin", Version(0, 0, 0), "./.libs");
+	Plugger plugger("my_plugin", Version(0, 0, 0), ".");
 	Plugin *plugin = plugger.plug("myplugin");
-	CHECK(plugin);
+	REQUIRE(plugin, return);
 	CHECK(startup_flag);
 	CHECK(!cleanup_flag);
 	
@@ -35,6 +35,7 @@ void test_plugin(void) {
 	// Check reopen
 	startup_flag = false;
 	Plugin *plugin2 = plugger.plug("myplugin");
+	REQUIRE(plugin2, return)
 	CHECK(!startup_flag);
 	CHECK(!cleanup_flag);
 	CHECK(plugin == plugin2);
