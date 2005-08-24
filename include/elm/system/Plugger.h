@@ -7,8 +7,10 @@
 #ifndef ELM_SYSTEM_PLUGGER_H
 #define ELM_SYSTEM_PLUGGER_H
 
+#include <elm/Iterator.h>
 #include <elm/system/Plugin.h>
 #include <elm/genstruct/Vector.h>
+#include <elm/system/Directory.h>
 
 namespace elm { namespace system {
 
@@ -44,6 +46,21 @@ public:
 	Plugin *plug(String name);
 	inline error_t lastError(void);
 	String lastErrorMessage(void);
+	
+	// Iterator class
+	class Iterator: public PreIterator<Iterator, String> {
+		Plugger& plugger;
+		int path;
+		Directory::Iterator *file;
+		void go(void);
+	public:
+		Iterator(Plugger& _plugger);
+		~Iterator(void);
+		bool ended(void) const;
+		String item(void) const;
+		void next(void);
+		Plugin *plug(void) const;
+	};
 };
 
 // Inlines
