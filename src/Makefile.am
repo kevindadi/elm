@@ -31,7 +31,12 @@ libelm_a_SOURCES= \
 	io_BlockInStream.cpp \
 	util_Version.cpp \
 	system_Plugin.cpp \
-	system_Plugger.cpp
+	system_Plugger.cpp \
+	system_SystemException.cpp \
+	system_Path.cpp \
+	system_FileItem.cpp \
+	system_File.cpp \
+	system_Directory.cpp
 	
 #	collection.cpp \
 #	list.cc \
