@@ -129,6 +129,7 @@ void HashTable<K, T>::remove(const K& key) {
 			else
 				tab[i] = node->next;
 			delete node;
+			break;
 		}
 }
 template <class K, class T>
