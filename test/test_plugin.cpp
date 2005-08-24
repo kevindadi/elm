@@ -47,5 +47,11 @@ void test_plugin(void) {
 	plugin->release();
 	CHECK(!startup_flag);
 	CHECK(cleanup_flag);
+
+	// Check iterator
+	int count = 0;
+	for(Plugger::Iterator plugin(plugger); plugin; plugin++, count++)
+		CHECK(plugin == "myplugin");
+	CHECK(count == 1);	
 	CHECK_END;
 }

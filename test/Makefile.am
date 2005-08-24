@@ -14,7 +14,8 @@ test_SOURCES		=\
 						test_utility.cpp \
 						test_vector.cpp \
 						test_hashtable.cpp \
-						test_lock.cpp
+						test_lock.cpp \
+						test_file.cpp
 test_LDFLAGS		= -rdynamic
 test_LDADD			= -L../src -lelm -ldl
 test_DEPENDENCIES	= ../src/libelm.a

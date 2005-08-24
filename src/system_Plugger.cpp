@@ -181,4 +181,102 @@ String Plugger::lastErrorMessage(void) {
 	}
 }
 
+
+/**
+ * @class Plugger::Iterator
+ * Used for exploring plugins hookable on the current plugger.
+ */
+
+
+/**
+ */
+void Plugger::Iterator::go(void) {
+	bool found = false;
+	while(!found) {
+		
+		// Next file
+		if(file)
+			file->next();
+		
+		// Next path
+		if(!file || file->ended()) {
+			if(file) {
+				delete file;
+				file = 0;
+			}
+			path++;
+			if(path >= plugger.paths.length())
+				return;
+			FileItem *item = FileItem::get(Path(plugger.paths[path]));
+			if(!item || !item->toDirectory())
+					continue;
+			else {
+				file = new Directory::Iterator(item->toDirectory());
+				if(file->ended())
+					continue;
+			}
+		}
+		
+		// Look current file
+		if(file->item()->path().toString().endsWith(".so"))
+			return;
+	}
+}
+
+
+/**
+ * Build a new iterator.
+ * @param plugger	Used plugger.
+ */
+Plugger::Iterator::Iterator(Plugger& _plugger): plugger(_plugger), path(-1),
+file(0) {
+	go();
+}
+
+
+/**
+ */
+Plugger::Iterator::~Iterator(void) {
+	if(file)
+		delete file;
+}
+
+
+/**
+ * Test if the iteration is ended.
+ * @return	True if it is ended.
+ */
+bool Plugger::Iterator::ended(void) const {
+	return path >= plugger.paths.length();
+}
+
+
+/**
+ * Get the current plugin name.
+ * @return	Current plugin name.
+ */
+String Plugger::Iterator::item(void) const {
+	Path path = (*file)->path();
+	String name = path.namePart();
+	name = name.substring(0, name.length() - 3);
+	return name;
+}
+
+
+/**
+ * Go to the next plugin.
+ */
+void Plugger::Iterator::next(void) {
+	go();
+}
+
+
+/**
+ * Plug the current plugin.
+ * @return	Matching plugin.
+ */
+Plugin *Plugger::Iterator::plug(void) const {
+	return plugger.plug(item());
+}
+
 } }	// elm::system
