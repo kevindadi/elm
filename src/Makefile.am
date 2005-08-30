@@ -27,6 +27,7 @@ libelm_a_SOURCES= \
 	Collection.cpp \
 	util_BitVector.cpp \
 	util_test.cpp \
+	util_VarArg.cpp \
 	io_BlockOutStream.cpp \
 	io_BlockInStream.cpp \
 	util_Version.cpp \

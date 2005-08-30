@@ -23,6 +23,7 @@ void test_vector(void);
 void test_hashtable(void);
 void test_lock(void);
 void test_file(void);
+void test_vararg(void);
 
 // List of tests
 struct test_t {
@@ -42,6 +43,7 @@ struct test_t {
 	{ "sllist", test_sllist },
 	{ "bitvector", test_bitvector },
 	{ "file", test_file },
+	{ "vararg", test_vararg },
 	{ "", 0 }
 };
 
