@@ -184,11 +184,10 @@ void Output::flush(void) {
  * @param fmt	Format string.
  * @param ...	Other arguments.
  */
-void Output::format(const char *fmt, ...) {
-	va_list args;
-	va_start(args, fmt);
-	formatArg(fmt, args);
-	va_end(args);
+void Output::format(CString fmt, ...) {
+	VARARG_BEGIN(args, fmt)
+		format(fmt, args);
+	VARARG_END
 }
 
 
@@ -197,11 +196,11 @@ void Output::format(const char *fmt, ...) {
  * @param fmt	Format string.
  * @param args	Other arguments.
  */
-void Output::formatArg(const char *fmt, va_list args) {
+void Output::format(CString fmt, VarArg& args) {
 	char buf[256];
 	
 	// Allocate remaining memory
-	int size = vsnprintf(buf, sizeof(buf), fmt, args);
+	int size = vsnprintf(buf, sizeof(buf), &fmt, args.args());
 	
 	// It's ok
 	if(size <= sizeof(buf))
@@ -210,7 +209,7 @@ void Output::formatArg(const char *fmt, va_list args) {
 	// Else use a bigger one
 	else {
 		char newbuf[size + 1];
-		size = vsnprintf(newbuf, sizeof(newbuf), fmt, args);
+		size = vsnprintf(newbuf, sizeof(newbuf), &fmt, args.args());
 		assert(size <= sizeof(newbuf));
 		strm->write(newbuf, size);
 	}
