@@ -78,7 +78,7 @@ void Output::print(bool value) {
  * @param chr	Character to print.
  */
 void Output::print(char chr) {
-	if(strm.write(chr) < 0)
+	if(strm->write(chr) < 0)
 		throw IOException();
 }
 
@@ -107,7 +107,7 @@ void Output::print(int value) {
 		*--p = '-';
 	
 	// Write it
-	if(strm.write(p, buffer + sizeof(buffer) - p) < 0)
+	if(strm->write(p, buffer + sizeof(buffer) - p) < 0)
 		throw IOException();
 }
 
@@ -122,7 +122,7 @@ void Output::print(unsigned int value) {
 	char *p = horner(buffer + sizeof(buffer), value, 10);
 	
 	// Write it
-	if(strm.write(p, buffer + sizeof(buffer) - p) < 0)
+	if(strm->write(p, buffer + sizeof(buffer) - p) < 0)
 		throw IOException();
 }
 
@@ -146,7 +146,7 @@ void Output::print(void *value) {
 		char *p = horner(buffer + sizeof(buffer), (unsigned long)value, 16);
 		while(p != buffer)
 			*--p = '0';
-		if(strm.write(buffer, 8) < 0)
+		if(strm->write(buffer, 8) < 0)
 			throw IOException();
 	}
 }
@@ -156,7 +156,7 @@ void Output::print(void *value) {
  * @param str	C string to print.
  */
 void Output::print(const CString str) {
-	if(strm.write(str.chars(), str.length()) < 0)
+	if(strm->write(str.chars(), str.length()) < 0)
 		throw IOException();
 }
 
@@ -165,7 +165,7 @@ void Output::print(const CString str) {
  * @param str	String to print.
  */
 void Output::print(const String& str) {
-	if(strm.write(str.chars(), str.length()) < 0)
+	if(strm->write(str.chars(), str.length()) < 0)
 		throw IOException();
 }
 
@@ -174,7 +174,7 @@ void Output::print(const String& str) {
  * @throw IOException	If there is a stream error.
  */
 void Output::flush(void) {
-	if(strm.flush() < 0)
+	if(strm->flush() < 0)
 		throw IOException();
 }
 
@@ -205,14 +205,14 @@ void Output::formatArg(const char *fmt, va_list args) {
 	
 	// It's ok
 	if(size <= sizeof(buf))
-		strm.write(buf, size);
+		strm->write(buf, size);
 	
 	// Else use a bigger one
 	else {
 		char newbuf[size + 1];
 		size = vsnprintf(newbuf, sizeof(newbuf), fmt, args);
 		assert(size <= sizeof(newbuf));
-		strm.write(newbuf, size);
+		strm->write(newbuf, size);
 	}
 }
 

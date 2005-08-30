@@ -15,12 +15,13 @@ namespace elm { namespace io {
 
 // Output class
 class Output {
-	OutStream& strm;
+	OutStream *strm;
 	char *horner(char *p, unsigned long val, int base);
 public:
-	inline Output(void): strm(stdout) { };
-	inline Output(OutStream& stream): strm(stream) { };
-	inline OutStream& stream(void) const { return strm; };
+	inline Output(void): strm(&stdout) { };
+	inline Output(OutStream& stream): strm(&stream) { };
+	inline OutStream& stream(void) const { return *strm; };
+	inline void setStream(OutStream& stream) { strm = &stream; };
 	
 	void print(bool value);
 	void print(char chr);
