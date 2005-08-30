@@ -8,6 +8,7 @@
 #define ELM_UTIL_VERSION_H
 
 #include <assert.h>
+#include <elm/io.h>
 
 namespace elm {
 
@@ -33,6 +34,7 @@ public:
 	inline int compare(const Version& version) const;
 	
 	// Operators
+	inline operator bool(void) const;
 	inline Version& operator=(const Version& version);
 	inline bool operator==(const Version& version) const;
 	inline bool operator!=(const Version& version) const;
@@ -41,6 +43,8 @@ public:
 	inline bool operator<(const Version& version) const;
 	inline bool operator<=(const Version& version) const;
 };
+
+io::Output& operator<<(io::Output& out, const Version& version);
 
 // Inlines
 inline Version::Version(int major, int minor, int release)
@@ -89,6 +93,10 @@ inline int Version::compare(const Version& version) const {
 	return res;
 }
 	
+inline Version::operator bool(void) const {
+	return _major || _minor || _release;
+}
+
 inline Version& Version::operator=(const Version& version) {
 	_major = version._major;
 	_minor = version._minor;

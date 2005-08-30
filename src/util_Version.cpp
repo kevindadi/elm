@@ -96,4 +96,15 @@ namespace elm {
  */
 const Version Version::ZERO;
 
+
+/**
+ */
+io::Output& operator<<(io::Output& out, const Version& version) {
+	out << version.major()
+		<< '.' << version.minor()
+		<< '.' << version.release();
+	return out;
+}
+
+
 }; // elm
