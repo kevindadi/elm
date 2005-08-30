@@ -48,11 +48,25 @@ inline va_list& VarArg::args(void) {
 }
 
 // Useful overload
-template <> bool VarArg::next(void) { return (bool)va_arg(_args, int); };
-template <> char VarArg::next(void) { return (char)va_arg(_args, int); };
-template <> short VarArg::next(void) { return (short)va_arg(_args, int); };
-template <> unsigned char VarArg::next(void) { return (unsigned char)va_arg(_args, unsigned int); };
-template <> unsigned short VarArg::next(void) { return (unsigned short)va_arg(_args, unsigned int); };
+template <> inline bool VarArg::next(void) {
+	return (bool)va_arg(_args, int);
+};
+
+template <> inline char VarArg::next(void) {
+	return (char)va_arg(_args, int);
+};
+
+template <> inline short VarArg::next(void) {
+	return (short)va_arg(_args, int);
+};
+
+template <> inline unsigned char VarArg::next(void) {
+	return (unsigned char)va_arg(_args, unsigned int);
+};
+
+template <> inline unsigned short VarArg::next(void) {
+	return (unsigned short)va_arg(_args, unsigned int);
+};
 
 } // elm
 
