@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Elm</name>
+	<name>elm</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -21,12 +21,12 @@
 					<value>all</value>
 				</dictionary>
 				<dictionary>
-					<key>org.eclipse.cdt.make.core.enableAutoBuild</key>
-					<value>false</value>
-				</dictionary>
-				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildLocation</key>
 					<value></value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.enableAutoBuild</key>
+					<value>false</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.enableFullBuild</key>
@@ -53,12 +53,12 @@
 					<value>make</value>
 				</dictionary>
 				<dictionary>
-					<key>org.eclipse.cdt.make.core.autoBuildTarget</key>
-					<value>all</value>
-				</dictionary>
-				<dictionary>
 					<key>org.eclipse.cdt.make.core.stopOnError</key>
 					<value>false</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.cdt.make.core.autoBuildTarget</key>
+					<value>all</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>
@@ -92,6 +92,16 @@
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.esiProviderParserId</key>
 					<value>org.eclipse.cdt.make.core.GCCSpecsConsoleParser</value>
+				</dictionary>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
+			<triggers>full,incremental,</triggers>
+			<arguments>
+				<dictionary>
+					<key>LaunchConfigHandle</key>
+					<value>&lt;project&gt;/.externalToolBuilders/AAP.launch</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>
