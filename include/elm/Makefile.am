@@ -11,6 +11,7 @@ SUBDIRS = \
 
 includeelmdir=$(includedir)/elm
 includeelm_HEADERS = \
+	Collection.h \
 	debug.h \
 	io.h \
 	Iterator.h \
