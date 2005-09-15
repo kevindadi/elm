@@ -132,6 +132,10 @@ void Output::print(unsigned int value) {
  */
 void Output::print(double value) {
 	// !!TODO!!
+	char buffer[32];
+	snprintf(buffer, sizeof(buffer), "%g", value);
+	if(strm->write(buffer, strlen(buffer)) < 0)
+		throw IOException();
 }
 
 /**
