@@ -26,30 +26,34 @@ public:
 	} error_t;
 
 private:	
-	typedef struct plug_t {
-		String name;
-		void *handle;
-		Plugin *plugin;
-	} plug_t;
 	
-	String hook;
+	static genstruct::Vector<Plugger *> pluggers;
+	String _hook;
 	Version per_vers;
-	elm::genstruct::Vector<plug_t> plugs;
-	elm::genstruct::Vector<String> paths;
+	genstruct::Vector<Plugin *> plugins;
+	genstruct::Vector<String> paths;
 	error_t err;
-	void unplug(Plugin *plugin);
+	static void leave(Plugin *plugin);
+	Plugin *plug(Plugin *plugin, void *handle);
+	inline genstruct::Vector<Plugin *>& statics(void);
+
 public:
 	Plugger(String hook, const Version& plugger_version, String paths = "*");
+	~Plugger(void);
 	void addPath(String path);
 	void removePath(String path);
 	void resetPaths(void);
 	Plugin *plug(String name);
+	Plugin *plugFile(String path);
 	inline error_t lastError(void);
 	String lastErrorMessage(void);
+	inline String hook(void) const;
 	
 	// Iterator class
 	class Iterator: public PreIterator<Iterator, String> {
 		Plugger& plugger;
+		genstruct::Vector<Plugin *>& statics;
+		int i;
 		int path;
 		Directory::Iterator *file;
 		void go(void);
@@ -66,6 +70,14 @@ public:
 // Inlines
 inline Plugger::error_t Plugger::lastError(void) {
 	return err;
+}
+
+inline String Plugger::hook(void) const {
+	return _hook;
+}
+
+inline genstruct::Vector<Plugin *>& Plugger::statics(void) {
+	return Plugin::static_plugins;
 }
 
 } } // elm::system

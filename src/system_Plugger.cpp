@@ -23,15 +23,21 @@ namespace elm { namespace system {
 
 
 /**
+ * Current active pluggers.
+ */
+genstruct::Vector<Plugger *> Plugger::pluggers;
+
+
+/**
  * Build a new plugger.
- * @param _hook				Hook name for retrieving plugin in the code unit.
+ * @param hook				Hook name for retrieving plugin in the code unit.
  * @param plugger_version	Plugger version for compatibility checking.
  * @param _paths			List of path separated by ":" for retrieving
  * 							the plugin. Pass "*" for initializing with the
  * 							default system paths.
  */
-Plugger::Plugger(String _hook, const Version& plugger_version, String _paths)
-: hook(_hook), per_vers(plugger_version), err(OK) {
+Plugger::Plugger(String hook, const Version& plugger_version, String _paths)
+: _hook(hook), per_vers(plugger_version), err(OK) {
 	
 	// Look in the system paths
 	if(_paths == "*")
@@ -47,6 +53,25 @@ Plugger::Plugger(String _hook, const Version& plugger_version, String _paths)
 	}
 	if(_paths)
 		paths.add(_paths);
+	
+	// Add to active pluggers
+	pluggers.add(this);
+}
+
+
+/**
+ */
+Plugger::~Plugger(void) {
+	pluggers.remove(this);
+}
+
+
+/**
+ * For internal use only.
+ */
+void Plugger::leave(Plugin *plugin) {
+	for(int i = 0; i < pluggers.length(); i++)
+		pluggers[i]->plugins.remove(plugin);
 }
 
 
@@ -85,70 +110,71 @@ Plugin *Plugger::plug(String name) {
 	err = OK;
 
 	// Look in opened plugins
-	for(int i = 0; i < plugs.length(); i++)
-		if(plugs[i].name == name) {
-			plugs[i].plugin->use();
-			return plugs[i].plugin;
+	for(int i = 0; i < plugins.length(); i++)
+		if(plugins[i]->name() == name) {
+			plugins[i]->plug(0);
+			return plugins[i];
 		}
 	
-	// Attempt to open it
+	// Look in static plugins
+	Plugin *plugin = Plugin::get(_hook, name);
+	if(plugin)
+		return plug(plugin, 0);
+	
+	// Load the plugin
 	for(int i = 0; i < paths.length(); i++) {
-		
-		// Try to link the SO library
 		StringBuffer buf;
 		buf << paths[i] << "/" << name << ".so";
-		String path = buf.toString();
-		//cout << "Opening " << path << "...";
-		void *handle = dlopen(&path, RTLD_LAZY);
-		if(!handle) {
-			//cout << "failed (" << dlerror() << ")\n";
-			err = NO_PLUGIN;
-			continue;
-		}
-		//cout << "success\n";
-			
-		// Look for the plugin symbol
-		Plugin *plugin = (Plugin *)dlsym(handle, &hook);
-		if(!plugin) {
-			err = NO_HOOK;
-			continue;
-		}
-		
-		// Check plugger version
-		if(!plugin->pluggerVersion().accepts(per_vers)) {
-			err = BAD_VERSION;
-			continue;
-		}
-		
-		// Create the entry
-		err = OK;
-		plug_t plug = { name, handle, plugin };
-		plugs.add(plug);
-		plugin->plug(this);
-		return plugin;
+		Plugin *plugin = plugFile(buf.toString());
+		if(plugin)
+			return plugin;
 	}
 	
-	// Plug failure
+	// No plugin available
 	return 0;
 }
 
 
 /**
- * For internal use only.
  */
-void Plugger::unplug(Plugin *plugin) {
-	assert(plugin);
+Plugin *Plugger::plug(Plugin *plugin, void *handle) {
+	plugin->plug(handle);
+	if(!plugins.contains(plugin))
+		plugins.add(plugin);
+	return plugin;
+}
+
+
+/**
+ * Plug the given file in the plugger.
+ * @param path	Path of file to plug.
+ * @return		Plugin or null if there is an error.
+ */
+Plugin *Plugger::plugFile(String path) {
+	err = OK;
 	
-	// Find the plug
-	int i;
-	for(i = 0; i < plugs.length(); i++)
-		if(plugs[i].plugin == plugin)
-			break;
-	assert(i < plugs.length());
-	
-	// Remove it
-	dlclose(plugs[i].handle);
-	plugs.removeAt(i);
+	// Open shared library
+	void *handle = dlopen(&path, RTLD_LAZY);
+	if(!handle) {
+		err = NO_PLUGIN;
+		return 0;
+	}
+			
+	// Look for the plugin symbol
+	Plugin *plugin = (Plugin *)dlsym(handle, &_hook);
+	if(!plugin) {
+		err = NO_HOOK;
+		return 0;
+	}
+		
+	// Check plugger version
+	if(!plugin->pluggerVersion().accepts(per_vers)) {
+		err = BAD_VERSION;
+		return 0;
+	}
+		
+	// Plug it
+	return plug(plugin, handle);
 }
 
 
@@ -191,8 +217,19 @@ String Plugger::lastErrorMessage(void) {
 /**
  */
 void Plugger::Iterator::go(void) {
-	bool found = false;
-	while(!found) {
+	
+	// Look in statics
+	if(i < statics.length()) {
+		i++;
+		while(i < statics.length()) {
+			if(statics[i]->hook() == plugger.hook())
+				return;
+			i++;
+		}
+	}
+	
+	// Look in files
+	while(true) {
 		
 		// Next file
 		if(file)
@@ -206,10 +243,10 @@ void Plugger::Iterator::go(void) {
 			}
 			path++;
 			if(path >= plugger.paths.length())
-				return;
+				break;
 			FileItem *item = FileItem::get(Path(plugger.paths[path]));
 			if(!item || !item->toDirectory())
-					continue;
+				continue;
 			else {
 				file = new Directory::Iterator(item->toDirectory());
 				if(file->ended())
@@ -219,7 +256,7 @@ void Plugger::Iterator::go(void) {
 		
 		// Look current file
 		if(file->item()->path().toString().endsWith(".so"))
-			return;
+			break;
 	}
 }
 
@@ -229,7 +266,7 @@ void Plugger::Iterator::go(void) {
  * @param plugger	Used plugger.
  */
 Plugger::Iterator::Iterator(Plugger& _plugger): plugger(_plugger), path(-1),
-file(0) {
+file(0), i(-1), statics(_plugger.statics()) {
 	go();
 }
 
@@ -256,10 +293,14 @@ bool Plugger::Iterator::ended(void) const {
  * @return	Current plugin name.
  */
 String Plugger::Iterator::item(void) const {
-	Path path = (*file)->path();
-	String name = path.namePart();
-	name = name.substring(0, name.length() - 3);
-	return name;
+	if(i < statics.length())
+		return statics[i]->name();
+	else {
+		Path path = (*file)->path();
+		String name = path.namePart();
+		name = name.substring(0, name.length() - 3);
+		return name;
+	}
 }
 
 
@@ -276,7 +317,10 @@ void Plugger::Iterator::next(void) {
  * @return	Matching plugin.
  */
 Plugin *Plugger::Iterator::plug(void) const {
-	return plugger.plug(item());
+	if(i < statics.length())
+		return plugger.plug(statics[i], 0);
+	else
+		return plugger.plugFile(file->item()->path().toString());
 }
 
 } }	// elm::system

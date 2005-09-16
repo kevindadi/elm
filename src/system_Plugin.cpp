@@ -5,10 +5,18 @@
  * src/prog/system_Plugin.h -- Plugin class implementation.
  */
 
+#include <assert.h>
+#include <dlfcn.h>
 #include <elm/system/Plugin.h>
 #include <elm/system/Plugger.h>
 
 namespace elm { namespace system {
+
+/* Maximal age for unused plugins before deletion
+ * (expressed in plugin getting cycles).
+ */
+#define MAX_AGE	16
+
 
 /**
  * @class Plugin
@@ -32,33 +40,84 @@ namespace elm { namespace system {
  
 
 /**
+ * List of static plugins.
+ */
+genstruct::Vector<Plugin *> Plugin::static_plugins;
+
+
+/**
+ * List of unused plugins.
+ */
+genstruct::Vector<Plugin *> Plugin::unused_plugins;
+
+
+/**
  * Build a new plugin.
  * @param name				Plugin name.
  * @param plugger_version	Plugger version (used for checking compatibility
  * 							between plugin and user application API).
+ * @param hook				Hook of a matching plugger
  */
-Plugin::Plugin(String name, const Version& plugger_version)
-: _name(name), per_vers(plugger_version), usage(0), plugger(0) {
+Plugin::Plugin(String name, const Version& plugger_version, String hook)
+: _name(name), per_vers(plugger_version), _hook(hook), state(0), _handle(0) {
+	if(hook)
+		static_plugins.add(this);
 }
 
 
 /**
  * For internal use only.
  */
-void Plugin::use(void) {
-	usage++;
+void Plugin::plug(void *handle) {
+	
+	// Usage incrementation
+	if(state > 0)
+		state++;
+	
+	// Initialization
+	else if(state == 0) {
+		startup();
+		state = 1;
+		if(handle) {
+			_handle = handle;
+			static_plugins.remove(this);
+		}
+	}
+	
+	// Revival for unused plugins
+	else if(state < 0) {
+		unused_plugins.remove(this);
+		state = 1;
+	}
+		
+	// Make other older
+	step();
 }
 
 
 /**
- * For internal use only.
+ * Call it when the plugin is no more used.
  */
-void Plugin::plug(Plugger *_plugger) {
-	assert(_plugger);
-	assert(!plugger);
-	plugger = _plugger;
-	use();
-	startup();
+void Plugin::unplug(void) {
+	assert(state);
+	
+	// Decrement usage
+	state--;
+	
+	// Plugin become unused ?
+	if(!state) {
+		unused_plugins.add(this);
+		state = -1;
+	}
+		
+	// Unused plugin become too old ?
+	else if(state < -MAX_AGE) {
+		Plugger::leave(this);
+		cleanup();
+		unused_plugins.remove(this);
+		if(_handle)
+			dlclose(_handle);
+	}	
 }
 
 
@@ -75,19 +134,6 @@ void Plugin::startup(void) {
  * application. It may be overriden for performing specific clean up.
  */
 void Plugin::cleanup(void) {
-}
-
-
-/**
- * When a plugin is no more useful, this method must be called for letting
- * the system cleaning its data structures.
- */
-void Plugin::release(void) {
-	usage--;
-	if(!usage && plugger) {
-		cleanup();
-		plugger->unplug(this);		
-	}
 }
 
 
@@ -124,5 +170,38 @@ void Plugin::release(void) {
  * Get the plugger version.
  * @return Plugger version.
  */
- 
+
+
+/**
+ * @fn String Plugin::hook(void) const;
+ * Get the hook of the current plugin.
+ * @return	Plugin hook.
+ */
+
+
+/**
+ * For internal use only.
+ */
+void Plugin::step(void) {
+	for(int i = unused_plugins.length() - 1; i >= 0; i--)
+		unused_plugins[i]->unplug();
+}
+
+
+/**
+ * For internal use only.
+ */
+Plugin *Plugin::get(String hook, String name) {
+	
+	// Find the plugin
+	Plugin *found = 0;
+	for(int i = 0; i < static_plugins.length(); i++)
+		if(static_plugins[i]->hook() == hook
+		&& static_plugins[i]->name() == name)
+			return static_plugins[i];
+	
+	// Not found
+	return 0;
+}
+
 } } // elm::system

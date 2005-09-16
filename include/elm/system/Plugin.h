@@ -8,6 +8,7 @@
 #define ELM_SYSTEM_PLUGIN_H
 
 #include <elm/string.h>
+#include <elm/genstruct/Vector.h>
 #include <elm/util/Version.h>
 
 namespace elm { namespace system {
@@ -15,26 +16,33 @@ namespace elm { namespace system {
 // Plugin class
 class Plugin {
 	friend class Plugger;
+	static genstruct::Vector<Plugin *> static_plugins;
+	static genstruct::Vector<Plugin *> unused_plugins;
+	String _hook;
 	String _name;
 	Version per_vers;
-	int usage;
-	Plugger *plugger;
-	void plug(Plugger *plugger);
-	void use(void);
+	void *_handle;
+	int state;
+	void plug(void *handle);
+	static void step(void);
+	static Plugin *get(String hook, String name);
+
 protected:
 	String _description;
 	String _licence;
 	Version _plugin_version;
 	virtual void startup(void);
 	virtual void cleanup(void);
+
 public:
-	Plugin(String name, const Version& plugger_version);
+	Plugin(String name, const Version& plugger_version, String hook = "");
 	inline String name(void) const;
 	inline String description(void) const;
 	inline String licence(void) const;
 	inline const Version& pluginVersion(void) const;
 	inline const Version& pluggerVersion(void) const;
-	void release(void);
+	inline String hook(void) const;
+	void unplug(void);
 };
 
 // Inlines
@@ -56,6 +64,10 @@ inline const Version& Plugin::pluginVersion(void) const {
 
 inline const Version& Plugin::pluggerVersion(void) const {
 	return per_vers;
+}
+
+inline String Plugin::hook(void) const {
+	return _hook;
 }
 
 } } // elm::system
