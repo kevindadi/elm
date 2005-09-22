@@ -37,7 +37,8 @@ libelm_a_SOURCES= \
 	system_Path.cpp \
 	system_FileItem.cpp \
 	system_File.cpp \
-	system_Directory.cpp
+	system_Directory.cpp \
+	system_StopWatch.cpp
 	
 #	collection.cpp \
 #	list.cc \
