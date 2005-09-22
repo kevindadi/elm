@@ -6,6 +6,7 @@ includeelmsystem_HEADERS = \
 	Path.h \
 	Plugger.h \
 	Plugin.h \
-	SystemException.h
+	SystemException.h \
+	StopWatch.h
 
 
