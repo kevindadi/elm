@@ -51,6 +51,7 @@ public:
 	bool exists(const K& key);
 	
 	void put(const K& key, const T& value);
+	void putAll(const HashTable<K, T>& htab);
 	void remove(const K& key);
 	void clear(void);
 
@@ -140,19 +141,30 @@ int HashTable<K, T>::count(void) const {
 			cnt++;
 	return cnt;
 }
+
 template <class K, class T>
 inline Option<T> HashTable<K,T>::get(const K& key)
 		{ node_t *node = find(key); return node ? Option<T>(node->value) : Option<T>(); };
+
 template <class K, class T>
 const T HashTable<K,T>::get(const K& key, const T& def_value) {
 	node_t *node = find(key);
 	return node ? node->value : def_value;
 }
+
 template <class K, class T>
 bool HashTable<K, T>::exists(const K& key) {
 	node_t *node = find(key);
 	return node != 0;
 }
+
+template <class K, class T>
+void HashTable<K, T>::putAll(const HashTable<K, T>& htab) {
+	for(int i = 0; i < htab.size; i++)
+		for(node_t *node = htab.tab[i]; node; node = node->next) 
+			put(node->key, node->value);
+}
+
 
 // KeyIterator methods
 template <class K, class T>
