@@ -34,7 +34,7 @@ public:
 
 // Inlines
 inline StringBuffer::StringBuffer(int capacity, int increment)
-: stream(capacity, increment), io::Output(stream) {
+: io::Output(stream), stream(capacity, increment) {
 	String::buffer_t str = { 0 };
 	stream.write((char *)&str, sizeof(unsigned short));
 }
