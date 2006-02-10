@@ -31,7 +31,7 @@ public:
 
 // Inlines
 inline DynBlock::DynBlock(int capacity, int increment)
-: cap(capacity), _size(0), inc(increment), buf(new char[capacity]) {
+: _size(0), cap(capacity), inc(increment), buf(new char[capacity]) {
 }
 inline DynBlock::~DynBlock(void) {
 	if(buf)
