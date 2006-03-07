@@ -25,5 +25,6 @@ myplugin_so_SOURCES	= plugin.cpp
 myplugin_so_LDFLAGS	= -shared
 
 INCLUDES	= -I../include
-AM_CXXFLAGS	= -g3 
+AM_CXXFLAGS	= -g3 -fPIC
+
 
