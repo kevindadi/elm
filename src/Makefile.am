@@ -12,6 +12,7 @@ libelm_a_SOURCES= \
 	io_UnixInStream.cpp \
 	io_IOException.cpp \
 	block_DynBlock.cpp \
+	genstruct_VectorQueue.cpp \
 	inhstruct_SLList.cpp \
 	inhstruct_BinTree.cpp \
 	inhstruct_SortedBinTree.cpp \
