@@ -24,6 +24,7 @@ void test_hashtable(void);
 void test_lock(void);
 void test_file(void);
 void test_vararg(void);
+void test_vector_queue(void);
 
 // List of tests
 struct test_t {
@@ -44,6 +45,7 @@ struct test_t {
 	{ "bitvector", test_bitvector },
 	{ "file", test_file },
 	{ "vararg", test_vararg },
+	{ "vector_queue", test_vector_queue },
 	{ "", 0 }
 };
 
