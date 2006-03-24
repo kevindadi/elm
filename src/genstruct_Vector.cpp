@@ -182,4 +182,27 @@ namespace elm { namespace genstruct {
  * the current length of the vector).
  */
 
+
+/**
+ * @fn void Vector::push(const T& value);
+ * Push an item at the end of the vector..
+ * @param value		Value to push in.
+ * @seealso add()
+ */
+
+
+/**
+ * @fn const T Vector::pop(void);
+ * Pop an item from the end of the vector and shrink its length by 1.
+ * @return	Popped item.
+ */
+
+
+/**
+ * @fn const T Vector::top(void);
+ * Get the last item of the vector, that is, the top of the stack represented
+ * by the vector.
+ * @return	Last vector item.
+ */
+
 } } // elm::genstruct

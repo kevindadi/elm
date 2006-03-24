@@ -45,6 +45,11 @@ public:
 	void grow(int new_cap);
 	void setLength(int new_length);
 	
+	// Stack processing
+	inline void push(const T& value);
+	inline const T pop(void);
+	inline const T top(void);
+	
 	// Iterator
 	class Iterator: public PreIterator<Iterator, T> {
 		const Vector<T>& _vec;
@@ -152,6 +157,20 @@ template <class T> void Vector<T>::setLength(int new_length) {
 	assert(new_length >= 0);
 	assert(new_length <= cnt);
 	cnt = new_length;
+}
+
+template <class T> inline void Vector<T>::push(const T& value) {
+	add(value);
+}
+
+template <class T> inline const T Vector<T>::pop(void) {
+	assert(cnt > 0);
+	return tab[--cnt];
+}
+
+template <class T> inline const T Vector<T>::top(void) {
+	assert(cnt > 0);
+	return tab[cnt - 1];
 }
 
 
