@@ -25,7 +25,7 @@ public:
 
 
 // Macros
-#define ELM_CHECK_BEGIN(name)	{ TestCase __case(name);
+#define ELM_CHECK_BEGIN(name)	{ elm::TestCase __case(name);
 #define ELM_CHECK(tst)			__case.check(__FILE__, __LINE__, #tst, tst)
 #define ELM_CHECK_END 			__case.complete(); }
 #define ELM_REQUIRE(tst, action)	if(!__case.require(__FILE__, __LINE__, #tst, tst)) action
