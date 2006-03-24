@@ -9,6 +9,8 @@
 
 #include <assert.h>
 #include <memory.h>
+#include <elm/io.h>
+#include <elm/Iterator.h>
 
 namespace elm {
 
@@ -32,6 +34,7 @@ public:
 	inline bool includes(const BitVector& vec) const;
 	inline bool includesStrictly(const BitVector &vec) const;
 	inline bool equals(const BitVector& vec) const;
+	int countBits(void) const;
 	
 	inline void set(int index) const;
 	inline void set(int index, bool value) const;
@@ -51,6 +54,20 @@ public:
 	inline BitVector makeAnd(const BitVector& vec) const;
 	inline BitVector makeReset(const BitVector& vec) const;
 	
+	void print(io::Output& out) const;
+	
+	// Iterator iter
+	class OneIterator: public PreIterator<OneIterator, int> {
+		const BitVector& bvec;
+		int i;
+	public:
+		inline OneIterator(const BitVector& bit_vector);
+		inline int item(void) const;
+		inline bool ended(void) const;
+		inline void next(void);		
+	};
+	
+	// Operators
 	inline operator bool(void) const;
 	inline bool operator[](int index) const;
 	inline BitVector operator~(void) const;
@@ -71,6 +88,12 @@ public:
 	inline bool operator>=(const BitVector& vec) const;
 };
 
+
+// IO functions
+inline io::Output& operator<<(io::Output& out, const BitVector& bvec) {
+	bvec.print(out);
+	return out;
+}
 
 // Inlines
 inline int BitVector::bytes(void) const {
@@ -316,6 +339,27 @@ inline bool BitVector::operator>(const BitVector& vec) const {
 
 inline bool BitVector::operator>=(const BitVector& vec) const {
 	return includes(vec);
+}
+
+
+// BitVector::OneIterator inlines
+inline BitVector::OneIterator::OneIterator(const BitVector& bit_vector)
+: bvec(bit_vector), i(-1) {
+	next();
+}
+
+inline int BitVector::OneIterator::item(void) const {
+	return i;
+}
+
+inline bool BitVector::OneIterator::ended(void) const {
+	return i >= bvec.size();
+}
+
+inline void BitVector::OneIterator::next(void) {
+	do
+		i++;
+	while(i < bvec.size() && !bvec.bit(i));
 }
 
 } // elm

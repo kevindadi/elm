@@ -10,6 +10,24 @@
 namespace elm {
 
 /**
+ * Class for building the bit counter array.
+ */
+class BitCounter {
+public:
+	char counts[256];
+	inline BitCounter(void) {
+		for(int i = 0; i < 256; i++) {
+			counts[i] = 0;
+			for(int j = 1; j < 256; j <<= 1)
+				if(i & j)
+					counts[i]++;		
+		}
+	};
+};
+static BitCounter bit_counter;
+
+
+/**
  * @class BitVector
  * <p>This class provides facilities for managing vector of bits in an optimized
  * way.</p>
@@ -301,6 +319,43 @@ BitVector::BitVector(const BitVector& vec, int new_size): _size(new_size) {
 /**
  * @fn bool BitVector::operator>=(const BitVector& vec) const;
  * Reverse form of includes().
+ */
+
+
+/**
+ * Print the bit vector in a binary form.
+ * @param out	Output to use.
+ */
+void BitVector::print(io::Output& out) const {
+	for(int i = 0; i < size(); i++)
+		out << (bit(i) ? '1' : '0');
+}
+
+
+/**
+ * Count the number of bits whose value is 1.
+ */
+int BitVector::countBits(void) const {
+	int result = 0;
+	for(int i = 0; i < bytes(); i++)
+		result += bit_counter.counts[bits[i]];
+	return result;
+}
+
+
+/**
+ * @class Iterator::OneIterator
+ * This class represents an iterator on the bits containing a one in a bit
+ * vector. As a value, it returns the bit vector positions containing a 1.
+ * @note May be fully improved by benefiting from the test a full byte
+ * for presence of at least a one inside.
+ */
+
+
+/**
+ * @fn BitVector::OneIterator::OneIterator(const BitVector& bit_vector);
+ * Build a new bit-to-one iterator.
+ * @param bit_vector	Bit vector to iterate on.
  */
 
 } // elm
