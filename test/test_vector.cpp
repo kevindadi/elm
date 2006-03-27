@@ -101,6 +101,24 @@ void test_vector(void) {
 		CHECK(v.count() == 0);
 	}
 	
+	// Stack behaviour of the genstruct::Vector
+	{
+		genstruct::Vector<int> v;
+		v.push(0);
+		CHECK(v.top() == 0);
+		v.push(1);
+		CHECK(v.top() == 1);
+		v.push(2);
+		CHECK(v.top() == 2);
+		CHECK(v.pop() == 2);
+		CHECK(v.pop() == 1);
+		v.push(3);
+		CHECK(v.top() == 3);
+		CHECK(v.pop() == 3);
+		CHECK(v.pop() == 0);
+		CHECK(v.length() == 0);
+	}
+	
 	CHECK_END;
 }
 
