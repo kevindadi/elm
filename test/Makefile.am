@@ -1,3 +1,4 @@
+# $Id$
 
 noinst_PROGRAMS	=	test myplugin.so
 
@@ -16,7 +17,8 @@ test_SOURCES		=\
 						test_hashtable.cpp \
 						test_lock.cpp \
 						test_file.cpp \
-						test_vararg.cpp
+						test_vararg.cpp \
+						test_vector_queue.cpp
 test_LDFLAGS		= -rdynamic
 test_LDADD			= -L../src -lelm -ldl
 test_DEPENDENCIES	= ../src/libelm.a
