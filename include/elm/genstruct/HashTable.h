@@ -1,8 +1,8 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004, IRIT-UPS.
  *
- * hashtable.h -- hash table interfaces.
+ * elm/genstruct/HashTable.h -- HashTable class interface.
  */
 #ifndef ELM_GENSTRUCT_HASHTABLE_H
 #define ELM_GENSTRUCT_HASHTABLE_H
@@ -48,9 +48,11 @@ public:
 	
 	inline Option<T> get(const K& key);
 	const T get(const K& key, const T& def_value);
-	bool exists(const K& key);
+	bool hasKey(const K& key);
+	inline bool exists(const K& key) { return hasKey(key); };
 	
 	void put(const K& key, const T& value);
+	void add(const K& key, const T& value);
 	void putAll(const HashTable<K, T>& htab);
 	void remove(const K& key);
 	void clear(void);
@@ -67,6 +69,7 @@ public:
 	public:
 		inline ItemIterator(const HashTable<K, T>& htab): Iterator(htab) { };
 		inline T item(void) const { return this->node->value; }
+		inline const K& key(void) const { return this->node->key; };
 	};
 };
 
@@ -111,8 +114,9 @@ struct HashTable<K, T>::node_t *HashTable<K, T>::find(const K& key) {
 		}
 	return 0;
 }
+
 template <class K, class T>
-void HashTable<K, T>::put(const K& key, const T& value) {
+void HashTable<K, T>::add(const K& key, const T& value) {
 	int i = hkey.hash(key) % size;
 	node_t *node = new node_t;
 	node->next = tab[i];
@@ -120,6 +124,16 @@ void HashTable<K, T>::put(const K& key, const T& value) {
 	node->key = key;
 	node->value = value;
 }
+
+template <class K, class T>
+void HashTable<K, T>::put(const K& key, const T& value) {
+	node_t *node = find(key);
+	if(node)
+		node->value = value;
+	else
+		add(key, value);
+}
+
 template <class K, class T>
 void HashTable<K, T>::remove(const K& key) {
 	int i = hkey.hash(key) % size;
@@ -153,7 +167,7 @@ const T HashTable<K,T>::get(const K& key, const T& def_value) {
 }
 
 template <class K, class T>
-bool HashTable<K, T>::exists(const K& key) {
+bool HashTable<K, T>::hasKey(const K& key) {
 	node_t *node = find(key);
 	return node != 0;
 }
@@ -166,7 +180,7 @@ void HashTable<K, T>::putAll(const HashTable<K, T>& htab) {
 }
 
 
-// KeyIterator methods
+// Iterator methods
 template <class K, class T>
 HashTable<K, T>::Iterator::Iterator(const HashTable<K, T>& _htab):
 htab(_htab) {
