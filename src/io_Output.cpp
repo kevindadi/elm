@@ -49,6 +49,40 @@ char *Output::horner(char *p, unsigned long val, int base) {
 	return p;
 }
 
+
+/**
+ * Convert an integer to character using the horner method.
+ * @param p			Pointer on top of buffer.
+ * @param val		Integer value to convert.
+ * @param base	Base of the conversion.
+ * @return				First character.
+ */
+char *Output::horner(char *p, unsigned long long val, int base) {
+	
+	// Special case of 0
+	if(!val)
+		*--p = '0';
+	
+	// Horner method
+	else
+		while(val) {
+			
+			// Compute the digit
+			int digit = val % base;
+			val /= base;
+			
+			// Put the character
+			if(digit < 10)
+				*--p = '0' + digit;
+			else
+				*--p = 'a' + digit - 10;
+		}
+	
+	// Return the first character position
+	return p;
+}
+
+
 /**
  * @fn Output::Output(void);
  * Build a formatted output on the standard output.
@@ -86,7 +120,7 @@ void Output::print(char chr) {
  * Print an integer.
  * @param value	Integer to print.
  */
-void Output::print(int value) {
+void Output::print(long value) {
 	char buffer[16];
 	bool neg = false;
 	unsigned long uval;
@@ -111,11 +145,42 @@ void Output::print(int value) {
 		throw IOException();
 }
 
+
+/**
+ * Print a long long integer.
+ * @param value	Long long integer to print.
+ */
+void Output::print(long long value) {
+	char buffer[64];
+	bool neg = false;
+	unsigned long long uval;
+	
+	// Process sign
+	if(value < 0) {
+		neg = true;
+		uval = -value;
+	}
+	else
+		uval = value;
+	
+	// Write the digits
+	char *p = horner(buffer + sizeof(buffer), uval, 10);
+	
+	// Add the sign
+	if(neg)
+		*--p = '-';
+	
+	// Write it
+	if(strm->write(p, buffer + sizeof(buffer) - p) < 0)
+		throw IOException();
+}
+
+
 /**
  * Print an unsigned integer.
  * @param value	Integer to print.
  */
-void Output::print(unsigned int value) {
+void Output::print(unsigned long value) {
 	char buffer[16];
 	
 	// Write the digits
@@ -125,6 +190,23 @@ void Output::print(unsigned int value) {
 	if(strm->write(p, buffer + sizeof(buffer) - p) < 0)
 		throw IOException();
 }
+
+
+/**
+ * Print an unsigned long long integer.
+ * @param value	Integer to print.
+ */
+void Output::print(unsigned long long value) {
+	char buffer[32];
+	
+	// Write the digits
+	char *p = horner(buffer + sizeof(buffer), value, 10);
+	
+	// Write it
+	if(strm->write(p, buffer + sizeof(buffer) - p) < 0)
+		throw IOException();
+}
+
 
 /**
  * Print a double value.

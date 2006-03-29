@@ -18,6 +18,7 @@ namespace elm { namespace io {
 class Output {
 	OutStream *strm;
 	char *horner(char *p, unsigned long val, int base);
+	char *horner(char *p, unsigned long long val, int base);
 public:
 	inline Output(void): strm(&stdout) { };
 	inline Output(OutStream& stream): strm(&stream) { };
@@ -26,8 +27,10 @@ public:
 	
 	void print(bool value);
 	void print(char chr);
-	void print(int value);
-	void print(unsigned int value);
+	void print(long value);
+	void print(unsigned long value);
+	void print(long long value);
+	void print(unsigned long long value);
 	void print(double value);
 	void print(void *value);
 	inline void print(const char *str) { print(CString(str)); };
@@ -39,8 +42,12 @@ public:
 	
 	inline Output& operator<<(bool value) { print(value); return *this; };
 	inline Output& operator<<(char value) { print(value); return *this; };
-	inline Output& operator<<(int value) { print(value); return *this; };
-	inline Output& operator<<(unsigned int value) { print(value); return *this; };
+	inline Output& operator<<(int value) { print((long)value); return *this; };
+	inline Output& operator<<(unsigned int value) { print((unsigned long)value); return *this; };
+	inline Output& operator<<(long value) { print(value); return *this; };
+	inline Output& operator<<(unsigned long value) { print(value); return *this; };
+	inline Output& operator<<(long long value) { print(value); return *this; };
+	inline Output& operator<<(unsigned long long value) { print(value); return *this; };
 	inline Output& operator<<(double value) { print(value); return *this; };
 	inline Output& operator<<(void *value) { print(value); return *this; };
 	inline Output& operator<<(const char *value) { print(value); return *this; };
