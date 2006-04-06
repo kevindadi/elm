@@ -203,7 +203,7 @@ inline bool Collection<T>::operator()(const T value) {
 // MutableCollection methods
 template <class T>
 void MutableCollection<T>::addAll(Collection<T> *values) {
-	for(Iterator<T> iter(*this); iter; iter++)
+	for(Iterator<T> iter(*values); iter; iter++)
 		add(*iter);
 }
 
