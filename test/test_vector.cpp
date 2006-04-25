@@ -119,6 +119,16 @@ void test_vector(void) {
 		CHECK(v.length() == 0);
 	}
 	
+	// addAll test
+	{
+		datastruct::Vector<int> v1, v2;
+		for(int i = 0; i < 10; i++)
+			v1.add(i);
+		v2.addAll(&v1);
+		for(int i = 0; i < 10; i++)
+			CHECK(v2[i] == i);
+	}
+	
 	CHECK_END;
 }
 
