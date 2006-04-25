@@ -27,7 +27,7 @@ public:
 	
 	inline void put(const T& value);
 	inline const T& get(void);
-	inline const T& head(void);
+	inline const T& head(void) const;
 	inline void reset(void);
 };
 
@@ -51,7 +51,7 @@ template <class T> void VectorQueue<T>::enlarge(void) {
 }
 
 template <class T> inline VectorQueue<T>::VectorQueue(int capacity)
-: cap(1 << capacity), hd(0), tl(0), buffer(new T[cap]) {
+: hd(0), tl(0), cap(1 << capacity), buffer(new T[cap]) {
 	assert(cap >= 0);
 }
 
@@ -91,7 +91,7 @@ template <class T> inline const T& VectorQueue<T>::get(void) {
 	return buffer[res];
 }
 
-template <class T> inline const T& VectorQueue<T>::head(void) {
+template <class T> inline const T& VectorQueue<T>::head(void) const {
 	assert(hd != tl);
 	return buffer[hd];
 }
