@@ -66,7 +66,7 @@ public:
 
 // EmbedVector methods
 template <class T> Vector<T>::Vector(int _cap)
-: cap(_cap), cnt(0), tab(new T[_cap]) {
+: tab(new T[_cap]), cap(_cap), cnt(0) {
 }
 template <class T> Vector<T>::~Vector(void) {
 	delete [] tab;
