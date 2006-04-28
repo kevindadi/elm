@@ -22,3 +22,5 @@ stamp-h.in
 doxygen.log
 libtool
 ltmain.sh
+AAPDIR
+.externalToolBuilders
