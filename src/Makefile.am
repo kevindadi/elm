@@ -14,6 +14,7 @@ libelm_a_SOURCES= \
 	block_DynBlock.cpp \
 	genstruct_HashTable.cpp \
 	genstruct_VectorQueue.cpp \
+	genstruct_Table.cpp \
 	inhstruct_SLList.cpp \
 	inhstruct_BinTree.cpp \
 	inhstruct_SortedBinTree.cpp \
@@ -41,7 +42,7 @@ libelm_a_SOURCES= \
 	system_File.cpp \
 	system_Directory.cpp \
 	system_StopWatch.cpp
-	
+
 #	collection.cpp \
 #	list.cc \
 #	sequence.cpp
@@ -49,3 +50,16 @@ libelm_a_SOURCES= \
 INCLUDES=-I../include
 AM_CXXFLAGS=-g3
 DEFS=@ELM_DEBUG_DEFS@
+
+if HAS_LIBXML
+libelm_a_SOURCES += \
+	xom_Builder.cpp \
+	xom_Document.cpp \
+	xom_Element.cpp \
+	xom_Node.cpp \
+	xom_NodeFactory.cpp \
+	xom_ParentNode.cpp \
+	xom_macros.h
+AM_CXXFLAGS+= @LIBXML_CFLAGS@
+endif
+	
