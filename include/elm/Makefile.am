@@ -9,6 +9,10 @@ SUBDIRS = \
 	util \
 	system
 
+if HAS_LIBXML
+SUBDIRS += xom
+endif
+
 includeelmdir=$(includedir)/elm
 includeelm_HEADERS = \
 	Collection.h \
