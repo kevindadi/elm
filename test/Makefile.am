@@ -14,11 +14,11 @@ test_SOURCES		=\
 						test_sllist.cpp \
 						test_sorted_bintree.cpp \
 						test_string.cpp \
-						test_string_buffer.cpp \						
+						test_string_buffer.cpp \
 						test_table.cpp \
 						test_utility.cpp \
 						test_vararg.cpp \
-						test_vector.cpp \						
+						test_vector.cpp \
 						test_vector_queue.cpp
 test_LDFLAGS		= -rdynamic
 test_LDADD			= -L../src -lelm -ldl
