@@ -48,7 +48,10 @@ public:
 	inline bool startsWith(const CString str) const;
 	inline bool startsWith(const String& str) const;
 	inline bool endsWith(const CString str) const;
-	inline bool endsWith(const String& str) const;	
+	inline bool endsWith(const String& str) const;
+	
+	// Automatic conversion
+	inline operator const char *(void) const { return buf; };
 };
 
 } // elm
