@@ -7,6 +7,13 @@ AC_STDC_HEADERS
 AC_HAVE_HEADERS(string.h)
 AC_PROG_RANLIB
 
+dnl XML Support
+has_libxml=yes
+PKG_CHECK_MODULES(LIBXML, libxml-2.0,,[has_libxml=no])
+AC_SUBST(LIBXML_CFLAGS)
+AC_SUBST(LIBXML_LIBS)
+AM_CONDITIONAL(HAS_LIBXML, test x$has_libxml = xyes)
+
 dnl ELM_DEBUG_DEFS=-DELM_DEBUG_AVLTREE
 AC_SUBST(ELM_DEBUG_DEFS)
 
@@ -25,4 +32,5 @@ AC_OUTPUT([
 	include/elm/string/Makefile
 	include/elm/util/Makefile
 	include/elm/system/Makefile
+	include/elm/xom/Makefile
 ], [])
