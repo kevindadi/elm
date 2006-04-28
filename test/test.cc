@@ -25,6 +25,8 @@ void test_lock(void);
 void test_file(void);
 void test_vararg(void);
 void test_vector_queue(void);
+void test_table(void);
+void test_xom(void);
 
 // List of tests
 struct test_t {
@@ -46,6 +48,8 @@ struct test_t {
 	{ "file", test_file },
 	{ "vararg", test_vararg },
 	{ "vector_queue", test_vector_queue },
+	{ "table", test_table },
+	{ "xom", test_xom },
 	{ "", 0 }
 };
 

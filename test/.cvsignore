@@ -6,3 +6,5 @@ test
 myplugin.la
 plugin.lo
 myplugin.so
+AAPDIR
+build-Linux2_6_11_6mdk_i686_up_4GB

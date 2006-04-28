@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<test>
+	<a>ok</a>
+	<b c="ok"/>
+	<c>
+		ok1
+		<d>ok2</d>
+		ok3
+	</c>
+</test>
