@@ -8,18 +8,22 @@
 #define ELM_IO_BLOCK_IN_STREAM_H
 
 #include <assert.h>
+#include <elm/string.h>
 #include <elm/io/InStream.h>
 
 namespace elm { namespace io {
 
 // BlockInStream class
 class BlockInStream: public InStream {
-	char *_block;
+	const char *_block;
 	int _size, off;
 public:
 
 	BlockInStream(char *block, int size);
-	inline char *block(void) const;
+	BlockInStream(const char *string);
+	BlockInStream(const CString& string);
+	BlockInStream(const String& string); 
+	inline const char *block(void) const;
 	inline int size(void) const;
 	inline int mark(void) const;
 	inline void move(int mark);
@@ -33,7 +37,7 @@ public:
 };
 
 // Inlines
-inline char *BlockInStream::block(void) const {
+inline const char *BlockInStream::block(void) const {
 	return _block;
 }
 
