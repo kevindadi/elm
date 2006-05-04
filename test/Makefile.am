@@ -8,6 +8,7 @@ test_SOURCES		=\
 						test_bitvector.cpp \
 						test_dllist.cpp \
 						test_file.cpp \
+						test_formatter.cpp \
 						test_hashtable.cpp \
 						test_lock.cpp \
 						test_plugin.cpp \
