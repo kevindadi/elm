@@ -60,6 +60,19 @@ namespace elm {
  * Same as @ref CHECK_END
  */
 
+/**
+ * @def ELM_CHECK_EQUAL(res, ref)
+ * Test if the result of a test is equal to a reference value.
+ * @param res	Result of the test.
+ * @param ref	Reference value.
+ */
+
+
+/**
+ * @def CHECK_EQUAL(res, ref)
+ * See ELM_CHECK_EQUAL.
+ */
+
 
 /**
  * @class TestCase
