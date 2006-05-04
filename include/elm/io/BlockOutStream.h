@@ -9,6 +9,8 @@
 
 #include <elm/io/OutStream.h>
 #include <elm/block/DynBlock.h>
+#include <elm/string/CString.h>
+#include <elm/string/String.h>
 
 namespace elm { namespace io {
 
@@ -22,6 +24,8 @@ public:
 	inline char *detach(void);
 	inline void clear(void);
 	inline void setSize(int size);
+	CString toCString(void);
+	String toString(void);
 	
 	// OutStream overload
 	virtual int write(const char *buffer, int size);
