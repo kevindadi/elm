@@ -33,7 +33,6 @@ libelm_a_SOURCES= \
 	util_VarArg.cpp \
 	io_BlockOutStream.cpp \
 	io_BlockInStream.cpp \
-	util_Version.cpp \
 	system_Plugin.cpp \
 	system_Plugger.cpp \
 	system_SystemException.cpp \
@@ -41,11 +40,9 @@ libelm_a_SOURCES= \
 	system_FileItem.cpp \
 	system_File.cpp \
 	system_Directory.cpp \
-	system_StopWatch.cpp
-
-#	collection.cpp \
-#	list.cc \
-#	sequence.cpp
+	system_StopWatch.cpp \
+	util_Formatter.cpp \
+	util_Version.cpp
 
 INCLUDES=-I../include
 AM_CXXFLAGS=-g3
@@ -59,6 +56,7 @@ libelm_a_SOURCES += \
 	xom_Node.cpp \
 	xom_NodeFactory.cpp \
 	xom_ParentNode.cpp \
+	xom_String.cpp \
 	xom_macros.h
 AM_CXXFLAGS+= @LIBXML_CFLAGS@
 endif
