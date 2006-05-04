@@ -34,58 +34,6 @@ namespace elm {
 	
 	
 /**
- * @fn void StringBuffer::put(char chr);
- * Put a single character in the buffer.
- * @param chr	Character to put in the buffer.
- */
-
-
-/**
- * @fn void StringBuffer::put(const char *block, int size);
- * Put a block a memory in the buffer.
- * @param block	Address of memory block to put.
- * @param size	Size of memory block.
- */
-
-
-/**
- * @fn void StringBuffer::put(const char *cstring);
- * Put a C string in the buffer.
- * @param cstring	C string to put in the buffer.
- */
-
-
-/**
- * @fn void StringBuffer::put(const CString str);
- * Put a CString object in the buffer.
- * @param str	CString to put in the buffer.
- */
-
-
-/**
- * @fn void StringBuffer::put(const String& str);
- * Put a string in the buffer.
- * @param str	Strint to put in the buffer.
- */
-
-
-/**
- * @fn void StringBuffer::format(const char *fmt, ...);
- * Print a formatted string as does the printf() from C standard IO.
- * @param fmt	Format string (see printf() manual).
- * @param ...	Argument for format string.
- */
-
-
-/**
- * @fn void StringBuffer::formatArg(const char *fmt, va_list args);
- * Print a formatted string as does the printf() from C standard IO.
- * @param fmt	Format string (see printf() manual).
- * @param args	Arguments for format string.
- */
-
-
-/**
  * @fn int StringBuffer::length(void) const;
  * Get the length of the string stored in the buffer.
  * @return	String length.
@@ -95,6 +43,13 @@ namespace elm {
 /**
  * @fn void StringBuffer::reset(void);
  * Remove all characters from the string buffer.
+ */
+
+
+/**
+ * @fn io::OutStream& StringBuffer::stream(void);
+ * Get the an output stream to write to the string buffer.
+ * @return	Stream to the string buffer.
  */
 
 } // elm
