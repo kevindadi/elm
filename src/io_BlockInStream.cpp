@@ -24,7 +24,35 @@ namespace elm { namespace io {
 BlockInStream::BlockInStream(char *block, int size)
 : _block(block), _size(size), off(0) {
 }
-	
+
+
+/**
+ * Build a block input stream from a C string.
+ * @param string	C string to read.
+ */	
+BlockInStream::BlockInStream(const char *string)
+: _block(string), _size(strlen(string)), off(0) {
+	assert(string);
+}
+
+
+/**
+ * Build a block input stream from a CString object.
+ * @param string	String to read to.
+ */
+BlockInStream::BlockInStream(const CString& string)
+: _block(string.chars()), _size(string.length()), off(0) {
+}
+
+
+/**
+ * Build a block input stream from a String object.
+ * @param string	String to read from.
+ */
+BlockInStream::BlockInStream(const String& string)
+: _block(string.chars()), _size(string.length()), off(0) {
+}
+
 
 /**
  * @fn char *BlockInStream::block(void) const;

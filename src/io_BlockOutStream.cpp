@@ -83,4 +83,25 @@ int BlockOutStream::write(char byte) {
 int BlockOutStream::flush(void) {
 }
 
+
+/**
+ * Convert the buffer to a CString object.
+ * (this object must not be used after this call and the caller is reponsible
+ * for freeing the C string buffer).
+ * @return	Buffer converted to C string.
+ */
+CString BlockOutStream::toCString(void) {
+	write('\0');
+	return CString(detach());
+}
+
+
+/**
+ * Convert the buffer to a String object.
+ * @return	String object.
+ */
+String BlockOutStream::toString(void) {
+	return String(_block.base(), _block.size());
+}
+
 } }	// elm::io
