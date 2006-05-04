@@ -10,46 +10,52 @@
 using namespace elm;
 
 // Prototypes
-void test_string_buffer(void);
-void test_sorted_bintree(void);
-void test_dllist(void);
-void test_plugin(void);
 void test_avl(void);
-void test_sllist(void);
 void test_bitvector(void);
-void test_string(void);
-void test_utility(void);
-void test_vector(void);
+void test_dllist(void);
+void test_file(void);
+void test_formatter(void);
 void test_hashtable(void);
 void test_lock(void);
-void test_file(void);
-void test_vararg(void);
-void test_vector_queue(void);
+void test_plugin(void);
+void test_sllist(void);
+void test_sorted_bintree(void);
+void test_string(void);
+void test_string_buffer(void);
 void test_table(void);
-void test_xom(void);
+void test_utility(void);
+void test_vararg(void);
+void test_vector(void);
+void test_vector_queue(void);
+#ifdef HAS_LIBXML
+	void test_xom(void);
+#endif
 
 // List of tests
 struct test_t {
 	CString name;
 	void (*fun)(void);
 } tests[] = {
-	{ "string", test_string },
-	{ "utility", test_utility },
-	{ "vector", test_vector },
+	{ "avl", test_avl },
+	{ "bitvector", test_bitvector },
+	{ "dllist", test_dllist },
+	{ "file", test_file },
+	{ "formatter", test_formatter },
 	{ "hashtable", test_hashtable },
 	{ "lock", test_lock },
-	{ "sorted_bintree", test_sorted_bintree },
-	{ "string_buffer", test_string_buffer },
-	{ "dllist", test_dllist },
 	{ "plugin", test_plugin },
-	{ "avl", test_avl },
 	{ "sllist", test_sllist },
-	{ "bitvector", test_bitvector },
-	{ "file", test_file },
+	{ "sorted_bintree", test_sorted_bintree },
+	{ "string", test_string },
+	{ "string_buffer", test_string_buffer },
+	{ "table", test_table },
+	{ "utility", test_utility },
+	{ "vector", test_vector },	
 	{ "vararg", test_vararg },
 	{ "vector_queue", test_vector_queue },
-	{ "table", test_table },
-	{ "xom", test_xom },
+	#ifdef HAS_LIBXML
+		{ "xom", test_xom },
+	#endif
 	{ "", 0 }
 };
 
