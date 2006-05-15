@@ -21,10 +21,11 @@ namespace elm { namespace io {
  * Convert an integer to character using the horner method.
  * @param p			Pointer on top of buffer.
  * @param val		Integer value to convert.
- * @param base	Base of the conversion.
+ * @param base		Base of the conversion.
+ * @param enc		Base character for encoding digits upper than 10.
  * @return				First character.
  */
-char *Output::horner(char *p, unsigned long val, int base) {
+char *Output::horner(char *p, unsigned long val, int base, char enc) {
 	
 	// Special case of 0
 	if(!val)
@@ -42,7 +43,7 @@ char *Output::horner(char *p, unsigned long val, int base) {
 			if(digit < 10)
 				*--p = '0' + digit;
 			else
-				*--p = 'a' + digit - 10;
+				*--p = enc + digit - 10;
 		}
 	
 	// Return the first character position
@@ -299,6 +300,52 @@ void Output::format(CString fmt, VarArg& args) {
 		assert(size <= sizeof(newbuf));
 		strm->write(newbuf, size);
 	}
+}
+
+
+/**
+ * Print a formatted long value.
+ * @param fmt	Formatted value to display.
+ */
+void Output::print(const IntFormat fmt) {
+	
+	// To horner
+	unsigned long uval;
+	if(fmt.sign && fmt.val < 0)
+		uval = -fmt.val;
+	else
+		uval = fmt.val;
+	char buffer[33];
+	char *res = horner(buffer + 32, uval, fmt.base, fmt.upper ? 'A' : 'a');
+	if(fmt.sign && fmt.val < 0)
+		*(--res) = '-';
+	int size = buffer + 32 - res;
+	
+	// Compute pads
+	int lpad = 0, rpad = 0;
+	if(fmt.width)
+		switch(fmt.align) {
+		case NONE:
+		case LEFT:
+			rpad = fmt.width - size;
+			break;
+		case RIGHT:
+			lpad = fmt.width - size;
+			break;
+		case CENTER:
+			lpad = (fmt.width - size) / 2;
+			rpad = fmt.width - size - lpad;
+			break;
+		default:
+			assert(0);
+		}
+	
+	// Perform the display
+	for(int i = 0; i < lpad; i++)
+		strm->write(fmt.pad);
+	strm->write(res, size);
+	for(int i = 0; i < rpad; i++)
+		strm->write(fmt.pad);
 }
 
 } // io

@@ -10,6 +10,7 @@ test_SOURCES		=\
 						test_file.cpp \
 						test_formatter.cpp \
 						test_hashtable.cpp \
+						test_io_format.cpp \
 						test_lock.cpp \
 						test_plugin.cpp \
 						test_sllist.cpp \

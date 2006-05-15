@@ -16,6 +16,7 @@ void test_dllist(void);
 void test_file(void);
 void test_formatter(void);
 void test_hashtable(void);
+void test_io_format(void);
 void test_lock(void);
 void test_plugin(void);
 void test_sllist(void);
@@ -42,6 +43,7 @@ struct test_t {
 	{ "file", test_file },
 	{ "formatter", test_formatter },
 	{ "hashtable", test_hashtable },
+	{ "io_format", test_io_format },
 	{ "lock", test_lock },
 	{ "plugin", test_plugin },
 	{ "sllist", test_sllist },
