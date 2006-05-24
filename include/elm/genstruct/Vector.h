@@ -81,12 +81,15 @@ template <class T> bool Vector<T>::isEmpty(void) const {
 	return cnt == 0;
 }
 template <class T> T& Vector<T>::item(int index) {
+	assert(index < cnt);
 	return tab[index];
 }
 template <class T> T Vector<T>::get(int index) const {
+	assert(index < cnt);
 	return tab[index];
 }
 template <class T> void Vector<T>::set(int index, const T value) {
+	assert(index < cnt);
 	tab[index] = value;
 }
 template <class T> T& Vector<T>::operator[](int index) {
@@ -108,6 +111,7 @@ template <class T> int Vector<T>::indexOf(const T value, int start) const {
 	return -1;
 }
 template <class T> int Vector<T>::lastIndexOf(const T value, int start) const {
+	assert(start <= cnt);
 	for(int i = (start < 0 ? cnt : start) - 1; i >= 0; i--)
 		if(value == tab[i])
 			return i;
@@ -132,6 +136,7 @@ template <class T> void Vector<T>::remove(const T value) {
 	if(i >= 0) removeAt(i);
 }
 template <class T> void Vector<T>::insert(int index, const T value) {
+	assert(index <= cnt);
 	if(cnt >= cap)
 		grow(cap * 2);
 	for(int i = cnt; i > index; i--)
