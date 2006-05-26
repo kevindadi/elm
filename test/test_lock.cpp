@@ -7,6 +7,7 @@
 
 #include <elm/util/test.h>
 #include <elm/utility.h>
+#include <elm/util/AutoPtr.h>
 
 using namespace elm;
 
