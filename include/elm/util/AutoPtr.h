@@ -7,6 +7,10 @@
 #ifndef ELM_UTIL_AUTOPTR_H
 #define ELM_UTIL_AUTOPTR_H
 
+#include <assert.h>
+
+namespace elm {
+
 // Lock class
 class Lock {
 	int usage;
@@ -112,6 +116,8 @@ template <class T> bool AutoPtr<T>::operator<(const AutoPtr<T>& ap) const {
 template <class T> bool AutoPtr<T>::operator<=(const AutoPtr<T>& ap) const {
 	return ptr <= ap.ptr;
 }
+
+} // elm
 
 #endif // ELM_UTIL_AUTOPTR_H
 
