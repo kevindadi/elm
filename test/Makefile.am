@@ -9,6 +9,7 @@ test_SOURCES		=\
 						test_dllist.cpp \
 						test_file.cpp \
 						test_formatter.cpp \
+						test_frag_table.cpp \
 						test_hashtable.cpp \
 						test_io_format.cpp \
 						test_lock.cpp \

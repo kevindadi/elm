@@ -15,6 +15,7 @@ void test_bitvector(void);
 void test_dllist(void);
 void test_file(void);
 void test_formatter(void);
+void test_frag_table(void);
 void test_hashtable(void);
 void test_io_format(void);
 void test_lock(void);
@@ -51,6 +52,7 @@ struct test_t {
 	{ "string", test_string },
 	{ "string_buffer", test_string_buffer },
 	{ "table", test_table },
+	{ "frag_table", test_frag_table },
 	{ "utility", test_utility },
 	{ "vector", test_vector },	
 	{ "vararg", test_vararg },

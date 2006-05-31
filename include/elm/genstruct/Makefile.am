@@ -1,13 +1,13 @@
 includeelmgenstructdir=$(includedir)/elm/genstruct
 includeelmgenstruct_HEADERS = \
+	AVLTree.h \
 	DLList.h \
-	FragArray.h \
+	FragTable.h \
 	HashTable.h \
 	SLList.h \
 	SortedBinMap.h \
 	SortedBinTree.h \
 	Table.h \
 	Vector.h \
-	VectorQueue.h \
-	AVLTree.h
+	VectorQueue.h 
 
