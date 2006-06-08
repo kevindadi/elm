@@ -10,7 +10,7 @@
 namespace elm { namespace genstruct {
 
 /**
- * @class FragTable
+ * @class FragTable "elm/genstruct/FragTable.h"
  * This container class allows indexed access to its data. It is implemented
  * as expandable fragmented table using a two-level table traversal. The first
  * level table selects a sub-table that contains the actual stored items.
@@ -105,7 +105,7 @@ namespace elm { namespace genstruct {
 
 
 /**
- * @class FragTable::Iterator
+ * @class FragTable::Iterator  "elm/genstruct/FragTable.h"
  * Iterator on the content of @ref FragTable.
  */
 
@@ -138,7 +138,7 @@ namespace elm { namespace genstruct {
 
 
 /**
- * @class MutableIterator
+ * @class MutableIterator  "elm/genstruct/FragTable.h"
  * Implements a mutable iterator on the items of a @ref FragTable.
  */
 
