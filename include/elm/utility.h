@@ -9,6 +9,7 @@
 
 #include <assert.h>
 #include <elm/string.h>
+#include <elm/util/Option.h>
 
 namespace elm {
 
@@ -22,24 +23,6 @@ public:
 
 // Error class
 class Error: public Exception {
-};
-
-
-// Optional value
-template <class T> class Option {
-	bool one;
-	T val;
-public:
-	inline Option(void): one(false) { };
-	inline Option(const T& value): one(true), val(value) { };
-	inline Option(const Option<T> &opt): one(opt.one), val(opt.val) { };
-	inline bool isOne(void) const { return one; };
-	inline bool isNone(void) const { return !one; };
-	inline T value(void) const { return val; };
-	inline operator bool(void) const { return one; };
-	inline T operator*(void) const { return val; };
-	inline Option<T>& operator=(const Option<T>& opt)
-		{ one = opt.one; val = opt.val; };
 };
 
 
@@ -58,34 +41,6 @@ public:
 	static Comparator<T>& def;
 	virtual int compare(T v1, T v2) = 0;
 };
-
-
-// Pair class
-template <class T1, class T2>
-class Pair {
-public:
-	T1 fst;
-	T2 snd;
-	inline Pair(const T1& _fst, const T2& _snd);
-	inline Pair(const Pair<T1, T2>& pair);
-	inline Pair<T1, T2>& operator=(const Pair<T1, T2>& pair);
-};
-
-// Pair inlines
-template <class T1, class T2>
-inline Pair<T1, T2>::Pair(const T1& _fst, const T2& _snd): fst(_fst), snd(_snd) {
-}
-
-template <class T1, class T2>
-inline Pair<T1, T2>::Pair(const Pair<T1, T2>& pair)
-: fst(pair.fst), snd(pair.snd) {
-}
-
-template <class T1, class T2>
-inline Pair<T1, T2>& Pair<T1, T2>::operator=(const Pair<T1, T2>& pair) {
-	fst = pair.fst;
-	snd = pair.snd;
-}
 
 };	// elm
 

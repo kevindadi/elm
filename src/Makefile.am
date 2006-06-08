@@ -43,6 +43,8 @@ libelm_a_SOURCES= \
 	system_Directory.cpp \
 	system_StopWatch.cpp \
 	util_Formatter.cpp \
+	util_Option.cpp \
+	uti_Pair.cpp \
 	util_Version.cpp
 
 INCLUDES=-I../include
@@ -58,6 +60,7 @@ libelm_a_SOURCES += \
 	xom_NodeFactory.cpp \
 	xom_ParentNode.cpp \
 	xom_String.cpp \
+	xom_Text.cpp \
 	xom_macros.h
 AM_CXXFLAGS+= @LIBXML_CFLAGS@
 endif
