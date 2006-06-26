@@ -6,6 +6,7 @@ includeelmxom_HEADERS = \
 	Node.h \
 	NodeFactory.h \
 	ParentNode.h \
-	String.h
+	String.h \
+	Text.h
 
 

@@ -19,12 +19,14 @@ class Nodes;
 // Document class
 class Element: public ParentNode {
 protected:
+	friend class NodeFactory;
 	Element(void *node);
 	virtual Element	*shallowCopy(void);
+	static void *makeNS(String name, String uri);
 public:
-	Element(Element *element);
 	Element(String name);
 	Element(String name, String uri);
+	Element(const Element *element);
 
 	virtual void addAttribute(Attribute *attribute);
 	virtual void addNamespaceDeclaration(String prefix, String uri);
@@ -34,9 +36,8 @@ public:
 	virtual Attribute *getAttribute(String name);
 	virtual Attribute *getAttribute(String localName, String ns);
 	virtual int	getAttributeCount(void);
-	virtual String getAttributeValue(String name);
-	virtual String getAttributeValue(String localName, String ns);
-	virtual String getBaseURI(void);
+	virtual Option<String> getAttributeValue(String name);
+	virtual Option<String> getAttributeValue(String localName, String ns);
 	virtual Elements *getChildElements(void);
 	virtual Elements *getChildElements(String name);
 	virtual Elements *getChildElements(String localName, String ns);

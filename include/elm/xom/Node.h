@@ -16,6 +16,7 @@ namespace elm { namespace xom {
 class Node;
 class Document;
 class ParentNode;
+class NodeFactory;
 class Nodes;
 class XPathContext;
 class Builder;
@@ -37,29 +38,36 @@ public:
 protected:
 	friend class Builder;
 	void *node;
-	inline Node(void *_node);
+	Node(void *_node);
 	Node *make(void *node);
 	inline Node *get(void *node);
+	Node *internCopy(void);
+	Node *internGetChild(int index);
+	int internGetChildCount(void);
+	String internGetValue(void);
+	String internToXML(void);
 public:
+	inline void *getNode(void) const;
 
 	kind_t kind(void) const;
 	virtual Node *copy(void) = 0;
 	void detach(void);
-	bool equals(const Node * node);
-	virtual String getBaseURI(void) = 0;
+	bool equals(const Node * node) const;
+	virtual String getBaseURI(void);
 	virtual Node *getChild(int index) = 0;
 	virtual int getChildCount(void) = 0;
-	Document *getDocument(void);
-	ParentNode *getParent(void);
+	virtual Document *getDocument(void);
+	virtual ParentNode *getParent(void);
 	virtual String getValue(void) = 0;
-	Nodes *query(const String& xpath, XPathContext *context);
-	String toXML(void);
+	virtual Nodes *query(const String& xpath);
+	virtual Nodes *query(const String& xpath, XPathContext *context);
+	virtual String toXML(void) = 0;
 };
 
 
 // Node inlines
-inline Node::Node(void *_node): node(_node) {
-	assert(node);
+inline void *Node::getNode(void) const {
+	return node;
 }
 
 } } // elm::xom
