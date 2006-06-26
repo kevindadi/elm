@@ -15,16 +15,19 @@ namespace elm { namespace xom {
 class ParentNode: public Node {
 protected:
 	inline ParentNode(void * node): Node(node) { };
+	void internSetBaseURI(String URI);
 public:
 	virtual void appendChild(Node *child);
-	virtual Node *getChild(int position);
-	virtual int	getChildCount(void);
 	virtual int	indexOf(Node *child);
 	virtual void insertChild(Node *child, int position);
 	virtual Node *removeChild(int position);
 	virtual Node *removeChild(Node *child);
 	virtual void replaceChild(Node *old_child, Node *new_child);
 	virtual void setBaseURI(String URI) = 0;
+	
+	// Node overload
+	virtual Node *getChild(int index);
+	virtual int getChildCount(void);
 };
 
 } } // elm::xom
