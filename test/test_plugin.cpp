@@ -42,12 +42,16 @@ PluginTwo plugin_two;
 
 // test routine
 void test_plugin(void) {
+	cout << "!!! " << &plugin_two << io::endl;
 	CHECK_BEGIN("Plugin");
 	
 	// Simple open
 	Plugger plugger("my_plugin", Version(0, 0, 0), ".");
 	Plugin *plugin = plugger.plug("myplugin");
-	REQUIRE(plugin, return);
+	REQUIRE(plugin, {
+		cout << "ERROR: " << plugger.lastErrorMessage() << io::endl;
+		return;
+	});
 	CHECK(startup_flag);
 	CHECK(!cleanup_flag);
 	
@@ -111,7 +115,7 @@ void test_plugin(void) {
 		CHECK(plugin);
 		CHECK(plugin == "plugin_two");
 		plugin++;
-		CHECK(plugin);
+		REQUIRE(plugin, return);
 		CHECK(plugin == "myplugin");
 		plugin++;
 		CHECK(!plugin);
