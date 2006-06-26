@@ -4,3 +4,6 @@ Makefile.in
 libelm.a
 build-Linux2_6_11_6mdk_i686_up_4GB
 AAPDIR
+*.la
+*.lo
+*.libs
