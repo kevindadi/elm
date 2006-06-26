@@ -36,6 +36,7 @@ protected:
 
 public:
 	Plugin(String name, const Version& plugger_version, String hook = "");
+	~Plugin(void);
 	inline String name(void) const;
 	inline String description(void) const;
 	inline String licence(void) const;
