@@ -1,5 +1,12 @@
-lib_LIBRARIES=libelm.a
-libelm_a_SOURCES= \
+lib_LTLIBRARIES=libelm.la
+
+INCLUDES=-I../include
+AM_CXXFLAGS=-g3
+libelm_la_LDFLAGS=-version-info 0:1:0
+DEFS=@ELM_DEBUG_DEFS@
+
+
+libelm_la_SOURCES= \
 	utility.cpp \
 	string_String.cpp \
 	string_StringBuffer.cpp \
@@ -44,15 +51,11 @@ libelm_a_SOURCES= \
 	system_StopWatch.cpp \
 	util_Formatter.cpp \
 	util_Option.cpp \
-	uti_Pair.cpp \
+	util_Pair.cpp \
 	util_Version.cpp
 
-INCLUDES=-I../include
-AM_CXXFLAGS=-g3
-DEFS=@ELM_DEBUG_DEFS@
-
 if HAS_LIBXML
-libelm_a_SOURCES += \
+libelm_la_SOURCES += \
 	xom_Builder.cpp \
 	xom_Document.cpp \
 	xom_Element.cpp \

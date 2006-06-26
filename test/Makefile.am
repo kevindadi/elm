@@ -1,6 +1,17 @@
 # $Id$
 
-noinst_PROGRAMS	=	test myplugin.so
+noinst_PROGRAMS	=	test
+noinst_LTLIBRARIES = myplugin.la
+
+INCLUDES	= -I../include
+AM_CXXFLAGS	= -g3
+AM_CXXFLAGS += @LIBXML_CFLAGS@ -DHAS_LIBXML
+
+
+# Test program
+test_LDFLAGS		= -export-dynamic
+test_LDADD			= ../src/libelm.la
+test_DEPENDENCIES	= ../src/libelm.la
 
 test_SOURCES		=\
 						test.cc \
@@ -23,21 +34,15 @@ test_SOURCES		=\
 						test_vararg.cpp \
 						test_vector.cpp \
 						test_vector_queue.cpp
-test_LDFLAGS		= -rdynamic
-test_LDADD			= -L../src -lelm -ldl
-test_DEPENDENCIES	= ../src/libelm.a
-
-myplugin_so_SOURCES	= plugin.cpp
-myplugin_so_LDFLAGS	= -shared
-
-INCLUDES	= -I../include
-AM_CXXFLAGS	= -g3 -fPIC
-AM_LDFLAGS =
 
 if HAS_LIBXML
 test_SOURCES += test_xom.cpp
-AM_CXXFLAGS += @LIBXML_CFLAGS@ -DHAS_LIBXML
-AM_LDFLAGS += @LIBXML_LIBS@
+test_LDFLAGS += @LIBXML_LIBS@
+test_LDADD += -lltdl -dlopen myplugin.la
 endif
-	
 
+
+# MyPlugin plugin
+myplugin_la_LDFLAGS	= -module -rpath $(HOME)
+myplugin_la_LIBADD = ../src/libelm.la
+myplugin_la_SOURCES	= plugin.cpp

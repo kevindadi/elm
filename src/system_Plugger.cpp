@@ -7,14 +7,18 @@
 
 #include <assert.h>
 #include <stdlib.h>
-#include <dlfcn.h>
+#include <ltdl.h>
 #include <elm/system/Plugger.h>
 #include <elm/io.h>
+
+extern "C" {
+	extern const lt_dlsymlist lt_preloaded_symbols[];
+}
 
 namespace elm { namespace system {
 
 /**
- * @class Plugger
+ * @class Plugger <elm/system/Plugger.h>
  * This class is used for connecting Plugin object from dynamic loaded code
  * unit. The Plugin object is retrieved as a global data matching the hook name
  * passed to the plugger creation. The dynamic loaded code units are retrieved
@@ -38,6 +42,14 @@ genstruct::Vector<Plugger *> Plugger::pluggers;
  */
 Plugger::Plugger(String hook, const Version& plugger_version, String _paths)
 : _hook(hook), per_vers(plugger_version), err(OK) {
+	
+	// Initialize DL library
+	static bool preloaded = false;
+	if(!preloaded) {
+		lt_dlpreload_default(lt_preloaded_symbols);
+		lt_dlinit();
+		preloaded = true;
+	}
 	
 	// Look in the system paths
 	if(_paths == "*")
@@ -63,6 +75,7 @@ Plugger::Plugger(String hook, const Version& plugger_version, String _paths)
  */
 Plugger::~Plugger(void) {
 	pluggers.remove(this);
+	lt_dlexit();
 }
 
 
@@ -124,7 +137,7 @@ Plugin *Plugger::plug(String name) {
 	// Load the plugin
 	for(int i = 0; i < paths.length(); i++) {
 		StringBuffer buf;
-		buf << paths[i] << "/" << name << ".so";
+		buf << paths[i] << "/" << name << ".la";
 		Plugin *plugin = plugFile(buf.toString());
 		if(plugin)
 			return plugin;
@@ -154,14 +167,14 @@ Plugin *Plugger::plugFile(String path) {
 	err = OK;
 	
 	// Open shared library
-	void *handle = dlopen(&path, RTLD_LAZY);
+	void *handle = lt_dlopen(&path);
 	if(!handle) {
 		err = NO_PLUGIN;
 		return 0;
 	}
 			
 	// Look for the plugin symbol
-	Plugin *plugin = (Plugin *)dlsym(handle, &_hook);
+	Plugin *plugin = (Plugin *)lt_dlsym((lt_dlhandle)handle, &_hook);
 	if(!plugin) {
 		err = NO_HOOK;
 		return 0;
@@ -195,7 +208,7 @@ String Plugger::lastErrorMessage(void) {
 		return "Success.";
 	case NO_PLUGIN: {
 			StringBuffer buf;
-			buf << "cannot open the plugin(" << dlerror() << ").";
+			buf << "cannot open the plugin(" << lt_dlerror() << ").";
 			return buf.toString();
 		}
 	case NO_HOOK:
@@ -255,7 +268,7 @@ void Plugger::Iterator::go(void) {
 		}
 		
 		// Look current file
-		if(file->item()->path().toString().endsWith(".so"))
+		if(file->item()->path().toString().endsWith(".la"))
 			break;
 	}
 }
