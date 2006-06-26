@@ -2,10 +2,16 @@ AC_INIT(test/test.cc)
 AM_INIT_AUTOMAKE(Elm, 0.1)
 AM_CONFIG_HEADER(config.h)
 
+dnl C++ Support
 AC_PROG_CXX
 AC_STDC_HEADERS
 AC_HAVE_HEADERS(string.h)
 AC_PROG_RANLIB
+
+dnl Dynamic Libraries
+AC_LIBTOOL_DLOPEN
+AC_DISABLE_SHARED
+AC_PROG_LIBTOOL
 
 dnl XML Support
 has_libxml=yes
