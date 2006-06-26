@@ -2,44 +2,72 @@
  * $Id$
  * Copyright (c) 2006, IRIT UPS.
  *
- * elm/xom/UTF8String.h -- UTF8String class.
+ * elm/xom/String.h -- String class.
  */
-#ifndef ELM_XOM_UTF8STRING_H
-#define ELM_XOM_UTF8STRING_H
+#ifndef ELM_XOM_STRING_H
+#define ELM_XOM_STRING_H
 
 #include <string.h>
+#include <elm/string.h>
+#include <elm/io.h>
 #include <stdlib.h>
 
 namespace elm { namespace xom {
 
-// UTF8String class
+/**
+ * XOM character type.
+ */
+typedef unsigned char char_t;
+
+// String class
 class String {
-public:
-	typedef unsigned char char_t;
-private:
-	char_t *buf;
+protected:
+	const char_t *buf;
+	static const char_t null_buf[1];
 public:
 
 	// Constructors
+	inline String(void);
 	inline String(const char *str);
+	inline String(const char_t *str);
+	inline String(const String& string);
 	
 	// Buffer management
 	
 	// Accessors
-	inline char_t *buffer(void) const;
+	inline const char_t *buffer(void) const;
 	inline void copy(void);
 	inline void free(void);
 	
 	// Operators
-	
+	inline operator const char *(void) const;
+	inline String& operator=(const String& string);
+	inline operator CString(void) const;
 };
 
-// UTF8String inlines
-inline String::String(const char *str)
-: buf((char_t *)str) {
+inline elm::io::Output& operator<<(elm::io::Output& out, const String& string) {
+	out.print((const char *)(string.buffer()));
+	return out;
 }
 
-inline String::char_t *String::buffer(void) const {
+
+// String inlines
+inline String::String(void): buf(null_buf) {
+}
+
+inline String::String(const char *str)
+: buf(str ? (char_t *)str : null_buf) {
+}
+
+inline String::String(const char_t *str)
+: buf(str ? str : null_buf) {
+}
+
+inline String::String(const String& string): buf(string.buf) {
+}
+
+
+inline const char_t *String::buffer(void) const {
 	return buf;
 }
 
@@ -48,10 +76,24 @@ inline void String::copy(void) {
 }
 
 inline void String::free(void) {
-	::free(buf);
-	buf = (char_t *)"";
+	if(buf != null_buf) {
+		::free((void *)buf);
+		buf = null_buf;
+	}
+}
+
+inline String::operator const char *(void) const {
+	return (const char *)buf;
+}
+
+inline String& String::operator=(const String& string) {
+	buf = string.buf;
+}
+
+inline String::operator CString(void) const {
+	return (const char *)buf;
 }
 
 } } // elm::xom
 
-#endif // ELM_XOM_UTF8STRING_H
+#endif // ELM_XOM_STRING_H

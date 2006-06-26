@@ -6,19 +6,71 @@
  */
 
 #include <assert.h>
-#include <libxml/tree.h>
+#include "xom_macros.h"
 #include <elm/xom/Node.h>
 #include <elm/xom/Document.h>
-
-#define NODE(p) ((xmlNodePtr)(p))
+#include <elm/xom/NodeFactory.h>
+#include <elm/xom/Element.h>
+#include <elm/xom/Text.h>
 
 namespace elm { namespace xom {
+
+/**
+ * @page xom XOM Module
+ * This module support an implementation of the XOM API (http://www.xom.nu/)
+ * for XML adapted to C++. All classes of this modules are contained in the
+ * elm::xom namespace.
+ * @par
+ * C++ specificities includes :
+ * @li the strings are encoded in UTF-8 and the @ref elm::xom::String class
+ * provides facilities to handle them.
+ * @li some methods builds new string and some only uses fixed string that does
+ * not need to be fried. Read carefully the documentation to avoid memory leaks.
+ * @li as the method getValue() may in some cases build a new string,
+ * @ref elm::xom::Text provides a more efficient method, getText(), to get its
+ * content without need of memory management.
+ * 
+ * @internal XOM module is implemented on top of C library libxml2. As a
+ * consequence, the used texts are encoded in UTF-8.
+ */
+
+
+// UnsupportedNode class
+class UnsupportedNode: public Node {
+public:
+	inline UnsupportedNode(void *node): Node(node) {
+	};
+	virtual Node *copy(void) {
+		return new UnsupportedNode(node);
+	};
+	Node *getChild(int index) {
+		return internGetChild(index);
+	}
+	virtual int getChildCount(void) {
+		return internGetChildCount();
+	}
+	virtual String getValue(void) {
+		return internGetValue();
+	}
+	virtual String toXML(void) {
+		return internToXML();
+	};
+};
+
 
 /**
  * @class Node
  * The base class of nodes of a XOM XML tree.
  * Refer to http://www.xom.nu/ for more information.
  */
+
+
+// Node inlines
+Node::Node(void *_node): node(_node) {
+	assert(node);
+	NODE(node)->_private = this;
+}
+
 
 
 /**
@@ -30,6 +82,15 @@ Node *Node::make(void *node) {
 	NodeFactory *fact = (((Document *)(NODE(node)->doc->_private)))->fact;
 	Node *result;
 	switch(NODE(node)->type) {
+	case XML_ELEMENT_NODE:
+		result = fact->makeElement(node);
+		break;
+	case XML_TEXT_NODE:
+		result = fact->makeText(node);
+		break;
+	default:
+		result = new UnsupportedNode(node);
+		break;
 	}
 	NODE(node)->_private = result;
 	return result;
@@ -70,18 +131,218 @@ Node::kind_t Node::kind(void) const {
 	return kinds[NODE(node)->type];
 }
 
-/*	virtual Node *copy(void) const = 0;
-	void detach(void);
-	bool equals(const Node * node) const;
-	virtual CString getBaseURI(void) const = 0;
-	virtual Node *getChild(int index) const = 0;
-	virtual int getChildCount(void) const = 0;
-	Document *getDocument(void) const;
-	ParentNode *getParent(void) const;
-	virtual String getValue(void) const = 0;
-	Nodes *query(String& xpath, XPathContext *context) const;
-	tring toXML(void) const;*/
+
+/**
+ * Get the parent node.
+ * @return	Parent node.
+ */
+ParentNode *Node::getParent(void) {
+	return (ParentNode *)make(NODE(node)->parent);
+}
 
 
-	
+/**
+ * @fn String Node::getValue(void);
+ * Get the node as a string with markup removed.
+ * @return	Text value of the node. The returned string must be fried by
+ * the caller.
+ */
+
+
+/**
+ */
+String Node::internGetValue(void) {
+	return xmlNodeGetContent(NODE(node));
+}
+
+
+/**
+ * Detach the current node from its parent.
+ */
+void Node::detach(void) {
+	xmlUnlinkNode(NODE(node));
+}
+
+
+/**
+ * Test if the current and the passed nodes are equals, that is, they are the
+ * same object.
+ */
+bool Node::equals(const Node * node) const {
+	return this == node;
+}
+
+
+/**
+ * Returns the base URI of this node as specified by XML Base, or the empty
+ * string if this is not known. In most cases, this is the URL against which
+ * relative URLs in this node should be resolved.
+ * @par
+ * The base URI of a non-parent node is the base URI of the element containing
+ * the node. The base URI of a document node is the URI from which the document
+ * was parsed, or which was set by calling setBaseURI on on the document.
+ * @par
+ * The base URI of an element is determined as follows:
+ * @par
+ * @li If the element has an xml:base attribute, then the value of that
+ * attribute is converted from an IRI to a URI, absolutized if possible, and
+ * returned.
+ * @li Otherwise, if any ancestor element of the element loaded from the same
+ * entity has an xml:base attribute, then the value of that attribute from the
+ * nearest such ancestor is converted from an IRI to a URI, absolutized if
+ * possible, and returned. xml:base attributes from other entities are not
+ * considered.
+ * @li Otherwise, if setBaseURI() has been invoked on this element, then the URI
+ * most recently passed to that method is absolutized if possible and returned.
+ * @li Otherwise, if the element comes from an externally parsed entity or the
+ * document entity, and the original base URI has not been changed by invoking
+ * setBaseURI(), then the URI of that entity is returned.
+ * @liOtherwise, (the element was created by a constructor rather then being
+ * parsed from an existing document), the base URI of the nearest ancestor that
+ * does have a base URI is returned. If no ancestors have a base URI, then the
+ * empty string is returned. 
+ * @par
+ * Absolutization takes place as specified by the XML Base specification.
+ * However, it is not always possible to absolutize a relative URI, in which
+ * case the empty string will be returned.
+ *
+ * @return the base URI of this node. This string must be fried by the caller.
+ */
+String Node::getBaseURI(void) {
+	return xmlNodeGetBase(DOC(NODE(node)->doc), NODE(node));
+}
+
+
+/**
+ * @fn Node *Node::getChild(int index);
+ * Returns the child of this node at the specified position.
+ * @param position the index of the child node to return 
+ * @return the positionth child node of this node 
+ */
+
+
+/**
+ */
+Node *Node::internGetChild(int index) {
+	assert(0);
+}
+
+
+/**
+ * int Node::getChildCount(void);
+ * Returns the number of children of this node. This is always non-negative
+ * (greater than or equal to zero).
+ * @return the number of children of this node
+ */
+
+
+/**
+ */
+int Node::internGetChildCount(void) {
+	return 0;
+}
+
+
+/**
+ * Returns the document that contains this node, or null if this node is not
+ * currently part of a document. Each node belongs to no more than one document
+ * at a time. If this node is a Document, then it returns this node.
+ * @return the document this node is a part of
+ */
+Document *Node::getDocument(void) {
+	return (Document *)get(NODE(node)->doc);
+}
+
+
+/**
+ * Returns the nodes selected by the XPath expression in the context of this
+ * node in document order as defined in XSLT. All namespace prefixes used in the
+ * expression should be bound to namespace URIs by the second argument.
+ * @par
+ * Note that XPath expressions operate on the XPath data model, not the XOM data
+ *  model. XPath counts all adjacent Text objects as a single text node, and
+ * does not consider empty Text objects. For instance, an element that has
+ * exactly three text children in XOM, will have exactly one text child in
+ * XPath, whose value is the concatenation of all three XOM Text objects.
+ * @par
+ * You can use XPath expressions that use the namespace axis. However, namespace
+ *  nodes are never returned. If an XPath expression only selects namespace
+ * nodes, then this method will return an empty list.
+ * @par
+ * No variables are bound.
+ * @par
+ * The context position is the index of this node among its parents children,
+ * counting adjacent text nodes as one. The context size is the number of
+ * children this node's parent has, again counting adjacent text nodes as one
+ * node. If the parent is a Document, then the DocType (if any) is not counted.
+ * If the node has no parent, then the context position is 1, and the context
+ * size is 1.
+ * @par
+ * Queries such as /*, //, and /* //p that refer to the root node do work when
+ * operating with a context node that is not part of a document. However,
+ * the query / (return the root node) throws an XPathException when applied to
+ * a node that is not part of the document. Furthermore the top-level node in
+ * the tree is treated as the first and only child of the root node, not as the
+ * root node itself. For instance, this query stores parent in the result
+ * variable, not child:
+ * @code
+ * Element parent = new Element("parent");
+ * Element child = new Element("child");
+ * parent.appendChild(child);
+ * Nodes results = child.query("/*");
+ * Node result = result.get(0);
+ * @endcode
+ * @param xpath the XPath expression to evaluate
+ * @param namespaces a collection of namespace prefix bindings used in the
+ * XPath expression 
+ * @return a list of all matched nodes; possibly empty 
+ * @throw XPathException if there's a syntax error in the expression, the query
+ * returns something other than a node-set
+ */
+Nodes *Node::query(const String& xpath, XPathContext *context) {
+	assert(0);
+}
+
+
+/**
+ * String Node::toXML(void);
+ * Returns the actual XML form of this node, such as might be copied and pasted
+ * from the original document. However, this does not preserve semantically
+ * insignificant details such as white space inside tags or the use of
+ * empty-element tags vs. start-tag end-tag pairs.
+ * @return an XML representation of this node. The returned string must be fried
+ * by the caller.
+ */
+
+
+/**
+ */
+String Node::internToXML(void) {
+	String result;
+	xmlBufferPtr buf = xmlBufferCreate();
+	if(xmlNodeDump(buf, DOC(getDocument()->node), NODE(node), 0, 0) < 0)
+		result = "";
+	else
+		result = buf->content;
+	buf->content = 0;
+	xmlBufferFree(buf);
+	return result;
+}
+
+
+/**
+ * Returns the nodes selected by the XPath expression in the context of this
+ * node in document order as defined by XSLT. This XPath expression must not
+ * contain any namespace prefixes.
+ * @par
+ * No variables are bound. No namespace prefixes are bound.
+ * @param xpath the XPath expression to evaluate 
+ * @return a list of all matched nodes; possibly empty 
+ * @throw XPathException if there's a syntax error in the expression; or the
+ * query returns something other than a node-set.
+ */
+Nodes *Node::query(const String& xpath) {
+	assert(0);
+}
+
 } } // elm::xom

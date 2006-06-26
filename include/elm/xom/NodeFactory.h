@@ -15,6 +15,7 @@ class Builder;
 class Comment;
 class Document;
 class Element;
+class Node;
 class Nodes;
 class ProcessingInstruction;
 class Text;
@@ -23,11 +24,12 @@ class Text;
 // NodeFactory class
 class NodeFactory {
 	friend class Builder;
+	friend class Node;
 	virtual Attribute *makeAttribute(void *node);
 	virtual Comment *makeComment(void *node);
 	virtual Document *makeDocument(void *node);
 	virtual ProcessingInstruction *makeProcessingInstruction(void *node);
-	virtual Element	*makeRootElement(void *node);
+	virtual Element	*makeElement(void *node);
 	virtual Text *makeText(void *node);
 public:
 	/*virtual Document *startMakingDocument(void);

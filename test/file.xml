@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<test>
+<test a1="ok" a2="ko">
 	<a>ok</a>
 	<b c="ok"/>
 	<c>

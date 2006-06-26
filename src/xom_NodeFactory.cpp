@@ -9,6 +9,8 @@
 #include <libxml/tree.h>
 #include <elm/xom/NodeFactory.h>
 #include <elm/xom/Document.h>
+#include <elm/xom/Element.h>
+#include <elm/xom/Text.h>
 
 namespace elm { namespace xom {
 
@@ -45,12 +47,22 @@ ProcessingInstruction *NodeFactory::makeProcessingInstruction(void *node) {
 	assert(0);
 }
 
-Element	*NodeFactory::makeRootElement(void *node) {
-	assert(0);
+
+/**
+ * Build an element from its low-level reference.
+ * @param node	Low-level node reference.
+ */
+Element	*NodeFactory::makeElement(void *node) {
+	return new Element(node);
 }
 
+
+/**
+ * Build a text from its low-level node reference.
+ * @param node	Low-level node reference.
+ */
 Text *NodeFactory::makeText(void *node) {
-	assert(0);
+	return new Text(node);
 }
 
 } } // elm::xom
