@@ -9,8 +9,7 @@ AM_CXXFLAGS += @LIBXML_CFLAGS@ -DHAS_LIBXML
 
 
 # Test program
-test_LDFLAGS		= -export-dynamic
-test_LDADD			= ../src/libelm.la
+test_LDADD			=  -dlopen force ../src/libelm.la
 test_DEPENDENCIES	= ../src/libelm.la
 
 test_SOURCES		=\
@@ -37,12 +36,12 @@ test_SOURCES		=\
 
 if HAS_LIBXML
 test_SOURCES += test_xom.cpp
-test_LDFLAGS += @LIBXML_LIBS@
-test_LDADD += -lltdl -dlopen myplugin.la
+test_LDADD += @LIBXML_LIBS@
 endif
 
 
 # MyPlugin plugin
-myplugin_la_LDFLAGS	= -module -rpath $(HOME)
+myplugin_la_LDFLAGS	= -module -rpath @abs_builddir@
 myplugin_la_LIBADD = ../src/libelm.la
+myplugin_la_DEPS = ../src/libelm.la
 myplugin_la_SOURCES	= plugin.cpp

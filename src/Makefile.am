@@ -1,8 +1,9 @@
 lib_LTLIBRARIES=libelm.la
 
-INCLUDES=-I../include
+INCLUDES=-I../include @INCLTDL@
 AM_CXXFLAGS=-g3
 libelm_la_LDFLAGS=-version-info 0:1:0
+libelm_la_LIBADD = @LIBLTDL@
 DEFS=@ELM_DEBUG_DEFS@
 
 

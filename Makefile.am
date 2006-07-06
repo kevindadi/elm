@@ -1,2 +1,2 @@
-SUBDIRS=src test include
+SUBDIRS=libltdl src test include
 

@@ -5,15 +5,23 @@
  * src/system_Plugger.h -- Plugger class implementation.
  */
 
+#define WITH_LIBTOOL
+
 #include <assert.h>
 #include <stdlib.h>
-#include <ltdl.h>
+#ifdef WITH_LIBTOOL
+#	include <ltdl.h>
+#else
+#	include <dlfcn.h>
+#endif
 #include <elm/system/Plugger.h>
 #include <elm/io.h>
 
-extern "C" {
-	extern const lt_dlsymlist lt_preloaded_symbols[];
-}
+#ifdef WITH_LIBTOOL
+	extern "C" {
+		extern const lt_dlsymlist lt_preloaded_symbols[];
+	}
+#endif
 
 namespace elm { namespace system {
 
@@ -44,12 +52,15 @@ Plugger::Plugger(String hook, const Version& plugger_version, String _paths)
 : _hook(hook), per_vers(plugger_version), err(OK) {
 	
 	// Initialize DL library
-	static bool preloaded = false;
-	if(!preloaded) {
-		lt_dlpreload_default(lt_preloaded_symbols);
-		lt_dlinit();
-		preloaded = true;
-	}
+	#ifdef WITH_LIBTOOL
+		static bool preloaded = false;
+		if(!preloaded) {
+			//LTDL_SET_PRELOADED_SYMBOLS();
+			lt_dlpreload_default(lt_preloaded_symbols);
+			lt_dlinit();
+			preloaded = true;
+		}
+	#endif
 	
 	// Look in the system paths
 	if(_paths == "*")
@@ -75,7 +86,9 @@ Plugger::Plugger(String hook, const Version& plugger_version, String _paths)
  */
 Plugger::~Plugger(void) {
 	pluggers.remove(this);
-	lt_dlexit();
+	#ifdef WITH_LIBTOOL
+		lt_dlexit();
+	#endif
 }
 
 
@@ -137,7 +150,11 @@ Plugin *Plugger::plug(String name) {
 	// Load the plugin
 	for(int i = 0; i < paths.length(); i++) {
 		StringBuffer buf;
-		buf << paths[i] << "/" << name << ".la";
+		#ifdef WITH_LIBTOOL
+			buf << paths[i] << "/" << name << ".la";		
+		#else
+			buf << paths[i] << "/" << name << ".so";
+		#endif
 		Plugin *plugin = plugFile(buf.toString());
 		if(plugin)
 			return plugin;
@@ -167,14 +184,22 @@ Plugin *Plugger::plugFile(String path) {
 	err = OK;
 	
 	// Open shared library
-	void *handle = lt_dlopen(&path);
+	#ifdef WITH_LIBTOOL
+		void *handle = lt_dlopen(&path);
+	#else
+		void *handle = dlopen(&path, RTLD_LAZY);
+	#endif
 	if(!handle) {
 		err = NO_PLUGIN;
 		return 0;
 	}
 			
 	// Look for the plugin symbol
-	Plugin *plugin = (Plugin *)lt_dlsym((lt_dlhandle)handle, &_hook);
+	#ifdef WITH_LIBTOOL
+		Plugin *plugin = (Plugin *)lt_dlsym((lt_dlhandle)handle, &_hook);
+	#else
+		Plugin *plugin = (Plugin *)dlsym(handle, &_hook);
+	#endif
 	if(!plugin) {
 		err = NO_HOOK;
 		return 0;
@@ -208,7 +233,11 @@ String Plugger::lastErrorMessage(void) {
 		return "Success.";
 	case NO_PLUGIN: {
 			StringBuffer buf;
-			buf << "cannot open the plugin(" << lt_dlerror() << ").";
+			#ifdef WITH_LIBTOOL
+				buf << "cannot open the plugin(" << lt_dlerror() << ").";
+			#else
+				buf << "cannot open the plugin(" << dlerror() << ").";
+			#endif
 			return buf.toString();
 		}
 	case NO_HOOK:

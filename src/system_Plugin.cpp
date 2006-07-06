@@ -5,8 +5,14 @@
  * src/prog/system_Plugin.h -- Plugin class implementation.
  */
 
+#define WITH_LIBTOOL
+
 #include <assert.h>
-#include <ltdl.h>
+#ifdef WITH_LIBTOOL
+#	include <ltdl.h>
+#else
+#	include <dlfcn.h>
+#endif
 #include <elm/system/Plugin.h>
 #include <elm/system/Plugger.h>
 
@@ -217,7 +223,11 @@ void Plugin::unplug(void) {
 		cleanup();
 		unused_plugins.remove(this);
 		if(_handle)
-			lt_dlclose((lt_dlhandle)_handle);
+			#ifdef WITH_LIBTOOL
+				lt_dlclose((lt_dlhandle)_handle);
+			#else
+				dlclose(_handle);
+			#endif
 	}	
 }
 
