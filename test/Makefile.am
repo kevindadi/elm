@@ -5,7 +5,7 @@ noinst_LTLIBRARIES = myplugin.la
 
 INCLUDES	= -I../include
 AM_CXXFLAGS	= -g3
-AM_CXXFLAGS += @LIBXML_CFLAGS@ -DHAS_LIBXML
+AM_CXXFLAGS += @LIBXML_CFLAGS@
 
 
 # Test program
@@ -35,6 +35,7 @@ test_SOURCES		=\
 						test_vector_queue.cpp
 
 if HAS_LIBXML
+AM_CXXFLAGS += -DHAS_LIBXML
 test_SOURCES += test_xom.cpp
 test_LDADD += @LIBXML_LIBS@
 endif
