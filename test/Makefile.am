@@ -9,7 +9,7 @@ AM_CXXFLAGS += @LIBXML_CFLAGS@ -DHAS_LIBXML
 
 
 # Test program
-test_LDADD			=  -dlopen force ../src/libelm.la
+test_LDADD			=  -dlopen force -dlopen myplugin.la ../src/libelm.la
 test_DEPENDENCIES	= ../src/libelm.la
 
 test_SOURCES		=\
