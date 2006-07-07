@@ -20,7 +20,6 @@ dnl XML Support
 ELM_CHECK_MODULES(LIBXML, libxml-2.0, [has_libxml=yes], [has_libxml=no])
 AM_CONDITIONAL(HAS_LIBXML, test x$has_libxml = xyes)
 
-
 dnl ELM_DEBUG_DEFS=-DELM_DEBUG_AVLTREE
 AC_SUBST(ELM_DEBUG_DEFS)
 
