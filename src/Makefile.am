@@ -1,11 +1,12 @@
 lib_LTLIBRARIES=libelm.la
 
 INCLUDES=-I../include @INCLTDL@
-AM_CXXFLAGS=-g3
-libelm_la_LDFLAGS=-version-info 0:1:0
-libelm_la_LIBADD = @LIBLTDL@
-DEFS=@ELM_DEBUG_DEFS@
 
+AM_CXXFLAGS = @LIBXML_CFLAGS@
+
+libelm_la_LDFLAGS=-version-info 0:1:0
+libelm_la_LIBADD = @LIBLTDL@ @LIBXML_LIBS@
+DEFS=@ELM_DEBUG_DEFS@
 
 libelm_la_SOURCES= \
 	utility.cpp \
@@ -66,6 +67,4 @@ libelm_la_SOURCES += \
 	xom_String.cpp \
 	xom_Text.cpp \
 	xom_macros.h
-AM_CXXFLAGS+= @LIBXML_CFLAGS@
 endif
-	

@@ -1,5 +1,5 @@
-AC_INIT(test/test.cc)
-AM_INIT_AUTOMAKE(Elm, 0.1)
+AC_INIT(Elm, 0.1)
+AM_INIT_AUTOMAKE(1.7)
 AM_CONFIG_HEADER(config.h)
 
 dnl C++ Support
@@ -17,9 +17,9 @@ AC_SUBST(INCLTDL)
 AC_SUBST(LIBLTDL)
 
 dnl XML Support
-has_libxml=yes
-ELM_CHECK_MODULES(LIBXML, libxml-2.0,,[has_libxml=no])
+ELM_CHECK_MODULES(LIBXML, libxml-2.0, [has_libxml=yes], [has_libxml=no])
 AM_CONDITIONAL(HAS_LIBXML, test x$has_libxml = xyes)
+
 
 dnl ELM_DEBUG_DEFS=-DELM_DEBUG_AVLTREE
 AC_SUBST(ELM_DEBUG_DEFS)

@@ -4,13 +4,13 @@ noinst_PROGRAMS	=	test
 noinst_LTLIBRARIES = myplugin.la
 
 INCLUDES	= -I../include
-AM_CXXFLAGS	= -g3
-AM_CXXFLAGS += @LIBXML_CFLAGS@
-
+if HAS_LIBXML
+AM_CXXFLAGS = -DHAS_LIBXML
+endif
 
 # Test program
-test_LDADD			=  -dlopen force -dlopen myplugin.la ../src/libelm.la
-test_DEPENDENCIES	= ../src/libelm.la
+test_LDADD = -dlopen force -dlopen myplugin.la ../src/libelm.la
+test_DEPENDENCIES = ../src/libelm.la
 
 test_SOURCES		=\
 						test.cc \
@@ -35,9 +35,7 @@ test_SOURCES		=\
 						test_vector_queue.cpp
 
 if HAS_LIBXML
-AM_CXXFLAGS += -DHAS_LIBXML
 test_SOURCES += test_xom.cpp
-test_LDADD += @LIBXML_LIBS@
 endif
 
 
