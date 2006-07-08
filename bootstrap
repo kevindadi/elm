@@ -1,0 +1,7 @@
+#!/bin/sh
+
+aclocal \
+&& autoheader \
+&& libtoolize --ltdl \
+&& automake --gnu --add-missing \
+&& autoconf
