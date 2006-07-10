@@ -7,6 +7,7 @@
 #ifndef ELM_IO_UNIX_OUTSTREAM_H
 #define ELM_IO_UNIX_OUTSTREAM_H
 
+#include <elm/string.h>
 #include <elm/io/OutStream.h>
 
 namespace elm { namespace io {
@@ -20,6 +21,7 @@ public:
 	inline int fd(void) const { return _fd; };
 	virtual int write(const char *buffer, int size);	
 	virtual int flush(void);
+	elm::CString lastErrorMessage(void);
 };
 
 } } // elm::io

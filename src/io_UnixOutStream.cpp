@@ -6,12 +6,13 @@
  */
 
 #include <unistd.h>
+#include <errno.h>
 #include <elm/io/UnixOutStream.h>
 
 namespace elm { namespace io {
 
-	/**
- * @class UnixOutStream
+/**
+ * @class UnixOutStream <elm/io.h>
  * Output stream implementation using the Unix low-level IO system.
  */
 
@@ -20,6 +21,15 @@ namespace elm { namespace io {
  * Build a Unix output stream using a file descriptor identifier.
  * @param _fd	File descriptor identifier.
  */
+
+
+/**
+ * Return the last occured error message.
+ * @return	Last error message.
+ */
+CString UnixOutStream::lastErrorMessage(void) {
+	return strerror(errno);
+}
 
 
 // Overloaded
