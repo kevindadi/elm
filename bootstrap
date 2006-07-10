@@ -3,5 +3,5 @@
 aclocal \
 && autoheader \
 && libtoolize --ltdl \
-&& automake --gnu --add-missing \
+&& automake --add-missing \
 && autoconf
