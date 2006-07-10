@@ -16,6 +16,25 @@ AC_CONFIG_SUBDIRS(libltdl)
 AC_SUBST(INCLTDL)
 AC_SUBST(LIBLTDL)
 
+dnl ==== Building mode ====
+AC_ARG_WITH(mode, [  --with-mode={dev,normal,final}	Activate the given build mode.],,with_mode=dev)
+case $with_mode in
+dev)
+	CXXFLAGS="-g3"
+	;;
+normal)
+	CXXFLAGS="-g"
+	;;
+final)
+	CPPFLAGS="$CPPFLAGS -DNDEBUG"
+	CXXFLAGS="-O2"
+	;;
+*)
+	AC_MSG_ERROR([unknown mode $with_mode])
+	;;
+esac
+
+
 dnl XML Support
 ELM_CHECK_MODULES(LIBXML, libxml-2.0, [has_libxml=yes], [has_libxml=no])
 AM_CONDITIONAL(HAS_LIBXML, test x$has_libxml = xyes)
