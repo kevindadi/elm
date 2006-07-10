@@ -10,7 +10,7 @@
 namespace elm {
 
 /**
- * @class  Option "elm/util/Option.h"
+ * @class  <elm/util/Option.h>
  * This class is very handly to manage parameters or return value that may be
  * optional. This class records there is no value or there is a value and the
  * instance of the value.
@@ -112,10 +112,10 @@ namespace elm {
 
 
 /**
- * @var const OptionalNone none;
  * This special value cause the construction of an optional value without
  * value available.
  */
+const OptionalNone none = OptionalNone();
 
 
 /**
