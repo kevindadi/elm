@@ -16,8 +16,8 @@ namespace elm {
 // Exception class
 class Exception {
 public:
-	virtual ~Exception(void) { };
-	virtual String message(void) = 0;
+	virtual ~Exception(void);
+	virtual String message(void);
 };
 
 

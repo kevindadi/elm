@@ -112,4 +112,24 @@ static StringComparator string_comp_obj;
 template <> Comparator<String>& Comparator<String>::def = string_comp_obj;
 
 
+/**
+ * @class Exception <elm/utility.h>
+ * The base class of exceptions in Elm.
+ */
+
+
+/**
+ */
+Exception::~Exception(void) {
+}
+
+
+/**
+ * Return a message describing the exception.
+ * @return	Exception message.
+ */
+String Exception::message(void) {
+	return "";	
+}
+
 };
