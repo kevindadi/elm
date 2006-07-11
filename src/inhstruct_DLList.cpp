@@ -10,7 +10,7 @@
 namespace elm { namespace inhstruct {
 
 /**
- * @class DLNode
+ * @class DLNode <elm/inhstruct/DLList.h>
  * This class represents node in the DL list. In order to use the list,
  * a user class must inherit from this one for attaching data.
  */
@@ -91,7 +91,7 @@ namespace elm { namespace inhstruct {
 
 
 /**
- * @class DLList
+ * @class DLList <elm/inhstruct/DLList.h>
  * This class implements a double-linked list using node inherited from the
  * user.
  */
