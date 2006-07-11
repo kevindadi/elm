@@ -1,8 +1,8 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004, IRIT-UPS.
  *
- * sllist.h -- single link list interface.
+ * elm/inhstruct/SLList.h -- SLList class interface.
  */
 #ifndef ELM_INHSTRUCT_SLLIST_H
 #define ELM_INHSTRUCT_SLLIST_H
