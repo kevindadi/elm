@@ -23,6 +23,7 @@ libelm_la_SOURCES= \
 	block_DynBlock.cpp \
 	genstruct_FragTable.cpp \
 	genstruct_HashTable.cpp \
+	genstruct_SLList.cpp \
 	genstruct_VectorQueue.cpp \
 	genstruct_Table.cpp \
 	inhstruct_SLList.cpp \
