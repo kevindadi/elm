@@ -1,8 +1,8 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004, IRIT-UPS.
  *
- * dllist.h -- double link list classes interface.
+ * elm/genstruct/DLList.h -- DLList class interface.
  */
 #ifndef ELM_GENSTRUCT_DLLIST_H
 #define ELM_GENSTRUCT_DLLIST_H
@@ -37,6 +37,7 @@ public:
 	inline void addLast(const T value);
 	inline void removeFirst(void);
 	inline void removeLast(void);
+	inline void removeAll(const T& item);
 	inline void clear(void);
 	
 	// Iterator class
@@ -61,6 +62,7 @@ public:
 		inline inhstruct::DLList& elist(void) const;
 	public:
 		inline Editor(DLList& list);
+		inline Editor(const Editor& editor);
 		inline T& item(void) const;
 		inline T& operator*(void) const;		
 		inline void remove(void);
@@ -118,6 +120,17 @@ template <class T> bool DLList<T>::contains(const T value) const {
 			return true;
 	return false;
 }
+
+template <class T>
+inline void DLList<T>::removeAll(const T& item) {
+	for(Editor cur(*this); cur; ) {
+		if(*cur == item)
+			cur.remove();
+		else
+			cur++;
+	}
+}
+
 template <class T> void DLList<T>::clear(void) {
 	DLNode *node;
 	while(node = (DLNode *)list.first()) {
@@ -165,8 +178,14 @@ template <class T> void DLList<T>::Iterator::last(void) {
 template <class T> inhstruct::DLList& DLList<T>::Editor::elist(void) const {
 	return (DLList<T>&)list;
 }
+
 template <class T> DLList<T>::Editor::Editor(DLList& list): Iterator(list) {
-};
+}
+
+template <class T>
+inline DLList<T>::Editor::Editor(const Editor& editor): Iterator(editor) {
+}
+
 template <class T> T& DLList<T>::Editor::item(void) const {
 	return this->cur->value();
 }
