@@ -21,6 +21,7 @@ libelm_la_SOURCES= \
 	io_UnixInStream.cpp \
 	io_IOException.cpp \
 	block_DynBlock.cpp \
+	genstruct_DLList.cpp \
 	genstruct_FragTable.cpp \
 	genstruct_HashTable.cpp \
 	genstruct_SLList.cpp \
