@@ -90,6 +90,35 @@ TestCase::TestCase(CString name): _name(name), tests(0), errors(0) {
 
 
 /**
+ * Prepare to do a test.
+ * @param file	Source file.
+ * @param line	Source line.
+ * @param text	Code text to test.
+ */
+void TestCase::test(CString file, int line, CString text) {
+	tests++;
+	cout << file << ':' << line << ": " << text << '\t';
+}
+
+
+/**
+ * Inform that the current test has failed.
+ */
+void TestCase::failed(void) {
+	cout << "\x1b[31m[FAILED]\x1b[0m\n";
+	errors++;
+}
+
+
+/**
+ * Inform that the current test has succeeded.
+ */
+void TestCase::succeeded(void) {
+	cout << "\x1b[32m[OK]\x1b[0m\n";
+}
+
+
+/**
  * Check if a test has returned true.
  * @param file		Source file containing the test.
  * @param line		Line in the source file of the test.
@@ -97,14 +126,11 @@ TestCase::TestCase(CString name): _name(name), tests(0), errors(0) {
  * @param result	Result of the test.
  */
 void TestCase::check(CString file, int line, CString text, bool result) {
-	tests++;
-	cout << file << ':' << line << ": " << text << '\t';
+	test(file, line, text);
 	if(result)
-		cout << "\x1b[32m[OK]\x1b[0m\n";
-	else {
-		cout << "\x1b[31m[FAILED]\x1b[0m\n";
-		errors++;
-	}
+		succeeded();
+	else
+		failed();
 }
 
 
