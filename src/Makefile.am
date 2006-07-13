@@ -54,6 +54,7 @@ libelm_la_SOURCES= \
 	system_Directory.cpp \
 	system_StopWatch.cpp \
 	util_Formatter.cpp \
+	util_MessageException.cpp \
 	util_Option.cpp \
 	util_Pair.cpp \
 	util_Version.cpp
