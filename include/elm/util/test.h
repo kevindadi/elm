@@ -19,6 +19,9 @@ class TestCase {
 	int errors;
 public:
 	TestCase(CString name);
+	void test(CString file, int line, CString text);
+	void failed(void);
+	void succeeded(void);
 	void check(CString file, int line, CString text, bool result);
 	bool require(CString file, int line, CString text, bool result);
 	template <class T> inline void check_equal(CString file, int line, 
@@ -43,12 +46,15 @@ const T& result, const T& reference) {
 #define ELM_CHECK_END 			__case.complete(); }
 #define ELM_REQUIRE(tst, action)	if(!__case.require(__FILE__, __LINE__, #tst, tst)) action
 #define ELM_CHECK_EQUAL(res, ref)	__case.check_equal(__FILE__, __LINE__, #res " == " #ref, res, ref)
+#define ELM_CHECK_EXCEPTION(exn, stat)	{ __case.test(__FILE__, __LINE__, #stat); \
+	try { stat; __case.failed(); } catch(exn) { __case.succeeded(); } }
 #ifndef ELM_NO_SHORTCUT
 #	define CHECK_BEGIN(name) ELM_CHECK_BEGIN(name)
 #	define CHECK(tst) ELM_CHECK(tst)
 #	define REQUIRE(tst, action) ELM_REQUIRE(tst, action)
 #	define CHECK_EQUAL(res, ref) ELM_CHECK_EQUAL(res, ref)
 #	define CHECK_END ELM_CHECK_END
+#	define CHECK_EXCEPTION(exn, stat) ELM_CHECK_EXCEPTION(exn, stat)
 #endif
 
 } // elm
