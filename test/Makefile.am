@@ -22,7 +22,9 @@ test_SOURCES		=\
 						test_frag_table.cpp \
 						test_hashtable.cpp \
 						test_io_format.cpp \
+						test_io_output.cpp \
 						test_lock.cpp \
+						test_option.cpp \
 						test_plugin.cpp \
 						test_sllist.cpp \
 						test_sorted_bintree.cpp \

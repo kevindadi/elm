@@ -18,6 +18,38 @@ class UnknownException {
 
 
 /**
+ * @class OptionException
+ * This class may be raised by options of by the option @ref Manager to
+ * indicate that there is an error in command line arguments.
+ */
+
+
+/**
+ * Build an empty with a string message possibly containing printf-like
+ * escape sequences for arguments.
+ * @param message	Message formats.
+ * @param ...		Arguments.
+ */
+OptionException::OptionException(elm::CString format, ...) {
+	VARARG_BEGIN(args, format);
+	buildMessage(format, args);
+	VARARG_END
+}
+
+
+/**
+ * Build an empty with a string message possibly containing printf-like
+ * escape sequences for arguments.
+ * @param message	Message formats.
+ * @param ...		Arguments.
+ */
+
+OptionException::OptionException(elm::CString format, VarArg& args)
+: MessageException(format, args) {
+}
+
+
+/**
  * @class Manager
  * This class is used for managing the options of a command.
  * It is usually 
@@ -80,7 +112,8 @@ void Manager::processOption(Option *option, int& i, int argc, char **argv) {
 		else {
 			cerr << "ERROR: option \"" << *option << "\" requires an argument.\n";
 			displayHelp();
-			throw OptionException();
+			throw OptionException("ERROR: option \"%s\" requires an argument.",
+				argv[i]);
 		}
 		break;	
 	}
@@ -145,7 +178,8 @@ void Manager::parse(int argc, char **argv) {
 				}
 				catch(UnknownException _) {
 					cerr << "ERROR: option \"-" << opts[j] << "\" is unknown.\n";
-					throw OptionException();
+					throw OptionException("ERROR: option \"-%c\" is unknown.",
+						opts[j]);
 				}
 			}
 		}
@@ -153,11 +187,12 @@ void Manager::parse(int argc, char **argv) {
 		/* Multiple-letter argument */
 		else {
 			try {
-					cerr << "ERROR: option \"" << argv[i] << "\" is unknown.\n";
 				processOption(findLongName(&argv[i][2]), i, argc, argv);
 			}
 			catch(UnknownException _) {
-				throw OptionException();
+				cerr << "ERROR: option \"" << argv[i] << "\" is unknown.\n";
+				throw OptionException("ERROR: option \"%s\" is unknown.",
+					argv[i]);
 			}
 		}
 	}

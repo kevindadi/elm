@@ -18,7 +18,9 @@ void test_formatter(void);
 void test_frag_table(void);
 void test_hashtable(void);
 void test_io_format(void);
+void test_io_output(void);
 void test_lock(void);
+void test_option(void);
 void test_plugin(void);
 void test_sllist(void);
 void test_sorted_bintree(void);
@@ -45,7 +47,9 @@ struct test_t {
 	{ "formatter", test_formatter },
 	{ "hashtable", test_hashtable },
 	{ "io_format", test_io_format },
+	{ "io_output", test_io_output },
 	{ "lock", test_lock },
+	{ "option", test_option },
 	{ "plugin", test_plugin },
 	{ "sllist", test_sllist },
 	{ "sorted_bintree", test_sorted_bintree },
