@@ -9,11 +9,15 @@
 
 #include <elm/genstruct/Vector.h>
 #include <elm/option/Option.h>
+#include <elm/util/MessageException.h>
 
 namespace elm { namespace option {
 
 // OptionException exception
-class OptionException {
+class OptionException: public MessageException {
+public:
+	OptionException(elm::CString format, ...);
+	OptionException(elm::CString format, VarArg& args);
 };
 
 
