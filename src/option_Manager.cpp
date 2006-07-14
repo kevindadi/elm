@@ -92,10 +92,8 @@ Option *Manager::findLongName(CString name) {
 void Manager::processOption(Option *option, int& i, int argc, char **argv) {
 
 	// No option
-	if(!option) {
-		displayHelp();
+	if(!option)
 		throw UnknownException();
-	}
 
 	// Find the argument
 	String arg;
@@ -103,15 +101,13 @@ void Manager::processOption(Option *option, int& i, int argc, char **argv) {
 	case arg_none:
 		break;
 	case arg_optional:
-		if(i + 1 < argc && argv[i][0] != '-')
-			arg = argv[i++];
+		if(i + 1 < argc && argv[i + 1][0] != '-')
+			arg = argv[++i];
 		break;
 	case arg_required:
-		if(i + 1 < argc && argv[i][0] != '-')
-			arg = argv[i++];
+		if(i + 1 < argc && argv[i + 1][0] != '-')
+			arg = argv[++i];
 		else {
-			//cerr << "ERROR: option \"" << *option << "\" requires an argument.\n";
-			//displayHelp();
 			throw OptionException("option \"%s\" requires an argument.",
 				argv[i]);
 		}
@@ -177,7 +173,6 @@ void Manager::parse(int argc, char **argv) {
 					processOption(findShortName(opts[j]), i, argc, argv);
 				}
 				catch(UnknownException _) {
-					//cerr << "ERROR: option \"-" << opts[j] << "\" is unknown.\n";
 					throw OptionException("option \"-%c\" is unknown.", opts[j]);
 				}
 			}
@@ -189,7 +184,6 @@ void Manager::parse(int argc, char **argv) {
 				processOption(findLongName(&argv[i][2]), i, argc, argv);
 			}
 			catch(UnknownException _) {
-				//cerr << "ERROR: option \"" << argv[i] << "\" is unknown.\n";
 				throw OptionException("option \"%s\" is unknown.", argv[i]);
 			}
 		}
