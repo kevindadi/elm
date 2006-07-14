@@ -38,6 +38,7 @@ libelm_la_SOURCES= \
 	option_Manager.cpp \
 	option_StringOption.cpp \
 	option_ActionOption.cpp \
+	option_EnumOption.cpp \
 	Iterator.cpp \
 	Collection.cpp \
 	util_BitVector.cpp \

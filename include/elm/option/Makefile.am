@@ -5,5 +5,6 @@ includeelmoption_HEADERS = \
 	Option.h \
 	StandardOption.h \
 	StringOption.h \
-	ActionOption.h
+	ActionOption.h \
+	EnumOption.h
 

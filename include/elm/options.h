@@ -11,5 +11,6 @@
 #include <elm/option/BoolOption.h>
 #include <elm/option/StringOption.h>
 #include <elm/option/ActionOption.h>
+#include <elm/option/EnumOption.h>
 
 #endif	// ELM_OPTIONS_H
