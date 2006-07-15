@@ -14,6 +14,29 @@ namespace elm { namespace option {
  * Base class of classes used for representing options with the OptionManager class.
  */
 
+/**
+ * @typedef usage_t
+ * Defines the kind of arguments used by an option.
+ */
+
+
+/**
+ * @var usage_t arg_none
+ * This option does not require an argument.
+ */
+
+
+/**
+ * @var usage_t arg_optional
+ * Accept but does not require an argument.
+ */
+
+
+/**
+ * @var usage_t arg_required
+ * Require an argument.
+ */
+
 
 /**
  * Display the name of the option to the given output stream.
