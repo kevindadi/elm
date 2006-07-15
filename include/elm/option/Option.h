@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004, IRIT-UPS.
  *
  * elm/option/Option.h -- Option class interface.
  */
