@@ -102,7 +102,14 @@ namespace elm { namespace genstruct {
  * Evaluates to the true if the table is not empty.
  * @return	False if the table is empty, false else.
  */
-
+ 
+ 
+/**
+ * @fn void FragTable<T>::clean(void);
+ * Remove all items from the fragmeted table and release as many memory
+ * as possible.
+ */
+ 
 
 /**
  * @class FragTable::Iterator  "elm/genstruct/FragTable.h"

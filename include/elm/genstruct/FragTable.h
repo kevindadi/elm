@@ -27,6 +27,7 @@ public:
 	inline T& get(int index);
 	inline void set(int index, const T& value) const;
 	inline void add(T value);
+	inline void clean(void);
 	
 	// Operators
 	inline const T& operator[](int index) const;
@@ -70,6 +71,14 @@ template <class T>
 inline FragTable<T>::~FragTable(void) {
 	for(int i = 0; i < tab.length(); i++)
 		delete [] tab[i];
+}
+
+template <class T>
+inline void FragTable<T>::clean(void) {
+	for(int i = 1; i < tab.length(); i++)
+		delete [] tab[i];
+	tab.setLength(1);
+	cused = 0;
 }
 
 template <class T>	
