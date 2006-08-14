@@ -10,7 +10,7 @@
 namespace elm {
 	
 /**
- * @class Pair "elm/util/Pair.h"
+ * @class Pair <elm/util/Pair.h>
  * This template class is mainly useful for returning or passing in parameter
  * a data item composed of a two values.
  * @param T1	First value type.
@@ -28,6 +28,12 @@ namespace elm {
  * @var Pair::snd;
  * The second value of the pair : may be read or written.
  */
+
+
+/**
+ * @fn Pair::Pair(void);
+ * Build a pair with uninitialized content.
+ */ 
 
 
 /**

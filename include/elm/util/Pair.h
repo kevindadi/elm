@@ -15,6 +15,7 @@ class Pair {
 public:
 	T1 fst;
 	T2 snd;
+	inline Pair(void);
 	inline Pair(const T1& _fst, const T2& _snd);
 	inline Pair(const Pair<T1, T2>& pair);
 	inline Pair<T1, T2>& operator=(const Pair<T1, T2>& pair);
@@ -22,6 +23,10 @@ public:
 
 
 // Pair inlines
+template <class T1, class T2>
+inline Pair<T1, T2>::Pair(void) {
+}
+
 template <class T1, class T2>
 inline Pair<T1, T2>::Pair(const T1& _fst, const T2& _snd): fst(_fst), snd(_snd) {
 }
