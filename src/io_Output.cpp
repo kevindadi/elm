@@ -13,7 +13,7 @@
 namespace elm { namespace io {
 
 /**
- * @class Output
+ * @class Output <elm/io.h>
  * Formatted output class.
  */
 
