@@ -27,8 +27,13 @@ public:
 	
 	inline void put(const T& value);
 	inline const T& get(void);
-	inline const T& head(void) const;
+	inline T& head(void) const;
 	inline void reset(void);
+	
+	// Operators
+	inline operator bool(void) const;
+	inline T *operator->(void) const;
+	inline T& operator*(void) const;
 };
 
 // VectorQueue implementation
@@ -91,7 +96,7 @@ template <class T> inline const T& VectorQueue<T>::get(void) {
 	return buffer[res];
 }
 
-template <class T> inline const T& VectorQueue<T>::head(void) const {
+template <class T> inline T& VectorQueue<T>::head(void) const {
 	assert(hd != tl);
 	return buffer[hd];
 }
@@ -99,6 +104,18 @@ template <class T> inline const T& VectorQueue<T>::head(void) const {
 template <class T> inline void VectorQueue<T>::reset(void) {
 	hd = 0;
 	tl = 0;
+}
+
+template <class T> inline VectorQueue<T>::operator bool(void) const {
+	return !isEmpty();
+}
+
+template <class T> inline T *VectorQueue<T>::operator->(void) const {
+	return &head();
+}
+
+template <class T> inline T& VectorQueue<T>::operator*(void) const {
+	return head();
 }
 
 } } // elm::genstruct
