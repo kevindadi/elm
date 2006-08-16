@@ -1,8 +1,8 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004, IRIT-UPS.
  *
- * src/io_IOException.cpp -- IOException clas implementation.
+ * src/io_IOException.cpp -- IOException class implementation.
  */
 
 #include <string.h>
@@ -16,17 +16,20 @@ namespace elm { namespace io {
  * This exception is thrown when an IO error occurs.
  */
 
-/**
- *@fn  IOException::IOException(CString message);
- * Build a new IOException with the given message.
- */
 
 /**
- * Build an IO exception getting the error message from errno and from
- * the strerror() primitive.
+ *@fn  IOException::IOException(CString message, ...);
+ * Build a new IOException with the given message.
+ * @param message	Message formatted a-la printf.
+ * @param ...		Arguments used in the message.
  */
-IOException::IOException(void): msg(strerror(errno)) {
-}
+
+
+/**
+ *@fn  IOException::IOException(CString message, VarArg& args);
+ * Build a new IOException with the given message.
+ * @param message	Message formatted a-la printf.
+ * @param args		Arguments used in the message.
+ */
 
 } } // elm::io
-

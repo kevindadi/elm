@@ -15,14 +15,23 @@
 namespace elm { namespace io {
 
 // IOException class
-class IOException: public Exception {
+class IOException: public MessageException {
 	String msg;
 public:
-	IOException(void);
-	inline IOException(CString message): msg(message) { };
-	inline IOException(String message): msg(message) { };
-	virtual String message(void) { return msg; };	
+	inline IOException(CString message, ...);
+	inline IOException(CString message, VarArg& args);
 };
+
+// IOException inlines
+inline IOException::IOException(CString message, ...) {
+	VARARG_BEGIN(args, message)
+		buildMessage(message, args);
+	VARARG_END;
+}
+
+inline IOException::IOException(CString message, VarArg& args)
+: MessageException(message, args) {
+}
 
 } // io
 

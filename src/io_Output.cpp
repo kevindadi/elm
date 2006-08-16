@@ -15,6 +15,13 @@ namespace elm { namespace io {
 /**
  * @class Output <elm/io.h>
  * Formatted output class.
+ * 
+ * See @ref IntFormat to format integers. The code below show how to format
+ * an address with a size of 32 bits:
+ * @code
+ * 	void *p;
+ * 	cout << io::right(io::pad('0', io::width(32, io::hex(o)))) << io::endl;
+ * @endcode
  */
 
 /**
@@ -114,7 +121,7 @@ void Output::print(bool value) {
  */
 void Output::print(char chr) {
 	if(strm->write(chr) < 0)
-		throw IOException();
+		throw IOException("io error");
 }
 
 /**
@@ -143,7 +150,7 @@ void Output::print(long value) {
 	
 	// Write it
 	if(strm->write(p, buffer + sizeof(buffer) - p) < 0)
-		throw IOException();
+		throw IOException("io error");
 }
 
 
@@ -173,7 +180,7 @@ void Output::print(long long value) {
 	
 	// Write it
 	if(strm->write(p, buffer + sizeof(buffer) - p) < 0)
-		throw IOException();
+		throw IOException("io error");
 }
 
 
@@ -189,7 +196,7 @@ void Output::print(unsigned long value) {
 	
 	// Write it
 	if(strm->write(p, buffer + sizeof(buffer) - p) < 0)
-		throw IOException();
+		throw IOException("io error");
 }
 
 
@@ -205,7 +212,7 @@ void Output::print(unsigned long long value) {
 	
 	// Write it
 	if(strm->write(p, buffer + sizeof(buffer) - p) < 0)
-		throw IOException();
+		throw IOException("io error");
 }
 
 
@@ -218,7 +225,7 @@ void Output::print(double value) {
 	char buffer[32];
 	snprintf(buffer, sizeof(buffer), "%g", value);
 	if(strm->write(buffer, strlen(buffer)) < 0)
-		throw IOException();
+		throw IOException("io error");
 }
 
 /**
@@ -234,7 +241,7 @@ void Output::print(void *value) {
 		while(p != buffer)
 			*--p = '0';
 		if(strm->write(buffer, 8) < 0)
-			throw IOException();
+			throw IOException("io error");
 	}
 }
 
@@ -244,7 +251,7 @@ void Output::print(void *value) {
  */
 void Output::print(const CString str) {
 	if(strm->write(str.chars(), str.length()) < 0)
-		throw IOException();
+		throw IOException("io error");
 }
 
 /**
@@ -253,7 +260,7 @@ void Output::print(const CString str) {
  */
 void Output::print(const String& str) {
 	if(strm->write(str.chars(), str.length()) < 0)
-		throw IOException();
+		throw IOException("io error");
 }
 
 /**
@@ -262,7 +269,7 @@ void Output::print(const String& str) {
  */
 void Output::flush(void) {
 	if(strm->flush() < 0)
-		throw IOException();
+		throw IOException("io error");
 }
 
 
@@ -347,6 +354,108 @@ void Output::print(const IntFormat fmt) {
 	for(int i = 0; i < rpad; i++)
 		strm->write(fmt.pad);
 }
+
+/**
+ * @class IntFormat
+ * This class is used to perform formatting on integer passed to the @ref Output
+ * class.
+ * 
+ * It is rarely used as-is but with some inlines functions performing formatting:
+ * @ref io::base, @ref io::bin, @ref io::hex, @ref op::width, @ref io::align,
+ * @ref io::left, @ref io::center, @ref io::right, @ref io::pad,
+ * @ref io::uppercase, @ref io::lowercase.
+ */
+ 
+/**
+ * @var unsigned char IntFormat::base;
+ * Numeric base used to display the integer (default to 10).
+ */
+/**
+ * @var unsigned char IntFormat::width;
+ * Width of the field where the integer will be displayed. Default 0 for
+ * no field width constraint. If the displayed integer size is less than the
+ * width, it will be aligned according the @ref IntFormat::align attribute
+ * and padded according the @ref IntFormat::pad attribute.
+ */
+/** 
+ * @var unsigned IntFormat::align;
+ * Alignment of integer in the field. One of LEFT, CENTER or RIGHT.
+ */
+/**
+ * @var unsigned IntFormat::upper;
+ * If true, upper case characters will be used to display integer whose base
+ * is greater than 10. If false (default), lower case characters will be used.
+ */
+/**
+ * @var unsigned IntFormat::sign;
+ * If true, ever display the sign. If false (default), only display negative
+ * sign.
+ */
+/**
+ * @var char IntFormat::pad;
+ * Character used to pad the displayed integer in the field (default '0').
+ */
+
+
+/**
+ * @fn IntFormat base(int base, IntFormat fmt);
+ * Format an integer with the given base.
+ * @param base	Numeric base.
+ * @param fmt	Displayed integer.
+ */
+/**
+ * @fn IntFormat bin(IntFormat fmt);
+ * Used a binary base to display an integer.
+ * @param fmt	Displayed integer.
+ */
+/**
+ * @fn IntFormat hex(IntFormat fmt);
+ * Used an hexadecimal base to display an integer.
+ * @param fmt	Displayed integer.
+ */
+/**
+ * @fn IntFormat width(int width, IntFormat fmt);
+ * Select the width of field where the integer will be displayed to.
+ * @param width	Field width.
+ * @param fmt	Displayed integer.
+ */
+/**
+ * @fn IntFormat align(alignment_t align, IntFormat fmt);
+ * Used the given alignment to display the integer in its field.
+ * @param align		Alignment.
+ * @param fmt		Displayed integer.
+ */
+/**
+ * @fn IntFormat left(IntFormat fmt);
+ * Align the integer to the left in its field.
+ * @param fmt	Displayed integer.
+ */
+/**
+ * @fn IntFormat right(IntFormat fmt);
+ * Align the integer to the right in its field.
+ * @param fmt	Displayed integer.
+ */
+/**
+ * @fn IntFormat center(IntFormat fmt);
+ * Center the integer in its field.
+ * @param fmt	Displayed integer.
+ */
+/**
+ * @fn IntFormat pad(char pad, IntFormat fmt);
+ * Select the padding character.
+ * @param pad	Padding character.
+ * @param fmt	Displayed integer.
+ */
+/**
+ * @fn IntFormat uppercase(IntFormat fmt);
+ * Select uppercase characters for digits bigger than 10.
+ * @param fmt	Displayed integer.
+ */
+/**
+ * @fn IntFormat lowercase(IntFormat fmt);
+ * Select lowercase characters for digits bigger than 10.
+ * @param fmt	Displayed integer.
+ */
 
 } // io
 

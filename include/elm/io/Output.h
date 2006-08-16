@@ -1,13 +1,12 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004-2006, IRIT-UPS.
  *
  * elm/io/Output.h -- interface for Output class.
  */
 #ifndef ELM_IO_OUTPUT_H
 #define ELM_IO_OUTPUT_H
 
-#include <stdarg.h>
 #include <elm/utility.h>
 #include <elm/io/OutStream.h>
 #include <elm/util/VarArg.h>
