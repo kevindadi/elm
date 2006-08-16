@@ -32,6 +32,7 @@ void test_vararg(void);
 void test_vector(void);
 void test_vector_queue(void);
 #ifdef HAS_LIBXML
+	void test_serial(void);
 	void test_xom(void);
 #endif
 
@@ -62,6 +63,7 @@ struct test_t {
 	{ "vararg", test_vararg },
 	{ "vector_queue", test_vector_queue },
 	#ifdef HAS_LIBXML
+		{ "serial", test_serial },
 		{ "xom", test_xom },
 	#endif
 	{ "", 0 }

@@ -37,7 +37,9 @@ test_SOURCES		=\
 						test_vector_queue.cpp
 
 if HAS_LIBXML
-test_SOURCES += test_xom.cpp
+test_SOURCES += \
+	test_xom.cpp \
+	test_serial.cpp
 endif
 
 
