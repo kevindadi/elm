@@ -10,7 +10,7 @@
 namespace elm {
 
 /**
- * @class MessageException
+ * @class MessageException <elm/utility.h>
  * This class is dedicated to the exception management with a human-readable
  * message.
  */

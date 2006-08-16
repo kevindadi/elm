@@ -11,20 +11,13 @@
 #include <elm/string.h>
 #include <elm/util/Option.h>
 #include <elm/util/Pair.h>
+#include <elm/util/MessageException.h>
 
 namespace elm {
 
-// Exception class
-class Exception {
-public:
-	virtual ~Exception(void);
-	virtual String message(void);
-};
-
-
 // Error class
-class Error: public Exception {
-};
+/*class Error: public Exception {
+};*/
 
 
 // HashKey class

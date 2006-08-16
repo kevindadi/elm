@@ -8,8 +8,8 @@
 #define ELM_UTIL_MESSAGE_EXCEPTION_H
 
 #include <assert.h>
+#include <elm/util/Exception.h>
 #include <elm/string.h>
-#include <elm/utility.h>
 #include <elm/util/VarArg.h>
 
 namespace elm {
