@@ -197,6 +197,8 @@ void String::toc(void) {
  * @fn CString String::toCString(void);
  * Convert the current string to a CString object.
  * @return	Matching CString object.
+ * @warning The returned CString contains a pointer to a buffer owned by the
+ * current string. This buffer is only valid while the current is living.
  */
 
 
