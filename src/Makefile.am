@@ -5,7 +5,11 @@ INCLUDES=-I../include @INCLTDL@
 AM_CXXFLAGS = @LIBXML_CFLAGS@
 
 libelm_la_LDFLAGS=-version-info 0:1:0
-libelm_la_LIBADD = @LIBLTDL@ @LIBXML_LIBS@
+libelm_la_LIBADD = @LIBLTDL@
+if HAS_LIBXML
+libelm_la_LIBADD += @LIBXML_LIBS@
+endif
+
 DEFS=@ELM_DEBUG_DEFS@
 
 libelm_la_SOURCES= \
