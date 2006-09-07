@@ -26,6 +26,8 @@ class DLList {
 	
 	inhstruct::DLList list;
 public:
+	inline ~DLList(void);
+
 	inline T first(void) const;
 	inline T last(void) const;
 	inline bool isEmpty(void) const;
@@ -83,6 +85,10 @@ template <class T> T DLList<T>::DLNode::value(void) const {
 
 
 // DLList<T> methods
+template <class T> inline DLList<T>::~DLList(void) {
+	clear();
+}
+
 template <class T> T DLList<T>::first(void) const {
 	return ((DLNode *)list.first())->value();
 }
@@ -133,7 +139,8 @@ inline void DLList<T>::removeAll(const T& item) {
 
 template <class T> void DLList<T>::clear(void) {
 	DLNode *node;
-	while(node = (DLNode *)list.first()) {
+	while(!list.isEmpty()) {
+		DLNode *node = (DLNode *)list.first();
 		list.removeFirst();
 		delete node;
 	}
