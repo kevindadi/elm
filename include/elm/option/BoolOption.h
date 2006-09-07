@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004-06, IRIT-UPS.
  *
  * elm/option/BoolOption.h -- BoolOption class interface.
  */
