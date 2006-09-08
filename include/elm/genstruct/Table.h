@@ -85,19 +85,19 @@ inline T *Table<T>::table(void) {
 
 template <class T>
 inline T Table<T>::get(int index) const {
-	assert(index < cnt);
+	assert(index >= 0 && index < cnt);
 	return tab[index];
 }
 
 template <class T>
 inline T& Table<T>::get(int index) {
-	assert(index < cnt);
+	assert(index >= 0 && index < cnt);
 	return tab[index];
 }
 
 template <class T>
 inline void Table<T>::set(int index, const T& value) {
-	assert(index < cnt);
+	assert(index >= 0 && index < cnt);
 	tab[index] = value;
 }
 
