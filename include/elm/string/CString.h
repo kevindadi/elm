@@ -7,6 +7,8 @@
 #ifndef ELM_STRING_CSTRING_H
 #define ELM_STRING_CSTRING_H
 
+#include <string.h>
+
 namespace elm {
 
 class String;
