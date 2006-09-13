@@ -15,9 +15,9 @@ namespace elm { namespace genstruct {
 // FragTable class
 template <class T> class FragTable {
 	genstruct::Vector<T *> tab;
-	int cused, csize, msk, shf;
+	int size, msk, shf, used;
 public:
-	inline FragTable(int chunk_size = 256);
+	inline FragTable(int size_pow = 8);
 	inline ~FragTable(void);
 	
 	// Methods
@@ -61,10 +61,9 @@ public:
 
 // FragTable<T> Inlines
 template <class T>
-inline FragTable<T>::FragTable(int chunk_size): cused(0),
-csize(1 << chunk_size), msk(csize - 1), shf(chunk_size) {
-	assert(chunk_size > 0);
-	tab.add(new T[csize]);
+inline FragTable<T>::FragTable(int size_pow)
+: size(1 << size_pow), msk(size - 1), shf(size_pow), used(size) {
+	assert(size_pow > 0);
 }
 
 template <class T>
@@ -75,20 +74,20 @@ inline FragTable<T>::~FragTable(void) {
 
 template <class T>
 inline void FragTable<T>::clean(void) {
-	for(int i = 1; i < tab.length(); i++)
+	for(int i = 0; i < tab.length(); i++)
 		delete [] tab[i];
-	tab.setLength(1);
-	cused = 0;
+	tab.setLength(0);
+	used = size;
 }
 
 template <class T>	
 inline bool FragTable<T>::isEmpty(void) const {
-	return tab.length() == 1 && cused == 0;
+	return tab.length() == 0;
 }
 
 template <class T>
 inline int FragTable<T>::length(void) const {
-	return ((tab.length() - 1) << shf) + cused;
+	return ((tab.length() - 1) << shf) + used;
 }
 
 template <class T>
@@ -111,11 +110,11 @@ inline void FragTable<T>::set(int index, const T& value) const {
 
 template <class T>	
 inline void FragTable<T>::add(T value) {
-	if(cused >= csize) {
-		tab.add(new T[csize]);
-		cused = 0;
+	if(used >= size) {
+		tab.add(new T[size]);
+		used = 0;
 	}
-	tab[tab.length() - 1][cused++] = value;
+	tab[tab.length() - 1][used++] = value;
 }
 
 template <class T>
@@ -148,7 +147,7 @@ inline FragTable<T>::Iterator::Iterator(const FragTable<T>& array)
 
 template <class T>
 inline void FragTable<T>::Iterator::next(void) {
-	assert(i < arr.length());
+	assert(i < len);
 	i++;
 }
 
