@@ -55,6 +55,7 @@ public:
 	inline Output(OutStream& stream): strm(&stream) { };
 	inline OutStream& stream(void) const { return *strm; };
 	inline void setStream(OutStream& stream) { strm = &stream; };
+	void flush(void);
 	
 	void print(bool value);
 	void print(char chr);
@@ -70,7 +71,6 @@ public:
 	void print(const IntFormat fmt);
 	void format(CString fmt, ...);
 	void format(CString fmt, VarArg& args);
-	void flush(void);
 	
 	inline Output& operator<<(bool value) { print(value); return *this; };
 	inline Output& operator<<(char value) { print(value); return *this; };

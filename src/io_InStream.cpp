@@ -48,4 +48,13 @@ int InStream::read(void) {
 		return FAILED;
 }
 
+
+/**
+ * Return a message for the last error.
+ * @return	Message of the last error.
+ */
+CString InStream::lastErrorMessage(void) {
+	return "";
+}
+
 } } // elm::io

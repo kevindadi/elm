@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004-06, IRIT - UPS.
  *
  * src/op_Output.cpp-- Output class implementation.
  */
@@ -121,7 +121,7 @@ void Output::print(bool value) {
  */
 void Output::print(char chr) {
 	if(strm->write(chr) < 0)
-		throw IOException("io error %d", __LINE__);
+		throw IOException(strm->lastErrorMessage());
 }
 
 /**
@@ -150,7 +150,7 @@ void Output::print(long value) {
 	
 	// Write it
 	if(strm->write(p, buffer + sizeof(buffer) - p) < 0)
-		throw IOException("io error %d", __LINE__);
+		throw IOException(strm->lastErrorMessage());
 }
 
 
@@ -180,7 +180,7 @@ void Output::print(long long value) {
 	
 	// Write it
 	if(strm->write(p, buffer + sizeof(buffer) - p) < 0)
-		throw IOException("io error %d", __LINE__);
+		throw IOException(strm->lastErrorMessage());
 }
 
 
@@ -196,7 +196,7 @@ void Output::print(unsigned long value) {
 	
 	// Write it
 	if(strm->write(p, buffer + sizeof(buffer) - p) < 0)
-		throw IOException("io error %d", __LINE__);
+		throw IOException(strm->lastErrorMessage());
 }
 
 
@@ -212,7 +212,7 @@ void Output::print(unsigned long long value) {
 	
 	// Write it
 	if(strm->write(p, buffer + sizeof(buffer) - p) < 0)
-		throw IOException("io error %d", __LINE__);
+		throw IOException(strm->lastErrorMessage());
 }
 
 
@@ -225,7 +225,7 @@ void Output::print(double value) {
 	char buffer[32];
 	snprintf(buffer, sizeof(buffer), "%g", value);
 	if(strm->write(buffer, strlen(buffer)) < 0)
-		throw IOException("io error %d", __LINE__);
+		throw IOException(strm->lastErrorMessage());
 }
 
 /**
@@ -241,7 +241,7 @@ void Output::print(void *value) {
 		while(p != buffer)
 			*--p = '0';
 		if(strm->write(buffer, 8) < 0)
-			throw IOException("io error %d", __LINE__);
+			throw IOException(strm->lastErrorMessage());
 	}
 }
 
@@ -251,7 +251,7 @@ void Output::print(void *value) {
  */
 void Output::print(const CString str) {
 	if(strm->write(str.chars(), str.length()) < 0)
-		throw IOException("io error %d", __LINE__);
+		throw IOException(strm->lastErrorMessage());
 }
 
 /**
@@ -260,7 +260,7 @@ void Output::print(const CString str) {
  */
 void Output::print(const String& str) {
 	if(strm->write(str.chars(), str.length()) < 0)
-		throw IOException("io error %d", __LINE__);
+		throw IOException(strm->lastErrorMessage());
 }
 
 /**
@@ -269,7 +269,7 @@ void Output::print(const String& str) {
  */
 void Output::flush(void) {
 	if(strm->flush() < 0)
-		throw IOException("io error %d", __LINE__);
+		throw IOException(strm->lastErrorMessage());
 }
 
 

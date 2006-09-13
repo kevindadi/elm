@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004-06, IRIT - UPS.
  *
  * elm/io/OutStream.h -- interface for OutStream class.
  */
@@ -21,7 +21,7 @@ public:
 	inline int fd(void) const { return _fd; };
 	virtual int write(const char *buffer, int size);	
 	virtual int flush(void);
-	elm::CString lastErrorMessage(void);
+	virtual CString lastErrorMessage(void);
 };
 
 } } // elm::io

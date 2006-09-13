@@ -42,4 +42,13 @@ int OutStream::write(char byte) {
  * @return 0 for success, less than 0 for error.
  */
 
+
+/**
+ * Return a message for the last error.
+ * @return	Message of the last error.
+ */
+CString OutStream::lastErrorMessage(void) {
+	return "";
+}
+
 } } // elm::io

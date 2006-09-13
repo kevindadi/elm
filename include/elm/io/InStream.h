@@ -7,6 +7,8 @@
 #ifndef ELM_IO_INSTREAM_H
 #define ELM_IO_INSTREAM_H
 
+#include <elm/string/CString.h>
+
 namespace elm { namespace io {
 
 // InStream class
@@ -17,6 +19,7 @@ public:
 	virtual ~InStream(void) { };
 	virtual int read(char *buffer, int size) = 0;
 	virtual int read(void);
+	virtual CString lastErrorMessage(void);
 };
 
 } }	// elm::io

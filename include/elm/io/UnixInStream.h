@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2005-06, IRIT - UPS.
  *
  * elm/io/InStream.h -- interface for InStream class.
  */
@@ -20,6 +20,7 @@ public:
 	inline int fd(void) const { return _fd; };
 	virtual int read(char *buffer, int size);
 	virtual int read(void) { return InStream::read(); };
+	virtual CString lastErrorMessage(void);
 };
 
 } } // elm::io

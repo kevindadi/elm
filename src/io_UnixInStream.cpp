@@ -1,12 +1,13 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004-06, IRIT - UPS.
  *
  * src/UnixInStream.cpp -- implementation for UnixInStream class.
  */
 
 #include <sys/types.h>
 #include <unistd.h>
+#include <errno.h>
 #include <elm/io/UnixInStream.h>
 
 namespace elm { namespace io {
@@ -35,6 +36,13 @@ namespace elm { namespace io {
  */	
 int UnixInStream::read(char *buffer, int size) {
 	return ::read(_fd, buffer, size);
+}
+
+
+/**
+ */
+CString UnixInStream::lastErrorMessage(void) {
+	return strerror(errno);
 }
 
 } } // elm::io

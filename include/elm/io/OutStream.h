@@ -7,6 +7,8 @@
 #ifndef ELM_IO_OUTSTREAM_H
 #define ELM_IO_OUTSTREAM_H
 
+#include <elm/string/CString.h>
+
 namespace elm { namespace io {
 
 // OutStream class
@@ -16,6 +18,7 @@ public:
 	virtual int write(const char *buffer, int size) = 0;
 	virtual int write(char byte);
 	virtual int flush(void) = 0;
+	virtual CString lastErrorMessage(void);
 };
 
 // Standard IO streams	

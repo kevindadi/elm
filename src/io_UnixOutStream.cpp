@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004-06, IRIT - UPS.
  *
  * src/io_UnixOutStream.cpp -- implementation of UnixOutStream class.
  */
