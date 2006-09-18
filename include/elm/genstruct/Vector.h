@@ -56,7 +56,7 @@ public:
 		int i;
 	public:
 		inline Iterator(const Vector& vec);
-		inline Iterator(Iterator& iter);
+		inline Iterator(const Iterator& iter);
 		inline bool ended(void) const;
 		inline T item(void) const;
 		inline void next(void);
@@ -184,7 +184,7 @@ template <class T>
 inline Vector<T>::Iterator::Iterator(const Vector& vec): _vec(vec), i(0) {
 }
 template <class T>
-inline Vector<T>::Iterator::Iterator(Vector<T>::Iterator& iter)
+inline Vector<T>::Iterator::Iterator(const Vector<T>::Iterator& iter)
 : _vec(iter._vec), i(iter.i) {
 }
 template <class T>
