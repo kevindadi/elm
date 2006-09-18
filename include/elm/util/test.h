@@ -48,6 +48,9 @@ const T& result, const T& reference) {
 #define ELM_CHECK_EQUAL(res, ref)	__case.check_equal(__FILE__, __LINE__, #res " == " #ref, res, ref)
 #define ELM_CHECK_EXCEPTION(exn, stat)	{ __case.test(__FILE__, __LINE__, #stat); \
 	try { stat; __case.failed(); } catch(exn) { __case.succeeded(); } }
+#define ELM_FAIL_ON_EXCEPTION(exn, stat) { __case.test(__FILE__, __LINE__, #stat); \
+	try { stat; __case.succeeded(); } \
+	catch(exn e) { __case.failed(); cerr << "exception = " << e.message() << elm::io::endl; } }
 #ifndef ELM_NO_SHORTCUT
 #	define CHECK_BEGIN(name) ELM_CHECK_BEGIN(name)
 #	define CHECK(tst) ELM_CHECK(tst)
@@ -55,6 +58,7 @@ const T& result, const T& reference) {
 #	define CHECK_EQUAL(res, ref) ELM_CHECK_EQUAL(res, ref)
 #	define CHECK_END ELM_CHECK_END
 #	define CHECK_EXCEPTION(exn, stat) ELM_CHECK_EXCEPTION(exn, stat)
+#	define FAIL_ON_EXCEPTION(exn, stat) ELM_FAIL_ON_EXCEPTION(exn, stat)
 #endif
 
 } // elm
