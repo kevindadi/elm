@@ -6,6 +6,7 @@
  */
 
 #include <elm/io/InStream.h>
+#include <elm/io/UnixInStream.h>
 
 namespace elm { namespace io {
 

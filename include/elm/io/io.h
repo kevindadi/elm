@@ -11,6 +11,7 @@
 #include <elm/io/InStream.h>
 #include <elm/io/OutStream.h>
 #include <elm/io/Output.h>
+#include <elm/io/Input.h>
 
 namespace elm { namespace io {
 
@@ -38,6 +39,7 @@ inline IOException::IOException(CString message, VarArg& args)
 // Standard environment
 extern io::Output cout;
 extern io::Output cerr;
+extern io::Input cin;
 
 } // elm
 

@@ -18,6 +18,7 @@ libelm_la_SOURCES= \
 	string_StringBuffer.cpp \
 	io_OutStream.cpp \
 	io_UnixOutStream.cpp \
+	io_Input.cpp \
 	io_Output.cpp \
 	io_InFileStream.cpp \
 	io_InStream.cpp \

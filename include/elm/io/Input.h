@@ -15,11 +15,14 @@ namespace elm { namespace io {
 // Input class
 class Input {
 	InStream *strm;
+	int buf;
+	int get(void);
+	void back(int chr);
 public:
-	inline Input(void): strm(&stdin) { };
-	inline Input(InStream& stream): strm(&stream) { };
+	inline Input(void): strm(&stdin), buf(-1) { };
+	inline Input(InStream& stream): strm(&stream), buf(-1) { };
 	inline InStream& stream(void) const { return *strm; };
-	inline void setStream(InStream& stream) { strm = &stream; };
+	inline void setStream(InStream& stream) { strm = &stream; buf = -1; };
 	
 	bool scanBool(void);
 	char scanChar(void);
@@ -28,10 +31,10 @@ public:
 	double scanDouble(void);
 	String scanWord(void);
 	String scanLine(void);
-	bool swallow(char chr);
-	bool swallow(CString string);
-	bool swallow(String string);
-	bool swallowBlank(void);
+	void swallow(char chr);
+	void swallow(CString string);
+	void swallow(const String& string);
+	void swallowBlank(void);
 	
 	inline Input& operator>>(bool& value) { value = scanBool(); return *this; };
 	inline Input& operator>>(char& value) { value = scanChar(); return *this; };
@@ -47,6 +50,9 @@ public:
 	inline Input& operator>>(float& value) { value = scanDouble(); return *this; };
 	inline Input& operator>>(double& value) { value = scanDouble(); return *this; };
 	inline Input& operator>>(String& value) { value = scanLine(); return *this; };
+	inline Input& operator>>(char value) { swallow(value); return *this; };
+	inline Input& operator>>(CString value) { swallow(value); return *this; };
+	inline Input& operator>>(const String& value) { swallow(value); return *this; };
 };
 
 } } // elm::io

@@ -22,6 +22,9 @@ public:
 	virtual CString lastErrorMessage(void);
 };
 
-} }	// elm::io
+// Standard IO streams	
+extern InStream& stdin;
+
+} }	// io::elm
 
 #endif // ELM_IO_INSTREAM_H
