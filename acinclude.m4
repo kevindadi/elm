@@ -1,51 +1,68 @@
+# Check for a module in pkg-config
+#	1 variable base
+# 	2 library name
+# 	3 minimal version
+# 	4 To do when found
+# 	5 To do when not found
+AC_DEFUN([ELM_CHECK_PKG_CONFIG], [
+	HAS_$1=no
+	AS_IF(test -z "$PKG_CONFIG",
+		[
+			AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+			PKG_CONFIG_MIN_VERSION=0.9.0
+			AS_IF($PKG_CONFIG --atleast-pkgconfig-version $PKG_CONFIG_MIN_VERSION,
+				,
+				PKG_CONFIG=no)
+		])
+	AS_IF(test "$PKG_CONFIG" != "no",
+		[
+			AC_MSG_CHECKING(for $2-$3)
+			AS_IF($PKG_CONFIG --exists "$2-$3",
+				[
+					AC_MSG_RESULT(yes)
+					HAS_$1=yes
+					AC_MSG_CHECKING($1_CFLAGS)
+					$1_CFLAGS=`$PKG_CONFIG --cflags "$2-$3"`
+					AC_MSG_RESULT($$1_CFLAGS)
+					AC_MSG_CHECKING($1_LIBS)
+					$1_LIBS=`$PKG_CONFIG --libs "$2-$3"`
+					AC_MSG_RESULT($$1_LIBS)
+				],
+				[	AC_MSG_RESULT([no]) ])
+		])
+	AS_IF(test "$HAS_$1" = "yes", [$4], [$5])	
+])
 
-AC_DEFUN(ELM_CHECK_MODULES, [
-	succeeded=no
 
-	if test -z "$PKG_CONFIG"; then
-		AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
-	fi
-
-	if test "$PKG_CONFIG" = "no" ; then
-		echo "*** The pkg-config script could not be found. Make sure it is"
-		echo "*** in your path, or set the PKG_CONFIG environment variable"
-		echo "*** to the full path to pkg-config."
-		echo "*** Or see http://www.freedesktop.org/software/pkgconfig to get  pkg-config."
-	else
-		PKG_CONFIG_MIN_VERSION=0.9.0
-		if $PKG_CONFIG --atleast-pkgconfig-version $PKG_CONFIG_MIN_VERSION; then
-			AC_MSG_CHECKING(for $2)
-
-			if $PKG_CONFIG --exists "$2" ; then
-				AC_MSG_RESULT(yes)
-				succeeded=yes
-
-				AC_MSG_CHECKING($1_CFLAGS)
-				$1_CFLAGS=`$PKG_CONFIG --cflags "$2"`
-				AC_MSG_RESULT($$1_CFLAGS)
-
-				AC_MSG_CHECKING($1_LIBS)
-				$1_LIBS=`$PKG_CONFIG --libs "$2"`
-				AC_MSG_RESULT($$1_LIBS)
-			else
-				$1_CFLAGS=""
-				$1_LIBS=""
-				AC_MSG_RESULT([no])
-			fi
-
-			AC_SUBST($1_CFLAGS)
-			AC_SUBST($1_LIBS)
-		else
-			echo "*** Your version of pkg-config is too old. You need version $PKG_CONFIG_MIN_VERSION or newer."
-			echo "*** See http://www.freedesktop.org/software/pkgconfig";
-		fi
-	fi
-
-	if test $succeeded = yes; then
-		ifelse([$3], , :, [$3])
-	else
-		ifelse([$4], , AC_MSG_ERROR([Library requirements ($2) not met; consider 
-			adjusting the PKG_CONFIG_PATH environment variable if your libraries are in a 
-			nonstandard prefix so pkg-config can find them.]), [$4])
-	fi
+# Check for a existence of xxx-config
+#	1 variable base
+#	2 library name
+#	3 minimal version
+#	4 To do when found
+#	5 To do when not found
+AC_DEFUN([ELM_CHECK_CONFIG], [
+	HAS_$1=no
+	AC_MSG_CHECKING([for $2-config])
+	[AC_PATH_PROG([$1_CONFIG], [$2-config], [no])]
+	AS_IF(test "$1_CONFIG" = "no",
+		[ AC_MSG_RESULT(no) ],
+		[
+			AC_MSG_RESULT([$1_CONFIG])
+			AC_MSG_CHECKING(for $2-$3)
+			curver=`$2-config --version`
+			AS_IF(
+				test "$curver" < "$3",
+				[AC_MSG_RESULT([bad version : $curver at least required !])],
+				[
+					AC_MSG_RESULT(yes)
+					HAS_$1=yes
+					AC_MSG_CHECKING($1_CFLAGS)
+					$1_CFLAGS=`$1-config --cflags`
+					AC_MSG_RESULT($$1_CFLAGS)
+					AC_MSG_CHECKING($1_LIBS)
+					$1_LIBS=`$1-config --libs`
+					AC_MSG_RESULT($$1_LIBS)
+				])
+		])
+	AS_IF(test "$HAS_$1" = "yes", $4, $5)	
 ])
