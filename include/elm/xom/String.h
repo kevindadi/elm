@@ -20,10 +20,7 @@ namespace elm { namespace xom {
 typedef unsigned char char_t;
 
 // String class
-class String {
-protected:
-	const char_t *buf;
-	static const char_t null_buf[1];
+class String: public CString {
 public:
 
 	// Constructors
@@ -35,55 +32,38 @@ public:
 	// Buffer management
 	
 	// Accessors
-	inline const char_t *buffer(void) const;
 	inline void copy(void);
 	inline void free(void);
 	
 	// Operators
-	inline operator const char *(void) const;
 	inline String& operator=(const String& string);
 	inline operator CString(void) const;
+	inline operator char_t *(void) const;
 };
-
-inline elm::io::Output& operator<<(elm::io::Output& out, const String& string) {
-	out.print((const char *)(string.buffer()));
-	return out;
-}
 
 
 // String inlines
-inline String::String(void): buf(null_buf) {
+inline String::String(void) {
 }
 
 inline String::String(const char *str)
-: buf(str ? (char_t *)str : null_buf) {
+: CString(str) {
 }
 
 inline String::String(const char_t *str)
-: buf(str ? str : null_buf) {
+: CString((const char *)str) {
 }
 
-inline String::String(const String& string): buf(string.buf) {
-}
-
-
-inline const char_t *String::buffer(void) const {
-	return buf;
+inline String::String(const String& string): CString(string) {
 }
 
 inline void String::copy(void) {
-	buf = (char_t *)strdup((char *)buf);
+	buf = strdup(chars());
 }
 
 inline void String::free(void) {
-	if(buf != null_buf) {
-		::free((void *)buf);
-		buf = null_buf;
-	}
-}
-
-inline String::operator const char *(void) const {
-	return (const char *)buf;
+	::free((void *)buf);
+	buf = "";
 }
 
 inline String& String::operator=(const String& string) {
@@ -92,6 +72,10 @@ inline String& String::operator=(const String& string) {
 
 inline String::operator CString(void) const {
 	return (const char *)buf;
+}
+
+inline String::operator char_t *(void) const {
+	return (char_t *)buf;
 }
 
 } } // elm::xom

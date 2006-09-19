@@ -71,6 +71,7 @@ libelm_la_SOURCES += \
 	xom_Builder.cpp \
 	xom_Document.cpp \
 	xom_Element.cpp \
+	xom_Elements.cpp \
 	xom_Node.cpp \
 	xom_NodeFactory.cpp \
 	xom_ParentNode.cpp \

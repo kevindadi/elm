@@ -3,6 +3,7 @@ includeelmxom_HEADERS = \
 	Builder.h \
 	Document.h \
 	Element.h \
+	Elements.h \
 	Node.h \
 	NodeFactory.h \
 	ParentNode.h \

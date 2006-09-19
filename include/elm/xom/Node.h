@@ -37,6 +37,7 @@ public:
 	} kind_t;
 protected:
 	friend class Builder;
+	friend class Elements;
 	void *node;
 	Node(void *_node);
 	Node *make(void *node);
