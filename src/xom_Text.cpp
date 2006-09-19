@@ -20,7 +20,7 @@ namespace elm { namespace xom {
  * Build a new text node.
  * @param data	Content of the text node.
  */
-Text::Text(String data): Node(xmlNewText(data.buffer())) {
+Text::Text(String data): Node(xmlNewText(data)) {
 	assert(node);
 }
 
@@ -46,7 +46,7 @@ Node *Text::copy(void) {
  * @param data	Text to put in.
  */
 void Text::setValue(String data) {
-	xmlNodeSetContent(NODE(node), data.buffer());
+	xmlNodeSetContent(NODE(node), data);
 }
 
 

@@ -8,6 +8,7 @@
 #include "xom_macros.h"
 #include <elm/xom/Element.h>
 #include <elm/xom/Text.h>
+#include <elm/xom/Elements.h>
 
 namespace elm { namespace xom {
 
@@ -25,17 +26,17 @@ namespace elm { namespace xom {
 void *Element::makeNS(String name, String uri) {
 	int len;
 	xmlNodePtr node = 0;
-	const xmlChar *local_name = xmlSplitQName3(name.buffer(), &len);
+	const xmlChar *local_name = xmlSplitQName3(name, &len);
 	if(!local_name) {
-		node = xmlNewNode(NULL, name.buffer());
-		xmlNewNs(node, uri.buffer(), NULL);
+		node = xmlNewNode(NULL, name);
+		xmlNewNs(node, uri, NULL);
 	}
 	else {
 		node = xmlNewNode(NULL, local_name);
 		char_t prefix[len + 1];
-		memcpy(prefix, name.buffer(), len);
+		memcpy(prefix, &name, len);
 		prefix[len] = '\0';
-		NODE(node)->ns = xmlNewNs(node, uri.buffer(), prefix);
+		NODE(node)->ns = xmlNewNs(node, uri, prefix);
 	}
 	return node;
 }
@@ -55,7 +56,7 @@ Element::Element(void *node): ParentNode(node) {
  * @param name the name of the element 
  * @throw IllegalNameException if name is not a legal XML 1.0 non-colonized name.
  */
-Element::Element(String name): ParentNode(xmlNewNode(NULL, name.buffer())) {
+Element::Element(String name): ParentNode(xmlNewNode(NULL, name)) {
 	// !!TODO!! Check the validity of the name
 }
 
@@ -149,7 +150,7 @@ void Element::addNamespaceDeclaration(String prefix, String uri) {
  * @throw IllegalAddException if this node cannot have children of this type.
  */
 void Element::appendChild(String text) {
-	xmlNodeAddContent(NODE(node), text.buffer());
+	xmlNodeAddContent(NODE(node), text);
 }
 
 
@@ -225,7 +226,7 @@ int	Element::getAttributeCount(void) {
  * @return the value of the attribute of this element with the specified name.
  */
 Option<String> Element::getAttributeValue(String name) {
-	xmlChar *result = xmlGetProp(NODE(node), name.buffer());
+	xmlChar *result = xmlGetProp(NODE(node), name);
 	if(!result)
 		return none;
 	else
@@ -242,7 +243,7 @@ Option<String> Element::getAttributeValue(String name) {
  * and namespace.
  */
 Option<String> Element::getAttributeValue(String localName, String ns) {
-	xmlChar *result = xmlGetNsProp(NODE(node), localName.buffer(), ns.buffer());
+	xmlChar *result = xmlGetNsProp(NODE(node), localName, ns);
 	if(!result)
 		return none;
 	else
@@ -255,8 +256,11 @@ Option<String> Element::getAttributeValue(String localName, String ns) {
  * @return a comatose list containing all child elements of this element.
  */
 Elements *Element::getChildElements(void) {
-	// !!TODO!!
-	assert(0);
+	Elements *elems = new Elements();
+	for(xmlNodePtr cur = NODE(node)->children; cur; cur = cur->next) 
+		if(cur->type == XML_ELEMENT_NODE)
+			elems->elems.add((Element *)make(cur));
+	return elems;
 }
 
 
@@ -268,8 +272,12 @@ Elements *Element::getChildElements(void) {
  * the specified name.
  */
 Elements *Element::getChildElements(String name) {
-	// !!TODO!!
-	assert(0);
+	Elements *elems = new Elements;
+	for(xmlNodePtr cur = NODE(node)->children; cur; cur = cur->next) 
+		if(cur->type == XML_ELEMENT_NODE
+		&& name == String(cur->name))
+			elems->elems.add((Element *)make(cur));
+	return elems;
 }
 
 
@@ -285,8 +293,13 @@ Elements *Element::getChildElements(String name) {
  * the specified name in the specified namespace.
  */
 Elements *Element::getChildElements(String localName, String ns) {
-	// !!TODO!!
-	assert(0);
+	Elements *elems = new Elements;
+	for(xmlNodePtr cur = NODE(node)->children; cur; cur = cur->next) 
+		if(cur->type == XML_ELEMENT_NODE
+		&& localName == String(cur->name)
+		&& ns == String(cur->ns->href))
+			elems->elems.add((Element *)make(cur));
+	return elems;
 }
 
 
@@ -298,8 +311,11 @@ Elements *Element::getChildElements(String localName, String ns) {
  * or null if there is no such element.
  */
 Element	*Element::getFirstChildElement(String name) {
-	// !!TODO!!
-	assert(0);
+	for(xmlNodePtr cur = NODE(node)->children; cur; cur = cur->next)
+		if(cur->type == XML_ELEMENT_NODE
+		&& name == String(cur->name))
+			return (Element *)make(cur);
+	return 0;
 }
 
 
@@ -312,8 +328,12 @@ Element	*Element::getFirstChildElement(String name) {
  * namespace, or null if there is no such element.
  */
 Element	*Element::getFirstChildElement(String localName, String ns) {
-	// !!TODO!!
-	assert(0);
+	for(xmlNodePtr cur = NODE(node)->children; cur; cur = cur->next) 
+		if(cur->type == XML_ELEMENT_NODE
+		&& localName == String(cur->name)
+		&& ns == String(cur->ns->href))
+			return (Element *)make(cur);
+	return 0;
 }
 
 
