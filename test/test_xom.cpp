@@ -6,10 +6,7 @@
  */
 
 #include <elm/util/test.h>
-#include <elm/xom/Builder.h>
-#include <elm/xom/Document.h>
-#include <elm/xom/Element.h>
-#include <elm/xom/Text.h>
+#include <elm/xom.h>
 
 using namespace elm;
 using namespace xom;
@@ -60,6 +57,25 @@ void test_xom(void) {
 	Element *root_element = doc->getRootElement();
 	CHECK(root_element);
 	display_element(root_element, 0);
+	
+	// Look check Elements
+	{
+		Element *celem = root_element->getFirstChildElement("c");
+		CHECK(celem);
+		Elements *elems = celem->getChildElements();
+		CHECK_EQUAL(elems->size(), 4);
+		CHECK_EQUAL(elems->get(0)->getLocalName(), xom::String("d"));
+		CHECK_EQUAL(elems->get(1)->getLocalName(), xom::String("d"));
+		CHECK_EQUAL(elems->get(2)->getLocalName(), xom::String("c"));
+		CHECK_EQUAL(elems->get(3)->getLocalName(), xom::String("d"));
+		delete elems;
+		elems = celem->getChildElements("d");
+		CHECK_EQUAL(elems->size(), 3);
+		CHECK_EQUAL(elems->get(0)->getLocalName(), xom::String("d"));
+		CHECK_EQUAL(elems->get(1)->getLocalName(), xom::String("d"));
+		CHECK_EQUAL(elems->get(2)->getLocalName(), xom::String("d"));
+		delete elems;
+	}
 	
 	CHECK_END;
 }
