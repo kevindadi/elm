@@ -8,6 +8,7 @@
 #include <elm/util/test.h>
 #include <elm/io.h>
 #include <elm/string.h>
+#include <elm/io/BlockInStream.h>
 
 using namespace elm;
 using namespace elm::io;
@@ -69,5 +70,11 @@ void test_io_format(void) {
 	CHECK_EQUAL(test(hex((signed)111)), String("6f"));
 	CHECK_EQUAL(test(hex((unsigned)111)), String("6f"));
 	
-	CHECK_END;
+	BlockInStream instream("666", 3);
+	Input in(instream);
+	int x;
+	FAIL_ON_EXCEPTION(IOException, in >> x);
+	CHECK_EQUAL(x, 666);
+
+	CHECK_END;	
 }
