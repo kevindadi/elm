@@ -15,6 +15,7 @@ class String;
 	
 // CString class
 class CString {
+protected:
 	const char *buf;
 public:
 	inline CString(void): buf("") { };
