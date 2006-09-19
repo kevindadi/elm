@@ -21,4 +21,6 @@ includeelm_HEADERS = \
 	Iterator.h \
 	options.h \
 	string.h \
-	utility.h
+	utility.h \
+	xom.h
+
