@@ -9,53 +9,61 @@
 
 #include <elm/string.h>
 #include <elm/genstruct/Vector.h>
+#include <elm/genstruct/Table.h>
 #include <elm/util/Version.h>
 
 namespace elm { namespace system {
 
 // Plugin class
 class Plugin {
+public:
+	typedef genstruct::Table<CString> aliases_t;
+private:
 	friend class Plugger;
 	static genstruct::Vector<Plugin *> static_plugins;
 	static genstruct::Vector<Plugin *> unused_plugins;
-	String _hook;
-	String _name;
+	CString _hook;
+	CString _name;
 	Version per_vers;
 	void *_handle;
 	int state;
+	const aliases_t& _aliases;
 	void plug(void *handle);
 	static void step(void);
-	static Plugin *get(String hook, String name);
+	static Plugin *get(CString hook, CString name);
 
 protected:
-	String _description;
-	String _licence;
+	CString _description;
+	CString _licence;
 	Version _plugin_version;
 	virtual void startup(void);
 	virtual void cleanup(void);
 
 public:
-	Plugin(String name, const Version& plugger_version, String hook = "");
+	Plugin(CString name, const Version& plugger_version, CString hook = "",
+		const aliases_t& aliases = aliases_t::EMPTY);
 	~Plugin(void);
-	inline String name(void) const;
-	inline String description(void) const;
-	inline String licence(void) const;
+	inline CString name(void) const;
+	inline CString description(void) const;
+	inline CString licence(void) const;
 	inline const Version& pluginVersion(void) const;
 	inline const Version& pluggerVersion(void) const;
-	inline String hook(void) const;
+	inline CString hook(void) const;
+	inline const aliases_t& aliases(void) const;
+	bool matches(CString name) const;
 	void unplug(void);
 };
 
 // Inlines
-inline String Plugin::name(void) const {
+inline CString Plugin::name(void) const {
 	return _name;
 }
 
-inline String Plugin::description(void) const {
+inline CString Plugin::description(void) const {
 	return _description;
 }
 
-inline String Plugin::licence(void) const {
+inline CString Plugin::licence(void) const {
 	return _licence;
 }
 
@@ -67,9 +75,13 @@ inline const Version& Plugin::pluggerVersion(void) const {
 	return per_vers;
 }
 
-inline String Plugin::hook(void) const {
+inline CString Plugin::hook(void) const {
 	return _hook;
 }
+
+inline const Plugin::aliases_t& Plugin::aliases(void) const {
+	return _aliases;
+} 
 
 } } // elm::system
 

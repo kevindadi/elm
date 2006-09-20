@@ -156,9 +156,21 @@ genstruct::Vector<Plugin *> Plugin::unused_plugins;
  * @param plugger_version	Plugger version (used for checking compatibility
  * 							between plugin and user application API).
  * @param hook				Hook of a matching plugger
+ * @param aliases			Name aliases for the plugin.
  */
-Plugin::Plugin(String name, const Version& plugger_version, String hook)
-: _name(name), per_vers(plugger_version), _hook(hook), state(0), _handle(0) {
+Plugin::Plugin(
+	CString name,
+	const Version& plugger_version,
+	CString hook,
+	const aliases_t& aliases
+) :
+	_name(name),
+	per_vers(plugger_version),
+	_hook(hook),
+	state(0),
+	_handle(0),
+	_aliases(aliases)
+{
 	if(hook)
 		static_plugins.add(this);
 	//cout << "Construct " << this << io::endl;
@@ -302,17 +314,40 @@ void Plugin::step(void) {
 /**
  * For internal use only.
  */
-Plugin *Plugin::get(String hook, String name) {
+Plugin *Plugin::get(CString hook, CString name) {
 	
 	// Find the plugin
 	Plugin *found = 0;
 	for(int i = 0; i < static_plugins.length(); i++)
 		if(static_plugins[i]->hook() == hook
-		&& static_plugins[i]->name() == name)
+		&& static_plugins[i]->matches(name))
 			return static_plugins[i];
 	
 	// Not found
 	return 0;
+}
+
+
+/**
+ * @fn const aliases_t& Plugin::aliases(void) const;
+ * Get the table of aliases of the plugin.
+ * @return	Table of aliases.
+ */
+
+
+/**
+ * Test if the current plugin matches the given name, that is, if the name
+ * or one of the aliases matches the name.
+ * @param name	Name to test.
+ * @return		True if the name is matched, false else.
+ */
+bool Plugin::matches(CString name) const {
+	if(_name == name)
+		return true;
+	for(int i = 0; i < _aliases.count(); i++)
+		if(name == _aliases[i])
+			return true;
+	return false;
 }
 
 } } // elm::system

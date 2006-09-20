@@ -28,7 +28,7 @@ public:
 private:	
 	
 	static genstruct::Vector<Plugger *> pluggers;
-	String _hook;
+	CString _hook;
 	Version per_vers;
 	genstruct::Vector<Plugin *> plugins;
 	genstruct::Vector<String> paths;
@@ -38,12 +38,12 @@ private:
 	inline genstruct::Vector<Plugin *>& statics(void);
 
 public:
-	Plugger(String hook, const Version& plugger_version, String paths = "*");
+	Plugger(CString hook, const Version& plugger_version, String paths = "*");
 	~Plugger(void);
 	void addPath(String path);
 	void removePath(String path);
 	void resetPaths(void);
-	Plugin *plug(String name);
+	Plugin *plug(CString name);
 	Plugin *plugFile(String path);
 	inline error_t lastError(void);
 	String lastErrorMessage(void);

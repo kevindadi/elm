@@ -48,7 +48,7 @@ genstruct::Vector<Plugger *> Plugger::pluggers;
  * 							the plugin. Pass "*" for initializing with the
  * 							default system paths.
  */
-Plugger::Plugger(String hook, const Version& plugger_version, String _paths)
+Plugger::Plugger(CString hook, const Version& plugger_version, String _paths)
 : _hook(hook), per_vers(plugger_version), err(OK) {
 	
 	// Initialize DL library
@@ -132,12 +132,12 @@ void Plugger::resetPaths(void) {
  * @param name	Name of the plugin to get.
  * @return		Found plugin or null.
  */
-Plugin *Plugger::plug(String name) {
+Plugin *Plugger::plug(CString name) {
 	err = OK;
 
 	// Look in opened plugins
 	for(int i = 0; i < plugins.length(); i++)
-		if(plugins[i]->name() == name) {
+		if(plugins[i]->matches(name)) {
 			plugins[i]->plug(0);
 			return plugins[i];
 		}
