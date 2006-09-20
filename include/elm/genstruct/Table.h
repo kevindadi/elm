@@ -18,6 +18,8 @@ protected:
 	T *tab;
 	int cnt;
 public:
+	static Table<T> EMPTY;
+
 	inline Table(void);
 	inline Table(T *table, int count);
 	inline Table(const Table<T>& table);
@@ -53,6 +55,9 @@ public:
 
 
 // Table inlines
+template <class T>
+Table<T> Table<T>::EMPTY;
+
 template <class T>
 inline Table<T>::Table(void): tab(0), cnt(0) {
 }
