@@ -264,6 +264,9 @@ void Plugger::Iterator::go(void) {
 	if(i < statics.length()) {
 		i++;
 		while(i < statics.length()) {
+			/*cerr << "STATIC: " << i << " "
+				 << statics[i]->name() << " "
+				 << statics[i]->hook() << io::endl;*/
 			if(statics[i]->hook() == plugger.hook())
 				return;
 			i++;
