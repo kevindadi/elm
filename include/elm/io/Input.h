@@ -50,9 +50,9 @@ public:
 	inline Input& operator>>(float& value) { value = scanDouble(); return *this; };
 	inline Input& operator>>(double& value) { value = scanDouble(); return *this; };
 	inline Input& operator>>(String& value) { value = scanLine(); return *this; };
-	inline Input& operator>>(char value) { swallow(value); return *this; };
+	/*inline Input& operator>>(const char value) { swallow(value); return *this; };
 	inline Input& operator>>(CString value) { swallow(value); return *this; };
-	inline Input& operator>>(const String& value) { swallow(value); return *this; };
+	inline Input& operator>>(const String& value) { swallow(value); return *this; };*/
 };
 
 } } // elm::io

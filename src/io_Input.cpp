@@ -211,6 +211,7 @@ double Input::scanDouble(void) {
 		while(chr >= '0' && chr <='9') {
 			value += (chr - '0') * dec;
 			dec = dec / 10;
+			chr = get();
 		}
 	}
 	
