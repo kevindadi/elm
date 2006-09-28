@@ -52,6 +52,11 @@ libelm_la_SOURCES= \
 	util_VarArg.cpp \
 	io_BlockOutStream.cpp \
 	io_BlockInStream.cpp \
+	serial_Serializer.cpp \
+	serial_SerialClass.cpp \
+	serial_TextSerializer.cpp \
+	serial_Unserializer.cpp \
+	serial_XOMUnserializer.cpp \
 	system_Plugin.cpp \
 	system_Plugger.cpp \
 	system_SystemException.cpp \
