@@ -10,12 +10,14 @@
 namespace elm { namespace serial {
 
 // Extern classes
+class SerialClass;
 class Serializer;
 class Unserializer;
 
 // Macros
 #define SERIALIZABLE \
 	public: \
+		static elm::serial::SerialClass& __class; \
 		virtual void __serialize(elm::serial::Serializer& _serializer) const; \
 		void __unserialize(elm::serial::Unserializer& _serializer); \
 	private:

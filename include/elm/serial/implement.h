@@ -14,6 +14,12 @@
 
 namespace elm { namespace serial {
 
+template <class T>
+elm::serial::SerialClass& __make_class(elm::CString name) {
+	static elm::serial::GenSerialClass<T> clazz(name);
+	return clazz;
+}
+
 // Macros
 #define FIELD(name) 			_serializer.processField(#name, name)
 #define ON_SERIAL(code) 		if(__serial) { code; }
@@ -21,7 +27,7 @@ namespace elm { namespace serial {
 #define SERIALIZE_BASE(clazz)	{ if(__serial) clazz::__serialize(_serializer); }
 
 #define SERIALIZE(clazz, fields) \
-	elm::serial::GenSerialClass<clazz> __sclass_##clazz(#clazz); \
+	elm::serial::SerialClass& clazz::__class = elm::serial::__make_class<clazz>(#clazz); \
 	void clazz::__serialize(elm::serial::Serializer& _serializer) const  { \
 		bool __serial = true; \
 		fields; \
