@@ -9,6 +9,19 @@
 
 namespace elm {
 
+// const void * hash key
+class ConstPtrHashKey: public HashKey<const void *> {
+	virtual unsigned long hash(const void *v) {
+		return (unsigned long)v;
+	};
+	virtual bool equals(const void *key1, const void *key2) {
+		return key1 == key2;
+	};
+};
+static ConstPtrHashKey cptr_hkey_obj;
+template <> HashKey<const void *>& HashKey<const void *>::def = cptr_hkey_obj;
+
+
 // int_hkey
 class IntHashKey: public HashKey<int> {
 	virtual unsigned long hash(int v) {
