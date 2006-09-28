@@ -7,6 +7,7 @@ SUBDIRS = \
 	option \
 	string \
 	util \
+	serial \
 	system
 
 if HAS_LIBXML

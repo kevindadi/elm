@@ -58,8 +58,9 @@ AC_OUTPUT([
 	include/elm/inhstruct/Makefile
 	include/elm/io/Makefile
 	include/elm/option/Makefile
+	include/elm/serial/Makefile
 	include/elm/string/Makefile
-	include/elm/util/Makefile
 	include/elm/system/Makefile
+	include/elm/util/Makefile
 	include/elm/xom/Makefile
 ], [])
