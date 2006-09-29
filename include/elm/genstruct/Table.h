@@ -33,6 +33,9 @@ public:
 	inline void set(int index, const T& value);
 	inline bool isEmpty(void) const;
 	
+	// Mutators
+	inline void copy(const Table<T>& table);
+	
 	// Operators
 	inline T operator[](int index) const;
 	inline T& operator[](int index);
@@ -51,6 +54,7 @@ public:
 	inline ~AllocatedTable(void);
 	inline void allocate(int count);
 	inline void free(void);
+	inline AllocatedTable<T>& operator=(const Table<T>& table);
 };
 
 
@@ -122,9 +126,14 @@ inline T& Table<T>::operator[](int index) {
 }
 
 template <class T>
-inline Table<T>& Table<T>::operator=(const Table& table) {
+inline void Table<T>::copy(const Table<T>& table) {
 	tab = table.tab;
 	cnt = table.cnt;
+}
+
+template <class T>
+inline Table<T>& Table<T>::operator=(const Table& table) {
+	copy(table);
 }
 
 template <class T>
@@ -168,6 +177,11 @@ inline void AllocatedTable<T>::free(void) {
 		delete [] Table<T>::tab;
 	Table<T>::tab = 0;
 	Table<T>::cnt = 0;
+}
+
+template <class T>
+inline AllocatedTable<T>& AllocatedTable<T>::operator=(const Table<T>& table) {
+	copy(table);
 }
 
 } } // elm::genstruct
