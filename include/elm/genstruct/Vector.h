@@ -8,6 +8,7 @@
 #define ELM_GENSTRUCT_VECTOR_H
 
 #include <assert.h>
+#include <elm/genstruct/Table.h>
 #include <elm/Iterator.h>
 
 namespace elm { namespace genstruct {
@@ -37,6 +38,7 @@ public:
 	inline operator bool(void) const;
 	
 	// Mutators
+	inline void add(void);
 	inline void add(const T value);
 	void removeAt(int index);
 	inline void remove(const T value);
@@ -44,6 +46,7 @@ public:
 	inline void clear(void);
 	void grow(int new_cap);
 	void setLength(int new_length);
+	inline Table<T> detach(void);
 	
 	// Stack processing
 	inline void push(const T& value);
@@ -68,9 +71,19 @@ public:
 template <class T> Vector<T>::Vector(int _cap)
 : tab(new T[_cap]), cap(_cap), cnt(0) {
 }
+
 template <class T> Vector<T>::~Vector(void) {
-	delete [] tab;
+	if(tab)
+		delete [] tab;
 }
+
+template <class T>
+inline Table<T> Vector<T>::detach(void) {
+	T *dtab = tab;
+	tab = 0;
+	return Table<T>(dtab, cnt);
+}
+
 template <class T> int Vector<T>::capacity(void) const {
 	return cap;
 }
@@ -126,6 +139,14 @@ template <class T> void Vector<T>::add(const T value) {
 		grow(cap * 2);
 	tab[cnt++] = value;
 }
+
+template <class T>
+inline void Vector<T>::add(void) {
+	if(cnt >= cap)
+		grow(cap * 2);
+	cnt++;	
+}
+
 template <class T> void Vector<T>::removeAt(int index) {
 	for(int i = index + 1; i < cnt; i++)
 		tab[i - 1] = tab[i];
