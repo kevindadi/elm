@@ -8,6 +8,7 @@
 #define ELM_SERIAL_XOM_UNSERIALIZER_H
 
 #include <elm/genstruct/HashTable.h>
+#include <elm/genstruct/Vector.h>
 #include <elm/serial/Unserializer.h>
 
 namespace elm {
@@ -37,10 +38,16 @@ class XOMUnserializer: public Unserializer {
 		void record(void *_ptr);
 	} ref_t;
 
+	typedef struct context_t {
+		int i;
+		xom::Element *elem;
+	} context_t;
+
 	xom::Document *doc;
-	xom::Element *elem;
+	context_t ctx;
 	elm::io::Input in;
 	elm::genstruct::HashTable<CString,  ref_t *> refs;
+	elm::genstruct::Vector<context_t> stack;
 
 public:
 	XOMUnserializer(xom::Element *element);
@@ -48,13 +55,17 @@ public:
 	~XOMUnserializer(void);
 
 	// Unserializer overload
-	virtual void delayObject(void *&ptr);
 	virtual void close(void);
-	virtual void readPointer(void *&ptr);
+	virtual void readPointer(SerialClass& clazz, void *&ptr);
 	virtual void beginObject(CString name);
 	virtual void endObject(void);
 	virtual bool beginField(CString name);
 	virtual void endField(void);
+	virtual bool beginList(void);
+	virtual void endList(void);
+	virtual bool nextItem(void);
+	virtual int readEnum(elm::CString values[]);	
+	
 	virtual void read(bool& val);
 	virtual void read(char& val);
 	virtual void read(unsigned char& val);

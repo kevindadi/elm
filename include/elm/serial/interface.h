@@ -15,9 +15,14 @@ class Serializer;
 class Unserializer;
 
 // Macros
+#define REFLEXIVE \
+public: \
+	static elm::serial::SerialClass& __class; \
+private:
+
 #define SERIALIZABLE \
+	REFLEXIVE \
 	public: \
-		static elm::serial::SerialClass& __class; \
 		virtual void __serialize(elm::serial::Serializer& _serializer) const; \
 		void __unserialize(elm::serial::Unserializer& _serializer); \
 	private:

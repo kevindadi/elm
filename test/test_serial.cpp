@@ -10,8 +10,10 @@
 #include <elm/xom.h>
 #include <elm/serial/interface.h>
 #include <elm/serial/implement.h>
+#include <elm/serial/SerialTable.h>
 #include <elm/serial/XOMUnserializer.h>
 #include <elm/serial/TextSerializer.h>
+#include <elm/genstruct/Table.h>
 
 using namespace elm;
 
@@ -26,7 +28,6 @@ public:
 	MySubClass(char _c, MyClass *_back): c(_c), back(_back) { };
 };
 
-SERIALIZE(MySubClass, FIELD(c); FIELD(back);)
 
 
 // MyClass class
@@ -40,10 +41,31 @@ public:
 	MyClass(int _x): x(_x), sub('a', this), sub2(new MySubClass('b', 0)) { };
 };
 
-SERIALIZE(MyClass, FIELD(x); FIELD(sub); FIELD(sub2))
+
+
+// ItemClass
+class ItemClass {
+	SERIALIZABLE
+public:
+	int x;
+	virtual int getX(void) { return x; };
+};
+
+
+// Item2Class
+class Item2Class: public ItemClass {
+	SERIALIZABLE
+public:
+	virtual int getX(void) { return 666; };
+};
 
 
 // SimpleClass
+typedef enum enum_t {
+	VAL1 = 0,
+	VAL2,
+	VAL3
+} enum_t;
 class SimpleClass {
 	SERIALIZABLE
 public:
@@ -51,10 +73,20 @@ public:
 	char c;
 	double f;
 	CString str;
-	SimpleClass(void): x(111), c('a'), f(0.1), str("ok") { };
+	serial::SerialTable<int> list;
+	serial::SerialTable<ItemClass> list2;
+	serial::SerialTable<ItemClass *> list3;
+	enum_t en;
+	SimpleClass(void): x(111), c('a'), f(0.1), str("ok"), en(VAL1) { }
 };
-SERIALIZE(SimpleClass, FIELD(x); FIELD(c); FIELD(f); FIELD(str))
+CString values[] = { "VAL1", "VAL2", "VAL3", "" };
 
+namespace elm { namespace serial {
+template <>
+inline void elm::serial::Unserializer::read<enum_t>(enum_t& val) {
+	val = (enum_t)readEnum(values);
+}
+} }
 
 // Entry point
 void test_serial(void) {
@@ -64,6 +96,7 @@ void test_serial(void) {
 	MyClass my_object(666);
 	serialize << my_object;
 	serialize.close();
+	cout << io::endl << io::endl;
 	
 	// Unserialize XML
 	serial::XOMUnserializer unser("unser.xml");
@@ -73,4 +106,22 @@ void test_serial(void) {
 	cout << "res.c = " << res.c << io::endl;
 	cout << "res.f = " << res.f << io::endl;
 	cout << "res.str = " << res.str << io::endl;
+	cout << "address = " << &res.list[0] << io::endl;
+	for(int i = 0; i < res.list.count(); i++)
+		cout << "res.list[" << i << "] = " << res.list[i] << io::endl;
+	for(int i = 0; i < res.list2.count(); i++)
+		cout << "res.list2[" << i << "] = " << res.list2[i].x << io::endl;
+	for(int i = 0; i < res.list3.count(); i++)
+		cout << "res.list3[" << i << "] = " << res.list3[i]->getX()
+			 << " = " << res.list3[i]->x << io::endl;
+	cout << "en = " << values[res.en] << io::endl;
 }
+
+
+// Avoid impact of template predefinition
+SERIALIZE(MySubClass, FIELD(c); FIELD(back);)
+SERIALIZE(MyClass, FIELD(x); FIELD(sub); FIELD(sub2))
+SERIALIZE(ItemClass, FIELD(x))
+SERIALIZE(Item2Class, SERIALIZE_BASE(ItemClass))
+SERIALIZE(SimpleClass, FIELD(x); FIELD(c); FIELD(f); FIELD(str); FIELD(list);
+	FIELD(en); FIELD(list2); FIELD(list3))

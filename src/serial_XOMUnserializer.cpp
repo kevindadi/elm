@@ -48,7 +48,8 @@ void XOMUnserializer::ref_t::record(void *_ptr) {
  * @param element	XOM element to use.
  */				
 XOMUnserializer::XOMUnserializer(xom::Element *element)
-: doc(0), elem(element) {
+: doc(0) {
+	ctx.elem = element;
 }
 
 
@@ -57,13 +58,14 @@ XOMUnserializer::XOMUnserializer(xom::Element *element)
  * @param path	Path document to unserialize from.
  */
 XOMUnserializer::XOMUnserializer(elm::CString path)
-: doc(0), elem(0) {
+: doc(0) {
+	ctx.elem = 0;
 	xom::Builder builder;
 	doc = builder.build(path);
 	if(!doc)
 		throw io::IOException("cannot open \"%s\"", &path);
-	elem = doc->getRootElement();
-	assert(elem);
+	ctx.elem = doc->getRootElement();
+	assert(ctx.elem);
 }
 
 
@@ -76,12 +78,6 @@ XOMUnserializer::~XOMUnserializer(void) {
 
 
 /**
- */
-void XOMUnserializer::delayObject(void *&ptr) {
-}
-
-
-/**
  */	
 void XOMUnserializer::close(void) {
 }
@@ -89,10 +85,11 @@ void XOMUnserializer::close(void) {
 
 /**
  */
-void XOMUnserializer::readPointer(void *&ptr) {
+void XOMUnserializer::readPointer(SerialClass& clazz, void *&ptr) {
+	SerialClass *uclass = &clazz;
 	
 	// Is there a reference ?
-	CString id = elem->getAttributeValue("ref");
+	CString id = ctx.elem->getAttributeValue("ref");
 	if(id) {
 		ref_t *ref = refs.get(id, 0);
 		if(!ref) {
@@ -106,17 +103,17 @@ void XOMUnserializer::readPointer(void *&ptr) {
 	else {
 		
 		// Find the class
-		CString clazz_name = elem->getAttributeValue("class");
-		if(!clazz_name)
-			clazz_name = elem->getLocalName();
-		SerialClass *clazz = SerialClass::find(clazz_name);
-		if(!clazz)
-			throw io::IOException("no class %s\n", &clazz_name);
-		ptr = clazz->create();
-		clazz->unserialize(ptr, *this);
-		
+		CString clazz_name = ctx.elem->getAttributeValue("class");
+		if(clazz_name) {
+			uclass = SerialClass::find(clazz_name);
+			if(!uclass)
+				throw io::IOException("no class %s\n", &clazz_name);
+		}
+		ptr = uclass->create();
+		uclass->unserialize(ptr, *this);
+
 		// Record identification
-		id = elem->getAttributeValue("id");
+		id = ctx.elem->getAttributeValue("id");
 		if(id) {
 			ref_t *ref = refs.get(id, 0);
 			if(ref)
@@ -143,10 +140,11 @@ void XOMUnserializer::endObject(void) {
 /**
  */
 bool XOMUnserializer::beginField(CString name) {
-	xom::Element *felem = elem->getFirstChildElement(xom::String(name));
+	xom::Element *felem = ctx.elem->getFirstChildElement(xom::String(name));
 	if(!felem)
 		return false;
-	elem = felem;
+	stack.push(ctx);
+	ctx.elem = felem;
 	return true;
 }
 
@@ -154,14 +152,14 @@ bool XOMUnserializer::beginField(CString name) {
 /**
  */
 void XOMUnserializer::endField(void) {
-	elem = (xom::Element *)elem->getParent();
+	ctx = stack.pop();
 }
 
 
 /**
  */
 void XOMUnserializer::read(bool& val) {
-	xom::String text = elem->getValue();
+	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
 	in >> val;
@@ -172,7 +170,7 @@ void XOMUnserializer::read(bool& val) {
 /**
  */
 void XOMUnserializer::read(char& val) {
-	xom::String text = elem->getValue();
+	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
 	in >> val;
@@ -183,7 +181,7 @@ void XOMUnserializer::read(char& val) {
 /**
  */
 void XOMUnserializer::read(unsigned char& val) {
-	xom::String text = elem->getValue();
+	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
 	in >> val;
@@ -194,7 +192,7 @@ void XOMUnserializer::read(unsigned char& val) {
 /**
  */
 void XOMUnserializer::read(short& val) {
-	xom::String text = elem->getValue();
+	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
 	in >> val;
@@ -205,7 +203,7 @@ void XOMUnserializer::read(short& val) {
 /**
  */
 void XOMUnserializer::read(unsigned short& val) {
-	xom::String text = elem->getValue();
+	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
 	in >> val;
@@ -216,7 +214,7 @@ void XOMUnserializer::read(unsigned short& val) {
 /**
  */
 void XOMUnserializer::read(long& val) {
-	xom::String text = elem->getValue();
+	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
 	in >> val;
@@ -227,7 +225,7 @@ void XOMUnserializer::read(long& val) {
 /**
  */
 void XOMUnserializer::read(unsigned long& val) {
-	xom::String text = elem->getValue();
+	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
 	in >> val;
@@ -238,7 +236,7 @@ void XOMUnserializer::read(unsigned long& val) {
 /**
  */
 void XOMUnserializer::read(int& val) {
-	xom::String text = elem->getValue();
+	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
 	in >> val;
@@ -249,7 +247,7 @@ void XOMUnserializer::read(int& val) {
 /**
  */
 void XOMUnserializer::read(unsigned int& val) {
-	xom::String text = elem->getValue();
+	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
 	in >> val;
@@ -260,7 +258,7 @@ void XOMUnserializer::read(unsigned int& val) {
 /**
  */
 void XOMUnserializer::read(long long& val) {
-	xom::String text = elem->getValue();
+	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
 	in >> val;
@@ -271,7 +269,7 @@ void XOMUnserializer::read(long long& val) {
 /**
  */
 void XOMUnserializer::read(unsigned long long& val) {
-	xom::String text = elem->getValue();
+	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
 	in >> val;
@@ -282,7 +280,7 @@ void XOMUnserializer::read(unsigned long long& val) {
 /**
  */
 void XOMUnserializer::read(float& val) {
-	xom::String text = elem->getValue();
+	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
 	in >> val;
@@ -293,7 +291,7 @@ void XOMUnserializer::read(float& val) {
 /**
  */
 void XOMUnserializer::read(double& val) {
-	xom::String text = elem->getValue();
+	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
 	in >> val;
@@ -304,17 +302,69 @@ void XOMUnserializer::read(double& val) {
 /**
  */
 void XOMUnserializer::read(CString& val) {
-	val = elem->getValue();
+	val = ctx.elem->getValue();
 }
 
 
 /**
  */
 void XOMUnserializer::read(String& val) {
-	xom::String text = elem->getValue();
+	xom::String text = ctx.elem->getValue();
 	val = String(text);
 	text.free();
 }
 
-} } // elm::serial
 
+/**
+ */
+bool XOMUnserializer::beginList(void) {
+	int cnt = ctx.elem->getChildCount();
+	for(ctx.i = 0; ctx.i < cnt; ctx.i++) {
+		xom::Node *node = ctx.elem->getChild(ctx.i);
+		if(node->kind() == xom::Node::ELEMENT) {
+			stack.push(ctx);
+			ctx.elem = (xom::Element *)node;
+			return true;
+		}
+	}
+	return false;
+}
+
+
+/**
+ */
+void XOMUnserializer::endList(void) {
+}
+
+
+/**
+ */
+bool XOMUnserializer::nextItem(void) {
+	ctx = stack.pop();
+	int cnt = ctx.elem->getChildCount();
+	for(ctx.i++; ctx.i < cnt; ctx.i++) {
+		xom::Node *node = ctx.elem->getChild(ctx.i);
+		if(node->kind() == xom::Node::ELEMENT) {
+			stack.push(ctx);
+			ctx.elem = (xom::Element *)node;
+			return true;
+		}
+	}
+	return false;
+}
+
+
+/**
+ */
+int XOMUnserializer::readEnum(elm::CString values[]) {
+	xom::String text = ctx.elem->getValue();
+	for(int i = 0; values[i]; i++)
+		if(values[i] == text) {
+			text.free();
+			return i;
+		}
+	text.free();
+	throw io::IOException("bad enumrated value");
+}
+
+} } // elm::serial

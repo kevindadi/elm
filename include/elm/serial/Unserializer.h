@@ -8,6 +8,7 @@
 #define ELM_SERIAL_UNSERIALIZER_H
 
 #include <elm/string.h>
+#include <elm/serial/SerialClass.h>
 
 namespace elm { namespace serial {
 
@@ -17,10 +18,28 @@ class Unserializer {
 	template <class T> void process(T& val) { read(val); };
 
 public:
-	virtual void close(void) = 0;
 	
-	// Write methods
-	template <class T> inline void read(T& val) { process<T>(val); };
+	// Read control
+	template <class T> inline void read(T& val) {
+		beginObject(T::__class.name());
+		val.__unserialize(*this);
+		endObject();
+	}
+	template <class T> inline void read(T *&val) {
+		readPointer(T::__class, (void*&)val);
+	}
+	virtual void close(void) = 0;
+	virtual void readPointer(SerialClass& clazz, void *&ptr) = 0;
+	virtual void beginObject(CString name) = 0;
+	virtual void endObject(void) = 0;
+	virtual bool beginField(CString name) = 0;
+	virtual void endField(void) = 0;
+	virtual bool beginList(void) = 0;
+	virtual void endList(void) = 0;
+	virtual bool nextItem(void) = 0;
+	virtual int readEnum(elm::CString values[]) = 0;
+
+	// Read base types	
 	virtual void read(bool& val) = 0;
 	virtual void read(char& val) = 0;
 	virtual void read(unsigned char& val) = 0;
@@ -36,12 +55,7 @@ public:
 	virtual void read(double& val) = 0;
 	virtual void read(CString& val) = 0;
 	virtual void read(String& val) = 0;
-	virtual void readPointer(void *&ptr) = 0;
-	virtual void beginObject(CString name) = 0;
-	virtual void endObject(void) = 0;
-	virtual bool beginField(CString name) = 0;
-	virtual void endField(void) = 0;
-
+	
 	// Operators 
 	template <class T> inline Unserializer& operator>>(T& val) {
 		read(val);

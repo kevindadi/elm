@@ -20,20 +20,29 @@ elm::serial::SerialClass& __make_class(elm::CString name) {
 	return clazz;
 }
 
+template <class T> inline void __serial_proceed(T& obj, Serializer& serializer) {
+	obj.T::__serialize(serializer);
+}
+
+template <class T> inline void __serial_proceed(T& obj, Unserializer& unserializer) {
+	obj.T::__unserialize(unserializer);
+}
+
 // Macros
 #define FIELD(name) 			_serializer.processField(#name, name)
 #define ON_SERIAL(code) 		if(__serial) { code; }
 #define ON_UNSERIAL(code)		if(!__serial) { code; }
-#define SERIALIZE_BASE(clazz)	{ if(__serial) clazz::__serialize(_serializer); }
+#define SERIALIZE_BASE(clazz)	elm::serial::__serial_proceed<clazz>((clazz&)*this, _serializer)
+
+#define REFLEXIVITY(clazz) \
+	elm::serial::SerialClass& clazz::__class = elm::serial::__make_class<clazz>(#clazz);
 
 #define SERIALIZE(clazz, fields) \
-	elm::serial::SerialClass& clazz::__class = elm::serial::__make_class<clazz>(#clazz); \
+	REFLEXIVITY(clazz) \
 	void clazz::__serialize(elm::serial::Serializer& _serializer) const  { \
-		bool __serial = true; \
 		fields; \
 	} \
 	void clazz::__unserialize(elm::serial::Unserializer& _serializer) { \
-		bool __serial = false; \
 		fields; \
 	} \
 	namespace elm { namespace serial { \
@@ -45,14 +54,6 @@ elm::serial::SerialClass& __make_class(elm::CString name) {
 	template <> inline void Serializer::process<clazz *>(clazz * const &val) { \
 		if(writePointer(val)) \
 			delayObject(val, Serializer::delay<clazz>); \
-	} \
-	template <> void Unserializer::process(clazz& _obj) { \
-		beginObject(#clazz); \
-		_obj.__unserialize(*this); \
-		endObject(); \
-	} \
-	template <> inline void Unserializer::process<clazz *>(clazz *&val) { \
-		readPointer((void*&)val); \
 	} \
 	} }
 

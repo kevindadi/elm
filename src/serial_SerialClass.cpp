@@ -5,6 +5,7 @@
  * src/serial_SerialClass.cpp -- SerialClass and GenSerialClass implementation.
  */
 
+#include <elm/io.h>
 #include <elm/serial/SerialClass.h>
 
 namespace elm { namespace serial {
@@ -37,7 +38,7 @@ genstruct::HashTable<CString, SerialClass *> SerialClass::classes;
  * Initialize the serial classes declared during application initialization.
  */
 void SerialClass::initialize(void) {
-	for(SerialClass *clazz; clazz; clazz = clazz->next)
+	for(SerialClass *clazz = first; clazz; clazz = clazz->next)
 		classes.put(clazz->_name, clazz);
 	initialized = true;
 }
@@ -48,6 +49,7 @@ void SerialClass::initialize(void) {
  * @param name	Class name.
  */
 SerialClass::SerialClass(elm::CString name) : _name(name) {
+	cout << "CLASS " << name << " DECLARED (" << first << ") !\n";
 	if(initialized)
 		classes.put(name, this);
 	else {
