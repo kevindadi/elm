@@ -69,6 +69,7 @@ typedef enum enum_t {
 class SimpleClass {
 	SERIALIZABLE
 public:
+	ItemClass *ref;
 	int x;
 	char c;
 	double f;
@@ -91,30 +92,40 @@ inline void elm::serial::Unserializer::read<enum_t>(enum_t& val) {
 // Entry point
 void test_serial(void) {
 	
-	// Serialize text
-	elm::serial::TextSerializer serialize;
-	MyClass my_object(666);
-	serialize << my_object;
-	serialize.close();
-	cout << io::endl << io::endl;
-	
-	// Unserialize XML
-	serial::XOMUnserializer unser("unser.xml");
-	SimpleClass res;
-	unser >> res;
-	cout << "res.x = " << res.x << io::endl;
-	cout << "res.c = " << res.c << io::endl;
-	cout << "res.f = " << res.f << io::endl;
-	cout << "res.str = " << res.str << io::endl;
-	cout << "address = " << &res.list[0] << io::endl;
-	for(int i = 0; i < res.list.count(); i++)
-		cout << "res.list[" << i << "] = " << res.list[i] << io::endl;
-	for(int i = 0; i < res.list2.count(); i++)
-		cout << "res.list2[" << i << "] = " << res.list2[i].x << io::endl;
-	for(int i = 0; i < res.list3.count(); i++)
-		cout << "res.list3[" << i << "] = " << res.list3[i]->getX()
-			 << " = " << res.list3[i]->x << io::endl;
-	cout << "en = " << values[res.en] << io::endl;
+	try {
+		
+		// Serialize text
+		elm::serial::TextSerializer serialize;
+		MyClass my_object(666);
+		serialize << my_object;
+		serialize.close();
+		cout << io::endl << io::endl;
+		
+		// Unserialize XML
+		serial::XOMUnserializer unser("unser.xml");
+		SimpleClass res;
+		unser >> res;
+		unser.close();
+		cout << "res.x = " << res.x << io::endl;
+		cout << "res.c = " << res.c << io::endl;
+		cout << "res.f = " << res.f << io::endl;
+		cout << "res.str = " << res.str << io::endl;
+		cout << "address = " << &res.list[0] << io::endl;
+		for(int i = 0; i < res.list.count(); i++)
+			cout << "res.list[" << i << "] = " << res.list[i] << io::endl;
+		for(int i = 0; i < res.list2.count(); i++)
+			cout << "res.list2[" << i << "] = " << res.list2[i].x
+			     << " (" << io::hex((int)&res.list2[i]) << ")" << io::endl;
+		for(int i = 0; i < res.list3.count(); i++)
+			cout << "res.list3[" << i << "] = " << res.list3[i]->getX()
+				 << " = " << res.list3[i]->x
+			     << " (" << io::hex((int)res.list3[i]) << ")" << io::endl;
+		cout << "en = " << values[res.en] << io::endl;
+		cout << "ref = " << io::hex((int)res.ref) << io::endl;
+	}
+	catch(Exception& exn) {
+		cerr << "ERROR: " << exn.message() << io::endl;
+	}
 }
 
 
@@ -124,4 +135,4 @@ SERIALIZE(MyClass, FIELD(x); FIELD(sub); FIELD(sub2))
 SERIALIZE(ItemClass, FIELD(x))
 SERIALIZE(Item2Class, SERIALIZE_BASE(ItemClass))
 SERIALIZE(SimpleClass, FIELD(x); FIELD(c); FIELD(f); FIELD(str); FIELD(list);
-	FIELD(en); FIELD(list2); FIELD(list3))
+	FIELD(en); FIELD(list2); FIELD(list3); FIELD(ref))

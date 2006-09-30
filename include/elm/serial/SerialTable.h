@@ -30,7 +30,7 @@ public:
 
 	static SerialClass& __class;
 	virtual void __serialize(Serializer& _serializer) const;
-	void __unserialize(Unserializer& _serializer);
+	void __serialize(Unserializer& _serializer);
 };
 
 // SerialTable<T> Implementation
@@ -61,7 +61,7 @@ void SerialTable<T>::__serialize(Serializer& _serializer) const {
 }
 
 template <class T>
-void SerialTable<T>::__unserialize(Unserializer& _serializer) {
+void SerialTable<T>::__serialize(Unserializer& _serializer) {
 	genstruct::Vector<T> vec;
 	for(bool next = _serializer.beginList(); next; next = _serializer.nextItem()) {
 		vec.add();

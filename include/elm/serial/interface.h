@@ -24,7 +24,7 @@ private:
 	REFLEXIVE \
 	public: \
 		virtual void __serialize(elm::serial::Serializer& _serializer) const; \
-		void __unserialize(elm::serial::Unserializer& _serializer); \
+		void __serialize(elm::serial::Unserializer& _serializer); \
 	private:
 
 } } // elm::serial

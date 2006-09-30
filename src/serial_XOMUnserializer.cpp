@@ -4,7 +4,6 @@
  *
  * src/serial_XOMUnserializer.cpp -- XOMUnserializer class implementation.
  */
-
 #include <elm/xom.h>
 #include <elm/io/BlockInStream.h>
 #include <elm/serial/SerialClass.h>
@@ -80,6 +79,9 @@ XOMUnserializer::~XOMUnserializer(void) {
 /**
  */	
 void XOMUnserializer::close(void) {
+	for(genstruct::HashTable<CString,  ref_t *>::ItemIterator ref(refs); ref; ref++)
+		if(!ref->ptr)
+			throw io::IOException(ref.key());
 }
 
 
@@ -109,25 +111,27 @@ void XOMUnserializer::readPointer(SerialClass& clazz, void *&ptr) {
 			if(!uclass)
 				throw io::IOException("no class %s\n", &clazz_name);
 		}
+		
+		// Build the object
 		ptr = uclass->create();
+		beginObject(clazz_name, ptr);
 		uclass->unserialize(ptr, *this);
-
-		// Record identification
-		id = ctx.elem->getAttributeValue("id");
-		if(id) {
-			ref_t *ref = refs.get(id, 0);
-			if(ref)
-				ref->record(ptr);
-			else
-				refs.put(id, new ref_t(ptr));
-		}
+		endObject();
 	}
 }
 
 
 /**
  */
-void XOMUnserializer::beginObject(CString name) {
+void XOMUnserializer::beginObject(CString name, void *ptr) {
+	xom::String id = ctx.elem->getAttributeValue("id");
+	if(id) {
+		ref_t *ref = refs.get(id, 0);
+		if(ref)
+			ref->record(ptr);
+		else
+			refs.put(id, new ref_t(ptr));
+	}
 }
 
 

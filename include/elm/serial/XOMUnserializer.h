@@ -57,7 +57,7 @@ public:
 	// Unserializer overload
 	virtual void close(void);
 	virtual void readPointer(SerialClass& clazz, void *&ptr);
-	virtual void beginObject(CString name);
+	virtual void beginObject(CString name, void *ptr);
 	virtual void endObject(void);
 	virtual bool beginField(CString name);
 	virtual void endField(void);

@@ -21,8 +21,8 @@ public:
 	
 	// Read control
 	template <class T> inline void read(T& val) {
-		beginObject(T::__class.name());
-		val.__unserialize(*this);
+		beginObject(T::__class.name(), &val);
+		val.__serialize(*this);
 		endObject();
 	}
 	template <class T> inline void read(T *&val) {
@@ -30,7 +30,7 @@ public:
 	}
 	virtual void close(void) = 0;
 	virtual void readPointer(SerialClass& clazz, void *&ptr) = 0;
-	virtual void beginObject(CString name) = 0;
+	virtual void beginObject(CString name, void *ptr) = 0;
 	virtual void endObject(void) = 0;
 	virtual bool beginField(CString name) = 0;
 	virtual void endField(void) = 0;

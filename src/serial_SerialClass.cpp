@@ -49,7 +49,7 @@ void SerialClass::initialize(void) {
  * @param name	Class name.
  */
 SerialClass::SerialClass(elm::CString name) : _name(name) {
-	cout << "CLASS " << name << " DECLARED (" << first << ") !\n";
+	//cout << "CLASS " << name << " DECLARED (" << first << ") !\n";
 	if(initialized)
 		classes.put(name, this);
 	else {

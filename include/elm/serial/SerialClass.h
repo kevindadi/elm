@@ -48,7 +48,7 @@ public:
 	}
 	
 	virtual void unserialize(void *ptr, Unserializer& unserializer) {
-		((T *)ptr)->__unserialize(unserializer);
+		((T *)ptr)->__serialize(unserializer);
 	}
 	
 };
