@@ -80,8 +80,10 @@ XOMUnserializer::~XOMUnserializer(void) {
  */	
 void XOMUnserializer::close(void) {
 	for(genstruct::HashTable<CString,  ref_t *>::ItemIterator ref(refs); ref; ref++)
-		if(!ref->ptr)
-			throw io::IOException(ref.key());
+		if(!ref->ptr) {
+			CString id = ref.key();
+			throw io::IOException("unsolved reference \"%s\"", &id);
+		}
 }
 
 
@@ -109,7 +111,7 @@ void XOMUnserializer::readPointer(SerialClass& clazz, void *&ptr) {
 		if(clazz_name) {
 			uclass = SerialClass::find(clazz_name);
 			if(!uclass)
-				throw io::IOException("no class %s\n", &clazz_name);
+				throw io::IOException("no class %s", &clazz_name);
 		}
 		
 		// Build the object
@@ -367,8 +369,9 @@ int XOMUnserializer::readEnum(elm::CString values[]) {
 			text.free();
 			return i;
 		}
+	String name = text;
 	text.free();
-	throw io::IOException("bad enumrated value");
+	throw io::IOException("bad enumerated value \"%s\"", &name);
 }
 
 } } // elm::serial
