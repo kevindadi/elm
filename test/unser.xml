@@ -20,5 +20,5 @@
 		<item><x>1</x></item>
 		<item class="Item2Class"><x>2</x></item>
 	</list3>
-	<en>VAL2</en>
+	<en>SimpleClass::VAL2</en>
 </SimpleClass>

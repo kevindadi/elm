@@ -61,14 +61,15 @@ public:
 
 
 // SimpleClass
-typedef enum enum_t {
-	VAL1 = 0,
-	VAL2,
-	VAL3
-} enum_t;
 class SimpleClass {
 	SERIALIZABLE
 public:
+	typedef enum enum_t {
+		VAL1 = 0,
+		VAL2,
+		VAL3
+	} enum_t;
+
 	ItemClass *ref;
 	int x;
 	char c;
@@ -80,14 +81,20 @@ public:
 	enum_t en;
 	SimpleClass(void): x(111), c('a'), f(0.1), str("ok"), en(VAL1) { }
 };
-CString values[] = { "VAL1", "VAL2", "VAL3", "" };
+//CString values[] = { "VAL1", "VAL2", "VAL3", "" };
 
-namespace elm { namespace serial {
-template <>
-inline void elm::serial::Unserializer::read<enum_t>(enum_t& val) {
-	val = (enum_t)readEnum(values);
+
+/*namespace elm { namespace serial {
+template <class T>
+inline void elm::serial::Unserializer::read<T>(T& val) {
 }
-} }
+} }*/ // elm::serial
+
+SERIALIZE_ENUM(SimpleClass::enum_t,
+	ENUM_VALUE(SimpleClass::VAL1),
+	ENUM_VALUE(SimpleClass::VAL2),
+	ENUM_VALUE(SimpleClass::VAL3));
+
 
 // Entry point
 void test_serial(void) {
@@ -120,7 +127,7 @@ void test_serial(void) {
 			cout << "res.list3[" << i << "] = " << res.list3[i]->getX()
 				 << " = " << res.list3[i]->x
 			     << " (" << io::hex((int)res.list3[i]) << ")" << io::endl;
-		cout << "en = " << values[res.en] << io::endl;
+		cout << "en = " << res.en << io::endl;
 		cout << "ref = " << io::hex((int)res.ref) << io::endl;
 	}
 	catch(Exception& exn) {

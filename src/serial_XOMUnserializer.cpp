@@ -362,12 +362,12 @@ bool XOMUnserializer::nextItem(void) {
 
 /**
  */
-int XOMUnserializer::readEnum(elm::CString values[]) {
+int XOMUnserializer::readEnum(Pair<elm::CString, int> values[]) {
 	xom::String text = ctx.elem->getValue();
-	for(int i = 0; values[i]; i++)
-		if(values[i] == text) {
+	for(int i = 0; values[i].fst; i++)
+		if(values[i].fst == text) {
 			text.free();
-			return i;
+			return values[i].snd;
 		}
 	String name = text;
 	text.free();
