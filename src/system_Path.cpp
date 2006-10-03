@@ -141,7 +141,7 @@ Path Path::parent(void) {
  * Return the name part of the path.
  * @return	Name part.
  */
-String Path::namePart(void) {
+String Path::namePart(void) const {
 	int pos = buf.lastIndexOf(SEPARATOR);
 	if(pos < 0)
 		return buf;
@@ -154,7 +154,7 @@ String Path::namePart(void) {
  * Return the directory part of the path.
  * @return	Directory part.
  */
-String Path::dirPart(void) {
+String Path::dirPart(void) const {
 	int pos = buf.lastIndexOf(SEPARATOR);
 	if(pos < 0)
 		return "";
@@ -167,7 +167,7 @@ String Path::dirPart(void) {
  * Test if the path is absolute.
  * @return	True if it is absolute, false else.
  */
-bool Path::isAbsolute(void) {
+bool Path::isAbsolute(void) const {
 	return buf.length() > 0 && buf[0] == SEPARATOR;
 }
 
@@ -176,7 +176,7 @@ bool Path::isAbsolute(void) {
  * Test if the path is relative.
  * @return	True if it is relative, false else.
  */
-bool Path::isRelative(void) {
+bool Path::isRelative(void) const {
 	return !isAbsolute();
 }
 
@@ -185,7 +185,7 @@ bool Path::isRelative(void) {
  * Test if the path is home-relative. On Unix, it is usually starting with "~".
  * @return	True if it is home-relative, false else.
  */
-bool Path::isHomeRelative(void) {
+bool Path::isHomeRelative(void) const {
 	return buf.length() > 0 && buf[0] == '~';	
 }
 
@@ -266,5 +266,58 @@ Path Path::home(void) {
  * Test if the path is null.
  * @return	True if it is not null, false else.
  */
+
+
+/**
+ * Get the base part of the path, that is, the path without the extension
+ * of the file part.
+ * @return	Base part of the path.
+ */
+Path Path::basePart(void) const {
+	int pos = buf.lastIndexOf(SEPARATOR);
+	if(pos < 0)
+		pos = 0;
+	pos = buf.indexOf('.', pos);
+	if(pos < 0)
+		return *this;
+	else
+		return buf.substring(0, pos);
+}
+
+
+/**
+ * Get the extension of the referenced file name.
+ * @return	Extension.
+ */
+String Path::extension(void) const {
+	int pos = buf.lastIndexOf(SEPARATOR);
+	if(pos < 0)
+		pos = 0;
+	pos = buf.indexOf('.', pos);
+	if(pos < 0)
+		return "";
+	else
+		return buf.substring(pos + 1);
+}
+
+
+/**
+ * Change the extension if there is some one or add the given extension.
+ * @param new_extension	New extension to put in.
+ * @return				New path with extension set.
+ */
+Path Path::setExtension(CString new_extension) {
+	int pos = buf.lastIndexOf(SEPARATOR);
+	if(pos < 0)
+		pos = 0;
+	pos = buf.indexOf('.', pos);
+	StringBuffer nbuf;
+	if(pos < 0)
+		nbuf << buf;
+	else
+		nbuf << buf.substring(0, pos);
+	nbuf << '.' << new_extension;
+	return nbuf.toString();
+}
 
 } } // elm::system
