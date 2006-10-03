@@ -7,12 +7,13 @@
 #ifndef ELM_SERIAL_INTERFACE_H
 #define ELM_SERIAL_INTERFACE_H
 
+#include <elm/serial/Serializer.h>
+#include <elm/serial/Unserializer.h>
+
 namespace elm { namespace serial {
 
 // Extern classes
 class SerialClass;
-class Serializer;
-class Unserializer;
 
 // Macros
 #define REFLEXIVE \
@@ -26,6 +27,12 @@ private:
 		virtual void __serialize(elm::serial::Serializer& _serializer) const; \
 		void __serialize(elm::serial::Unserializer& _serializer); \
 	private:
+
+#define SERIALIZABLE_ENUM(t) \
+	namespace elm { namespace serial { \
+		template <> \
+		inline void elm::serial::Unserializer::read<t>(t& val); \
+	} }
 
 } } // elm::serial
 
