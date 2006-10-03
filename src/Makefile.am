@@ -48,6 +48,7 @@ libelm_la_SOURCES= \
 	Iterator.cpp \
 	Collection.cpp \
 	util_BitVector.cpp \
+	util_StrongType.cpp \
 	util_test.cpp \
 	util_VarArg.cpp \
 	io_BlockOutStream.cpp \
