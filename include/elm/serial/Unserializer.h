@@ -8,6 +8,7 @@
 #define ELM_SERIAL_UNSERIALIZER_H
 
 #include <elm/string.h>
+#include <elm/util/Pair.h>
 #include <elm/serial/SerialClass.h>
 
 namespace elm { namespace serial {
@@ -37,7 +38,7 @@ public:
 	virtual bool beginList(void) = 0;
 	virtual void endList(void) = 0;
 	virtual bool nextItem(void) = 0;
-	virtual int readEnum(elm::CString values[]) = 0;
+	virtual int readEnum(Pair<elm::CString, int> values[]) = 0;
 
 	// Read base types	
 	virtual void read(bool& val) = 0;
