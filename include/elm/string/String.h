@@ -23,14 +23,14 @@ class String {
 	} buffer_t;
 	static buffer_t empty_buf;
 	static const int zero_off = sizeof(unsigned short);
-	const char *buf;
-	unsigned short off, len;
+	mutable const char *buf;
+	mutable unsigned short off, len;
 
 	// Internals
 	void copy(const char *str, int _len);
-	void lock(void) { ((buffer_t *)buf)->use++; };
-	void toc(void);
-	void unlock(void) { ((buffer_t *)buf)->use--; if(!((buffer_t *)buf)->use) delete [] buf; };
+	void lock(void) const { ((buffer_t *)buf)->use++; };
+	void toc(void) const;
+	void unlock(void) const { ((buffer_t *)buf)->use--; if(!((buffer_t *)buf)->use) delete [] buf; };
 	inline String(const char *_buf, int _off, int _len): buf(_buf), off(_off), len(_len) { lock(); };
 	static String concat(const char *s1, int l1, const char *s2, int l2);
 	inline String(buffer_t *buffer, int offset, int length)
@@ -65,13 +65,13 @@ public:
 	inline bool isEmpty(void) const { return !len; };
 	inline operator bool(void) const { return !isEmpty(); };
 
-	inline CString toCString(void) { if(buf[off + len] != '\0') toc(); return chars(); };
-	inline const char *operator&(void) { return toCString().chars(); };
+	inline CString toCString(void) const { if(buf[off + len] != '\0') toc(); return chars(); };
+	inline const char *operator&(void) const { return toCString().chars(); };
 		
 	inline char charAt(int index) const { return buf[index + off]; };
 	inline char operator[](int index) const { return charAt(index); };
-	inline String substring(int _off) { return String(buf, off + _off, len - _off); };
-	inline String substring(int _off, int _len) { return String(buf, off + _off, _len); };
+	inline String substring(int _off) const { return String(buf, off + _off, len - _off); };
+	inline String substring(int _off, int _len) const { return String(buf, off + _off, _len); };
 
 	inline String concat(const CString str) const { return concat(chars(), len, str.chars(), str.length()); };
 	inline String concat(const String& str) const { return concat(chars(), len, str.chars(), str.length()); };
