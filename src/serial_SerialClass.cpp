@@ -104,4 +104,20 @@ SerialClass *SerialClass::find(CString name) {
  * @param name	Name of the class.
  */
 
+
+/*
+ * !!TODO!!
+ * Current serialization implementation is very, very harmful !
+ * It must replaced quickly before it will be largely used. The future
+ * serialization must meet the following requirements :
+ * (1) only one function to handle the serialization of members,
+ * (2) checking of type consistency with polymorphic pointer / reference,
+ * (3) full support of base class serialization with management of possible
+ * name clashes,
+ * (4) simple support of specialization through simple template specialization,
+ * (5) real implementation of serialization must be hidden as possible,
+ * (6) ways to implement classical symbolic types (enum, set of bits, binary
+ * blocks and so one) must be provided.
+ */
+
 } } // elm::serial
