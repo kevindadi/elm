@@ -68,7 +68,7 @@ String String::concat(const char *s1, int l1, const char *s2, int l2) {
  * current string. If the buffer is only owned by the current string, the '\0'
  * is simply added. Else a new buffer is created.
  */
-void String::toc(void) {
+void String::toc(void) const {
 	
 	// Only one owner
 	buffer_t *sbuf = (buffer_t *)buf;
