@@ -364,11 +364,16 @@ bool XOMUnserializer::nextItem(void) {
  */
 int XOMUnserializer::readEnum(Pair<elm::CString, int> values[]) {
 	xom::String text = ctx.elem->getValue();
-	for(int i = 0; values[i].fst; i++)
-		if(values[i].fst == text) {
+	for(int i = 0; values[i].fst; i++) {
+		CString value = values[i].fst;
+		int pos = value.lastIndexOf(':');
+		if(pos >= 0)
+			value = value.chars() + pos + 1;
+		if(value == text) {
 			text.free();
 			return values[i].snd;
 		}
+	}
 	String name = text;
 	text.free();
 	throw io::IOException("bad enumerated value \"%s\"", &name);

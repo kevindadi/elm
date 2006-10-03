@@ -82,7 +82,7 @@ public:
 	SimpleClass(void): x(111), c('a'), f(0.1), str("ok"), en(VAL1) { }
 };
 //CString values[] = { "VAL1", "VAL2", "VAL3", "" };
-
+SERIALIZABLE_ENUM(SimpleClass::enum_t);
 
 /*namespace elm { namespace serial {
 template <class T>
