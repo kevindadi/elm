@@ -51,6 +51,17 @@ elm::serial::SerialClass& __make_class(elm::CString name) {
 	} \
 	} }
 
+#define ENUM_VALUE(n)	elm::Pair<elm::CString, int>(#n, n)
+
+#define SERIALIZE_ENUM(t, vals...) \
+	namespace elm { namespace serial { \
+	template <> \
+	inline void elm::serial::Unserializer::read<t>(t& val) { \
+		static elm::Pair<CString, int> values[] = { vals, Pair<CString, int>("", 0) }; \
+		val = (t)readEnum(values); \
+	} \
+	} }
+
 } } // elm::serial
 
 #endif // ELM_SERIAL_IMPLEMENT_H
