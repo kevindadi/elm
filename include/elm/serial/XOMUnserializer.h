@@ -64,7 +64,7 @@ public:
 	virtual bool beginList(void);
 	virtual void endList(void);
 	virtual bool nextItem(void);
-	virtual int readEnum(elm::CString values[]);	
+	virtual int readEnum(Pair<elm::CString, int> values[]);
 	
 	virtual void read(bool& val);
 	virtual void read(char& val);
