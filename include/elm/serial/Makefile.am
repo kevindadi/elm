@@ -6,6 +6,7 @@ includeelmserial_HEADERS = \
 	SerialClass.h \
 	TextSerializer.h \
 	Unserializer.h \
+	SerialTable.h \
 	XOMUnserializer.h
 
 
