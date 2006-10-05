@@ -6,6 +6,7 @@ includeelmio_HEADERS = \
 	io.h \
 	OutFileStream.h \
 	Output.h \
+	Input.h \
 	UnixInStream.h \
 	UnixOutStream.h \
 	BlockOutStream.h \
