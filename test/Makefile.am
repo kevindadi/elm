@@ -10,7 +10,7 @@ endif
 
 # Test program
 test_LDADD = -dlopen force -dlopen myplugin.la ../src/libelm.la
-test_DEPENDENCIES = ../src/libelm.la
+test_DEPENDENCIES = ../src/libelm.la myplugin.la
 
 test_SOURCES		=\
 						test.cc \
