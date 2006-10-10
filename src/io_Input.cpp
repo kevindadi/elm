@@ -260,16 +260,17 @@ String Input::scanWord(void) {
 
 /**
  * Scan a full line.
- * @return	Read line (final \n is removed).
+ * @return	Read line (final \n, if any, is appended).
  */
 String Input::scanLine(void) {
 	StringBuffer buf;
 	int chr = get();
-	while(chr >= 0 && chr != '\n') {
+	while(chr >= 0) {
 		buf << (char)chr;
+		if(chr == '\n')
+			break;
 		chr = get();
 	}
-	back(chr);
 	return buf.toString();	
 }
 
