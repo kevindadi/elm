@@ -8,12 +8,12 @@
 #define ELM_IO_INFILESTREAM_H
 
 #include <elm/string.h>
-#include <elm/io/UnixInStream.h>
+#include <elm/system/SystemIO.h>
 
 namespace elm { namespace io {
 
 // InFileStream class
-class InFileStream: public UnixInStream {
+class InFileStream: public system::SystemInStream {
 public:
 	InFileStream(CString path);
 	virtual ~InFileStream(void);
