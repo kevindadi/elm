@@ -8,8 +8,7 @@
 #define ELM_IO_IO_H
 
 #include <elm/utility.h>
-#include <elm/io/InStream.h>
-#include <elm/io/OutStream.h>
+#include <elm/system/SystemIO.h>
 #include <elm/io/Output.h>
 #include <elm/io/Input.h>
 
