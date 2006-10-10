@@ -7,7 +7,7 @@
 #ifndef ELM_IO_UNIX_OUTSTREAM_H
 #define ELM_IO_UNIX_OUTSTREAM_H
 
-#include <elm/string.h>
+#include <elm/string/CString.h>
 #include <elm/io/OutStream.h>
 
 namespace elm { namespace io {
