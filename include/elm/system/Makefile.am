@@ -6,7 +6,11 @@ includeelmsystem_HEADERS = \
 	Path.h \
 	Plugger.h \
 	Plugin.h \
+	Process.h \
+	ProcessBuilder.h \
+	StopWatch.h \
+	System.h \
 	SystemException.h \
-	StopWatch.h
+	SystemIO.h
 
 
