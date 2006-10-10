@@ -56,11 +56,16 @@ SystemException::SystemException(int code, String header) {
 	case EFAULT:
 	case ENOENT:
 	case ENOTDIR:
+	case ECHILD:
+	case ESRCH:
 		err = BAD_PATH;
 		break;
 	case EEXIST:
 		err = ALREADY_EXIST;
 		break;
+	case EINVAL:
+	case EINTR:
+		assert(0);
 	}
 	
 	// Compute message

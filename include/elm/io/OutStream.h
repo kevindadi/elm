@@ -22,8 +22,8 @@ public:
 };
 
 // Standard IO streams	
-extern OutStream& stdout;
-extern OutStream& stderr;	
+/*extern OutStream& stdout;
+extern OutStream& stderr;*/	
 
 
 } }	// elm::io

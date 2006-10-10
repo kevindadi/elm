@@ -22,8 +22,8 @@ public:
 	virtual CString lastErrorMessage(void);
 };
 
-// Standard IO streams	
-extern InStream& stdin;
+// Standard IO streams
+//extern InStream& stdin;
 
 } }	// io::elm
 

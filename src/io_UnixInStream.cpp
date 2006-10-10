@@ -49,7 +49,7 @@ CString UnixInStream::lastErrorMessage(void) {
 /**
  * Stream pointing to the standard error input.
  */
-static UnixInStream unix_stdin(0);
-InStream& stdin = unix_stdin;	
+/*static UnixInStream unix_stdin(0);
+InStream& stdin = unix_stdin;*/	
 
 } } // elm::io
