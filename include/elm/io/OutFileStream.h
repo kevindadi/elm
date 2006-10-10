@@ -8,12 +8,12 @@
 #define ELM_IO_OUTFILESTREAM_H
 
 #include <elm/string.h>
-#include <elm/io/UnixOutStream.h>
+#include <elm/system/SystemIO.h>
 
 namespace elm { namespace io {
 
 // OutFileStream class
-class OutFileStream: public UnixOutStream {
+class OutFileStream: public system::SystemOutStream {
 public:
 	OutFileStream(CString path);
 	virtual ~OutFileStream(void);
