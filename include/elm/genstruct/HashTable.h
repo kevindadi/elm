@@ -87,11 +87,13 @@ inline HashTable<K, T>::~HashTable(void) {
 }
 template <class K, class T>
 void HashTable<K, T>::clear(void) {
-	for(int i = 0; i < size; i++)
+	for(int i = 0; i < size; i++) {
 		for(node_t *cur = tab[i], *next; cur; cur = next) {
 			next = cur->next;
 			delete cur;
 		}
+		tab[i] = 0;
+	}
 }
 template <class K, class T>
 bool HashTable<K, T>::isEmpty(void) const {
