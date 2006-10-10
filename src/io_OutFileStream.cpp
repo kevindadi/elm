@@ -22,7 +22,7 @@ namespace elm { namespace io {
  * @param path Path of the file to wriet to.
  */
 OutFileStream::OutFileStream(CString path)
-: UnixOutStream(open(path.chars(), O_CREAT | O_TRUNC | O_WRONLY, 0777)) {
+: SystemOutStream(open(path.chars(), O_CREAT | O_TRUNC | O_WRONLY, 0777)) {
 }
 
 /**
