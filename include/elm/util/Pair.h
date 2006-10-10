@@ -22,6 +22,13 @@ public:
 };
 
 
+// Shortcut
+template <class T1, class T2>
+inline Pair<T1, T2> pair(const T1& v1, const T2& v2) {
+	return Pair<T1, T2>(v1, v2);
+}
+
+
 // Pair inlines
 template <class T1, class T2>
 inline Pair<T1, T2>::Pair(void) {
