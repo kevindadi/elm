@@ -47,10 +47,6 @@ libelm_la_SOURCES= \
 	option_IntOption.cpp \
 	Iterator.cpp \
 	Collection.cpp \
-	util_BitVector.cpp \
-	util_StrongType.cpp \
-	util_test.cpp \
-	util_VarArg.cpp \
 	io_BlockOutStream.cpp \
 	io_BlockInStream.cpp \
 	serial_Serializer.cpp \
@@ -70,11 +66,16 @@ libelm_la_SOURCES= \
 	system_System.cpp \
 	system_SystemException.cpp \
 	system_SystemIO.cpp \
+	util_BitVector.cpp \
 	util_Formatter.cpp \
 	util_MessageException.cpp \
 	util_Option.cpp \
 	util_Pair.cpp \
+	util_strong_type.cpp \
+	util_test.cpp \
+	util_VarArg.cpp \
 	util_Version.cpp
+
 
 if HAS_LIBXML
 libelm_la_SOURCES += \

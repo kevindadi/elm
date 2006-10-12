@@ -6,8 +6,7 @@ includeelmutil_HEADERS = \
 	MessageException.h \
 	Option.h \
 	Pair.h \
-	StrongType.h \
+	strong_type.h \
 	test.h \
 	VarArg.h \
 	Version.h
-
