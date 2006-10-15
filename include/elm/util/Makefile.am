@@ -3,6 +3,7 @@ includeelmutil_HEADERS = \
 	AutoPtr.h \
 	BitVector.h \
 	Exception.h \
+	HashKey.h \
 	MessageException.h \
 	Option.h \
 	Pair.h \

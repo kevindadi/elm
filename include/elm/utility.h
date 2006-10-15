@@ -12,22 +12,9 @@
 #include <elm/util/Option.h>
 #include <elm/util/Pair.h>
 #include <elm/util/MessageException.h>
+//#include <elm/util/HashKey.h>
 
 namespace elm {
-
-// Error class
-/*class Error: public Exception {
-};*/
-
-
-// HashKey class
-template <class T> class HashKey {
-public:
-	static HashKey<T>& def;
-	virtual unsigned long hash(T key) = 0;
-	virtual bool equals(T key1, T key2) = 0;
-};
-
 
 // Comparator class
 template <class T> class Comparator {

@@ -7,6 +7,7 @@
 
 #include <elm/util/test.h>
 #include <elm/utility.h>
+#include <elm/util/HashKey.h>
 
 using namespace elm;
 
@@ -26,44 +27,40 @@ void test_utility(void) {
 	
 	// Hashing tests
 	{
-		HashKey<int>& hkey = HashKey<int>::def;
-		CHECK(hkey.hash(0) == hkey.hash(0));
-		CHECK(hkey.hash(666) == hkey.hash(666));
-		CHECK(hkey.hash(-111) == hkey.hash(-111));
-		CHECK(hkey.equals(0, 0) == true);
-		CHECK(hkey.equals(666, 666) == true);
-		CHECK(hkey.equals(666, -111) == false);
+		CHECK(HashKey<int>::hash(0) == HashKey<int>::hash(0));
+		CHECK(HashKey<int>::hash(666) == HashKey<int>::hash(666));
+		CHECK(HashKey<int>::hash(-111) == HashKey<int>::hash(-111));
+		CHECK(HashKey<int>::equals(0, 0) == true);
+		CHECK(HashKey<int>::equals(666, 666) == true);
+		CHECK(HashKey<int>::equals(666, -111) == false);
 	}
 	{
-		HashKey<void *>& hkey = HashKey<void *>::def;
 		char val;
-		CHECK(hkey.hash(0) == hkey.hash(0));
-		CHECK(hkey.hash(&val) == hkey.hash(&val));
-		CHECK(hkey.equals(0, 0) == true);
-		CHECK(hkey.equals(&val, &val) == true);
-		CHECK(hkey.equals(&val, 0) == false);
+		CHECK(HashKey<void *>::hash(0) == HashKey<void *>::hash(0));
+		CHECK(HashKey<void *>::hash(&val) == HashKey<void *>::hash(&val));
+		CHECK(HashKey<void *>::equals(0, 0) == true);
+		CHECK(HashKey<void *>::equals(&val, &val) == true);
+		CHECK(HashKey<void *>::equals(&val, 0) == false);
 	}
 	{
-		HashKey<String>& hkey = HashKey<String>::def;
 		String s1("0123456789"), s2, s3("0123456789");
-		CHECK(hkey.hash(s2) == hkey.hash(s2));
-		CHECK(hkey.hash(s1) == hkey.hash(s1));
-		CHECK(hkey.hash(s1) == hkey.hash(s3));
-		CHECK(hkey.equals(s2, s2) == true);
-		CHECK(hkey.equals(s1, s1) == true);
-		CHECK(hkey.equals(s1, s3) == true);
-		CHECK(hkey.equals(s1, s2) == false);
+		CHECK(HashKey<String>::hash(s2) == HashKey<String>::hash(s2));
+		CHECK(HashKey<String>::hash(s1) == HashKey<String>::hash(s1));
+		CHECK(HashKey<String>::hash(s1) == HashKey<String>::hash(s3));
+		CHECK(HashKey<String>::equals(s2, s2) == true);
+		CHECK(HashKey<String>::equals(s1, s1) == true);
+		CHECK(HashKey<String>::equals(s1, s3) == true);
+		CHECK(HashKey<String>::equals(s1, s2) == false);
 	}
 	{
-		HashKey<CString>& hkey = HashKey<CString>::def;
 		CString s1("0123456789"), s2, s3("0123456789");
-		CHECK(hkey.hash(s2) == hkey.hash(s2));
-		CHECK(hkey.hash(s1) == hkey.hash(s1));
-		CHECK(hkey.hash(s1) == hkey.hash(s3));
-		CHECK(hkey.equals(s2, s2) == true);
-		CHECK(hkey.equals(s1, s1) == true);
-		CHECK(hkey.equals(s1, s3) == true);
-		CHECK(hkey.equals(s1, s2) == false);
+		CHECK(HashKey<CString>::hash(s2) == HashKey<CString>::hash(s2));
+		CHECK(HashKey<CString>::hash(s1) == HashKey<CString>::hash(s1));
+		CHECK(HashKey<CString>::hash(s1) == HashKey<CString>::hash(s3));
+		CHECK(HashKey<CString>::equals(s2, s2) == true);
+		CHECK(HashKey<CString>::equals(s1, s1) == true);
+		CHECK(HashKey<CString>::equals(s1, s3) == true);
+		CHECK(HashKey<CString>::equals(s1, s2) == false);
 	}
 	
 	// Comparators tests
