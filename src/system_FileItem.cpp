@@ -15,25 +15,24 @@
 #include <elm/system/Directory.h>
 #include <elm/genstruct/HashTable.h>
 #include <elm/system/SystemException.h>
-
+#include <elm/util/strong_type.h>
 
 namespace elm {
 
-// ino_t hashing
-class InoHashKey: public HashKey<ino_t> {
-	virtual unsigned long hash(ino_t v) {
-		return (unsigned long)v;
-	};
-	virtual bool equals(ino_t key1, ino_t key2) {
-		return key1 == key2;
-	};
-};
-static InoHashKey ino_hkey_obj;
-template <> HashKey<ino_t>& HashKey<ino_t>::def = ino_hkey_obj;
+STRONG_TYPE(inode_t, ino_t);
 
+// inode_t hash key
+template <>
+class HashKey<inode_t> {
+public:
+	static unsigned long hash(inode_t v)
+		{ return (unsigned long)v; }
+	static bool equals(inode_t key1, inode_t key2)
+		{ return key1 == key2; }
+};
 
 // Used for retrieving files by name.
-static genstruct::HashTable<ino_t, system::FileItem *> *files = 0;
+static genstruct::HashTable<inode_t, system::FileItem *> *files = 0;
 
 
 namespace system {
@@ -69,7 +68,7 @@ FileItem *FileItem::get(Path path) {
 	
 	// Need to initialize ?
 	if(!files)
-		files = new genstruct::HashTable<ino_t, FileItem *>;;
+		files = new genstruct::HashTable<inode_t, FileItem *>;;
 	
 	 // Look at stat
 	 struct stat st;

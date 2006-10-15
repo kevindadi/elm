@@ -68,6 +68,7 @@ libelm_la_SOURCES= \
 	system_SystemIO.cpp \
 	util_BitVector.cpp \
 	util_Formatter.cpp \
+	util_HashKey.cpp \
 	util_MessageException.cpp \
 	util_Option.cpp \
 	util_Pair.cpp \

@@ -14,6 +14,10 @@ namespace elm { namespace genstruct {
  * This class provides an hashing table implementation as an array of linked
  * list. A small caching feature put to the head of the linked list last
  * accessed items.
+ * 
+ * @param K	Type of the keys.
+ * @param T	Type of stored data.
+ * @param H	Class implementing @ref hash concept (default to HashKey).
  */
 
 
