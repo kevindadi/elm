@@ -14,32 +14,32 @@
 namespace elm { namespace datastruct {
 
 // HashTable class
-template <class K, class T>
+template <class K, class T, class H = HashKey<K> >
 class HashTable: public Map<K, T> {
 
 	// KeyCollection class
 	class KeyCollection: public Collection<K> {
-		const HashTable<K, T>& htab;
+		const HashTable<K, T, H>& htab;
 	public:
-		inline KeyCollection(const HashTable<K, T>& _htab);
+		inline KeyCollection(const HashTable<K, T, H>& _htab);
 		virtual IteratorInst<K> *visit(void);
 		virtual MutableCollection<K> *empty(void);
 	};
 	
 	// ValueCollection class
 	class ItemCollection: public Collection<T> {
-		const HashTable<K, T>& htab;
+		const HashTable<K, T, H>& htab;
 	public:
-		inline ItemCollection(const HashTable<K, T>& _htab);
+		inline ItemCollection(const HashTable<K, T, H>& _htab);
 		virtual IteratorInst<T> *visit(void);
 		virtual MutableCollection<T> *empty(void);
 	};
 		
-	genstruct::HashTable<K, T> htab;
+	genstruct::HashTable<K, T, H> htab;
 	KeyCollection keycol;
 	ItemCollection itemcol;
 public:
-	inline HashTable(HashKey<K>& hkey = HashKey<K>::def, int size = 211);
+	inline HashTable(int size = 211);
 
 	// Map overload
 	virtual void put(const K key, const T value);
@@ -52,74 +52,74 @@ public:
 
 
 // Methods
-template <class K, class T>
-HashTable<K, T>::HashTable(HashKey<K>& hkey, int size)
-: htab(hkey, size), keycol(*this), itemcol(*this) {
+template <class K, class T, class H>
+HashTable<K, T, H>::HashTable(int size)
+: htab(size), keycol(*this), itemcol(*this) {
 }
 
-template <class K, class T>
-void HashTable<K, T>::put(const K key, const T value) {
+template <class K, class T, class H>
+void HashTable<K, T, H>::put(const K key, const T value) {
 	htab.put(key, value);
 }
 
-template <class K, class T> 
-const Option<T> HashTable<K, T>::get(const K key) {
+template <class K, class T, class H> 
+const Option<T> HashTable<K, T, H>::get(const K key) {
 	return htab.get(key);
 }
 
-template <class K, class T>
-const T HashTable<K, T>::get(const K key, const T def) {
+template <class K, class T, class H>
+const T HashTable<K, T, H>::get(const K key, const T def) {
 	return htab.get(key, def);
 }
 
-template <class K, class T>
-void HashTable<K, T>::remove(const K key) {
+template <class K, class T, class H>
+void HashTable<K, T, H>::remove(const K key) {
 	htab.remove(key);
 }
 
-template <class K, class T>
-Collection<K>& HashTable<K, T>::keys(void) {
+template <class K, class T, class H>
+Collection<K>& HashTable<K, T, H>::keys(void) {
 	return keycol;
 }
 
-template <class K, class T>
-Collection<T>& HashTable<K, T>::items(void) {
+template <class K, class T, class H>
+Collection<T>& HashTable<K, T, H>::items(void) {
 	return itemcol;
 }
 
 
-// HashTable<K, T>::KeyCollection methods
-template <class K, class T>
-HashTable<K, T>::KeyCollection::KeyCollection(const HashTable<K, T>& _htab)
+// HashTable<K, T, H>::KeyCollection methods
+template <class K, class T, class H>
+HashTable<K, T, H>::KeyCollection::KeyCollection(const HashTable<K, T, H>& _htab)
 : htab(_htab) {
 }
 
-template <class K, class T>
-IteratorInst<K> *HashTable<K, T>::KeyCollection::visit(void) {
-	typename genstruct::HashTable<K, T>::KeyIterator iter(htab.htab);
-	return new IteratorObject<typename genstruct::HashTable<K, T>::KeyIterator, K>(iter);
+template <class K, class T, class H>
+IteratorInst<K> *HashTable<K, T, H>::KeyCollection::visit(void) {
+	typename genstruct::HashTable<K, T, H>::KeyIterator iter(htab.htab);
+	return new IteratorObject<typename genstruct::HashTable<K, T, H>::KeyIterator, K>(iter);
 }
 
-template <class K, class T>
-MutableCollection<K> *HashTable<K, T>::KeyCollection::empty(void) {
+template <class K, class T, class H>
+MutableCollection<K> *HashTable<K, T, H>::KeyCollection::empty(void) {
 	return new Vector<K>();
 }
 
 
 // HashTable<K, T>::ItemCollection methods
-template <class K, class T>
-HashTable<K, T>::ItemCollection::ItemCollection(const HashTable<K, T>& _htab)
+template <class K, class T, class H>
+HashTable<K, T, H>::ItemCollection::ItemCollection(const HashTable<K, T, H>& _htab)
 : htab(_htab) {
 }
 
-template <class K, class T>
-IteratorInst<T> *HashTable<K, T>::ItemCollection::visit(void) {
-	typename genstruct::HashTable<K, T>::ItemIterator iter(htab.htab);
-	return new IteratorObject<typename genstruct::HashTable<K, T>::ItemIterator, T>(iter);
+template <class K, class T, class H>
+IteratorInst<T> *HashTable<K, T, H>::ItemCollection::visit(void) {
+	typename genstruct::HashTable<K, T, H>::ItemIterator iter(htab.htab);
+	return new IteratorObject<typename genstruct::HashTable<K, T, H>::ItemIterator, T>(iter);
 }
 
-template <class K, class T>
-MutableCollection<T> *HashTable<K, T>::ItemCollection::empty(void) {
+template <class K, class T, class H>
+MutableCollection<T> *HashTable<K, T, H>::ItemCollection::empty(void) {
 	return new Vector<T>();
 }
 
