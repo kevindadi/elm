@@ -83,10 +83,12 @@ libelm_la_SOURCES += \
 	xom_Document.cpp \
 	xom_Element.cpp \
 	xom_Elements.cpp \
+	xom_Exception.cpp \
 	xom_Node.cpp \
 	xom_NodeFactory.cpp \
 	xom_ParentNode.cpp \
 	xom_String.cpp \
 	xom_Text.cpp \
+	xom_XIncluder.cpp \
 	xom_macros.h
 endif

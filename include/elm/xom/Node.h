@@ -23,6 +23,10 @@ class Builder;
 
 // Node class
 class Node {
+	friend class Builder;
+	friend class Elements;
+	friend class XIncluder;
+	
 public:
 	typedef enum kind_t {
 		NONE = 0,
@@ -36,8 +40,7 @@ public:
 		NAMESPACE
 	} kind_t;
 protected:
-	friend class Builder;
-	friend class Elements;
+	
 	void *node;
 	Node(void *_node);
 	Node *make(void *node);

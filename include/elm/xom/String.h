@@ -27,6 +27,7 @@ public:
 	inline String(void);
 	inline String(const char *str);
 	inline String(const char_t *str);
+	inline String(const CString& str);
 	inline String(const String& string);
 	
 	// Buffer management
@@ -52,6 +53,10 @@ inline String::String(const char *str)
 
 inline String::String(const char_t *str)
 : CString((const char *)str) {
+}
+
+inline String::String(const CString& str)
+: CString(str) {
 }
 
 inline String::String(const String& string): CString(string) {
