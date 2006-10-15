@@ -4,10 +4,10 @@ includeelmxom_HEADERS = \
 	Document.h \
 	Element.h \
 	Elements.h \
+	Exception.h \
 	Node.h \
 	NodeFactory.h \
 	ParentNode.h \
 	String.h \
-	Text.h
-
-
+	Text.h \
+	XIncluder.h
