@@ -7,6 +7,7 @@
 
 #include <elm/util/test.h>
 #include <elm/xom.h>
+#include <elm/xom/XIncluder.h>
 
 using namespace elm;
 using namespace xom;
@@ -75,6 +76,16 @@ void test_xom(void) {
 		CHECK_EQUAL(elems->get(1)->getLocalName(), xom::String("d"));
 		CHECK_EQUAL(elems->get(2)->getLocalName(), xom::String("d"));
 		delete elems;
+	}
+	
+	// Check xinclude
+	{
+		Document *doc = builder.build("including.xml");
+		CHECK(doc);
+		XIncluder::resolveInPlace(doc);
+		Element *root_element = doc->getRootElement();
+		CHECK(root_element);
+		display_element(root_element, 0);
 	}
 	
 	CHECK_END;
