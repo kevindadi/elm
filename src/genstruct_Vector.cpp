@@ -12,6 +12,8 @@ namespace elm { namespace genstruct {
 /**
  * @class Vector;
  * <p>A vector is an array of items whose size grows dynamically.</p>
+ * 
+ * @param T	Type of stored items.
  */
 
 
@@ -19,6 +21,13 @@ namespace elm { namespace genstruct {
  * @fn Vector::Vector(int _cap);
  * Build a new vector.
  * @param _cap	Capacity represents the initial and growing size of the fector.
+ */
+
+
+/**
+ * @fn Vector::Vector(const Vector<T>& vec);
+ * Build a vector by copying an existing one.
+ * @param vec	Vector to copy.
  */
 
 
@@ -203,6 +212,19 @@ namespace elm { namespace genstruct {
  * Get the last item of the vector, that is, the top of the stack represented
  * by the vector.
  * @return	Last vector item.
+ */
+
+
+/**
+ * @fn void Vector::copy(const Vector& vec);
+ * Copy the given vector in the current one.
+ * @param vec	Vector to copy.
+ */
+
+
+/**
+ * @fn Vector<T>& Vector::operator=(const Vector& vec);
+ * Shortcut to @ref copy().
  */
 
 } } // elm::genstruct

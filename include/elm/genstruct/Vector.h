@@ -21,6 +21,7 @@ class Vector {
 	unsigned short cap, cnt;
 public:
 	inline Vector(int _cap = 8);
+	inline Vector(const Vector<T>& vec);
 	inline ~Vector(void);
 	
 	// Accessors
@@ -47,7 +48,9 @@ public:
 	void grow(int new_cap);
 	void setLength(int new_length);
 	inline Table<T> detach(void);
-	
+	inline void copy(const Vector& vec);
+	inline Vector<T>& operator=(const Vector& vec) { copy(vec); };
+
 	// Stack processing
 	inline void push(const T& value);
 	inline const T pop(void);
@@ -71,6 +74,13 @@ public:
 template <class T> Vector<T>::Vector(int _cap)
 : tab(new T[_cap]), cap(_cap), cnt(0) {
 }
+
+
+template <class T> inline Vector<T>::Vector(const Vector<T>& vec)
+: tab(0), cap(0), cnt(0) {
+	copy(vec);
+}
+
 
 template <class T> Vector<T>::~Vector(void) {
 	if(tab)
@@ -183,6 +193,18 @@ template <class T> void Vector<T>::setLength(int new_length) {
 	assert(new_length >= 0);
 	assert(new_length <= cnt);
 	cnt = new_length;
+}
+
+template <class T> inline void Vector<T>::copy(const Vector& vec) {
+	if(!tab || vec.cnt > cap) {
+		if(tab)
+			delete [] tab;
+		cap = vec.cap;
+		tab = new T[vec.cap];
+	}
+	cnt = vec.cnt;
+	for(int i = 0; i < cnt; i++)
+		tab[i] = vec.tab[i];
 }
 
 template <class T> inline void Vector<T>::push(const T& value) {
