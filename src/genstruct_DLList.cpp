@@ -5,6 +5,8 @@
  * src/genstruct_DLList.cpp -- DLList class implementation.
  */
 
+#include <elm/genstruct/DLList.h>
+
 namespace elm { namespace genstruct {
 
 /**
@@ -12,6 +14,20 @@ namespace elm { namespace genstruct {
  * A generic implementation of a double-link list. It may be traversed using
  * the @ref Iterator class or modified using @ref Editor class.
  * @param T	Type of items stored in the list.
+ */
+
+
+/**
+ * @fn Iterator DLList::fromFirst(void) const;
+ * Get an iterator on the first item of the list.
+ * @return	Iterator on the first item.
+ */
+
+
+/**
+ * @fn Iterator DLList::fromLast(void) const;
+ * Get an iterator on the last item of the last.
+ * @return	Iterator on the last item.
  */
 
 
@@ -127,7 +143,7 @@ namespace elm { namespace genstruct {
 
 /**
  * @fn bool DLList::Iterator::ended(void) const;
- * Test if the end is reached.
+ * Test if the end or the begin is reached.
  * @return	True if the end is reached, false else.
  */
 
@@ -142,13 +158,6 @@ namespace elm { namespace genstruct {
 /**
  * @fn void DLList::Iterator::next(void);
  * Go to the next item.
- */
-
-
-/**
- * @fn bool DLList::Iterator::begining(void) const;
- * Test if the begin of the list is reached.
- * @return	True if the begin is reached, false else.
  */
 
 

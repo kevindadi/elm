@@ -41,10 +41,16 @@ public:
 	
 	// Iterator class
 	class Iterator: public genstruct::DLList<T>::Iterator {
+		friend class DLList<T>;
+		inline Iterator(const typename genstruct::DLList<T>::Iterator& iter);
 	public:
 		inline Iterator(const DLList<T>& list);
 		inline Iterator(const Iterator& iter);
 	};
+	
+	// Iterator methods
+	Iterator fromFirst(void) const { return list.fromFirst(); }
+	Iterator fromLast(void) const { return list.fromLast(); }
 };
 
 // DLList<T>::Iterator class
@@ -55,6 +61,11 @@ inline DLList<T>::Iterator::Iterator(const DLList<T>& list)
 
 template <class T>
 inline DLList<T>::Iterator::Iterator(const DLList<T>::Iterator::Iterator& iter)
+: genstruct::DLList<T>::Iterator(iter) {
+}
+
+template <class T>
+inline DLList<T>::Iterator::Iterator(const typename genstruct::DLList<T>::Iterator& iter)
 : genstruct::DLList<T>::Iterator(iter) {
 }
 

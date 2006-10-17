@@ -53,10 +53,10 @@ public:
 		inline bool ended(void) const;
 		inline T item(void) const;
 		inline void next(void);
-		inline bool begining(void) const;
 		inline void previous(void);
 		inline void first(void);
-		inline void last(void);	
+		inline void last(void);
+		inline Iterator& operator--(void) { previous(); };
 	};
 	
 	// Editor class
@@ -73,6 +73,10 @@ public:
 		inline void insertAfter(const T value);
 		inline void insertBefore(const T value);
 	};
+	
+	// Iterator generation
+	Iterator fromFirst(void) const;
+	Iterator fromLast(void) const;
 };
 
 
@@ -146,11 +150,21 @@ template <class T> void DLList<T>::clear(void) {
 	}
 }
 
+template <class T> typename DLList<T>::Iterator DLList<T>::fromFirst(void) const {
+	return Iterator(*this);
+}
+
+template <class T> typename DLList<T>::Iterator DLList<T>::fromLast(void) const {
+	Iterator iter(*this);
+	iter.last();
+	return iter;
+}
+
 
 // DList<T>::Iterator methods
 template <class T> DLList<T>::Iterator::Iterator(const DLList<T>& _list)
 : list(_list.list) {
-	cur = (DLNode *)list.first();
+		cur = (DLNode *)list.first();
 }
 
 template <class T>
@@ -159,23 +173,25 @@ inline DLList<T>::Iterator::Iterator(const DLList<T>::Iterator& iter)
 }
 
 template <class T> bool DLList<T>::Iterator::ended(void) const {
-	return cur->atEnd();
+	return cur->atEnd() || cur->atBegin();
 }
+
 template <class T> T DLList<T>::Iterator::item(void) const {
 	return cur->value();
 }
+
 template <class T> void DLList<T>::Iterator::next(void) {
 	cur = (DLNode *)cur->next();
 }
-template <class T> bool DLList<T>::Iterator::begining(void) const {
-	return cur == list.first();
-}
+
 template <class T> void DLList<T>::Iterator::previous(void) {
 	cur = (DLNode *)cur->previous();
 }
+
 template <class T> void DLList<T>::Iterator::first(void) {
 	cur = (DLNode *)list.first();
 }
+
 template <class T> void DLList<T>::Iterator::last(void) {
 	cur = (DLNode *)list.last();
 }
