@@ -84,6 +84,7 @@ void String::toc(void) const {
 		unlock();
 		nsbuf->buf[len] = '\0';
 		off = zero_off;
+		buf = nbuf;
 	}
 }
 
