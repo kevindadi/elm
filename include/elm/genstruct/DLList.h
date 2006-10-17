@@ -56,7 +56,7 @@ public:
 		inline void previous(void);
 		inline void first(void);
 		inline void last(void);
-		inline Iterator& operator--(void) { previous(); };
+		inline Iterator& operator--(int) { previous(); };
 	};
 	
 	// Editor class
