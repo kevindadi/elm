@@ -28,7 +28,7 @@ public:
 	inline int count(void) const;
 	inline const T *table(void) const;
 	inline T *table(void);
-	inline T get(int index) const;
+	inline const T& get(int index) const;
 	inline T& get(int index);
 	inline void set(int index, const T& value);
 	inline bool isEmpty(void) const;
@@ -37,7 +37,7 @@ public:
 	inline void copy(const Table<T>& table);
 	
 	// Operators
-	inline T operator[](int index) const;
+	inline const T& operator[](int index) const;
 	inline T& operator[](int index);
 	inline Table<T>& operator=(const Table& table);
 	inline operator bool(void) const;
@@ -93,7 +93,7 @@ inline T *Table<T>::table(void) {
 }
 
 template <class T>
-inline T Table<T>::get(int index) const {
+inline const T& Table<T>::get(int index) const {
 	assert(index >= 0 && index < cnt);
 	return tab[index];
 }
@@ -116,7 +116,7 @@ inline bool Table<T>::isEmpty(void) const {
 }
 
 template <class T>	
-inline T Table<T>::operator[](int index) const {
+inline const T& Table<T>::operator[](int index) const {
 	return get(index);
 }
 
