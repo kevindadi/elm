@@ -26,7 +26,7 @@ public:
 	inline SerialTable(void);
 	inline SerialTable(T *table, int count);
  	inline SerialTable(const genstruct::Table<T> &table);
-	inline SerialTable<T>& operator=(const genstruct::Table<T>& table);
+	//inline SerialTable<T>& operator=(const genstruct::Table<T>& table);
 
 	static SerialClass& __class;
 	virtual void __serialize(Serializer& _serializer) const;
@@ -48,10 +48,10 @@ inline SerialTable<T>::SerialTable(const genstruct::Table<T> &table)
 : genstruct::AllocatedTable<T>(table) {
 }
 
-template <class T>
+/*template <class T>
 inline SerialTable<T>& SerialTable<T>::operator=(const genstruct::Table<T>& table) {
 	copy(table);
-}
+}*/
 
 #ifdef ELM_SERIAL_IMPLEMENT_H
 
@@ -68,7 +68,7 @@ void SerialTable<T>::__serialize(Unserializer& _serializer) {
 		_serializer >> vec[vec.length() - 1];
 	}
 	_serializer.endList();
-	*this = vec.detach();
+	copy(vec.detach());
 }
 
 template <class T>
