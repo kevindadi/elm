@@ -121,6 +121,17 @@ void test_dllist(void) {
 		CHECK(cnt == -1);		
 	}
 	
+	// Check back iteration
+	{
+		datastruct::DLList<int> list;
+		for(int i = 0; i < 10; i++)
+			list.addLast(i);
+		int n = 9;
+		for(datastruct::DLList<int>::Iterator iter(list.fromLast()); iter;
+		iter--, n--)
+			CHECK_EQUAL(*iter, n); 
+	}
+
 	CHECK_END;
 }
 
