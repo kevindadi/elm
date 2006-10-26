@@ -181,7 +181,12 @@ inline void AllocatedTable<T>::free(void) {
 
 template <class T>
 inline AllocatedTable<T>& AllocatedTable<T>::operator=(const Table<T>& table) {
-	copy(table);
+	if(Table<T>::tab)
+		delete [] Table<T>::tab;
+	Table<T>::cnt = table.cnt;
+	Table<T>::tab = new T[table.cnt];
+	for(int i = 0; i < table.cnt; i++)
+		(*this)[i] = table[i];
 }
 
 } } // elm::genstruct
