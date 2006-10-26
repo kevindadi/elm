@@ -54,6 +54,9 @@ public:
 	inline ~AllocatedTable(void);
 	inline void allocate(int count);
 	inline void free(void);
+	inline AllocatedTable<T>& operator=(const AllocatedTable<T>& table) {
+		*this = (const Table<T>&)table;
+	}
 	inline AllocatedTable<T>& operator=(const Table<T>& table);
 };
 
@@ -134,6 +137,7 @@ inline void Table<T>::copy(const Table<T>& table) {
 template <class T>
 inline Table<T>& Table<T>::operator=(const Table& table) {
 	copy(table);
+	//cout << "Table::operator=(" << this << ", " << &table << ")\n";
 }
 
 template <class T>
@@ -145,11 +149,13 @@ inline Table<T>::operator bool(void) const {
 // Allocated table inlines
 template <class T>
 inline AllocatedTable<T>::AllocatedTable(void) {
+	//cout << "new AllocatedTable() = " << this << io::endl;
 }
 
 template <class T>
 inline AllocatedTable<T>::AllocatedTable(int count)
 : Table<T>(new T[count], count) {
+	//cout << "new AllocatedTable() = " << this << io::endl;
 }
 
 template <class T>
@@ -157,11 +163,13 @@ inline AllocatedTable<T>::AllocatedTable(const Table<T>& table)
 : Table<T>(new T[table.count()], table.count()) {
 	for(int i = 0; i < Table<T>::cnt; i++)
 		Table<T>::tab[i] = table[i];
+	//cout << "new AllocatedTable() = " << this << io::endl;
 }
 
 template <class T>
 inline AllocatedTable<T>::~AllocatedTable(void) {
 	free();	
+	//cout << "deleting AllocatedTable = " << this << io::endl;
 }
 
 template <class T>
@@ -181,11 +189,12 @@ inline void AllocatedTable<T>::free(void) {
 
 template <class T>
 inline AllocatedTable<T>& AllocatedTable<T>::operator=(const Table<T>& table) {
+	//cout << "AllocatedTable::operator=(" << this << ", " << &table << ")\n";
 	if(Table<T>::tab)
 		delete [] Table<T>::tab;
-	Table<T>::cnt = table.cnt;
-	Table<T>::tab = new T[table.cnt];
-	for(int i = 0; i < table.cnt; i++)
+	Table<T>::cnt = table.count();
+	Table<T>::tab = new T[table.count()];
+	for(int i = 0; i < table.count(); i++)
 		(*this)[i] = table[i];
 }
 

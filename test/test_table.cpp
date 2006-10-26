@@ -11,6 +11,20 @@
 using namespace elm;
 using namespace elm::genstruct;
 
+class TopTable {
+public:
+	AllocatedTable<int> tab;
+	TopTable(void): tab(0) { }
+	TopTable(int size): tab(size) { }
+	TopTable(const TopTable& tt): tab(tt.tab) { }
+};
+
+class BottomTable {
+public:
+	AllocatedTable< TopTable > tab;
+	BottomTable(int size): tab(size) { }
+};
+
 void test_table(void) {
 	CHECK_BEGIN("table");
 	
@@ -37,6 +51,20 @@ void test_table(void) {
 		CHECK(tab[2] == 6);
 	}
 	
+	// Complex tables
+	{
+		cout << "BEGIN\n";
+		BottomTable tt(4);
+		cout << "tt.tab[0] = TopTable(4);\n";
+		tt.tab[0] = TopTable(4);
+		cout << "tt.tab[1] = TopTable(4);\n";
+		tt.tab[1] = TopTable(4);
+		cout << "tt.tab[2] = TopTable(4);\n";
+		tt.tab[2] = TopTable(4);
+		cout << "tt.tab[3] = TopTable(4);\n";
+		tt.tab[3] = TopTable(4);
+		cout << "END\n";
+	}
 	CHECK_END;
 }
 	
