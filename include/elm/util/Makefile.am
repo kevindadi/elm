@@ -4,6 +4,7 @@ includeelmutil_HEADERS = \
 	BitVector.h \
 	Exception.h \
 	HashKey.h \
+	Initializer.h \
 	MessageException.h \
 	Option.h \
 	Pair.h \

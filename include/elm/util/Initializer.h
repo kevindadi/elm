@@ -13,7 +13,7 @@ namespace elm {
 template <class T>
 class Initializer {
 	typedef struct node_t {
-		struct node_t *node;
+		struct node_t *next;
 		T *object;
 		inline node_t(T *_object, struct node_t *_next)
 		: object(_object), next(_next) { }
@@ -22,18 +22,26 @@ class Initializer {
 	static node_t *list;
 	static bool initialized;
 public:
+	Initializer(void);
 	~Initializer(void);
 	void record(T *object);
 	void startup(void);
 };
 
 // Statics
-template <class T> node_t *Initializer<T>::list = 0;
+template <class T> typename Initializer<T>::node_t *Initializer<T>::list = 0;
 template <class T> bool Initializer<T>::initialized = false;
 
+// Initializer<T>::Initializer
+template <class T>
+Initializer<T>::Initializer(void) {
+	startup();
+}
+
 // Initializer<T>::~Initializer
+template <class T>
 Initializer<T>::~Initializer(void) {
-	for(node_t *node, *next; node; node = next) {
+	for(node_t *node = list, *next; node; node = next) {
 		next = node->next;
 		delete node;
 	}
@@ -44,8 +52,9 @@ template <class T>
 void Initializer<T>::record(T *object) {
 	if(initialized)
 		object->initialize();
-	else
+	else {
 		list = new node_t(object, list);
+	}
 }
 
 // Initializer<T>::startup()
