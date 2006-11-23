@@ -30,6 +30,7 @@ libelm_la_SOURCES= \
 	genstruct_FragTable.cpp \
 	genstruct_HashTable.cpp \
 	genstruct_SLList.cpp \
+	genstruct_Tree.cpp \
 	genstruct_VectorQueue.cpp \
 	genstruct_Table.cpp \
 	inhstruct_SLList.cpp \
@@ -54,6 +55,9 @@ libelm_la_SOURCES= \
 	serial_TextSerializer.cpp \
 	serial_Unserializer.cpp \
 	serial_XOMUnserializer.cpp \
+	serial2_serial.cpp \
+	serial2_TextSerializer.cpp \
+	serial2_XOMUnserializer.cpp \
 	system_File.cpp \
 	system_FileItem.cpp \
 	system_Directory.cpp \
