@@ -8,6 +8,7 @@ SUBDIRS = \
 	string \
 	util \
 	serial \
+	serial2 \
 	system
 
 if HAS_LIBXML
@@ -20,7 +21,9 @@ includeelm_HEADERS = \
 	debug.h \
 	io.h \
 	Iterator.h \
+	meta.h \
 	options.h \
+	rtti.h \
 	string.h \
 	utility.h \
 	xom.h
