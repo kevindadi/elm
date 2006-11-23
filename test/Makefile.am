@@ -1,6 +1,6 @@
 # $Id$
 
-noinst_PROGRAMS	=	test
+noinst_PROGRAMS	=	test serial2 unserial2
 noinst_LTLIBRARIES = myplugin.la
 
 INCLUDES	= -I../include
@@ -26,6 +26,7 @@ test_SOURCES		=\
 						test_lock.cpp \
 						test_option.cpp \
 						test_plugin.cpp \
+						test_process.cpp \
 						test_sllist.cpp \
 						test_sorted_bintree.cpp \
 						test_string.cpp \
@@ -48,3 +49,14 @@ myplugin_la_LDFLAGS	= -module -rpath @abs_builddir@
 myplugin_la_LIBADD = ../src/libelm.la
 myplugin_la_DEPS = ../src/libelm.la
 myplugin_la_SOURCES	= plugin.cpp
+
+
+# serial2 program
+serial2_LDADD = -dlopen force ../src/libelm.la
+serial2_DEPENDENCIES = ../src/libelm.la
+serial2_SOURCES		= serial2.cpp
+
+# unserial2 program
+unserial2_LDADD = -dlopen force ../src/libelm.la
+unserial2_DEPENDENCIES = ../src/libelm.la
+unserial2_SOURCES		= unserial2.cpp

@@ -22,6 +22,7 @@ void test_io_output(void);
 void test_lock(void);
 void test_option(void);
 void test_plugin(void);
+void test_process(void);
 void test_sllist(void);
 void test_sorted_bintree(void);
 void test_string(void);
@@ -51,6 +52,7 @@ struct test_t {
 	{ "io_output", test_io_output },
 	{ "lock", test_lock },
 	{ "option", test_option },
+	{ "process", test_process },
 	{ "plugin", test_plugin },
 	{ "sllist", test_sllist },
 	{ "sorted_bintree", test_sorted_bintree },
