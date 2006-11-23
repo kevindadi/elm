@@ -28,8 +28,8 @@ inline bool CString::endsWith(const String& str) const
 	{ int l1 = length(), l2 = str.length(); return l1 >= l2 && !memcmp(buf + l1 - l2, str.chars(), l2); };
 
 // Comparison inlines
-inline bool operator==(const CString s1, const CString s2) { return s1.compare(s2) == 0; };
-inline bool operator!=(const CString s1, const CString s2) { return s1.compare(s2) != 0; };
+inline bool operator==(const CString& s1, const CString& s2) { return s1.compare(s2) == 0; };
+inline bool operator!=(const CString& s1, const CString& s2) { return s1.compare(s2) != 0; };
 inline bool operator<(const CString s1, const CString s2) { return s1.compare(s2) < 0; };
 inline bool operator<=(const CString s1, const CString s2) { return s1.compare(s2) <= 0; };
 inline bool operator>(const CString s1, const CString s2) { return s1.compare(s2) > 0; };
