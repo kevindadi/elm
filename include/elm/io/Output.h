@@ -190,6 +190,10 @@ inline IntFormat lowercase(IntFormat fmt) {
 	return fmt;
 }
 
+inline IntFormat pointer(const void *p) {
+	return width(8, pad('0', hex((unsigned long)p)));
+}
+
 } } // elm::io
 
 #endif	// ELM_IO_OUTPUT_H
