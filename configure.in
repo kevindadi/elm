@@ -59,6 +59,7 @@ AC_OUTPUT([
 	include/elm/io/Makefile
 	include/elm/option/Makefile
 	include/elm/serial/Makefile
+	include/elm/serial2/Makefile
 	include/elm/string/Makefile
 	include/elm/system/Makefile
 	include/elm/util/Makefile
