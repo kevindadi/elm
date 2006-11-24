@@ -2,7 +2,7 @@
  * $Id$
  * Copyright (c) 2006 - IRIT-UPS <casse@irit.fr>
  *
- * elm/util/Initializer.h -- Initializer class interface.
+ * Initializer class interface.
  */
 #ifndef ELM_UTIL_INITIALIZER_H
 #define ELM_UTIL_INITIALIZER_H
