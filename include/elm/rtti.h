@@ -36,7 +36,24 @@ public:
 	inline V& value(void) const { return _value; };
 };
 template <class T>
-inline Field<T> field(CString name, T& value) { return Field<T>(name, value); };
+inline Field<T> field(CString name, T& value) {
+	return Field<T>(name, value);
+}
+
+
+// DefaultField class
+template <class T>
+class DefaultField: public Field<T> {
+	const T& def;
+public:
+	inline DefaultField(CString name, T& value, const T& _default)
+		: Field<T>(name, value), def(_default) { }
+	inline const T& defaultValue(void) const { return def; }
+};
+template <class T>
+inline DefaultField<T> field(CString name, T& value, const T& def) {
+	return DefaultField<T>(name, value, def);
+}
 
 
 // istype trait
