@@ -13,7 +13,7 @@
 	<list2>
 		<item id="id0"><x>0</x></item>
 		<item id="id1"><x>1</x></item>
-		<item><x>2</x></item>
+		<item><!--x>2</x--></item>
 	</list2>
 	<list3>
 		<item ref="id0"/>
