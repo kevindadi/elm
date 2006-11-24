@@ -18,7 +18,7 @@ using namespace elm;
 // MySubClass class
 class MyClass;
 class MySubClass {
-	SERIALIZABLE(MySubClass, FIELD(c) & FIELD(back))
+	SERIALIZABLE(MySubClass, DFIELD(c, '!') & FIELD(back))
 	char c;
 	MyClass *back;
 public:
@@ -43,7 +43,7 @@ SERIALIZE(MyClass);
 
 // ItemClass
 class ItemClass {
-	SERIALIZABLE(ItemClass, FIELD(x))
+	SERIALIZABLE(ItemClass, DFIELD(x, 666))
 public:
 	int x;
 	virtual int getX(void) { return x; };
