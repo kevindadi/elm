@@ -17,6 +17,7 @@
 	private:
 #define ELM_SERIALIZE(name) serial2::Class<name> name::__class(#name);
 #define ELM_FIELD(name) elm::field(#name, name)
+#define ELM_DFIELD(name, def) elm::field(#name, name, def)
 #define ELM_BASE(name) ((name&)*this)
 
 
@@ -24,6 +25,7 @@
 #	define SERIALIZABLE(name, fields) ELM_SERIALIZABLE(name, fields)
 #	define SERIALIZE(name) ELM_SERIALIZE(name)
 #	define FIELD(name) ELM_FIELD(name)
+#	define DFIELD(name, def) ELM_DFIELD(name, def)
 #	define BASE(name) ELM_BASE(name)
 #endif
 

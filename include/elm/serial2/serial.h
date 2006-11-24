@@ -112,9 +112,12 @@ inline Unserializer& operator&(Unserializer& serializer, T& data) {
 }
 template <class T>
 inline Unserializer& operator&(Unserializer& s, const Field<T>& field) {
-	s.beginField(field.name());
-	__unserialize(s, field.value());
-	s.endField();
+	__unserialize(s, field);
+	return s;
+}
+template <class T>
+inline Unserializer& operator&(Unserializer& s, const DefaultField<T>& field) {
+	__unserialize(s, field);
 	return s;
 }
 template <class T>
@@ -124,9 +127,12 @@ inline Unserializer& operator>>(Unserializer& serializer, T& data) {
 }
 template <class T>
 inline Unserializer& operator>>(Unserializer &s, const Field<T>& field) {
-	s.beginField(field.name());
-	__unserialize(s, field.value());
-	s.endField();
+	__unserialize(s, field);
+	return s;
+}
+template <class T>
+inline Unserializer& operator>>(Unserializer &s, const DefaultField<T>& field) {
+	__unserialize(s, field);
 	return s;
 }
 
@@ -262,6 +268,10 @@ inline void __serialize(Serializer& s, const Field<const T>& field) {
 	__serialize(s, field.value());
 	s.endField();
 }
+template <class T>
+inline void __serialize(Serializer& s, const DefaultField<const T>& field) {
+	__serialize(s, (const Field<const T>&)field);
+}
 
 template <class T>
 inline void __serialize(Serializer& s, const Field<T>& field) {
@@ -269,12 +279,27 @@ inline void __serialize(Serializer& s, const Field<T>& field) {
 	__serialize(s, field.value());
 	s.endField();
 }
+template <class T>
+inline void __serialize(Serializer& s, const DefaultField<T>& field) {
+	__serialize(s, (const Field<T>&)field);
+}
 
 template <class T>
 inline void __unserialize(Unserializer& s, const Field<T>& field) {
-	s.beginField(field.name());
-	__unserialize(s, field.value());
-	s.endField();
+	if(s.beginField(field.name())) {
+		__unserialize(s, field.value());
+		s.endField();
+	}
+}
+
+template <class T>
+inline void __unserialize(Unserializer& s, const DefaultField<T>& field) {
+	if(s.beginField(field.name())) {
+		__unserialize(s, field.value());
+		s.endField();
+	}
+	else
+		field.value() = field.defaultValue();
 }
 
 } } // elm::serial2
