@@ -11,11 +11,12 @@
 
 #define ELM_SERIALIZABLE(name, fields) \
 	public: \
-		static serial2::Class<name> __class; \
-		virtual serial2::AbstractType& __getSerialClass(void) const { return __class; }; \
+		static elm::serial2::Class<name> __class; \
+		virtual elm::serial2::AbstractType& __getSerialClass(void) const \
+			{ return __class; } \
 		template <class T> void __visit(T& e) { e & fields; } \
 	private:
-#define ELM_SERIALIZE(name) serial2::Class<name> name::__class(#name);
+#define ELM_SERIALIZE(name) elm::serial2::Class<name> name::__class(#name);
 #define ELM_FIELD(name) elm::field(#name, name)
 #define ELM_DFIELD(name, def) elm::field(#name, name, def)
 #define ELM_BASE(name) ((name&)*this)
