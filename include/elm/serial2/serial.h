@@ -97,7 +97,7 @@ inline void __unserialize(Unserializer& s, T *&v) {
 }
 template <class T>
 inline void __unserialize(Unserializer& s, const T *&v) {
-	s.onPointer(type<T>(), v);
+	s.onPointer(type<T>(), (void **)&v);
 }
 template <class T>
 inline void __unserialize(Unserializer& s, T& v) {

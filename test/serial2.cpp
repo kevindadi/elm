@@ -17,7 +17,13 @@ value_t color_t_values[] = {
 	value("GREEN", GREEN),
 	value("BLUE", BLUE)
 };
-ENUM(color_t, color_t_values);
+ENUM(color_t);  // , color_t_values
+ENUM_BEGIN(color_t)
+	VALUE(RED),
+	VALUE(GREEN),
+	VALUE(BLUE)
+ENUM_END
+
 
 #if 0
 namespace elm { namespace serial {

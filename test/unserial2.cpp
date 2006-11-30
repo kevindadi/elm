@@ -84,12 +84,12 @@ public:
 };
 SERIALIZE(SimpleClass);
 
-value_t enum_t_values[] = {
-	value("VAL1", SimpleClass::VAL1),
-	value("VAL2", SimpleClass::VAL2),
-	value("VAL3", SimpleClass::VAL3)
-};
-ENUM(SimpleClass::enum_t, enum_t_values);
+ENUM(SimpleClass::enum_t)
+ENUM_BEGIN(SimpleClass::enum_t) 
+	VALUE(SimpleClass::VAL1),
+	VALUE(SimpleClass::VAL2),
+	VALUE(SimpleClass::VAL3)
+ENUM_END
 
 
 // Entry point
