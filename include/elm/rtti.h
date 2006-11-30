@@ -119,20 +119,36 @@ template <> struct type_info<CString>: public type_t {
 template <> struct type_info<String>: public type_t {
 	static inline CString name(void) { return "<string>"; }
 };
+
+
+// Enumerations
 typedef struct enum_t {
 	enum { is_type = 1 };
 	enum { is_enum = 1 };
 	enum { is_class = 0 };
 } enum_t;
-#define ELM_ENUM(type, vals) \
+#define ELM_ENUM(type) \
 	namespace elm { \
 		template <> struct type_info<type>: public enum_t { \
+			static value_t __vals[]; \
 			static inline CString name(void) { return "<enum " #type ">"; } \
-			static inline value_t *values(void) { return vals; } \
+			static inline value_t *values(void) { return __vals; } \
 		}; \
 	}
+#define ELM_ENUM_BEGIN(type) \
+	namespace elm { \
+		struct value_t type_info<type>::__vals[] = {
+#define ELM_ENUM_END \
+			, value("", 0) \
+		}; \
+	}
+#define ELM_VALUE(name) elm::value(elm::_unqualify(#name), name)
+
 #ifndef ELM_NO_SHORTCUT
-#	define ENUM(type, vals) ELM_ENUM(type, vals)
+#	define ENUM(type) ELM_ENUM(type)
+#	define VALUE(name) ELM_VALUE(name)
+#	define ENUM_BEGIN(type) ELM_ENUM_BEGIN(type)
+#	define ENUM_END ELM_ENUM_END
 #endif
 
 
@@ -148,6 +164,7 @@ public:
 	virtual void *instantiate(void) = 0;
 };
 
+
 // Class class
 template <class T>
 class Class: public AbstractClass {
@@ -156,6 +173,16 @@ public:
 		: AbstractClass(name, base) { };
 	virtual void *instantiate(void) { return new T; }; 
 };
+
+
+// _unqualify function
+inline CString _unqualify(CString name) {
+	int pos = name.lastIndexOf(':');
+	if(pos < 0)
+		return name;
+	else
+		return name.substring(pos + 1);
+}
 
 } // elm
 
