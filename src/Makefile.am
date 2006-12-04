@@ -77,6 +77,7 @@ libelm_la_SOURCES= \
 	util_MessageException.cpp \
 	util_Option.cpp \
 	util_Pair.cpp \
+	util_Ref.cpp \
 	util_strong_type.cpp \
 	util_test.cpp \
 	util_VarArg.cpp \

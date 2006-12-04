@@ -27,6 +27,7 @@ test_SOURCES		=\
 						test_option.cpp \
 						test_plugin.cpp \
 						test_process.cpp \
+						test_ref.cpp \
 						test_sllist.cpp \
 						test_sorted_bintree.cpp \
 						test_string.cpp \
