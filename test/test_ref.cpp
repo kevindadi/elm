@@ -29,6 +29,7 @@ void test_ref(void) {
 		CHECK_EQUAL(&px, &y);
 		px = 12;
 		CHECK(px == 12);
+		cout << px << io::endl;
 		
 		int t[10];
 		for(int i = 0; i < 10; i++)
