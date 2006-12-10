@@ -56,7 +56,7 @@ Plugger::Plugger(CString hook, const Version& plugger_version, String _paths)
 		static bool preloaded = false;
 		if(!preloaded) {
 			//LTDL_SET_PRELOADED_SYMBOLS();
-			lt_dlpreload_default(lt_preloaded_symbols);
+			//lt_dlpreload_default(lt_preloaded_symbols);
 			lt_dlinit();
 			preloaded = true;
 		}
