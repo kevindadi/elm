@@ -28,6 +28,7 @@ public:
 	inline void set(int index, const T& value) const;
 	inline void add(T value);
 	inline void clean(void);
+	int alloc(int count);
 	
 	// Operators
 	inline const T& operator[](int index) const;
@@ -136,6 +137,18 @@ inline FragTable<T>& FragTable<T>::operator+=(T value) {
 template <class T>
 inline FragTable<T>::operator bool(void) const {
 	return !isEmpty();
+}
+
+template <class T>
+int FragTable<T>::alloc(int count) {
+	int res = length();
+	while(count >= size - used) {
+		count -= size - used;
+		tab.add(new T[size]);
+		used = 0;
+	}
+	used += count;
+	return res;
 }
 
 
