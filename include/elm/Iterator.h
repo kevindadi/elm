@@ -14,12 +14,30 @@ namespace elm {
 template <class I, class T>
 class PreIterator {
 public:
-	inline operator bool(void) const;
-	inline operator T(void) const;
-	inline I& operator++(int);
-	inline T operator*(void) const;
-	inline T operator->(void) const;
+	inline operator bool(void) const
+		{ return !((I *)this)->ended(); }
+	inline operator T(void) const
+		{ return ((I *)this)->item(); }
+	inline I& operator++(void)
+		{ ((I *)this)->next(); return *(I *)this; }
+	inline I& operator++(int)
+		{ ((I *)this)->next(); return *(I *)this; }
+	inline T operator*(void) const
+		{ return ((I *)this)->item(); }
+	inline T operator->(void) const
+		{ return ((I *)this)->item(); }
 };
+
+
+// PreBiDiIterator class
+template <class I, class T>
+class PreBiDiIterator: public PreIterator<I, T> {
+public:
+	inline I& operator--(void)
+		{ ((I *)this)->previous(); return *(I *)this; }
+	inline I& operator--(int)
+		{ ((I *)this)->previous(); return *(I *)this; } 
+}; 
 
 
 // IteratorInst class
@@ -115,26 +133,6 @@ template <class T> inline IteratorInst<T>::operator T(void) const {
 }
 
 
-// PreIterator methods
-template <class I, class T>
-inline PreIterator<I, T>::operator bool(void) const {
-	return !((I *)this)->ended();
-};
-template <class I, class T>
-inline PreIterator<I, T>::operator T(void) const {
-	return ((I *)this)->item();
-};
-template <class I, class T>
-inline I& PreIterator<I, T>::operator++(int) {
-	((I *)this)->next();
-	return *(I *)this;
-};
-template <class I, class T>
-inline T PreIterator<I, T>::operator->(void) const {
-	return ((I *)this)->item();
-};
-
-
 // Iterator methods
 template <class T> Iterator<T>::Iterator(IteratorInst<T> *_iter): iter(_iter) {
 }
@@ -166,10 +164,6 @@ template <class T> T Iterator<T>::operator->(void) const {
 template <class T> inline Iterator<T>::operator T(void) const {
 		return item();
 }
-template <class I, class T>
-inline T PreIterator<I, T>::operator*(void) const {
-	return ((I *)this)->item();
-};
 
 
 // MutableIterator methods
