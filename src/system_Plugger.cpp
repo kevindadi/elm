@@ -17,11 +17,12 @@
 #include <elm/system/Plugger.h>
 #include <elm/io.h>
 
-#ifdef WITH_LIBTOOL
+
+/*#ifdef WITH_LIBTOOL
 	extern "C" {
 		extern const lt_dlsymlist lt_preloaded_symbols[];
 	}
-#endif
+#endif*/
 
 namespace elm { namespace system {
 

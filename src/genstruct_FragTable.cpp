@@ -110,6 +110,15 @@ namespace elm { namespace genstruct {
  * as possible.
  */
  
+ 
+ /**
+  * @fn int FragTable<T>::alloc(int count);
+  * Allocate the given count of items in sequence in the table and return
+  * the index of the first item.
+  * @param count	Count of items to allocate.
+  * @return			Index of the first item.
+  */
+ 
 
 /**
  * @class FragTable::Iterator  "elm/genstruct/FragTable.h"
