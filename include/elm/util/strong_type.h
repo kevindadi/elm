@@ -13,9 +13,11 @@
 		typedef T _t; \
 		_t v; \
 		inline N(_t _v = 0): v(_v) { }; \
-		inline operator const _t&(void) const { return v; }; \
-		inline operator _t&(void) { return v; }; \
-		inline struct N& operator=(const _t& _v) { v = _v; return *this; }; \
+		inline operator const _t&(void) const { return v; } \
+		inline operator _t&(void) { return v; } \
+		inline struct N& operator=(const _t& _v) { v = _v; return *this; } \
+		inline const _t& operator*(void) const { return v; } \
+		inline _t& operator*(void) { return v; } \
 	} N
 
 // Shrotcut
