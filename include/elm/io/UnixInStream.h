@@ -19,7 +19,7 @@ protected:
 public:
 	inline UnixInStream(int fd): _fd(fd) { };
 	inline int fd(void) const { return _fd; };
-	virtual int read(char *buffer, int size);
+	virtual int read(void *buffer, int size);
 	virtual int read(void) { return InStream::read(); };
 	virtual CString lastErrorMessage(void);
 };
