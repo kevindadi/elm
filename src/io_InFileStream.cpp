@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <elm/io/InFileStream.h>
+#include <elm/io/io.h>
 
 namespace elm { namespace io {
 
@@ -23,6 +24,8 @@ namespace elm { namespace io {
  */
 InFileStream::InFileStream(CString path)
 : SystemInStream(open(path.chars(), O_RDONLY, 0777)) {
+	if(fd() < 0)
+		throw IOException("cannot open file \"%s\" : %s", &path, &lastErrorMessage());
 }
 
 /**

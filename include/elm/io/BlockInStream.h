@@ -19,11 +19,11 @@ class BlockInStream: public InStream {
 	int _size, off;
 public:
 
-	BlockInStream(char *block, int size);
+	BlockInStream(const void *block, int size);
 	BlockInStream(const char *string);
 	BlockInStream(const CString& string);
 	BlockInStream(const String& string); 
-	inline const char *block(void) const;
+	inline const void *block(void) const;
 	inline int size(void) const;
 	inline int mark(void) const;
 	inline void move(int mark);
@@ -32,12 +32,12 @@ public:
 	inline void reset(void);
 	
 	// InStream overload
-	virtual int read(char *buffer, int size);
+	virtual int read(void *buffer, int size);
 	virtual int read(void);
 };
 
 // Inlines
-inline const char *BlockInStream::block(void) const {
+inline const void *BlockInStream::block(void) const {
 	return _block;
 }
 

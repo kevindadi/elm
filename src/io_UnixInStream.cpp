@@ -34,7 +34,7 @@ namespace elm { namespace io {
 
 /**
  */	
-int UnixInStream::read(char *buffer, int size) {
+int UnixInStream::read(void *buffer, int size) {
 	return ::read(_fd, buffer, size);
 }
 

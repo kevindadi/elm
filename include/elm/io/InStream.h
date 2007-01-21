@@ -17,7 +17,7 @@ public:
 	static const int FAILED = -1;
 	static const int ENDED = -2;
 	virtual ~InStream(void) { };
-	virtual int read(char *buffer, int size) = 0;
+	virtual int read(void *buffer, int size) = 0;
 	virtual int read(void);
 	virtual CString lastErrorMessage(void);
 };

@@ -21,8 +21,8 @@ namespace elm { namespace io {
  * @param block	Block to read from.
  * @param size	Block size.
  */ 
-BlockInStream::BlockInStream(char *block, int size)
-: _block(block), _size(size), off(0) {
+BlockInStream::BlockInStream(const void *block, int size)
+: _block((const char *)block), _size(size), off(0) {
 }
 
 
@@ -103,7 +103,7 @@ BlockInStream::BlockInStream(const String& string)
 
 /**
  */	
-int BlockInStream::read(char *buffer, int size) {
+int BlockInStream::read(void *buffer, int size) {
 	
 	// Check size
 	if(off + size > _size)
