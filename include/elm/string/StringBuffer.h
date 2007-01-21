@@ -20,6 +20,7 @@ class StringBuffer: public io::Output {
 public:
 	inline StringBuffer(int capacity = 64, int increment = 32);
 	inline String toString(void);
+	inline String copyString(void);
 	inline int length(void) const;
 	inline void reset(void);
 	inline io::OutStream& stream(void);
@@ -49,6 +50,12 @@ inline void StringBuffer::reset(void) {
 
 inline io::OutStream& StringBuffer::stream(void) {
 	return _stream;
+}
+
+inline String StringBuffer::copyString(void) {
+	return String(
+		_stream.block() + sizeof(unsigned short),
+		_stream.size() - sizeof(unsigned short));
 }
 
 } // elm
