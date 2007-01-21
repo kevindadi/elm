@@ -27,3 +27,5 @@ AAPDIR
 autodoc
 libltdl
 .settings
+config.status.lineno
+configure.lineno
