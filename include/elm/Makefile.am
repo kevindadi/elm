@@ -1,5 +1,6 @@
 SUBDIRS = \
 	block \
+	checksum \
 	datastruct \
 	genstruct \
 	inhstruct \

@@ -46,6 +46,11 @@ AM_CONDITIONAL(HAS_LIBXML, test "$HAS_LIBXML" = "yes")
 dnl ELM_DEBUG_DEFS=-DELM_DEBUG_AVLTREE
 AC_SUBST(ELM_DEBUG_DEFS)
 
+
+dnl IS_SHARED condition
+AM_CONDITIONAL(IS_SHARED, test "$(enabled_shared)" = yes)
+
+
 AC_OUTPUT([
 	Makefile
 	src/Makefile
@@ -53,6 +58,7 @@ AC_OUTPUT([
 	include/Makefile
 	include/elm/Makefile
 	include/elm/block/Makefile
+	include/elm/checksum/Makefile
 	include/elm/datastruct/Makefile
 	include/elm/genstruct/Makefile
 	include/elm/inhstruct/Makefile

@@ -13,19 +13,9 @@ endif
 DEFS=@ELM_DEBUG_DEFS@
 
 libelm_la_SOURCES= \
-	utility.cpp \
-	string_String.cpp \
-	string_StringBuffer.cpp \
-	io_OutStream.cpp \
-	io_UnixOutStream.cpp \
-	io_Input.cpp \
-	io_Output.cpp \
-	io_InFileStream.cpp \
-	io_InStream.cpp \
-	io_OutFileStream.cpp \
-	io_UnixInStream.cpp \
-	io_IOException.cpp \
 	block_DynBlock.cpp \
+	checksum_Fletcher.cpp \
+	Collection.cpp \
 	genstruct_DLList.cpp \
 	genstruct_FragTable.cpp \
 	genstruct_HashTable.cpp \
@@ -38,6 +28,18 @@ libelm_la_SOURCES= \
 	inhstruct_SortedBinTree.cpp \
 	inhstruct_DLList.cpp \
 	inhstruct_AVLTree.cpp \
+	io_OutStream.cpp \
+	io_UnixOutStream.cpp \
+	io_Input.cpp \
+	io_Output.cpp \
+	io_InFileStream.cpp \
+	io_InStream.cpp \
+	io_OutFileStream.cpp \
+	io_UnixInStream.cpp \
+	io_IOException.cpp \
+	io_BlockOutStream.cpp \
+	io_BlockInStream.cpp \
+	Iterator.cpp \
 	option_Option.cpp \
 	option_StandardOption.cpp \
 	option_BoolOption.cpp \
@@ -46,10 +48,6 @@ libelm_la_SOURCES= \
 	option_ActionOption.cpp \
 	option_EnumOption.cpp \
 	option_IntOption.cpp \
-	Iterator.cpp \
-	Collection.cpp \
-	io_BlockOutStream.cpp \
-	io_BlockInStream.cpp \
 	serial_Serializer.cpp \
 	serial_SerialClass.cpp \
 	serial_TextSerializer.cpp \
@@ -58,6 +56,8 @@ libelm_la_SOURCES= \
 	serial2_serial.cpp \
 	serial2_TextSerializer.cpp \
 	serial2_XOMUnserializer.cpp \
+	string_String.cpp \
+	string_StringBuffer.cpp \
 	system_File.cpp \
 	system_FileItem.cpp \
 	system_Directory.cpp \
@@ -81,7 +81,8 @@ libelm_la_SOURCES= \
 	util_strong_type.cpp \
 	util_test.cpp \
 	util_VarArg.cpp \
-	util_Version.cpp
+	util_Version.cpp \
+	utility.cpp
 
 
 if HAS_LIBXML
