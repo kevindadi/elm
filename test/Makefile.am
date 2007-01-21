@@ -7,6 +7,9 @@ INCLUDES	= -I../include
 if HAS_LIBXML
 AM_CXXFLAGS = -DHAS_LIBXML
 endif
+if IS_SHARED
+AM_CXXFLAGS = -DIS_SHARED
+endif
 
 # Test program
 test_LDADD = -dlopen force -dlopen myplugin.la ../src/libelm.la
@@ -61,3 +64,5 @@ serial2_SOURCES		= serial2.cpp
 unserial2_LDADD = -dlopen force ../src/libelm.la
 unserial2_DEPENDENCIES = ../src/libelm.la
 unserial2_SOURCES		= unserial2.cpp
+
+TESTS = ./test

@@ -1,8 +1,8 @@
 /*
  * $Id$
- * Copyright (c) 2003, Alfheim Corporation.
+ * Copyright (c) 2003-07 IRIT-UPS <casse@irit.fr>
  *
- * test.cc -- unit tests.
+ * Unit tests
  */
 
 #include <elm/io.h>
@@ -54,10 +54,12 @@ struct test_t {
 	{ "lock", test_lock },
 	{ "option", test_option },
 	{ "process", test_process },
-	{ "plugin", test_plugin },
+#	ifdef IS_SHARED
+		{ "plugin", test_plugin },
+#	endif
 	{ "ref", test_ref },
 	{ "sllist", test_sllist },
-	{ "sorted_bintree", test_sorted_bintree },
+/*	{ "sorted_bintree", test_sorted_bintree }, */
 	{ "string", test_string },
 	{ "string_buffer", test_string_buffer },
 	{ "table", test_table },
