@@ -43,14 +43,14 @@ template <class T> void VectorQueue<T>::enlarge(void) {
 	T *new_buffer = new T[new_cap];
 	if( hd > tl) {
 		off = cap - hd;
-		for(int i = 0; i  < off; i++) {
+		for(int i = 0; i  < off; i++)
 			new_buffer[i] = buffer[hd + i];
-		}
 		hd = 0;
 	}
 	for(int i = hd; i < tl; i++)
 		new_buffer[off + i - hd] = buffer[i];
 	delete [] buffer;
+	tl = off + tl - hd;
 	cap = new_cap;
 	buffer = new_buffer;
 }
