@@ -7,8 +7,10 @@
 
 #include <elm/genstruct/VectorQueue.h>
 #include <elm/util/test.h>
+#include <stdlib.h>
 
 using namespace elm::genstruct;
+using namespace elm;
 
 void test_vector_queue(void) {
 	CHECK_BEGIN("vector_queue");
@@ -70,6 +72,24 @@ void test_vector_queue(void) {
 				CHECK(queue.get() == i);
 			}
 			CHECK(queue.isEmpty());
+	}
+	
+	// Stressing test
+	{
+		VectorQueue<int> queue(4);
+		int start = 0, stop = 0;
+		for(int i = 0; i < 2048; i++) {
+			int action = random();
+			if(action & 0x1) {
+				cout << "\tputting " << stop << io::endl;
+				queue.put(stop++);
+			}
+			else if(start != stop) {
+				int val = queue.get();
+				cout << "\tgetting " << val << "(=" << start << ")\n";
+				CHECK(val == start++);
+			} 
+		}
 	}
 	
 	CHECK_END;
