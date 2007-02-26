@@ -36,6 +36,7 @@ class DLList {
 	DLNode hd, tl;
 public:
 	inline DLList(void);
+	inline DLList(DLList& list);
 
 	inline DLNode *first(void) const;
 	inline DLNode *last(void) const;
@@ -104,6 +105,25 @@ DLList::DLList(void) {
 	tl.prv = &hd;
 	tl.nxt = 0;
 }
+
+inline DLList::DLList(DLList& list) {
+	hd.prv = 0;
+	tl.nxt = 0;
+	if(list.isEmpty()) {
+		hd.nxt = &tl;
+		tl.prv = &hd;
+	}
+	else {	
+		hd.nxt = list.hd.nxt;
+		list.hd.nxt = 0;
+		hd.nxt->prv = &hd;
+		tl.prv = list.tl.prv;
+		list.tl.prv = 0;
+		tl.prv->nxt = &tl;
+
+	}
+}
+
 DLNode *DLList::first(void) const {
 	return hd.nxt;
 }

@@ -21,19 +21,23 @@ class DLList {
 		T val;
 	public:
 		inline DLNode(const T value);
-		inline T value(void) const;
+		inline const T& value(void) const;
+		inline T& value(void) { return val; }
 	};
 	
 	inhstruct::DLList list;
 public:
 	inline ~DLList(void);
 
-	inline T first(void) const;
-	inline T last(void) const;
+	// Accessors
+	inline const T& first(void) const;
+	inline const T& last(void) const;
 	inline bool isEmpty(void) const;
 	inline int count(void) const;
 	inline bool contains(const T value) const;
+	inline operator bool(void) const { return !isEmpty(); }
 
+	// Mutators
 	inline void remove(const T value);
 	inline void addFirst(const T value);
 	inline void addLast(const T value);
@@ -51,7 +55,7 @@ public:
 		inline Iterator(const DLList& _list);
 		inline Iterator(const Iterator& iter);
 		inline bool ended(void) const;
-		inline T item(void) const;
+		inline const T& item(void) const;
 		inline void next(void);
 		inline void previous(void);
 		inline void first(void);
@@ -83,7 +87,7 @@ public:
 // DLList<T>::DLNode methods
 template <class T> DLList<T>::DLNode::DLNode(const T value): val(value) {
 }
-template <class T> T DLList<T>::DLNode::value(void) const {
+template <class T> const T& DLList<T>::DLNode::value(void) const {
 	return val;
 }
 
@@ -93,10 +97,10 @@ template <class T> inline DLList<T>::~DLList(void) {
 	clear();
 }
 
-template <class T> T DLList<T>::first(void) const {
+template <class T> const T& DLList<T>::first(void) const {
 	return ((DLNode *)list.first())->value();
 }
-template <class T> T DLList<T>::last(void) const {
+template <class T> const T& DLList<T>::last(void) const {
 	return ((DLNode *)list.last())->value();
 }
 template <class T> bool DLList<T>::isEmpty(void) const {
@@ -176,7 +180,7 @@ template <class T> bool DLList<T>::Iterator::ended(void) const {
 	return cur->atEnd() || cur->atBegin();
 }
 
-template <class T> T DLList<T>::Iterator::item(void) const {
+template <class T> const T& DLList<T>::Iterator::item(void) const {
 	return cur->value();
 }
 
