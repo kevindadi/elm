@@ -1,33 +1,15 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004-07, IRIT - UPS
  *
- * collection.h -- collection classes interfaces.
+ * Iteration classes
  */
-#ifndef ELM_DATASTRUCT_ITERATOR_H
-#define ELM_DATASTRUCT_ITERATOR_H
+#ifndef ELM_ITERATOR_H
+#define ELM_ITERATOR_H
+
+#include <elm/PreIterator.h>
 
 namespace elm {
-
-
-// PreIterator class
-template <class I, class T>
-class PreIterator {
-public:
-	inline operator bool(void) const
-		{ return !((I *)this)->ended(); }
-	inline operator T(void) const
-		{ return ((I *)this)->item(); }
-	inline I& operator++(void)
-		{ ((I *)this)->next(); return *(I *)this; }
-	inline I& operator++(int)
-		{ ((I *)this)->next(); return *(I *)this; }
-	inline T operator*(void) const
-		{ return ((I *)this)->item(); }
-	inline T operator->(void) const
-		{ return ((I *)this)->item(); }
-};
-
 
 // PreBiDiIterator class
 template <class I, class T>
@@ -225,4 +207,4 @@ void IteratorObject<I, T>::next(void) {
 
 } // elm::datastruct
 
-#endif // ELM_DATASTRUCT_ITERATOR_H
+#endif // ELM_ITERATOR_H
