@@ -5,10 +5,11 @@
  * system_StopWatch.cpp -- StopWatch class implementation.
  */
 
-#include <sys/times.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 #include <unistd.h>
 #include <elm/system/StopWatch.h>
-
+#include <elm/io.h>
 namespace elm { namespace system {
 
 /**
@@ -23,18 +24,18 @@ namespace elm { namespace system {
  * Must be called at the start of the time to measure.
  */
 void StopWatch::start(void) {
-	struct tms buf;
-	times(&buf);
-	start_time = (time_t)buf.tms_utime * 1000000 / sysconf(_SC_CLK_TCK);
+	struct rusage buf;
+	getrusage(RUSAGE_SELF, &buf);
+	start_time = (time_t)(buf.ru_utime.tv_sec*1000000 + buf.ru_utime.tv_usec);
 }
 
 /**
  * Must be called at the end of the time to measure.
  */
 void StopWatch::stop(void) {
-	struct tms buf;
-	times(&buf);
-	stop_time = (time_t)buf.tms_utime * 1000000 / sysconf(_SC_CLK_TCK);
+	struct rusage buf;
+	getrusage(RUSAGE_SELF, &buf);
+	stop_time = (time_t)(buf.ru_utime.tv_sec*1000000 + buf.ru_utime.tv_usec);
 }
 
 /**
