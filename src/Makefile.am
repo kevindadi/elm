@@ -20,6 +20,7 @@ libelm_la_SOURCES= \
 	genstruct_FragTable.cpp \
 	genstruct_HashTable.cpp \
 	genstruct_SLList.cpp \
+	genstruct_SortedSLList.cpp \
 	genstruct_Tree.cpp \
 	genstruct_VectorQueue.cpp \
 	genstruct_Table.cpp \

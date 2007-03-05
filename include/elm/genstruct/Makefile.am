@@ -5,6 +5,7 @@ includeelmgenstruct_HEADERS = \
 	FragTable.h \
 	HashTable.h \
 	SLList.h \
+	SortedSLList.h \
 	SortedBinMap.h \
 	SortedBinTree.h \
 	Table.h \
