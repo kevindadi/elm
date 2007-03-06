@@ -60,13 +60,13 @@ template <class T, class R> inline SortedSLList<T,R>::Iterator::Iterator()
 :genstruct::SLList<T>::Iterator() {
 	
 }
-template <class T, class R> SortedSLList<T,R>::SortedSLList<T,R>(SortedSLList<T,R> &source)
+template <class T, class R> SortedSLList<T,R>::SortedSLList(SortedSLList<T,R> &source)
 : order(source.order), list(source.list)
 {
 
 }
 
-template <class T, class R> SortedSLList<T,R>::SortedSLList<T,R>(R& _order)
+template <class T, class R> SortedSLList<T,R>::SortedSLList(R& _order)
 : order(&_order) {
 
 }
