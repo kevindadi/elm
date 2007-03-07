@@ -23,10 +23,10 @@ includeelm_HEADERS = \
 	debug.h \
 	io.h \
 	Iterator.h \
+	PreIterator.h \
 	meta.h \
 	options.h \
 	rtti.h \
 	string.h \
 	utility.h \
 	xom.h
-
