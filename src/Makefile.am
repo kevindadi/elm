@@ -14,6 +14,7 @@ DEFS=@ELM_DEBUG_DEFS@
 
 libelm_la_SOURCES= \
 	block_DynBlock.cpp \
+	debug.cpp \
 	checksum_Fletcher.cpp \
 	Collection.cpp \
 	genstruct_DLList.cpp \

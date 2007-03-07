@@ -1,4 +1,5 @@
 SUBDIRS = \
+	assert.h \
 	block \
 	checksum \
 	datastruct \

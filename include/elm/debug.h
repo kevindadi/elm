@@ -1,8 +1,8 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004-07, IRIT - UPS
  *
- * debug.h -- useful for debugging.
+ * Debugging macros
  */
 #ifndef ELM_DEBUG_H
 #define ELM_DEBUG_H
