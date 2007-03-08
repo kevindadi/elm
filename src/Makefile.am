@@ -15,6 +15,7 @@ DEFS=@ELM_DEBUG_DEFS@
 libelm_la_SOURCES= \
 	block_DynBlock.cpp \
 	debug.cpp \
+	debug_CrashHandler.cpp \
 	checksum_Fletcher.cpp \
 	Collection.cpp \
 	genstruct_DLList.cpp \
@@ -101,4 +102,8 @@ libelm_la_SOURCES += \
 	xom_Text.cpp \
 	xom_XIncluder.cpp \
 	xom_macros.h
+endif
+
+if HAVE_GDB_CRASH_HANDLER
+libelm_la_SOURCES += debug_GDBCrashHandler.cpp
 endif
