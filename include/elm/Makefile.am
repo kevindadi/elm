@@ -1,8 +1,8 @@
 SUBDIRS = \
-	assert.h \
 	block \
 	checksum \
 	datastruct \
+	debug \
 	genstruct \
 	inhstruct \
 	io \
@@ -19,6 +19,7 @@ endif
 
 includeelmdir=$(includedir)/elm
 includeelm_HEADERS = \
+	assert.h \
 	Collection.h \
 	debug.h \
 	io.h \

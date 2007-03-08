@@ -51,6 +51,31 @@ dnl IS_SHARED condition
 AM_CONDITIONAL(IS_SHARED, test "$(enabled_shared)" = yes)
 
 
+# Look for GDB
+AC_PATH_PROG(GDB_PATH, gdb)
+AS_IF(test -n "$GDB_PATH",
+	AC_DEFINE_UNQUOTED(GDB_PATH, "$GDB_PATH", [Path to GDB]))
+
+
+# Look for /proc filesystem
+AC_CHECK_FILE([/proc], [
+	HAVE_PROC_FS=yes
+	AC_DEFINE(HAVE_PROC_FS, [1], [/proc filesystem available])
+])
+
+
+# Select the default crash control behaviour
+CRASH_HANDLER=CrashHandler::DEFAULT
+AS_IF(test -n "$GDB_PATH" -a "$HAVE_PROC_FS" = "yes",
+	[
+		have_gdb_crash_handler=yes
+		AC_DEFINE(HAVE_GDB_CRASH_HANLDER, [1], [GDB crash handler availability])
+		CRASH_HANDLER=GDBCrashHandler::DEFAULT
+	])
+AM_CONDITIONAL(HAVE_GDB_CRASH_HANDLER, test "$have_gdb_crash_handler" = "yes")
+AC_DEFINE_UNQUOTED(CRASH_HANDLER, $CRASH_HANDLER, [Default crash handle])
+
+
 AC_OUTPUT([
 	Makefile
 	src/Makefile
@@ -60,6 +85,7 @@ AC_OUTPUT([
 	include/elm/block/Makefile
 	include/elm/checksum/Makefile
 	include/elm/datastruct/Makefile
+	include/elm/debug/Makefile
 	include/elm/genstruct/Makefile
 	include/elm/inhstruct/Makefile
 	include/elm/io/Makefile
