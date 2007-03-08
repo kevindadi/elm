@@ -5,7 +5,7 @@
  * Debugging classes and functions
  */
 
-#include <stdlib.h>
+#include <elm/debug/CrashHandler.h>
 
 namespace elm {
 
@@ -14,7 +14,7 @@ namespace elm {
  * cause a core dump, GDB invocation or any other debugging solution.
  */
 void crash(void) {
-	abort();
+	CrashHandler::crash();
 }
 
 } // elm
