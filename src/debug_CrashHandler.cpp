@@ -29,6 +29,12 @@ static void handle_SIGILL(int sig, siginfo_t *info, void *context) {
 }
 
 
+// handle SIGILL errors
+static void handle_SIGABRT(int sig, siginfo_t *info, void *context) {
+	CrashHandler::crash();
+}
+
+
 // handle SIGFPE errors
 static void handle_SIGFPE(int sig, siginfo_t *info, void *context) {
 	printf("FATAL: math float exception at %p.\n", info->si_addr);
@@ -107,6 +113,8 @@ void CrashHandler::setup(void) {
 	sigaction(SIGILL, &sa, 0);
 	sa.sa_sigaction = handle_SIGFPE;
 	sigaction(SIGFPE, &sa, 0);
+	sa.sa_sigaction = handle_SIGABRT;
+	sigaction(SIGABRT, &sa, 0);
 }
 
 
@@ -133,6 +141,8 @@ void CrashHandler::cleanup(void) {
 	sigaction(SIGILL, &sa, 0);
 	sa.sa_handler = SIG_DFL;
 	sigaction(SIGFPE, &sa, 0);
+	sa.sa_handler = SIG_DFL;
+	sigaction(SIGABRT, &sa, 0);
 }
 
 
