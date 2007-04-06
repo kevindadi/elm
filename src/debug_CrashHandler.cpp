@@ -102,17 +102,24 @@ CrashHandler CrashHandler::DEFAULT;
  * This function is called when the handler is installed.
  */
 void CrashHandler::setup(void) {
+	
+	// Handler initialization
 	struct sigaction sa;
 	sa.sa_handler = 0;
-	sa.sa_sigaction = handle_SIGSEGV;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_SIGINFO;
 	sa.sa_restorer = 0;
+	
+	// Repeatable handlers
+	sa.sa_sigaction = handle_SIGSEGV;
 	sigaction(SIGSEGV, &sa, 0);
 	sa.sa_sigaction = handle_SIGILL;
 	sigaction(SIGILL, &sa, 0);
 	sa.sa_sigaction = handle_SIGFPE;
 	sigaction(SIGFPE, &sa, 0);
+	
+	// One-shot handlers
+	sa.sa_flags |= SA_ONESHOT; 
 	sa.sa_sigaction = handle_SIGABRT;
 	sigaction(SIGABRT, &sa, 0);
 }
