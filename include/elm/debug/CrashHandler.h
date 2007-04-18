@@ -28,6 +28,14 @@ private:
 	static CrashHandler *current_handler; 
 };
 
+// NoCrashHandler class
+class NoCrashHandler: public CrashHandler {
+public:
+	virtual void setup(void) { }
+	virtual void handle(void) { }
+	virtual void cleanup(void) { }
+};
+
 } // elm
 
 #endif // ELM_DEBUG_CRASH_HANDLER_H
