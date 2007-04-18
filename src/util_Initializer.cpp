@@ -16,17 +16,17 @@ namespace elm {
  * This class solve the following problem at initialization. A set of
  * static object embedded in different sources shares a common datastructure
  * whose initialization time may be happen after some of these objects.
- * @p
+ * @par
  * Whatever, the static object initialization is split in two phases.
  * First, the object initialize itself but not the part using the shared data.
  * Instead, they record themselves to the initializer that will, when the shared
  * data will be initialized, call the "void initialize(void)" method of each
  * recorded object ensuring final initialization after the shared data item.
- * @p
+ * @par
  * To achieve this goal, either the shared data item must inherit from the
  * Initializer class or an Initializer static instance must be declared after
  * the shared data item.
- * @p
+ * @par
  * This class has very small footprint on the memory and, except the Initializer
  * object itself, all memory used will be returned to the system after the
  * initialization stage.
