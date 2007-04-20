@@ -22,7 +22,7 @@ class Initializer {
 	static node_t *list;
 	static bool initialized;
 public:
-	Initializer(void);
+	Initializer(bool start = true);
 	~Initializer(void);
 	void record(T *object);
 	void startup(void);
@@ -34,8 +34,9 @@ template <class T> bool Initializer<T>::initialized = false;
 
 // Initializer<T>::Initializer
 template <class T>
-Initializer<T>::Initializer(void) {
-	startup();
+Initializer<T>::Initializer(bool start) {
+	if(start)
+		startup();
 }
 
 // Initializer<T>::~Initializer

@@ -36,8 +36,11 @@ namespace elm {
 
 
 /**
- * @fn Initializer::Initializer(void);
+ * @fn Initializer::Initializer(bool start);
  * Simple constructor.
+ * @param start	If set to true, the initialization takes place at construction
+ * 				else the initialization is delayed until the @ref startup()
+ * 				method call from an external source.
  */
 
 
