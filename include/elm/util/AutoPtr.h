@@ -7,7 +7,7 @@
 #ifndef ELM_UTIL_AUTOPTR_H
 #define ELM_UTIL_AUTOPTR_H
 
-#include <assert.h>
+#include <elm/assert.h>
 
 namespace elm {
 
@@ -69,7 +69,7 @@ template <class T> AutoPtr<T>::~AutoPtr(void) {
 	ptr->unlock();
 }
 template <class T> T *AutoPtr<T>::operator->(void) const {
-	assert(!isNull());
+	ASSERTP(!isNull(), "accessing null pointer");
 	return (T *)ptr;
 }
 template <class T> AutoPtr<T>::AutoPtr(const AutoPtr& locked): ptr(locked.ptr) {
@@ -91,7 +91,7 @@ template <class T> bool AutoPtr<T>::isNull(void) const {
 	return ptr == null();
 }
 template <class T> T& AutoPtr<T>::operator*(void) const {
-	assert(!isNull());
+	ASSERTP(!isNull(), "accessing null pointer");
 	return *(T *)ptr;
 }
 
