@@ -7,7 +7,7 @@
 #ifndef ELM_GENSTRUCT_VECTORQUEUE_H
 #define ELM_GENSTRUCT_VECTORQUEUE_H
 
-#include <assert.h>
+#include <elm/assert.h>
 
 namespace elm { namespace genstruct {
 	
@@ -57,7 +57,7 @@ template <class T> void VectorQueue<T>::enlarge(void) {
 
 template <class T> inline VectorQueue<T>::VectorQueue(int capacity)
 : hd(0), tl(0), cap(1 << capacity), buffer(new T[cap]) {
-	assert(cap >= 0);
+	ASSERTP(cap >= 0, "capacity must be positive");
 }
 
 template <class T> inline VectorQueue<T>::~VectorQueue(void) {
@@ -90,14 +90,14 @@ template <class T> inline void VectorQueue<T>::put(const T& value) {
 }
 
 template <class T> inline const T& VectorQueue<T>::get(void) {
-	assert(hd != tl);
+	ASSERTP(hd != tl, "queue empty");
 	int res = hd;
 	hd = (hd + 1) & (cap - 1);
 	return buffer[res];
 }
 
 template <class T> inline T& VectorQueue<T>::head(void) const {
-	assert(hd != tl);
+	ASSERTP(hd != tl, "queue empty");
 	return buffer[hd];
 }
 
