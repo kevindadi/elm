@@ -7,7 +7,6 @@
 #ifndef ELM_UTIL_EXCEPTION_H
 #define ELM_UTIL_EXCEPTION_H
 
-#include <assert.h>
 #include <elm/string.h>
 
 namespace elm {
