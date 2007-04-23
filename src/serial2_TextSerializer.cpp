@@ -5,6 +5,7 @@
  * TextSerializer class implementation.
  */
 
+#include <elm/assert.h>
 #include <elm/io.h>
 #include <elm/serial2/serial.h>
 #include <elm/serial2/TextSerializer.h>
@@ -243,7 +244,7 @@ void TextSerializer::onEnum(const void *address, int value, AbstractEnum& clazz)
 {
 	prefix(clazz, address);
 	CString name = clazz.nameOf(value);
-	assert(name);
+	ASSERTP(name, "empty class name");
 	cout << name;
 	suffix(); 
 }
