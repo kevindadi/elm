@@ -7,7 +7,6 @@
 #ifndef ELM_XOM_NODE_H
 #define ELM_XOM_NODE_H
 
-#include <assert.h>
 #include <elm/xom/String.h>
 
 namespace elm { namespace xom {

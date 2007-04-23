@@ -7,7 +7,6 @@
 #ifndef ELM_SYSTEM_PATH_H
 #define ELM_SYSTEM_PATH_H
 
-#include <assert.h>
 #include <elm/string.h>
 #include <elm/io.h>
 

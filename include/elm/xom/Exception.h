@@ -7,7 +7,6 @@
 #ifndef ELM_XOM_EXCEPTION_H
 #define ELM_XOM_EXCEPTION_H
 
-#include <assert.h>
 #include <elm/xom/Node.h>
 #include <elm/util/MessageException.h>
 
