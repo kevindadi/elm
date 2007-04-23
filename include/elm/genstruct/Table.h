@@ -7,7 +7,7 @@
 #ifndef ELM_GENSTRUCT_TABLE_H
 #define ELM_GENSTRUCT_TABLE_H
 
-#include <assert.h>
+#include <elm/assert.h>
 
 namespace elm { namespace genstruct {
 
@@ -71,7 +71,7 @@ inline Table<T>::Table(void): tab(0), cnt(0) {
 
 template <class T>
 inline Table<T>::Table(T *table, int count): tab(table), cnt(count) {
-	assert(count == 0 || (count > 0 && table));
+	ASSERTP(count == 0 || (count > 0 && table), "null pointer for table");
 }
 
 
@@ -97,19 +97,19 @@ inline T *Table<T>::table(void) {
 
 template <class T>
 inline const T& Table<T>::get(int index) const {
-	assert(index >= 0 && index < cnt);
+	ASSERTP(index >= 0 && index < cnt, "index out of bounds");
 	return tab[index];
 }
 
 template <class T>
 inline T& Table<T>::get(int index) {
-	assert(index >= 0 && index < cnt);
+	ASSERTP(index >= 0 && index < cnt, "index out of bounds");
 	return tab[index];
 }
 
 template <class T>
 inline void Table<T>::set(int index, const T& value) {
-	assert(index >= 0 && index < cnt);
+	ASSERTP(index >= 0 && index < cnt, "index out of bounds");
 	tab[index] = value;
 }
 

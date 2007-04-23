@@ -7,8 +7,6 @@
 #ifndef ELM_GENSTRUCT_SORTEDSLLIST_H
 #define ELM_GENSTRUCT_SORTEDSLLIST_H
 
-#include <stdlib.h>
-#include <assert.h>
 #include <elm/genstruct/SLList.h>
 
 namespace elm { namespace genstruct {

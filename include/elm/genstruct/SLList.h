@@ -7,9 +7,7 @@
 #ifndef ELM_GENSTRUCT_SLLIST_H
 #define ELM_GENSTRUCT_SLLIST_H
 
-#include <stdlib.h>
-
-#include <assert.h>
+#include <elm/assert.h>
 #include <elm/Iterator.h>
 
 #include <elm/inhstruct/SLList.h>
@@ -119,7 +117,7 @@ template <class T> inline SLList<T>::Iterator::Iterator(const Iterator& source)
 : node(source.node) {
 }
 template <class T> inline SLList<T>::Iterator::Iterator()
-: node(NULL) {
+: node(0) {
 }
 template <class T> inline void SLList<T>::Iterator::operator=(const Iterator& source)
 {
@@ -129,21 +127,21 @@ template <class T> inline bool SLList<T>::Iterator::ended(void) const {
 	return !node;
 }
 template <class T> inline T SLList<T>::Iterator::item(void) const {
-	assert(node);
+	ASSERT(node);
 	return node->val;
 }
 template <class T> inline void SLList<T>::Iterator::next(void) {
-	assert(node);
+	ASSERT(node);
 	node = node->next();
 }
 
 
 template <class T> inline void SLList<T>::addAfter(const Iterator& pos, const T& value) {
-	assert(pos.node);
+	ASSERT(pos.node);
 	pos.node->insertAfter(new Node(value));
 }
 template <class T> inline void SLList<T>::removeNext(const Iterator& pos) {
-	assert(pos->node);
+	ASSERT(pos->node);
 	pos->node->removeNext();
 }
             

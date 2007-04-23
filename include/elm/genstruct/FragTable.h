@@ -7,7 +7,7 @@
 #ifndef ELM_GENSTRUCT_FRAGTABLE_H
 #define ELM_GENSTRUCT_FRAGTABLE_H
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <elm/genstruct/Vector.h>
 
 namespace elm { namespace genstruct {
@@ -64,7 +64,7 @@ public:
 template <class T>
 inline FragTable<T>::FragTable(int size_pow)
 : size(1 << size_pow), msk(size - 1), shf(size_pow), used(size) {
-	assert(size_pow > 0);
+	ASSERTP(size_pow > 0, "size must be greater than 0");
 }
 
 template <class T>
@@ -93,19 +93,19 @@ inline int FragTable<T>::length(void) const {
 
 template <class T>
 inline const T& FragTable<T>::get(int index) const {
-	assert(index >= 0 && index < length());
+	ASSERTP(index >= 0 && index < length(), "index out of bounds");
 	return tab[index >> shf][index & msk];
 }
 
 template <class T>
 inline T& FragTable<T>::get(int index) {
-	assert(index >= 0 && index < length());
+	ASSERTP(index >= 0 && index < length(), "index out of bounds");
 	return tab[index >> shf][index & msk];
 }
 
 template <class T>
 inline void FragTable<T>::set(int index, const T& value) const {
-	assert(index >= 0 && index < length());
+	ASSERTP(index >= 0 && index < length(), "index out of bounds");
 	tab[index >> shf][index & msk] = value;
 }
 
@@ -160,7 +160,7 @@ inline FragTable<T>::Iterator::Iterator(const FragTable<T>& array)
 
 template <class T>
 inline void FragTable<T>::Iterator::next(void) {
-	assert(i < len);
+	ASSERT(i < len);
 	i++;
 }
 

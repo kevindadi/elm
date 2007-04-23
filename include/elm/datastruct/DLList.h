@@ -7,7 +7,6 @@
 #ifndef ELM_DATASTRUCT_DLLIST_H
 #define ELM_DATASTRUCT_DLLIST_H
 
-#include <assert.h>
 #include <elm/Iterator.h>
 #include <elm/Collection.h>
 #include <elm/genstruct/DLList.h>

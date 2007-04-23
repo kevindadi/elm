@@ -7,7 +7,7 @@
 #ifndef ELM_GENSTRUCT_VECTOR_H
 #define ELM_GENSTRUCT_VECTOR_H
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <elm/genstruct/Table.h>
 #include <elm/Iterator.h>
 
@@ -104,15 +104,15 @@ template <class T> bool Vector<T>::isEmpty(void) const {
 	return cnt == 0;
 }
 template <class T> T& Vector<T>::item(int index) {
-	assert(index < cnt);
+	ASSERTP(index < cnt, "index out of bounds");
 	return tab[index];
 }
 template <class T> T Vector<T>::get(int index) const {
-	assert(index < cnt);
+	ASSERTP(index < cnt, "index out of bounds");
 	return tab[index];
 }
 template <class T> void Vector<T>::set(int index, const T value) {
-	assert(index < cnt);
+	ASSERTP(index < cnt, "index out of bounds");
 	tab[index] = value;
 }
 template <class T> T& Vector<T>::operator[](int index) {
@@ -134,7 +134,7 @@ template <class T> int Vector<T>::indexOf(const T value, int start) const {
 	return -1;
 }
 template <class T> int Vector<T>::lastIndexOf(const T value, int start) const {
-	assert(start <= cnt);
+	ASSERTP(start <= cnt, "index out of bounds");
 	for(int i = (start < 0 ? cnt : start) - 1; i >= 0; i--)
 		if(value == tab[i])
 			return i;
@@ -167,7 +167,7 @@ template <class T> void Vector<T>::remove(const T value) {
 	if(i >= 0) removeAt(i);
 }
 template <class T> void Vector<T>::insert(int index, const T value) {
-	assert(index <= cnt);
+	ASSERTP(index <= cnt, "index out of bounds");
 	if(cnt >= cap)
 		grow(cap * 2);
 	for(int i = cnt; i > index; i--)
@@ -179,9 +179,8 @@ template <class T> void Vector<T>::clear(void) {
 	cnt = 0;
 }
 template <class T> void Vector<T>::grow(int new_cap) {
-	assert(new_cap > 0);
-	assert(new_cap < 65536);
-	assert(new_cap >= cap);
+	ASSERTP(new_cap > 0 && new_cap < 65536, "new capacity out of [1, 65535]");
+	ASSERTP(new_cap >= cap, "new capacity must be bigger than old one");
 	cap = new_cap;
 	T *new_tab = new T[cap];
 	for(int i =0; i < cnt; i++)
@@ -190,8 +189,7 @@ template <class T> void Vector<T>::grow(int new_cap) {
 	tab = new_tab;
 }
 template <class T> void Vector<T>::setLength(int new_length) {
-	assert(new_length >= 0);
-	assert(new_length <= cnt);
+	ASSERTP(new_length >= 0 && new_length <= cnt, "new length must be in [0, current length]");
 	cnt = new_length;
 }
 
@@ -212,12 +210,12 @@ template <class T> inline void Vector<T>::push(const T& value) {
 }
 
 template <class T> inline const T Vector<T>::pop(void) {
-	assert(cnt > 0);
+	ASSERTP(cnt > 0, "no more data to pop");
 	return tab[--cnt];
 }
 
 template <class T> inline const T Vector<T>::top(void) {
-	assert(cnt > 0);
+	ASSERTP(cnt > 0, "no more data in the stack");
 	return tab[cnt - 1];
 }
 
