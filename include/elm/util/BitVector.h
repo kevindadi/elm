@@ -7,7 +7,7 @@
 #ifndef ELM_UTIL_BIT_VECTOR_H
 #define ELM_UTIL_BIT_VECTOR_H
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <memory.h>
 #include <elm/io.h>
 #include <elm/Iterator.h>
@@ -114,15 +114,15 @@ inline int BitVector::bit_index(int index) const {
 }
 
 inline BitVector::BitVector(int size, bool set): _size(size) {
-	assert(size > 0);
+	ASSERTP(size > 0, "size must be positive");
 	bits = new unsigned char[bytes()];
-	assert(bits);
+	ASSERT(bits);
 	memset(bits, set ? 0xff : 0, bytes());
 }
 
 inline BitVector::BitVector(const BitVector& vec): _size(vec.size()) {
 	bits = new unsigned char[bytes()];
-	assert(bits);
+	ASSERT(bits);
 	memcpy(bits, vec.bits, bytes());
 }
 
@@ -135,7 +135,7 @@ inline int BitVector::size(void) const {
 }
 
 inline bool BitVector::bit(int index) const {
-	assert(index < _size);
+	ASSERTP(index < _size, "index out of bounds");
 	return (bits[byte_index(index)] & (1 << bit_index(index))) != 0;
 }
 
@@ -148,7 +148,7 @@ inline bool BitVector::isEmpty(void) const {
 }
 
 inline bool BitVector::includes(const BitVector& vec) const {
-	assert(_size == vec._size);
+	ASSERTP(_size == vec._size, "bit vector must have the same size");
 	mask();
 	for(int i = 0; i < bytes(); i++)
 		if(~bits[i] & vec.bits[i])
@@ -157,7 +157,7 @@ inline bool BitVector::includes(const BitVector& vec) const {
 }
 
 inline bool BitVector::includesStrictly(const BitVector &vec) const {
-	assert(_size == vec._size);
+	ASSERTP(_size == vec._size, "bit vector must have the same size");
 	mask();
 	bool equal = true;
 	for(int i = 0; i < bytes(); i++) {
@@ -170,7 +170,7 @@ inline bool BitVector::includesStrictly(const BitVector &vec) const {
 }
 
 inline bool BitVector::equals(const BitVector& vec) const {
-	assert(_size == vec._size);
+	ASSERTP(_size == vec._size, "bit vector must have the same size");
 	mask();
 	for(int i = 0; i < bytes(); i++)
 		if(bits[i] != vec.bits[i])
@@ -179,12 +179,12 @@ inline bool BitVector::equals(const BitVector& vec) const {
 }
 
 inline void BitVector::set(int index) const {
-	assert(index < _size);
+	ASSERTP(index < _size, "index out of bounds");
 	bits[byte_index(index)] |= 1 << bit_index(index);
 }
 
 inline void BitVector::set(int index, bool value) const {
-	assert(index < _size);
+	ASSERTP(index < _size, "index out of bounds");
 	if(value)
 		set(index);
 	else
@@ -192,12 +192,12 @@ inline void BitVector::set(int index, bool value) const {
 }
 
 inline void BitVector::clear(int index) const {
-	assert(index < _size);
+	ASSERTP(index < _size, "index out of bounds");
 	bits[byte_index(index)] &= ~(1 << bit_index(index));
 }
 
 inline void BitVector::copy(const BitVector& vec) const {
-	assert(_size == vec._size);
+	ASSERTP(_size == vec._size, "bit vectors must have the same size");
 	memcpy(bits, vec.bits, bytes());
 }
 
@@ -215,19 +215,19 @@ inline void BitVector::applyNot(void) {
 }
 
 inline void BitVector::applyOr(const BitVector& vec) {
-	assert(_size == vec._size);
+	ASSERTP(_size == vec._size, "bit vectors must have the same size");
 	for(int i = 0; i < bytes(); i++)
 		bits[i] |= vec.bits[i];
 }
 
 inline void BitVector::applyAnd(const BitVector& vec) {
-	assert(_size == vec._size);
+	ASSERTP(_size == vec._size, "bit vectors must have the same size");
 	for(int i = 0; i < bytes(); i++)
 		bits[i] &= vec.bits[i];
 }
 
 inline void BitVector::applyReset(const BitVector& vec) {
-	assert(_size == vec._size);
+	ASSERTP(_size == vec._size, "bit vectors must have the same size");
 	for(int i = 0; i < bytes(); i++)
 		bits[i] &= ~vec.bits[i];
 	mask();
@@ -241,7 +241,7 @@ inline BitVector BitVector::makeNot(void) const {
 }
 
 inline BitVector BitVector::makeOr(const BitVector& vec) const {
-	assert(_size == vec._size);
+	ASSERTP(_size == vec._size, "bit vectors must have the same size");
 	BitVector res(_size);
 	for(int i = 0; i < bytes(); i++)
 		res.bits[i] = bits[i] | vec.bits[i];
@@ -249,7 +249,7 @@ inline BitVector BitVector::makeOr(const BitVector& vec) const {
 }
 
 inline BitVector BitVector::makeAnd(const BitVector& vec) const {
-	assert(_size == vec._size);
+	ASSERTP(_size == vec._size, "bit vectors must have the same size");
 	BitVector res(_size);
 	for(int i = 0; i < bytes(); i++)
 		res.bits[i] = bits[i] & vec.bits[i];
@@ -257,7 +257,7 @@ inline BitVector BitVector::makeAnd(const BitVector& vec) const {
 }
 
 inline BitVector BitVector::makeReset(const BitVector& vec) const {
-	assert(_size == vec._size);
+	ASSERTP(_size == vec._size, "bit vectors must have the same size");
 	BitVector res(_size);
 	for(int i = 0; i < bytes(); i++)
 		res.bits[i] = bits[i] & ~vec.bits[i];
