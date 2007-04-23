@@ -7,7 +7,7 @@
 #ifndef ELM_INHSTRUCT_DLLIST_H
 #define ELM_INHSTRUCT_DLLIST_H
 
-#include <assert.h>
+#include <elm/assert.h>
 
 namespace elm { namespace inhstruct {
 
@@ -58,21 +58,21 @@ DLNode *DLNode::previous(void) const {
 	return prv;
 }
 void DLNode::replace(DLNode *node) {
-	assert(node);
+	ASSERTP(node, "null node for replacement");
 	nxt->prv = node;
 	node->nxt = nxt;
 	prv->nxt = node;
 	node->prv = prv;
 }
 void DLNode::insertAfter(DLNode *node) {
-	assert(node);
+	ASSERTP(node, "null node to insert");
 	nxt->prv = node;
 	node->nxt = nxt;
 	nxt = node;
 	node->prv = this;
 }
 void DLNode::insertBefore(DLNode *node) {
-	assert(node);
+	ASSERTP(node, "null node to insert");
 	prv->nxt = node;
 	node->prv = prv;
 	prv = node;
@@ -83,11 +83,11 @@ void DLNode::remove(void) {
 	nxt->prv = prv;
 }
 void DLNode::removeNext(void) {
-	assert(!nxt->atEnd());
+	ASSERTP(!nxt->atEnd(), "no next node");
 	nxt->remove();
 }
 void DLNode::removePrevious(void) {
-	assert(!prv->atBegin());
+	ASSERTP(!prv->atBegin(), "no previous node");
 	prv->remove();
 }
 bool DLNode::atBegin(void) const {
@@ -140,19 +140,19 @@ int DLList::count(void) const {
 	return cnt;
 }
 void DLList::addFirst(DLNode *node) {
-	assert(node);
+	ASSERTP(node, "null node added");
 	hd.insertAfter(node);
 }
 void DLList::addLast(DLNode *node) {
-	assert(node);
+	ASSERTP(node, "null node added");
 	tl.insertBefore(node);
 }
 void DLList::removeFirst(void) {
-	assert(!isEmpty());
+	ASSERTP(!isEmpty(), "list empty");
 	hd.removeNext();
 }
 void DLList::removeLast(void) {
-	assert(!isEmpty());
+	ASSERTP(!isEmpty(), "list empty");
 	tl.removePrevious();
 }
 
