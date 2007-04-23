@@ -7,7 +7,7 @@
 #ifndef ELM_UTIL_VERSION_H
 #define ELM_UTIL_VERSION_H
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <elm/io.h>
 
 namespace elm {
@@ -49,9 +49,9 @@ io::Output& operator<<(io::Output& out, const Version& version);
 // Inlines
 inline Version::Version(int major, int minor, int release)
 : _major(major), _minor(minor), _release(release) {
-	assert(major >= 0);
-	assert(minor >= 0);
-	assert(release >= 0);
+	ASSERTP(major >= 0, "major number must be positive");
+	ASSERTP(minor >= 0, "minor number must be positive");
+	ASSERTP(release >= 0, "release number be positive");
 }
 
 inline Version::Version(const Version& version)
