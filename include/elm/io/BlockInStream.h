@@ -7,7 +7,7 @@
 #ifndef ELM_IO_BLOCK_IN_STREAM_H
 #define ELM_IO_BLOCK_IN_STREAM_H
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <elm/string.h>
 #include <elm/io/InStream.h>
 
@@ -50,17 +50,17 @@ inline int BlockInStream::mark(void) const {
 }
 
 inline void BlockInStream::move(int mark) {
-	assert(mark < _size);
+	ASSERT(mark < _size);
 	off = mark;
 }
 
 inline void BlockInStream::moveForward(int size) {
-	assert(off + size <= _size);
+	ASSERTP(off + size <= _size, "move out of block");
 	off += _size;
 }
 
 inline void BlockInStream::moveBackward(int size) {
-	assert(off - size >= 0);
+	ASSERTP(off - size >= 0, "move out of block");
 	off -= size;
 }
 
