@@ -7,7 +7,7 @@
 
 #define WITH_LIBTOOL
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <stdlib.h>
 #ifdef WITH_LIBTOOL
 #	include <ltdl.h>
@@ -246,7 +246,7 @@ String Plugger::lastErrorMessage(void) {
 	case BAD_VERSION:
 		return "Found plug-in is incompatible.";		
 	default:
-		assert(0);
+		ASSERTP(0, "unknown error");
 	}
 }
 

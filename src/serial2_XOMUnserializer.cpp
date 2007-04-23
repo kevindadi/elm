@@ -4,6 +4,7 @@
  *
  * src/serial_XOMUnserializer.cpp -- XOMUnserializer class implementation.
  */
+#include <elm/assert.h>
 #include <elm/xom.h>
 #include <elm/io/BlockInStream.h>
 #include <elm/serial2/serial.h>
@@ -64,7 +65,7 @@ XOMUnserializer::XOMUnserializer(elm::CString path)
 	if(!doc)
 		throw io::IOException("cannot open \"%s\"", &path);
 	ctx.elem = doc->getRootElement();
-	assert(ctx.elem);
+	ASSERT(ctx.elem);
 }
 
 

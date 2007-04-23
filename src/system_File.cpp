@@ -5,7 +5,7 @@
  * src/system_File.cpp -- File class implementation.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -24,7 +24,7 @@ namespace elm { namespace system {
 /**
  */
 File::File(Path path, ino_t inode): FileItem(path, inode) {
-	assert(path);
+	ASSERTP(path, "null path");
 }
 
 

@@ -56,7 +56,7 @@ static BitCounter bit_counter;
  * @param new_size	Size of the built vector.
  */
 BitVector::BitVector(const BitVector& vec, int new_size): _size(new_size) {
-	assert(new_size > 0);
+	ASSERTP(new_size > 0, "size must be positive");
 	bits = new unsigned char[bytes()];
 	if(new_size >= vec._size) {
 		memcpy(bits, vec.bits, vec._size);

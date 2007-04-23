@@ -5,7 +5,7 @@
  * src/xom_Elements.h -- XOM Elements class implementation.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <elm/xom/Elements.h>
 #include <elm/xom/Element.h>
 #include "xom_macros.h"

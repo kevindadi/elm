@@ -5,6 +5,7 @@
  * src/op_Output.cpp-- Output class implementation.
  */
 
+#include <elm/assert.h>
 #include <string.h>
 #include <errno.h>
 #include <stdio.h>
@@ -304,7 +305,7 @@ void Output::format(CString fmt, VarArg& args) {
 	else {
 		char newbuf[size + 1];
 		size = vsnprintf(newbuf, sizeof(newbuf), &fmt, args.args());
-		assert(size <= sizeof(newbuf));
+		ASSERT(size <= sizeof(newbuf));
 		strm->write(newbuf, size);
 	}
 }
@@ -344,7 +345,7 @@ void Output::print(const IntFormat fmt) {
 			rpad = fmt.width - size - lpad;
 			break;
 		default:
-			assert(0);
+			ASSERTP(0, "unknown alignment constant");
 		}
 	
 	// Perform the display
