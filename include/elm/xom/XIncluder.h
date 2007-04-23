@@ -7,7 +7,6 @@
 #ifndef ELM_XOM_XINCLUDER_H
 #define ELM_XOM_XINCLUDER_H
 
-#include <assert.h>
 #include <elm/xom/Document.h>
 
 namespace elm { namespace xom {

@@ -7,7 +7,6 @@
 #ifndef ELM_XOM_TEXT_H
 #define ELM_XOM_TEXT_H
 
-#include <assert.h>
 #include <elm/xom/Node.h>
 
 namespace elm { namespace xom {
