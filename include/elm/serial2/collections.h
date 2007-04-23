@@ -7,6 +7,7 @@
 #ifndef ELM_SERIAL2_COLLECTION_H
 #define ELM_SERIAL2_COLLECTION_H
 
+#include <elm/assert.h>
 #include <elm/serial2/serial.h>
 #include <elm/genstruct/Vector.h>
 #include <elm/genstruct/Table.h>
@@ -47,7 +48,7 @@ void __unserialize(Unserializer& serializer, AllocatedTable<T>& tab) {
 		tab.allocate(0);
 	else {
 		tab.allocate(cnt);
-		assert(serializer.beginCompound());
+		ASSERT(serializer.beginCompound());
 		for(int i = 0; i < cnt; i++) {
 			__unserialize(serializer, tab[i]);
 			serializer.nextItem();
