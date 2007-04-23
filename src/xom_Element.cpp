@@ -5,6 +5,7 @@
  * elm/xom_Element.cpp -- XOM Element class implementation.
  */
 
+#include <elm/assert.h>
 #include "xom_macros.h"
 #include <elm/xom/Element.h>
 #include <elm/xom/Text.h>
@@ -47,7 +48,7 @@ void *Element::makeNS(String name, String uri) {
  * @param node	Node in the parser representation.
  */
 Element::Element(void *node): ParentNode(node) {
-	assert(NODE(node)->type == XML_ELEMENT_NODE);
+	ASSERT(NODE(node)->type == XML_ELEMENT_NODE);
 }
 
 
@@ -116,7 +117,7 @@ Element	*Element::shallowCopy(void) {
  */
 void Element::addAttribute(Attribute *attribute) {
 	// !!TODO!!
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -139,7 +140,7 @@ void Element::addAttribute(Attribute *attribute) {
  */
 void Element::addNamespaceDeclaration(String prefix, String uri) {
 	// !!TODO!!
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -158,7 +159,7 @@ void Element::appendChild(String text) {
  */
 Node *Element::copy(void) {
 	// !!TODO!!
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -179,7 +180,7 @@ Node *Element::copy(void) {
  */
 Attribute *Element::getAttribute(int index) {
 	// !!TODO!!
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -191,7 +192,7 @@ Attribute *Element::getAttribute(int index) {
  */
 Attribute *Element::getAttribute(String name) {
 	// !!TODO!!
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -204,7 +205,7 @@ Attribute *Element::getAttribute(String name) {
  */
 Attribute *Element::getAttribute(String localName, String ns) {
 	// !!TODO!!
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -215,7 +216,7 @@ Attribute *Element::getAttribute(String localName, String ns) {
  */
 int	Element::getAttributeCount(void) {
 	// !!TODO!!
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -364,7 +365,7 @@ String Element::getLocalName(void) {
  */
 int	Element::getNamespaceDeclarationCount(void) {
 	// !!TODO!!
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -402,7 +403,7 @@ String Element::getNamespacePrefix(void) {
  **/
 String Element::getNamespacePrefix(int index) {
 	// !!TODO!!
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -427,7 +428,7 @@ String Element::getNamespaceURI(void) {
  */
 String Element::getNamespaceURI(String prefix) {
 	// !!TODO!!
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -438,7 +439,7 @@ String Element::getNamespaceURI(String prefix) {
  */
 String Element::getQualifiedName(void) {
 	// !!TODO!!
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -456,7 +457,7 @@ String Element::getValue(void) {
  * @param text The string to convert to a text node and insert.
  */
 void Element::insertChild(String text, int position) {
-	assert(position >= 0);
+	ASSERTP(position >= 0, "position must be positive");
 	ParentNode::insertChild(new Text(text), position);
 }
 
@@ -470,39 +471,39 @@ void Element::insertChild(String text, int position) {
  */
 Attribute *Element::removeAttribute(Attribute *attribute) {
 	// !!TODO!! Check if the attribute is owned by the current element.
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 Nodes *Element::removeChildren(void) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 void Element::removeNamespaceDeclaration(String prefix) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 void Element::setBaseURI(String uri) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 void Element::setLocalName(String local_name) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 void Element::setNamespacePrefix(String prefix) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 void Element::setNamespaceURI(String uri) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 String Element::toString(void) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 String Element::toXML(void) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 } } // elm::xom

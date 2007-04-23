@@ -5,7 +5,7 @@
  * src/inhstruct_AVLTree.cpp -- AVLTree implementation.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <elm/inhstruct/AVLTree.h>
 #include <elm/io.h>
 
@@ -73,7 +73,7 @@ static int inline abs(int x) {
  * @param node	Node to test for equality.
  */
 AVLTree::Node *AVLTree::get(Node *node) {
-	assert(node);
+	ASSERTP(node, "null node");
 	Node *cur = _root();
 	while(cur) {
 		int result = compare(node, cur);
@@ -132,7 +132,7 @@ void AVLTree::remove(Node *node) {
 
 // Private
 AVLTree::Node *AVLTree::insert(Node *cur, Node *node) {
-	assert(node);
+	ASSERTP(node, "null node");
 	if(!cur) {
 		node->h = 1;
 		return node;
@@ -168,14 +168,14 @@ AVLTree::Node *AVLTree::insert(Node *cur, Node *node) {
 		
 		// Recompute max
 		computeHeight(cur);
-		assert(abs(height(cur->_left()) - height(cur->_right())) < 2);
+		ASSERT(abs(height(cur->_left()) - height(cur->_right())) < 2);
 		return cur;
 	}
 }
 
 // Private
 AVLTree::Node *AVLTree::rotateSingleLeft(Node *root) {
-	assert(root);
+	ASSERTP(root, "null root");
 	Node *new_root = root->_left();
 	root->insertLeft(new_root->_right());
 	new_root->insertRight(root);
@@ -186,7 +186,7 @@ AVLTree::Node *AVLTree::rotateSingleLeft(Node *root) {
 
 // Private
 AVLTree::Node *AVLTree::rotateSingleRight(Node *root) {
-	assert(root);
+	ASSERTP(root, "null root");
 	Node *new_root = root->_right();
 	root->insertRight(new_root->_left());
 	new_root->insertLeft(root);
@@ -209,7 +209,7 @@ AVLTree::Node *AVLTree::rotateDoubleRight(Node *root) {
 
 // Private
 AVLTree::Node *AVLTree::remove(Node *cur, Node *node) {
-	assert(node);
+	ASSERTP(node, "null removed node");
 	
 	// Compare node
 	if(!cur)
@@ -239,7 +239,7 @@ AVLTree::Node *AVLTree::remove(Node *cur, Node *node) {
 		delete old_cur;
 	}
 	
-	assert(!cur || abs(height(cur->_left()) - height(cur->_right())) < 2);
+	ASSERT(!cur || abs(height(cur->_left()) - height(cur->_right())) < 2);
 	return cur;
 }
 

@@ -5,7 +5,7 @@
  * elm/option/option_IntOption.cpp -- IntOption class implementation.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <stdlib.h>
 #include <elm/option/IntOption.h>
 

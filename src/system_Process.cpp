@@ -5,7 +5,7 @@
  * src/system_Process.cpp -- Process class interface.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <sys/types.h>
 #include <sys/errno.h>
 #include <sys/wait.h> 
@@ -26,7 +26,7 @@ namespace elm { namespace system {
  * @param _pid	Process identifier.
  */
 Process::Process(int _pid): pid(_pid) {
-	assert(pid >= 0);
+	ASSERTP(pid >= 0, "negative PID");
 }
 
 
@@ -68,7 +68,7 @@ int Process::returnCode(void) {
  * @throws SystemException	On process system error.
  */
 void Process::kill(void) {
-	assert(pid >= 0);
+	ASSERT(pid >= 0);
 	if(::kill(pid, SIGKILL) < 0)
 		throw SystemException(errno, "process kill");
 }

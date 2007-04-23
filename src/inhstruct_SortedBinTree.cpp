@@ -5,7 +5,7 @@
  * src/SortedBinTree.cpp -- abstract binary tree implementation.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <elm/inhstruct/SortedBinTree.h>
 
 namespace elm { namespace inhstruct {
@@ -78,7 +78,7 @@ namespace elm { namespace inhstruct {
  * @return	Found node or null.
  */
 SortedBinTree::Node *SortedBinTree::get(Node *node) {
-	assert(node);
+	ASSERTP(node, "null node");
 	Node *cur = root();
 	while(cur) {
 		int result = compare(node, cur);
@@ -121,7 +121,7 @@ SortedBinTree::Node *SortedBinTree::get(Node *node) {
  * @param node		Node to add.
  */
 void SortedBinTree::insert(Node *node) {
-	assert(node);
+	ASSERTP(node, "null node");
 	if(isEmpty())
 		setRoot(node);
 	else
@@ -134,7 +134,7 @@ void SortedBinTree::insert(Node *node) {
  * @param node		Node to remove.
  */
 void SortedBinTree::remove(Node *node) {
-	assert(node);
+	ASSERTP(node, "null node");
 	setRoot(remove(root(), node));
 }
 

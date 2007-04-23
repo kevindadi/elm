@@ -1,11 +1,11 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004-07, IRIT - UPS
  *
  * elm/option/option_BoolOption.cpp -- BoolOption class implementation.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <elm/option/BoolOption.h>
 
 namespace elm { namespace option {

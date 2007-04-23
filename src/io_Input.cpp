@@ -5,6 +5,7 @@
  * src/io_Input.h -- Input class implementation.
  */
 
+#include <elm/assert.h>
 #include <elm/io/io.h>
 #include <elm/io/Input.h>
 #include <math.h>
@@ -45,7 +46,7 @@ int Input::get(void) {
  * @param chr	Back-pushed character.
  */
 void Input::back(int chr) {
-	assert(buf < 0);
+	ASSERTP(buf < 0, "buffer is empty");
 	buf = chr;
 }
 

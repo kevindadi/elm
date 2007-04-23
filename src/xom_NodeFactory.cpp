@@ -5,7 +5,7 @@
  * src/xom_NodeFactory.cpp -- XOM NodeFactory class implementation.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <libxml/tree.h>
 #include <elm/xom/NodeFactory.h>
 #include <elm/xom/Document.h>
@@ -27,11 +27,11 @@ NodeFactory NodeFactory::default_factory;
 
 
 Attribute *NodeFactory::makeAttribute(void *node) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 Comment *NodeFactory::makeComment(void *node) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -44,7 +44,7 @@ Document *NodeFactory::makeDocument(void *node) {
 }
 
 ProcessingInstruction *NodeFactory::makeProcessingInstruction(void *node) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 

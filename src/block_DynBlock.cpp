@@ -1,11 +1,11 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004-07, IRIT - UPS
  *
  * src/DynBlock.cpp -- implementation for DynBlock class.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <string.h>
 #include <elm/block/DynBlock.h>
 
@@ -55,7 +55,8 @@ void DynBlock::grow(int min) {
  * @param size	Size of the block.
  */ 
 void DynBlock::put(const char *block, int size) {
-	assert(block && size >= 0);
+	ASSERTP(block, "null block");
+	ASSERTP(size >= 0, "size must be positive");
 	
 	// Need to enlarge?
 	if(_size + size > cap)
@@ -74,9 +75,9 @@ void DynBlock::put(const char *block, int size) {
  * @param pos		Position to get bytes from.
  */
 void DynBlock::get(char *block, int size, int pos) {
-	assert(block);
-	assert(pos >= 0 && pos < _size);
-	assert(size >= 0 && pos + size <= _size);
+	ASSERTP(block, "null block");
+	ASSERTP(pos >= 0 && pos < _size, "out of bound position");
+	ASSERTP(size >= 0 && pos + size <= _size, "size out of bounds");
 	memcpy(block, buf + pos, size);
 }
 
@@ -136,7 +137,7 @@ void DynBlock::get(char *block, int size, int pos) {
  * @return		Allocated block that may initialized by application.
  */
 char *DynBlock::alloc(int size) {
-	assert(size >= 0);
+	ASSERTP(size >= 0, "size must positive");
 	
 	// Need to enlarge?
 	if(_size + size > cap)

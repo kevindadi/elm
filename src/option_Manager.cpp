@@ -5,7 +5,7 @@
  * elm/option/option_Manager.cpp -- Manager class implementation.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <elm/io.h>
 #include <elm/option/Manager.h>
 
@@ -132,7 +132,7 @@ void Manager::process(String arg) {
  * @param option	Option to add.
  */
 void Manager::addOption(Option *option) {
-	assert(option);
+	ASSERTP(option, "null option");
 	options.add(option);
 }
 
@@ -155,8 +155,8 @@ class BadArgumentException {
  * @param argv	Argument vector.
  */
 void Manager::parse(int argc, char **argv) {
-	assert(argv);
-	assert(argc > 0);
+	ASSERTP(argv, "null argv");
+	ASSERTP(argc > 0, "negative argc");
 	for(int i = 1; i < argc; i++) {
 	
 		/* Free argument */

@@ -5,7 +5,7 @@
  * src/system_System.cpp -- System class implementatuib.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <unistd.h>
 #include <errno.h>
 #include <elm/system/System.h>
@@ -71,7 +71,7 @@ PipeOutStream::~PipeOutStream(void) {
 Pair<PipeInStream *, PipeOutStream *> System::pipe(void) {
 	int fds[2];
 	if(::pipe(fds) < 0) {
-		assert(errno != EFAULT);
+		ASSERT(errno != EFAULT);
 		throw SystemException(errno, "pipe creation");
 	}
 	return pair(

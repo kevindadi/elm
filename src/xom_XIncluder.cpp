@@ -5,6 +5,7 @@
  * src/xom_XIncluder.cpp -- XOM XIncluder class implementation.
  */
 
+#include <elm/assert.h>
 #include "xom_macros.h"
 #include <libxml/xinclude.h>
 #include <elm/xom/XIncluder.h>
@@ -41,7 +42,7 @@ const String XIncluder::NS = XINCLUDE_NS;
  */
 Document *XIncluder::resolve(Document *in) {
 	// !!TODO!!
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -61,7 +62,7 @@ Document *XIncluder::resolve(Document *in) {
  */
 Document *XIncluder::resolve(Document *in, Builder& builder) {
 	// !!TODO!!
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -100,7 +101,7 @@ void XIncluder::resolveInPlace(Document *in) {
  */
 void XIncluder::resolveInPlace(Document *in, Builder& builder) {
 	// !!TODO!!
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 } } // elm::xom

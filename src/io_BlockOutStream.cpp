@@ -5,7 +5,7 @@
  * src/BlockOutStream.cpp -- BlockOutStream class implementation.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <string.h>
 #include <elm/io/BlockOutStream.h>
 

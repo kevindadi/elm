@@ -6,6 +6,7 @@
  */
 
 #include "xom_macros.h"
+#include <elm/assert.h>
 #include <elm/xom/Document.h>
 
 #define NODE(p) ((xmlNodePtr)(p))
@@ -25,25 +26,25 @@ namespace elm { namespace xom {
  */
 Document::Document(void *node, NodeFactory *factory)
 : ParentNode(node), fact(factory) {
-	assert(DOC(node)->type == XML_DOCUMENT_NODE);
-	assert(fact);
+	ASSERT(DOC(node)->type == XML_DOCUMENT_NODE);
+	ASSERT(fact);
 }
 
 
 Document::Document(Document *document): ParentNode(0) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 Document::Document(Element *root_element): ParentNode(0) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 	
 Node *Document::copy(void) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 String Document::getBaseURI(void) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -60,35 +61,35 @@ Element *Document::getRootElement(void) {
 }
 
 String Document::getValue(void) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 Node *Document::removeChild(int position) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 Node *Document::removeChild(Node *child) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 void Document::replaceChild(Node *old_child, Node *new_child) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 void Document::setBaseURI(String uri) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 void Document::setRootElement(Element *root) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 String Document::toString(void) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 String Document::toXML(void) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 } } // elm::xom

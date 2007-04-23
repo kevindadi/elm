@@ -5,6 +5,7 @@
  * elm/xom/Node.h -- XOM Text class implementation.
  */
 
+#include <elm/assert.h>
 #include <elm/xom/Text.h>
 #include "xom_macros.h"
 
@@ -21,7 +22,7 @@ namespace elm { namespace xom {
  * @param data	Content of the text node.
  */
 Text::Text(String data): Node(xmlNewText(data)) {
-	assert(node);
+	ASSERT(node);
 }
 
 
@@ -30,7 +31,7 @@ Text::Text(String data): Node(xmlNewText(data)) {
  * @param text	Text node to clone.
  */
 Text::Text(const Text *text): Node(xmlCopyNode(NODE(text->node), 1)) {
-	assert(node);
+	ASSERT(node);
 }
 
 

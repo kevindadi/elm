@@ -5,7 +5,7 @@
  * system_FileIem.h -- FileItem class implementation.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -47,7 +47,7 @@ namespace system {
 /**
  */ 
 FileItem::FileItem(Path path, ino_t inode): _path(path), usage(0), ino(inode) {
-	assert(path);
+	ASSERTP(path, "null path");
 }
 
 
@@ -55,7 +55,7 @@ FileItem::FileItem(Path path, ino_t inode): _path(path), usage(0), ino(inode) {
  * Virtual destructor.
  */
 FileItem::~FileItem(void) {
-	assert(!usage);
+	ASSERT(!usage);
 }
 
 

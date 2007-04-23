@@ -5,7 +5,7 @@
  * elm/option/option_ActionOption.cpp -- ActionOption class implementation.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <elm/option/ActionOption.h>
 
 namespace elm { namespace option {

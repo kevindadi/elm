@@ -5,7 +5,7 @@
  * src/system_SystemException.h -- SystemException class implementation.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <errno.h>
 #include <elm/system/SystemException.h>
 
@@ -65,7 +65,7 @@ SystemException::SystemException(int code, String header) {
 		break;
 	case EINVAL:
 	case EINTR:
-		assert(0);
+		ASSERT(0);
 	}
 	
 	// Compute message

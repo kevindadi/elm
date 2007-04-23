@@ -5,7 +5,7 @@
  * src/system_Directory.cpp -- Directory class implementation.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -35,9 +35,9 @@ Directory *Directory::make(Path path) {
 	
 	// Get the file
 	FileItem *item = FileItem::get(path);
-	assert(item);
+	ASSERT(item);
 	Directory *dir = item->toDirectory();
-	assert(dir);
+	ASSERT(dir);
 	return dir;
 }
 
@@ -45,7 +45,7 @@ Directory *Directory::make(Path path) {
 /**
  */
 Directory::Directory(Path path, ino_t inode): FileItem(path, inode) {
-	assert(path);
+	ASSERTP(path, "empty path");
 }
 
 
@@ -106,7 +106,7 @@ bool Directory::Iterator::ended(void) const {
 /**
  */
 FileItem *Directory::Iterator::item(void) const {
-	assert(file);
+	ASSERT(file);
 	return file;
 }
 

@@ -5,7 +5,7 @@
  * elm/option/option_StandardOption.cpp -- StandardOption class implementation.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include <elm/option/StandardOption.h>
 
 namespace elm { namespace option {
@@ -25,7 +25,7 @@ namespace elm { namespace option {
  */
 StandardOption::StandardOption(Manager& manager, char short_name, CString description)
 : sname(short_name), lname(""), desc(description) {
-	assert(sname && sname != '-');
+	ASSERTP(sname && sname != '-', "bad short option name");
 	manager.addOption(this);
 }
 
@@ -38,7 +38,7 @@ StandardOption::StandardOption(Manager& manager, char short_name, CString descri
  */
 StandardOption::StandardOption(Manager& manager, CString long_name, CString description)
 : sname(0), lname(long_name), desc(description) {
-	assert(long_name && long_name[0] != '-');
+	ASSERTP(long_name && long_name[0] != '-', "bad long option name");
 	manager.addOption(this);
 }
 
@@ -52,8 +52,8 @@ StandardOption::StandardOption(Manager& manager, CString long_name, CString desc
  */
 StandardOption::StandardOption(Manager& manager, char short_name, CString long_name, CString description)
 : sname(short_name), lname(long_name), desc(description) {
-	assert(sname && sname != '-');
-	assert(long_name && long_name[0] != '-');
+	ASSERTP(sname && sname != '-', "bad short option name");
+	ASSERTP(long_name && long_name[0] != '-', "bad long option name");
 	manager.addOption(this);
 }
 

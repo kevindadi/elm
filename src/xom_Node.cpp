@@ -5,7 +5,7 @@
  * src/xom_Node.cpp -- XOM Node class implementation.
  */
 
-#include <assert.h>
+#include <elm/assert.h>
 #include "xom_macros.h"
 #include <elm/xom/Node.h>
 #include <elm/xom/Document.h>
@@ -67,7 +67,7 @@ public:
 
 // Node inlines
 Node::Node(void *_node): node(_node) {
-	assert(node);
+	ASSERT(node);
 	NODE(node)->_private = this;
 }
 
@@ -127,7 +127,7 @@ Node::kind_t Node::kind(void) const {
     	NONE					// XML_DOCB_DOCUMENT_NODE
 	};
 	
-	assert(NODE(node)->type < sizeof(kinds) / sizeof(kind_t));
+	ASSERT(NODE(node)->type < sizeof(kinds) / sizeof(kind_t));
 	return kinds[NODE(node)->type];
 }
 
@@ -224,7 +224,7 @@ String Node::getBaseURI(void) {
 /**
  */
 Node *Node::internGetChild(int index) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -300,7 +300,7 @@ Document *Node::getDocument(void) {
  * returns something other than a node-set
  */
 Nodes *Node::query(const String& xpath, XPathContext *context) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -342,7 +342,7 @@ String Node::internToXML(void) {
  * query returns something other than a node-set.
  */
 Nodes *Node::query(const String& xpath) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 } } // elm::xom

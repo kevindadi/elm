@@ -7,7 +7,7 @@
 
 #define WITH_LIBTOOL
 
-#include <assert.h>
+#include <elm/assert.h>
 #ifdef WITH_LIBTOOL
 #	include <ltdl.h>
 #else
@@ -218,7 +218,7 @@ void Plugin::plug(void *handle) {
  * Call it when the plugin is no more used.
  */
 void Plugin::unplug(void) {
-	assert(state);
+	ASSERT(state);
 	
 	// Decrement usage
 	state--;

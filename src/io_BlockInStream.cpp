@@ -5,6 +5,7 @@
  * src/BlockInStream.cpp -- BlockInStream class implementation.
  */
 
+#include <elm/assert.h>
 #include <string.h>
 #include <elm/io/BlockInStream.h>
 
@@ -32,7 +33,7 @@ BlockInStream::BlockInStream(const void *block, int size)
  */	
 BlockInStream::BlockInStream(const char *string)
 : _block(string), _size(strlen(string)), off(0) {
-	assert(string);
+	ASSERTP(string, "null string pointer");
 }
 
 

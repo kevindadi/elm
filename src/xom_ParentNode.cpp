@@ -5,6 +5,7 @@
  * elm/xom_ParentNode.cpp -- XOM ParentNode class implementation.
  */
 
+#include <elm/assert.h>
 #include "xom_macros.h"
 #include <elm/xom/ParentNode.h>
 
@@ -24,7 +25,7 @@ namespace elm { namespace xom {
 
 
 void ParentNode::appendChild(Node *child) {
-	assert(0);
+	ASSERTP(0, "unsupported");
 }
 
 
@@ -36,8 +37,8 @@ void ParentNode::appendChild(Node *child) {
 Node *ParentNode::getChild(int position) {
 	xmlNodePtr cur = NODE(node)->children;
 	for(int i = 0; i < position; i++, cur = cur->next)
-		assert(cur);
-	assert(cur);
+		ASSERTP(cur, "position out of bounds");
+	ASSERTP(cur, "position out of bounds");
 	return Node::make(cur);	
 }
 
@@ -90,8 +91,8 @@ int	ParentNode::indexOf(Node *child) {
  * @throw MultipleParentException if child already has a parent 
  */
 void ParentNode::insertChild(Node *child, int position) {
-	assert(child);
-	assert(position >= 0);
+	ASSERTP(child, "null node");
+	ASSERTP(position >= 0, "position must be positive");
 	if(position == 0) {
 		if(!NODE(node)->children)
 			xmlAddChild(NODE(node), NODE(child->getNode()));
@@ -105,7 +106,7 @@ void ParentNode::insertChild(Node *child, int position) {
 				xmlAddNextSibling(cur, NODE(child->getNode()));
 				return;
 			}
-		assert(0);
+		ASSERTP(0, "position out of bounds");
 	}
 }
 
