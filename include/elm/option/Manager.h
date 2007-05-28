@@ -16,8 +16,7 @@ namespace elm { namespace option {
 // OptionException exception
 class OptionException: public MessageException {
 public:
-	OptionException(elm::CString format, ...);
-	OptionException(elm::CString format, VarArg& args);
+	OptionException(const String& message);
 };
 
 

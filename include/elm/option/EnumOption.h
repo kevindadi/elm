@@ -90,7 +90,7 @@ void EnumOption<T>::process(String arg) {
 			val = vals[i].value;
 			return;
 		}
-	throw OptionException("bad value \"%s\"", &arg);
+	throw OptionException(_ << "bad value \"" << arg << "\"");
 }
 	
 template <class T>

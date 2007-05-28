@@ -18,19 +18,12 @@ namespace elm { namespace io {
 class IOException: public MessageException {
 	String msg;
 public:
-	inline IOException(CString message, ...);
-	inline IOException(CString message, VarArg& args);
+	inline IOException(const String& message);
 };
 
 // IOException inlines
-inline IOException::IOException(CString message, ...) {
-	VARARG_BEGIN(args, message)
-		buildMessage(message, args);
-	VARARG_END;
-}
-
-inline IOException::IOException(CString message, VarArg& args)
-: MessageException(message, args) {
+inline IOException::IOException(const String& message)
+: MessageException(message) {
 }
 
 } // io
