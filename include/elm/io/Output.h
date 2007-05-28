@@ -7,7 +7,6 @@
 #ifndef ELM_IO_OUTPUT_H
 #define ELM_IO_OUTPUT_H
 
-#include <elm/utility.h>
 #include <elm/system/SystemIO.h>
 #include <elm/util/VarArg.h>
 
