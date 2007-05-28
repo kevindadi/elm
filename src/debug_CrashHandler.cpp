@@ -76,12 +76,6 @@ void CrashHandler::set(CrashHandler *handler) {
  * is set to "no".
  */
 void CrashHandler::crash(void) {
-
-	// Look for the ELM_DEBUG variable
-	if(strcasecmp(getenv("ELM_DEBUG"), "no") == 0)
-		abort();
-	
-	// Launch the crash handler
 	current_handler->handle();
 }
 
@@ -107,19 +101,16 @@ void CrashHandler::setup(void) {
 	struct sigaction sa;
 	sa.sa_handler = 0;
 	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = SA_SIGINFO;
+	sa.sa_flags = SA_SIGINFO | SA_ONESHOT;
 	sa.sa_restorer = 0;
 	
-	// Repeatable handlers
+	// Set handlers
 	sa.sa_sigaction = handle_SIGSEGV;
 	sigaction(SIGSEGV, &sa, 0);
 	sa.sa_sigaction = handle_SIGILL;
 	sigaction(SIGILL, &sa, 0);
 	sa.sa_sigaction = handle_SIGFPE;
 	sigaction(SIGFPE, &sa, 0);
-	
-	// One-shot handlers
-	sa.sa_flags |= SA_ONESHOT; 
 	sa.sa_sigaction = handle_SIGABRT;
 	sigaction(SIGABRT, &sa, 0);
 }
@@ -137,10 +128,14 @@ void CrashHandler::handle(void) {
  * This function is called when the handler is removed.
  */
 void CrashHandler::cleanup(void) {
+	
+	// Prepare datastructure
 	struct sigaction sa;
 	sa.sa_handler = SIG_DFL;
 	sa.sa_sigaction = 0;
 	sigemptyset(&sa.sa_mask);
+	
+	// Set handlers	
 	sa.sa_flags = SA_SIGINFO;
 	sa.sa_restorer = 0;
 	sigaction(SIGSEGV, &sa, 0);
@@ -163,6 +158,13 @@ CrashHandler *CrashHandler::current_handler = 0;
 class CrashMonitor {
 public:
 	CrashMonitor(void) {
+		
+		// Look for the ELM_DEBUG variable
+		const char *elm_debug = getenv("ELM_DEBUG");
+		if(elm_debug && strcasecmp(elm_debug, "no") == 0)
+			return;
+	
+		// Install the crash handler
 		CrashHandler::set(&CRASH_HANDLER);
 	}
 	inline ~CrashMonitor(void) {
