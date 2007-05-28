@@ -49,6 +49,17 @@ public:
 
 // autostr object
 extern AutoStringStartup autostr;
+extern AutoStringStartup &_;
+
+// Even faster autostring
+#ifndef ELM_AUTOSTR_FAST_NO
+template <class T>
+inline AutoString& operator<<(CString string, const T& value)
+	{ return autostr << string << value; }
+template <class T>
+inline AutoString& operator<<(const String& string, const T& value)
+	{ return autostr << string << value; }
+#endif // ELM_AUTOSTR_FAST_NO
 
 } // elm
 
