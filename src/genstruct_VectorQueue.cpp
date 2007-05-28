@@ -10,8 +10,9 @@
 namespace elm { namespace genstruct {
 
 /**
- * @class <elm/genstruct/VectorQueue.h>
+ * @class VectorQueue<T>
  * This class implements a queue as an extendable vector.
+ * @param T	Type of queued items.
  */
  
 
