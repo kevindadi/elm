@@ -10,25 +10,6 @@
 namespace elm {
 
 /**
- * @page hash Hash Concept
- * The Hash concept has the following signature:
- * @code
- * class Hash {
- * public:
- *		static unsigned long hash(const T& key);
- *		static inline bool equals(const T& key1, const T& key2)
- * };
- * @endcode
- * 
- * The hash function is used to get a 32-bits hash value associated with a key
- * while the equals method performs test for equality.
- * 
- * This concept is used in @ref genstruct::HashTable and
- * @ref datastruct::HashTable.
- */
-
-
-/**
  * @class HashKey
  * This is the default implementation of the Hash concept in ELM. It provides
  * a generic Jenkins hash function but provides also easier or more adapted
