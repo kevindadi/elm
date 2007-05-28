@@ -16,8 +16,7 @@ namespace elm { namespace xom {
 class Exception: public MessageException {
 	Node *_node;
 public:
-	Exception(Node *node, const CString& format, ...);
-	Exception(Node *node, const CString& format, VarArg& args);
+	Exception(Node *node, const String& message);
 	inline Node *node(void) const { return _node; };
 };
 
