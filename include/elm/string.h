@@ -1,8 +1,8 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004-07, IRIT - UPS
  *
- * string.h -- string classes interfaces.
+ * string module interface
  */
 #ifndef ELM_STRING_H
 #define ELM_STRING_H
@@ -11,6 +11,7 @@
 #include <elm/string/CString.h>
 #include <elm/string/String.h>
 #include <elm/string/StringBuffer.h>
+#include <elm/string/AutoString.h>
 
 namespace elm {
 
