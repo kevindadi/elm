@@ -18,7 +18,7 @@ void by_param(const String& str) {
 
 // Entry point
 void test_autostr(void) {
-	String str1 = autostr << "ok " << 666 << " " << true;
+	String str1 = _ << "ok " << 666 << " " << true;
 	cout << str1 << io::endl;
-	by_param(autostr << "ok " << 666 << " " << true);
+	by_param(_ << "ok " << 666 << " " << true);
 }
