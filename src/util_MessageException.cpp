@@ -17,46 +17,13 @@ namespace elm {
 
 
 /**
- * Build an exception with an empty message.
- */
-MessageException::MessageException(void) {
-}
-
-
-
-/**
- * Build the exception message with a printf-like format string.
- * @param message	Format message.
- * @param args		Arguments.
- */
-void MessageException::buildMessage(CString message, VarArg& args) {
-	StringBuffer buffer;
-	buffer.format(message, args);
-	msg = buffer.toString();
-}
-
-
-/**
- * Build an empty with a string message possibly containing printf-like
- * escape sequences for arguments.
- * @param message	Message formats.
- * @param ...		Arguments.
- */
-MessageException::MessageException(CString message, ...) {
-	VARARG_BEGIN(args, message)
-	buildMessage(message, args);
-	VARARG_END
-}
-
-
-/**
  * Build an empty with a string message possibly containing printf-like
  * escape sequences for arguments.
  * @param message	Message formats.
  * @param args		Arguments.
  */
-MessageException::MessageException(CString message, VarArg& args) {
-	buildMessage(message, args);
+MessageException::MessageException(const String& message)
+: msg(message) {
 }
 
 

@@ -8,6 +8,7 @@
 #include <elm/assert.h>
 #include <elm/io.h>
 #include <elm/option/Manager.h>
+#include <elm/string.h>
 
 namespace elm { namespace option {
 
@@ -30,22 +31,9 @@ class UnknownException {
  * @param message	Message formats.
  * @param ...		Arguments.
  */
-OptionException::OptionException(elm::CString format, ...) {
-	VARARG_BEGIN(args, format);
-	buildMessage(format, args);
-	VARARG_END
-}
 
-
-/**
- * Build an empty with a string message possibly containing printf-like
- * escape sequences for arguments.
- * @param message	Message formats.
- * @param ...		Arguments.
- */
-
-OptionException::OptionException(elm::CString format, VarArg& args)
-: MessageException(format, args) {
+OptionException::OptionException(const String& message)
+: MessageException(message) {
 }
 
 
@@ -108,8 +96,8 @@ void Manager::processOption(Option *option, int& i, int argc, char **argv) {
 		if(i + 1 < argc && argv[i + 1][0] != '-')
 			arg = argv[++i];
 		else {
-			throw OptionException("option \"%s\" requires an argument.",
-				argv[i]);
+			throw OptionException(_ << "option \"" << argv[i]
+				<< "\" requires an argument.");
 		}
 		break;	
 	}
@@ -173,7 +161,8 @@ void Manager::parse(int argc, char **argv) {
 					processOption(findShortName(opts[j]), i, argc, argv);
 				}
 				catch(UnknownException _) {
-					throw OptionException("option \"-%c\" is unknown.", opts[j]);
+					throw OptionException(elm::_ <<
+						"option \"-" << opts[j] << "\" is unknown.");
 				}
 			}
 		}
@@ -184,7 +173,8 @@ void Manager::parse(int argc, char **argv) {
 				processOption(findLongName(&argv[i][2]), i, argc, argv);
 			}
 			catch(UnknownException _) {
-				throw OptionException("option \"%s\" is unknown.", argv[i]);
+				throw OptionException(elm::_ <<
+					"option \"" << argv[i] << "\" is unknown.");
 			}
 		}
 	}

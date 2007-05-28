@@ -22,7 +22,16 @@ namespace elm {
  *	for(int i = 0; i < 100; i++)
  *		call(autostr << "Hello world, " << i << " times !");
  * @endcode
+ * 
+ * As the @ref autostr keyword is a bit long, you may replaced it by "_".
+ * 
+ * @code
+ *	for(int i = 0; i < 100; i++)
+ *		call(_ << "Hello world, " << i << " times !");
+ * @endcode
+ * 
  */
 AutoStringStartup autostr;
+AutoStringStartup &_ = autostr;
 
 } // elm

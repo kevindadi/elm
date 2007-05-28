@@ -18,24 +18,10 @@ namespace elm { namespace xom {
 /**
  * Build the exception from a formatted string.
  * @param node		Node causing the exception.
- * @param format	Message format.
- * @param ...		Format arguments.
+ * @param message	Message.
  */
-Exception::Exception(Node *node, const CString& format, ...) {
-	VARARG_BEGIN(args, format)
-		buildMessage(format, args);
-	VARARG_END
-}
-
-
-/**
- * Build the exception from a formatted string.
- * @param node		Node causing the exception.
- * @param format	Message format.
- * @param args		Format arguments.
- */
-Exception::Exception(Node *node, const CString& format, VarArg& args) {
-	buildMessage(format, args);
+Exception::Exception(Node *node, const String& message)
+: MessageException(message) {
 }
 
 

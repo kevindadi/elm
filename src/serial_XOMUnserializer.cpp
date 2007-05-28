@@ -63,7 +63,7 @@ XOMUnserializer::XOMUnserializer(elm::CString path)
 	xom::Builder builder;
 	doc = builder.build(path);
 	if(!doc)
-		throw io::IOException("cannot open \"%s\"", &path);
+		throw io::IOException(_ << "cannot open \"" << path << "\"");
 	ctx.elem = doc->getRootElement();
 	ASSERT(ctx.elem);
 }
@@ -83,7 +83,7 @@ void XOMUnserializer::close(void) {
 	for(genstruct::HashTable<CString,  ref_t *>::ItemIterator ref(refs); ref; ref++)
 		if(!ref->ptr) {
 			CString id = ref.key();
-			throw io::IOException("unsolved reference \"%s\"", &id);
+			throw io::IOException(_ << "unsolved reference \"" << id << "\"");
 		}
 }
 
@@ -112,7 +112,7 @@ void XOMUnserializer::readPointer(SerialClass& clazz, void *&ptr) {
 		if(clazz_name) {
 			uclass = SerialClass::find(clazz_name);
 			if(!uclass)
-				throw io::IOException("no class %s", &clazz_name);
+				throw io::IOException(_ << "no class " << clazz_name);
 		}
 		
 		// Build the object
@@ -377,7 +377,7 @@ int XOMUnserializer::readEnum(Pair<elm::CString, int> values[]) {
 	}
 	String name = text;
 	text.free();
-	throw io::IOException("bad enumerated value \"%s\"", &name);
+	throw io::IOException(_ << "bad enumerated value \"" << name << "\"");
 }
 
 } } // elm::serial
