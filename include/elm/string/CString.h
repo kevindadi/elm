@@ -1,8 +1,8 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2004-07, IRIT - UPS.
  *
- * elm/stirng/Cstring.h.h -- interface for CString class.
+ * CString class
  */
 #ifndef ELM_STRING_CSTRING_H
 #define ELM_STRING_CSTRING_H
