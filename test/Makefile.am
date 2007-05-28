@@ -17,6 +17,7 @@ test_DEPENDENCIES = ../src/libelm.la myplugin.la
 
 test_SOURCES		=\
 						test.cc \
+						test_autostr.cpp \
 						test_avl.cpp \
 						test_bitvector.cpp \
 						test_dllist.cpp \

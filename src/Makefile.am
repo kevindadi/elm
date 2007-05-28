@@ -60,6 +60,7 @@ libelm_la_SOURCES= \
 	serial2_serial.cpp \
 	serial2_TextSerializer.cpp \
 	serial2_XOMUnserializer.cpp \
+	string_AutoString.cpp \
 	string_String.cpp \
 	string_StringBuffer.cpp \
 	system_File.cpp \

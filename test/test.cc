@@ -10,6 +10,7 @@
 using namespace elm;
 
 // Prototypes
+void test_autostr(void);
 void test_avl(void);
 void test_bitvector(void);
 void test_dllist(void);
@@ -43,6 +44,7 @@ struct test_t {
 	CString name;
 	void (*fun)(void);
 } tests[] = {
+	{ "autostr", test_autostr },
 	{ "avl", test_avl },
 	{ "bitvector", test_bitvector },
 	{ "dllist", test_dllist },

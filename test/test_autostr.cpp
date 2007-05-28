@@ -1,0 +1,24 @@
+/*
+ * $Id$
+ * Copyright (c) 2007, IRIT-UPS.
+ *
+ * AutoStr tester
+ */
+
+#define ELM_TEST_AUTOSTR
+#include <elm/util/test.h>
+#include <elm/io.h>
+#include <elm/string.h>
+ 
+using namespace elm;
+
+void by_param(const String& str) {
+	cout << "by param = \"" << str << "\"\n";
+}
+
+// Entry point
+void test_autostr(void) {
+	String str1 = autostr << "ok " << 666 << " " << true;
+	cout << str1 << io::endl;
+	by_param(autostr << "ok " << 666 << " " << true);
+}
