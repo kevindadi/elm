@@ -7,8 +7,8 @@
 #ifndef ELM_STRING_STRING_BUFFER_H
 #define ELM_STRING_STRING_BUFFER_H
 
-#include <stdarg.h>
-#include <elm/string.h>
+#include <elm/string/CString.h>
+#include <elm/string/String.h>
 #include <elm/io/BlockOutStream.h>
 #include <elm/io/Output.h>
 
