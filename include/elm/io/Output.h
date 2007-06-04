@@ -141,11 +141,19 @@ inline IntFormat base(int base, IntFormat fmt) {
 
 inline IntFormat bin(IntFormat fmt) {
 	fmt.base = 2;
+	fmt.sign = false;
+	return fmt;
+}
+
+inline IntFormat oct(IntFormat fmt) {
+	fmt.base = 8;
+	fmt.sign = false;
 	return fmt;
 }
 
 inline IntFormat hex(IntFormat fmt) {
 	fmt.base = 16;
+	fmt.sign = false;
 	return fmt;
 }
 
