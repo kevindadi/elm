@@ -19,6 +19,8 @@ namespace elm { namespace concept {
  * @li @ref elm::concept::Iterator
  * @li @ref elm::concept::MutableArray
  * @li @ref elm::concept::MutableCollection
+ * @li @ref elm::concept::Queue
+ * @li @ref elm::concept::Stack
  * 
  * @par Value Concepts
  * @li @ref elm::concept::Comparator
@@ -257,6 +259,85 @@ public:
 	 * @param index	Index of the item to remove.
 	 */
 	void removeAt(int index);
+};
+
+
+/**
+ * This concepts represents stack of items (First-In First-Out).
+ * @param T	Type of stacked items.
+ */
+template <class T>
+class Stack {
+public:
+	
+	/**
+	 * Test if the stack is empty.
+	 * @return	Return true if the stack is empty, false else.
+	 */
+	bool isEmpty(void) const;
+	
+	/**
+	 * Get the item at the top of the stack.
+	 * @return	Top item of the stack.
+	 */
+	const T& top(void) const;
+	
+	/**
+	 * Pop the top item of the stack.
+	 * @return	Top item.
+	 */
+	T pop(void);
+	
+	/**
+	 * Push a new item in the stack.
+	 * @param item	Item to push in the stack.
+	 */
+	void push(const T& item);
+	
+	/**
+	 * Reset the stack to empty.
+	 */
+	void reset(void);
+};
+
+
+/**
+ * Concept representing the work of a queue.
+ * @param T	Type of item in the queue.
+ */
+template <class T>
+class Queue {
+public:
+
+	/**
+	 * Test if the queue is empty.
+	 * @return	True if the queue is empty, false else.
+	 */
+	bool isEmpty(void) const;
+	
+	/**
+	 * Get the head element of the queue.
+	 * @return	Head element of the queue.
+	 */
+	const T& head(void) const;
+	
+	/**
+	 * Get and remove the head item of the queue.
+	 * @return	Head item of the queue.
+	 */
+	T get(void);
+	
+	/**
+	 * Put a new item at the tail of the queue.
+	 * @param item	Item to enqueue.
+	 */
+	void put(const T& item);
+	
+	/**
+	 * Make the queue empty.
+	 */
+	void reset(void);
+
 };
 
 
