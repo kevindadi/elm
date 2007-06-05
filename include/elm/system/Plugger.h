@@ -49,6 +49,10 @@ public:
 	String lastErrorMessage(void);
 	inline String hook(void) const;
 	
+	// Error management
+	virtual void onError(String message);
+	virtual void onWarning(String message);
+	
 	// Iterator class
 	class Iterator: public PreIterator<Iterator, String> {
 		Plugger& plugger;

@@ -184,6 +184,14 @@ Plugin *Plugger::plug(Plugin *plugin, void *handle) {
 Plugin *Plugger::plugFile(String path) {
 	err = OK;
 	
+	// Check existence of the file
+	system::FileItem *file = system::FileItem::get(path);
+	if(!file) {
+		err = NO_PLUGIN;
+		return 0;
+	}
+	file->release();
+	
 	// Open shared library
 	#ifdef WITH_LIBTOOL
 		void *handle = lt_dlopen(&path);
@@ -192,9 +200,10 @@ Plugin *Plugger::plugFile(String path) {
 	#endif
 	if(!handle) {
 		err = NO_PLUGIN;
+		onError(_ << "invalid plugin found at \"" << path << "\"");
 		return 0;
 	}
-			
+
 	// Look for the plugin symbol
 	#ifdef WITH_LIBTOOL
 		Plugin *plugin = (Plugin *)lt_dlsym((lt_dlhandle)handle, &_hook);
@@ -203,12 +212,14 @@ Plugin *Plugger::plugFile(String path) {
 	#endif
 	if(!plugin) {
 		err = NO_HOOK;
+		onWarning(_ << "invalid plugin found at \"" << path << "\"");
 		return 0;
 	}
 		
 	// Check plugger version
 	if(!plugin->pluggerVersion().accepts(per_vers)) {
 		err = BAD_VERSION;
+		onWarning(_ << "bad version plugin found at \"" << path << "\"");
 		return 0;
 	}
 		
@@ -248,6 +259,26 @@ String Plugger::lastErrorMessage(void) {
 	default:
 		ASSERTP(0, "unknown error");
 	}
+}
+
+
+/**
+ * This method is called when an error arises to let the user display or not
+ * the message. As default, the message is displayed on standard error.
+ * @param message	Message of the error.
+ */
+void Plugger::onError(String message) {
+	cerr << "ERROR: " << message << io::endl;
+}
+
+
+/**
+ * This method is called when a warning arises to let the user display or not
+ * the message. As default, the message is displayed on standard error.
+ * @param message	Message of the warning.
+ */
+void Plugger::onWarning(String message) {
+	cerr << "WARNING: " << message << io::endl;
 }
 
 
