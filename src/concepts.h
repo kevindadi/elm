@@ -25,6 +25,12 @@ namespace elm { namespace concept {
  * @par Value Concepts
  * @li @ref elm::concept::Comparator
  * @li @ref elm::concept::Hash
+ * @li @ref elm::concept::Ordered
+ * @li @ref elm::concept::PartiallyOrdered
+ * 
+ * @par Note
+ * The This class represents the actual class itself in the concepts and must
+ * be changed according the current class.
  */
 
 /**
@@ -383,6 +389,73 @@ public:
 	 * 			>0 else.
 	 */
 	static int compare(const T& object1, const T& object2);
+};
+
+
+/**
+ * This concept is implemented by objects matching a total order.
+ */
+class Ordered {
+public:
+
+	/**
+	 * Compare two objects.
+	 * @param value	Value to compare with the current one.
+	 * @rerturn		<0 if current object is less than the argument,
+	 * 				0 for equality and >0 else.
+	 */
+	static int compare(const This& value);	
+};
+
+
+/**
+ * This concept is implemented by objects matching a partial order.
+ */
+class PartiallyOrdered {
+public:
+
+	/**
+	 * The bit 0 asserts equality relation.
+	 */
+	static const int EQUAL = 0x001;
+	
+	/**
+	 * The bit 1 asserts the inferiority relation.
+	 */
+	static const int LESS = 0x010;
+	
+	/**
+	 * The bit 2 asserts the superioritiy relation.
+	 */
+	static const int GREATER = 0x100;
+	
+	/**
+	 * All bits to zero shows that both values are uncomparable.
+	 */
+	static const int UNCOMP = 0x000;
+	
+	/**
+	 * Test for equality.
+	 * @param value	Value to compare with.
+	 * @return		True if both values are equals, false else.
+	 */
+	static bool equals(const This& value);
+	
+	/**
+	 * Perform a strict comparison: trying to compare uncomparable values
+	 * cause a failure.
+	 * @param value	Value to compare with.
+	 * @rerturn		<0 if current object is less than the argument,
+	 * 				0 for equality and >0 else.
+	 */
+	static int compare(const This& value);	
+	
+	/**
+	 * Perform a soft comparison: any value may be compared.
+	 * @param value		Value to compare with.
+	 * @return			A bit field composed by EQUAL, LESS, GREATER.
+	 */
+	static int compareSoft(const This& value);
 };
 
 } } // elm::concept
