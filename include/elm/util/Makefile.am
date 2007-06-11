@@ -1,5 +1,6 @@
 includeelmutildir=$(includedir)/elm/util
 includeelmutil_HEADERS = \
+	AutoComparator.h \
 	AutoPtr.h \
 	BitVector.h \
 	Exception.h \
