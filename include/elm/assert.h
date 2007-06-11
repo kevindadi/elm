@@ -18,7 +18,7 @@ void crash(void);
 #ifndef NDEBUG
 #	include <elm/io.h>
 #	define ELM_ASSERT_MSG(msg) \
-		cerr << "ASSERT:" << __FILE__ << ":" << __LINE__ << ": " << msg << io::endl
+		elm::cerr << "ASSERT:" << __FILE__ << ":" << __LINE__ << ": " << msg << io::endl
 #	define ELM_ASSERT(cond) \
 		if(!(cond)) { ELM_ASSERT_MSG("assert failure: " #cond); crash(); }
 #	define ELM_ASSERTP(cond, msg) \
