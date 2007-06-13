@@ -28,10 +28,10 @@ namespace elm { namespace system {
  * @Throws		SystemException		When creation files.
  */
 Directory *Directory::make(Path path) {
-	
+	errno = 0;
 	// Build the directory
 	if(mkdir(&path.toString(), 0777) < 0)
-		throw new SystemException(errno, "file");
+		throw SystemException(errno, "file");
 	
 	// Get the file
 	FileItem *item = FileItem::get(path);
@@ -65,11 +65,12 @@ Directory *Directory::toDirectory(void) {
 /**
  */
 void Directory::Iterator::go(void) {
+	errno = 0;
 	struct dirent *dirent = readdir(dir);
 	if(dirent)
 		file = FileItem::get(path / Path(dirent->d_name));
 	else if(errno)
-		throw new SystemException(errno, "file");
+		throw SystemException(errno, "file");
 	else
 		file = 0;
 }
@@ -79,9 +80,10 @@ void Directory::Iterator::go(void) {
  */
 Directory::Iterator::Iterator(Directory *directory)
 : dir(0), file(0), path(directory->path()) {
+	errno = 0;
 	dir = opendir(&directory->path().toString());
 	if(!dir)
-		throw new SystemException(errno, "file");
+		throw SystemException(errno, "file");
 	for(int i = 0; i < 3; i++)
 		go();	// Skip "." and ".."
 }
