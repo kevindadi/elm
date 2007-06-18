@@ -12,13 +12,14 @@
 namespace elm { namespace inhstruct {
 
 // AVLTree class
-class AVLTree: protected BinTree {
+class AVLTree: public BinTree {
 public:
 	
 	// AVLNode class
 	class Node: public BinTree::Node {
 		friend class AVLTree;
 		int h;
+	public:
 		inline Node *_left(void) const { return (Node *)left(); };
 		inline Node *_right(void) const { return (Node *)right(); };
 		#ifdef ELM_DEBUG_AVLTREE
@@ -34,6 +35,8 @@ private:
 	Node *rotateSingleRight(Node *node);
 	Node *rotateDoubleRight(Node *node);
 	Node *remap(Node *left, Node *right);
+	Node *balanceLeft(Node *cur, Node*& left);
+	Node *balanceRight(Node *cur, Node*& left);
 	void clean(Node *node);
 	inline Node *_root(void) const { return (Node *)root(); };
 	inline int height(Node *node) const { return node ? node->h : 0; };
