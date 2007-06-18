@@ -32,8 +32,8 @@ public:
 	String scanWord(void);
 	String scanLine(void);
 	void swallow(char chr);
-	void swallow(CString string);
-	void swallow(const String& string);
+	void swallow(CString str);
+	void swallow(const String& str);
 	void swallowBlank(void);
 	
 	inline Input& operator>>(bool& value) { value = scanBool(); return *this; };
