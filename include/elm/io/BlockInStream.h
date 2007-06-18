@@ -20,9 +20,9 @@ class BlockInStream: public InStream {
 public:
 
 	BlockInStream(const void *block, int size);
-	BlockInStream(const char *string);
-	BlockInStream(const CString& string);
-	BlockInStream(const String& string); 
+	BlockInStream(const char *str);
+	BlockInStream(const CString& str);
+	BlockInStream(const String& str); 
 	inline const void *block(void) const;
 	inline int size(void) const;
 	inline int mark(void) const;
