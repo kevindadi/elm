@@ -57,6 +57,11 @@ public:
 	inline operator const char *(void) const { return buf; };
 };
 
+// Type shortcut
+#ifndef ELM_NO_STRING_SHORTCUT
+	typedef CString cstring;
+#endif
+
 } // elm
 
 #endif	// ELM_STRING_CSTRING_H

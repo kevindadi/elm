@@ -54,11 +54,11 @@ extern AutoStringStartup &_;
 // Even faster autostring
 #ifndef ELM_AUTOSTR_FAST_NO
 template <class T>
-inline AutoString& operator<<(CString string, const T& value)
-	{ return autostr << string << value; }
+inline AutoString& operator<<(CString str, const T& value)
+	{ return autostr << str << value; }
 template <class T>
-inline AutoString& operator<<(const String& string, const T& value)
-	{ return autostr << string << value; }
+inline AutoString& operator<<(const String& str, const T& value)
+	{ return autostr << str << value; }
 #endif // ELM_AUTOSTR_FAST_NO
 
 } // elm
