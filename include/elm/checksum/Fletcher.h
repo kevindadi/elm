@@ -25,11 +25,11 @@ public:
 	void put(io::InStream& in);
 	void put(io::InStream& in, int length);
 	void put(const void *buffer, int length);
-	void put(const CString& string);
-	void put(const String& string);
-	inline Fletcher& operator<<(const char *string) { put(CString(string)); }
-	inline Fletcher& operator<<(const CString& string) { put(string); }
-	inline Fletcher& operator<<(const String& string) { put(string); }
+	void put(const CString& str);
+	void put(const String& str);
+	inline Fletcher& operator<<(const char *str) { put(CString(str)); }
+	inline Fletcher& operator<<(const CString& str) { put(str); }
+	inline Fletcher& operator<<(const String& str) { put(str); }
 	template <class T> inline Fletcher& operator<<(const T& value)
 		{ put(&value, sizeof(T)); }
 };
