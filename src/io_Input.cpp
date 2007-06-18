@@ -294,22 +294,22 @@ void Input::swallow(char chr) {
 /**
  * Read the character of the given string until finding a not matching
  * character (and throw an exception in this case).
- * @param string	String to read.
+ * @param str	String to read.
  */
-void Input::swallow(CString string) {
-	for(int i = 0; string[i]; i++)
-		swallow(string[i]);
+void Input::swallow(CString str) {
+	for(int i = 0; str[i]; i++)
+		swallow(str[i]);
 }
 
 
 /**
  * Read the character of the given string until finding a not matching
  * character (and throw an exception in this case).
- * @param string	String to read.
+ * @param str	String to read.
  */
-void Input::swallow(const String& string) {
-	for(int i = 0; i < string.length(); i++)
-		swallow(string[i]);
+void Input::swallow(const String& str) {
+	for(int i = 0; i < str.length(); i++)
+		swallow(str[i]);
 }
 
 

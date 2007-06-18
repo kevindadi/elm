@@ -99,20 +99,20 @@ void Fletcher::put(const void *block, int length) {
 
 /**
  * Put a C string in the checksum.
- * @param string	C string to put in.
+ * @param str	C string to put in.
  */
-void Fletcher::put(const CString& string) {
-	io::BlockInStream stream(string);
+void Fletcher::put(const CString& str) {
+	io::BlockInStream stream(str);
 	put(stream);
 }
 
 
 /**
  * Put a string in the checksum.
- * @param string	String to put in.
+ * @param str	String to put in.
  */
-void Fletcher::put(const String& string) {
-	io::BlockInStream stream(string);
+void Fletcher::put(const String& str) {
+	io::BlockInStream stream(str);
 	put(stream);	
 }
 

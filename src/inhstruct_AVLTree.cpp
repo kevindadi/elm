@@ -25,6 +25,17 @@ static int inline abs(int x) {
 		return -x;
 }
 
+static void dump(AVLTree::Node *node, int tab = 0) {
+	for(int i = 0; i < tab; i++)
+		cout << "  ";
+	cout << node << io::endl;
+	if(!node)
+		return;
+	dump(node->_left(), tab + 1);	
+	dump(node->_right(), tab + 1);	
+}
+
+
 /**
  * @class AVLTree::AVLNode
  * AVL tree requires a special kind of nodes implemenetd by this class.
@@ -40,8 +51,9 @@ static int inline abs(int x) {
  * must also inherit from the AVLTree::AVLNode class.
  * 
  * Performances:
- * - depth: O(Log n)
- * - find: O(n/2)
+ * @li lookup: O(Log n)
+ * @li add: O(Log n)
+ * @li removal: O(Log n)
  */
 
 /**
@@ -210,38 +222,94 @@ AVLTree::Node *AVLTree::rotateDoubleRight(Node *root) {
 // Private
 AVLTree::Node *AVLTree::remove(Node *cur, Node *node) {
 	ASSERTP(node, "null removed node");
+	ASSERTP(cur, "value not in the tree");
+	ASSERT(abs(height(cur->_left()) - height(cur->_right())) < 2);
 	
 	// Compare node
-	if(!cur)
-		return cur;
 	int cmp = compare(cur, node);
 	
 	// To left
 	if(cmp > 0) {
+		cout << "> left\n";
 		cur->insertLeft(remove(cur->_left(), node));
-		if(height(cur->_right()) - height(cur->_left()) > 1)
-			cur = rotateSingleRight(cur);
+		cout << height(cur->_left()) << " | " << height(cur->_right()) << io::endl;
+		dump(cur);
+		if(height(cur->_right()) - height(cur->_left()) > 1) {
+			if(!cur->_right()->_right()) {
+				cout << "rotateDoubleRight\n";
+				cur = rotateDoubleRight(cur);
+			}
+			else {
+				cout << "rotateSingleRight\n";
+				cur = rotateSingleRight(cur);
+			}
+			dump(cur);
+		}
+		cout << height(cur->_left()) << " | " << height(cur->_right()) << io::endl;
 		computeHeight(cur);
+		ASSERT(abs(height(cur->_left()) - height(cur->_right())) < 2);
 	}
 	
 	// To right
 	else if(cmp < 0) {
+		cout << "> right\n";
 		cur->insertRight(remove(cur->_right(), node));
-		if(height(cur->_left()) - height(cur->_right()) > 1)
-			cur = rotateSingleLeft(cur);
+		if(height(cur->_left()) - height(cur->_right()) > 1) {
+			if(!cur->_left()->_left())
+				cur = rotateDoubleLeft(cur);
+			else
+				cur = rotateSingleLeft(cur);
+		}
 		computeHeight(cur);
+		ASSERT(abs(height(cur->_left()) - height(cur->_right())) < 2);
 	}
 	
 	// Found !
 	else {
+		cout << "> found\n";
 		Node *old_cur = cur;
+		ASSERT(abs(height(cur->_left()) - height(cur->_right())) < 2);
 		cur = remap(cur->_left(), cur->_right());
+		ASSERT(!cur || abs(height(cur->_left()) - height(cur->_right())) < 2);
 		delete old_cur;
 	}
 	
 	ASSERT(!cur || abs(height(cur->_left()) - height(cur->_right())) < 2);
 	return cur;
 }
+
+
+// Private
+AVLTree::Node *AVLTree::balanceLeft(Node *cur, Node*& root) {
+	if(!cur->_left()) {
+		root = cur;
+		return cur->_right();
+	}
+	else {
+		cur->insertLeft(balanceLeft(cur->_left(), root));
+		if(height(cur->_right()) - height(cur->_left()) > 1)
+			cur = rotateSingleRight(cur);
+		computeHeight(cur);
+		return cur;
+	}
+}
+
+
+// Private
+AVLTree::Node *AVLTree::balanceRight(Node *cur, Node*& root) {
+	if(!cur->_right()) {
+		root = cur;
+		return cur->_left();
+	}
+	else {
+		cur->insertRight(balanceRight(cur->_right(), root));
+		if(height(cur->_left()) - height(cur->_right()) > 1)
+			cur = rotateSingleLeft(cur);
+		computeHeight(cur);
+		return cur;
+	}
+}
+
 
 // Private
 AVLTree::Node *AVLTree::remap(Node *left, Node *right) {
@@ -253,42 +321,38 @@ AVLTree::Node *AVLTree::remap(Node *left, Node *right) {
 		return left;
 	
 	/* Remap with left down */
+	Node *root = 0;
 	if(left->h < right->h) {
 		if(!right->_left()) {
 			right->insertLeft(left);
-			computeHeight(right);
-			return right;
+			root = right;
 		}
 		else {
-			Node *root = right->_left();
-			right->insertLeft(remap(root->_left(), root->_right()));
-			computeHeight(right);
+			Node *new_right = balanceLeft(right, root);
+			ASSERT(root);
 			root->insertLeft(left);
-			root->insertRight(right);
-			computeHeight(root);
-			return root;
+			root->insertRight(new_right);
 		}
-		return right;
 	}
 	
 	/* Remap with right down */
 	else {
 		if(!left->_right()) {
 			left->insertRight(right);
-			computeHeight(left);
-			return left;
+			root = left;
 		}
 		else {
-			Node *root = left->_right();
-			left->insertRight(remap(root->_left(), root->_right()));
-			computeHeight(left);
-			root->insertLeft(left);
+			Node *new_left = balanceRight(left, root);
+			ASSERT(root);
 			root->insertRight(right);
-			computeHeight(root);
-			return root;
+			root->insertLeft(new_left);
 		}
-		return right;
 	}
+	
+	// Return result
+	computeHeight(root);
+	ASSERT(abs(height(root->_left()) - height(root->_right())) < 2);	
+	return root;
 }
 
 
