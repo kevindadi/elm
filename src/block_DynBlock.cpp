@@ -6,7 +6,7 @@
  */
 
 #include <elm/assert.h>
-#include <string.h>
+#include <cstring>
 #include <elm/block/DynBlock.h>
 
 namespace elm { namespace block {
