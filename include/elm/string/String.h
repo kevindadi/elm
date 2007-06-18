@@ -91,6 +91,11 @@ public:
 	inline bool endsWith(const String& str) const;
 };
 
+// Type shortcut
+#ifndef ELM_NO_STRING_SHORTCUT
+	typedef String string;
+#endif
+
 // Inlines
 inline bool String::startsWith(const char *str) const {
 	return startsWith(CString(str));

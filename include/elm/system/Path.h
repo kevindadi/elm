@@ -46,9 +46,9 @@ public:
 	static Path home(void);
 	
 	// Operator
-	inline Path& operator=(const char *string) { buf = string; return *this; }
-	inline Path& operator=(CString string) { buf = string; return *this; }
-	inline Path& operator=(const String& string) { buf = string; return *this; }
+	inline Path& operator=(const char *str) { buf = str; return *this; }
+	inline Path& operator=(CString str) { buf = str; return *this; }
+	inline Path& operator=(const String& str) { buf = str; return *this; }
 	inline Path& operator=(Path& path);
 
 	inline bool operator==(Path& path);
