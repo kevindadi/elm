@@ -28,7 +28,7 @@ public:
 	inline String(const char *str);
 	inline String(const char_t *str);
 	inline String(const CString& str);
-	inline String(const String& string);
+	inline String(const String& str);
 	
 	// Buffer management
 	
@@ -37,7 +37,7 @@ public:
 	inline void free(void);
 	
 	// Operators
-	inline String& operator=(const String& string);
+	inline String& operator=(const String& str);
 	inline operator CString(void) const;
 	inline operator char_t *(void) const;
 };
@@ -59,7 +59,7 @@ inline String::String(const CString& str)
 : CString(str) {
 }
 
-inline String::String(const String& string): CString(string) {
+inline String::String(const String& str): CString(str) {
 }
 
 inline void String::copy(void) {
@@ -71,8 +71,8 @@ inline void String::free(void) {
 	buf = "";
 }
 
-inline String& String::operator=(const String& string) {
-	buf = string.buf;
+inline String& String::operator=(const String& str) {
+	buf = str.buf;
 }
 
 inline String::operator CString(void) const {
