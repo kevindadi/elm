@@ -38,7 +38,9 @@ GDBCrashHandler GDBCrashHandler::DEFAULT;
 /**
  */
 void GDBCrashHandler::handle(void) {
-	int main_pid = getpid();
+
+	// Clean all
+	cleanup();
 	
 	// Test for a tty ?
 	if(!isatty(0) || !isatty(1))
@@ -51,6 +53,7 @@ void GDBCrashHandler::handle(void) {
 		abort(); 
 	
 	// Make wait process
+	int main_pid = getpid();
 	int wait_pid = fork();
 	if(wait_pid == -1)
 		fatal("no fork");
