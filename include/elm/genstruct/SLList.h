@@ -26,6 +26,7 @@ template <class T> class SLList {
 	};
 
 public:
+	inline ~SLList(void);
 
 	// Iterator class
 	class Iterator: public PreIterator<Iterator, T> {
@@ -68,6 +69,14 @@ template <class T> inline typename SLList<T>::Node *SLList<T>::Node::next(void) 
 }
 
 // SLList class
+
+template <class T> inline SLList<T>::~SLList(void) {
+	while(!list.isEmpty()) {
+		Node *node = (Node *)list.first();
+		list.removeFirst();
+		delete node;
+	}
+}      
 template <class T> inline T SLList<T>::first(void) const {
 	return ((Node *)list.first())->val;
 }
@@ -144,7 +153,6 @@ template <class T> inline void SLList<T>::removeNext(const Iterator& pos) {
 	ASSERT(pos->node);
 	pos->node->removeNext();
 }
-            
 
 } } // elm::genstruct
 
