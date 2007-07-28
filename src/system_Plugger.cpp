@@ -246,7 +246,8 @@ String Plugger::lastErrorMessage(void) {
 	case NO_PLUGIN: {
 			StringBuffer buf;
 			#ifdef WITH_LIBTOOL
-				buf << "cannot open the plugin(" << lt_dlerror() << ").";
+				const char *msg = lt_dlerror();
+				buf << "cannot open the plugin(" << (msg ? msg : "") << ").";
 			#else
 				buf << "cannot open the plugin(" << dlerror() << ").";
 			#endif
