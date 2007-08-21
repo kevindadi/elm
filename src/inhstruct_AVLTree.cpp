@@ -9,6 +9,8 @@
 #include <elm/inhstruct/AVLTree.h>
 #include <elm/io.h>
 
+#define MARK	cerr << __FILE__ << ":" << __LINE__ << io::endl
+
 namespace elm { namespace inhstruct {
 
 // Private
@@ -24,6 +26,27 @@ static int inline abs(int x) {
 	else
 		return -x;
 }
+
+
+/**
+ * Replace a child from a parent, depending the child to remove.
+ * @param parent	Parent to remove a child from.
+ * @param old		Old child to replace.
+ * @param _new		New child for replacement.
+ */
+static inline void replaceChild(
+	AVLTree::Node *parent,
+	AVLTree::Node *old,
+	AVLTree::Node *_new
+) {
+	if(parent->_left() == old)
+		parent->insertLeft(_new);
+	else {
+		ASSERT(parent->_right() == old);
+		parent->insertRight(_new);
+	}
+}
+
 
 static void dump(AVLTree::Node *node, int tab = 0) {
 	for(int i = 0; i < tab; i++)
@@ -219,65 +242,6 @@ AVLTree::Node *AVLTree::rotateDoubleRight(Node *root) {
 	return rotateSingleRight(root);
 }
 
-// Private
-AVLTree::Node *AVLTree::remove(Node *cur, Node *node) {
-	ASSERTP(node, "null removed node");
-	ASSERTP(cur, "value not in the tree");
-	ASSERT(abs(height(cur->_left()) - height(cur->_right())) < 2);
-	
-	// Compare node
-	int cmp = compare(cur, node);
-	
-	// To left
-	if(cmp > 0) {
-		cout << "> left\n";
-		cur->insertLeft(remove(cur->_left(), node));
-		cout << height(cur->_left()) << " | " << height(cur->_right()) << io::endl;
-		dump(cur);
-		if(height(cur->_right()) - height(cur->_left()) > 1) {
-			if(!cur->_right()->_right()) {
-				cout << "rotateDoubleRight\n";
-				cur = rotateDoubleRight(cur);
-			}
-			else {
-				cout << "rotateSingleRight\n";
-				cur = rotateSingleRight(cur);
-			}
-			dump(cur);
-		}
-		cout << height(cur->_left()) << " | " << height(cur->_right()) << io::endl;
-		computeHeight(cur);
-		ASSERT(abs(height(cur->_left()) - height(cur->_right())) < 2);
-	}
-	
-	// To right
-	else if(cmp < 0) {
-		cout << "> right\n";
-		cur->insertRight(remove(cur->_right(), node));
-		if(height(cur->_left()) - height(cur->_right()) > 1) {
-			if(!cur->_left()->_left())
-				cur = rotateDoubleLeft(cur);
-			else
-				cur = rotateSingleLeft(cur);
-		}
-		computeHeight(cur);
-		ASSERT(abs(height(cur->_left()) - height(cur->_right())) < 2);
-	}
-	
-	// Found !
-	else {
-		cout << "> found\n";
-		Node *old_cur = cur;
-		ASSERT(abs(height(cur->_left()) - height(cur->_right())) < 2);
-		cur = remap(cur->_left(), cur->_right());
-		ASSERT(!cur || abs(height(cur->_left()) - height(cur->_right())) < 2);
-		delete old_cur;
-	}
-	
-	ASSERT(!cur || abs(height(cur->_left()) - height(cur->_right())) < 2);
-	return cur;
-}
-
 
 // Private
 AVLTree::Node *AVLTree::balanceLeft(Node *cur, Node*& root) {
@@ -396,6 +360,127 @@ void AVLTree::clean(Node *node) {
 		clean(node->_right());
 		free(node);
 	}
+}
+
+
+/**
+ * Remove a node from a subtree.
+ * @param root	Root of the subtree.
+ * @param node	Node to remove.
+ * @return		New root of the tree.
+ */
+AVLTree::Node *AVLTree::remove(Node *root, Node *node) {
+	ASSERTP(node, "null node to remove");
+	ASSERT(!root || abs(height(root->_left()) - height(root->_right())) < 2);
+	Node *cur = root;
+	int cmp = compare(cur, node);
+	
+	// Look right
+	if(cmp < 0) {
+		root->insertRight(remove(root->_right(), node));
+		cerr << "!!! " << (height(root->_left()) - height(root->_right())) << "\n";
+		dump(root);
+		if(height(root->_left()) - height(root->_right()) >= 2)
+			root = rotateSingleLeft(root);
+		dump(root);
+		ASSERT(!root || abs(height(root->_left()) - height(root->_right())) < 2);
+	}
+	
+	// Look left
+	else if(cmp > 0) {
+		root->insertLeft(remove(root->_left(), node));
+		if(height(root->_right()) - height(root->_left()) >= 2)
+			root = rotateSingleRight(root);
+		ASSERT(!root || abs(height(root->_left()) - height(root->_right())) < 2);
+	}
+	
+	// Found
+	else {
+		Node *left = cur->_left(), *right = cur->_right();
+		delete cur;
+		if(!left)
+			root = right;
+		else if(!right)
+			root = left;
+		else if(left->h > right->h) {
+			left = removeGreatest(left, root);
+			ASSERT(abs(height(left) - height(right) < 2));
+			root->insertLeft(left);
+			root->insertRight(right);
+		}
+		else {
+			right = removeLeast(right, root);
+			ASSERT(abs(height(left) - height(right) < 2));
+			root->insertRight(right);
+			root->insertLeft(left);
+		}
+	}
+	
+	// check and return result
+	if(root)
+		computeHeight(root);
+	ASSERT(!root || abs(height(root->_left()) - height(root->_right())) < 2);
+	return root;
+}
+
+
+/**
+ * Remove the greatest node of a subtree.
+ * @param root	Subtree to look in (must not be null).
+ * @param res	To return the removed node.
+ * @return		New top of the subtree.
+ */
+AVLTree::Node *AVLTree::removeGreatest(Node *root, Node *&res) {
+	ASSERT(root);
+	
+	// At the end
+	if(!root->_right()) {
+		res = root;
+		root = root->_left();
+	}
+	
+	// Go down
+	else {
+		root->insertRight(removeGreatest(root->_right(), res));
+		if(height(root->_left()) - height(root->_right()) >= 2)
+			root = rotateSingleLeft(root);
+		else
+			computeHeight(root);
+	}
+	
+	// Check
+	ASSERT(!root || abs(height(root->_left()) - height(root->_right())) < 2);
+	return root;
+}
+
+
+/**
+ * Remove the least node of a subtree.
+ * @param root	Subtree to look in (must not be null).
+ * @param res	To return the removed node.
+ * @return		New top of the subtree.
+ */
+AVLTree::Node *AVLTree::removeLeast(Node *root, Node *&res) {
+	ASSERT(root);
+	
+	// At the end
+	if(!root->_left()) {
+		res = root;
+		root = root->_right();
+	}
+	
+	// Go down
+	else {
+		root->insertLeft(removeLeast(root->_left(), res));
+		if(height(root->_right()) - height(root->_left()) >= 2)
+			root = rotateSingleRight(root);
+		else
+			computeHeight(root);
+	}
+	
+	// Check
+	ASSERT(!root || abs(height(root->_left()) - height(root->_right())) < 2);
+	return root;
 }
 
 
