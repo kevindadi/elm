@@ -65,7 +65,7 @@ void test_frag_table(void) {
 	CHECK(test_set);
 	
 	// Test mutable table
-	i = 0;
+	/*i = 0;
 	for(FragTable<int>::MutableIterator iter(tab); iter; iter++, i++)
 		iter = i;
 	bool test_mut_iter = true;
@@ -74,7 +74,7 @@ void test_frag_table(void) {
 			test_mut_iter = false;
 			break;
 		}
-	CHECK(test_mut_iter);
+	CHECK(test_mut_iter);*/
 	
 	CHECK_END;
 	
