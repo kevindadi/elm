@@ -64,7 +64,7 @@ void test_utility(void) {
 	}
 	
 	// Comparators tests
-	{
+	/*{
 		Comparator<int>& int_comp = Comparator<int>::def;
 		CHECK(int_comp.compare(-111, 666) < 0);
 		CHECK(int_comp.compare(666, -111) > 0);
@@ -107,7 +107,7 @@ void test_utility(void) {
 		CHECK(string_comp.compare(v1, v4) < 0);		// Transitive
 		CHECK(string_comp.compare(v2, v4) < 0);
 		CHECK(string_comp.compare(v1, v3) == 0);		// Internal representation
-	}
+	}*/
 	
 	CHECK_END;
 }
