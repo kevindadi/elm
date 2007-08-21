@@ -45,7 +45,6 @@ struct test_t {
 	void (*fun)(void);
 } tests[] = {
 	{ "autostr", test_autostr },
-	{ "avl", test_avl },
 	{ "bitvector", test_bitvector },
 	{ "dllist", test_dllist },
 	{ "file", test_file },
@@ -61,7 +60,7 @@ struct test_t {
 #	endif
 	{ "ref", test_ref },
 	{ "sllist", test_sllist },
-/*	{ "sorted_bintree", test_sorted_bintree }, */
+	{ "sorted_bintree", test_sorted_bintree },
 	{ "string", test_string },
 	{ "string_buffer", test_string_buffer },
 	{ "table", test_table },
