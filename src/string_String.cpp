@@ -1,8 +1,23 @@
 /*
- * $Id$
- * Copyright (c) 2003, Alfheim Corporation.
+ *	$Id$
+ *	String class implementation
  *
- * string.cc -- string classes implementation.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2003-07, IRIT UPS.
+ * 
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software 
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
  #include <elm/string.h>
@@ -10,10 +25,98 @@
  namespace elm {
  
  
+ /**
+  * @defgroup string Character String
+  * 
+  * This module provides classes making easier the use of character string.
+  * There is basically two classes: @ref String and @ref CString. Other classes
+  * provides more services like @ref StringBuffer.
+  * 
+  * Notice that typedefs "string" and "cstring" are only scalar-type-like
+  * shortcuts to @ref String and @ref CString classes.
+  * 
+  * @par Base Classes
+  * 
+  * The @ref CString is a simple wrapper around the original C "char *" 
+  * null-terminated C string. It
+  * provides an interface very similar to the @ref String class as possible.
+  * The operator "&" may be used to get the hidden "const char *" buffer.
+  * When @ref CString operation requires memory allocation, a @ref String
+  * object is instead returned as this class has automatic memory management
+  * facilities. The @ref CString is either useful to interact with the OS,
+  * or to handle constant litteral strings.
+  * 
+  * The @ref String provides a lot of facilities to handle strings as any other
+  * scalar type:
+  * @li the memory allocation is automatically handled (counter based),
+  * @li the memory allocation is only performed when needed (for concatenation
+  * time or for @ref CString conversion),
+  * @li the substring building is fast (inducing no memory movement).
+  *
+  * @par String Operations
+  * 
+  * The string classes implements the concept @ref concept::Array<char>.
+  * 
+  * The following operators are also available:
+  * @li "==", "!=", "<", "<=", ">", ">=" for comparisons,
+  * @li "+" for concatenation,
+  * @li "=" for assignment,
+  * @li "&" to get the character buffer (note that, for @ref String class, this
+  * array not ever ended by a null character).
+  * 
+  * Some automatic conversions are also available:
+  * @li @ref CString to @ref String,
+  * @li string to boolean (to false for an empty string, to true else).
+  * @li String::toCString() provides a way to convert a @ref String to a
+  *		@ref CString (ensuring a terminating null character),
+  * @li litteral C++ string to any string.
+  * 
+  * Finally, there some methods to perform tests or retrieval of strings:
+  * @li indexOf() and lastIndexOf() to retrieve a single character,
+  * @li startsWith() and endsWith() to test prefixes and suffixes.
+  * 
+  * And some methods to build strings:
+  * @li substring() to retrieve a sub-string by its position and length,
+  * @li concat() to perform concanetation.
+  * 
+  * @par StringBuffer Class
+  * 
+  * String building is very costly because it requires a memory copy of both
+  * involved strings. Usually, a string building operation involves many
+  * concatenation. The @ref StringBuffer class may be used to reduce this cost.
+  * 
+  * The string is built in a large buffer that is expanded (inducing a copy
+  * operation) less often than the original @ref String class. To makes things
+  * easier, this class provides also the same interface as IO @ref io::Output
+  * class. To get the completed string, one has only to call the toString()
+  * method as in the example below.
+  * 
+  * @code
+  * for(int i = 0; i < 10; i++) {
+  * 	StringBuffer buffer;
+  * 	buffer << "Hello world: " << i << io:endl;
+  * 	string str = buffer.toString();
+  * 	my_function(str);
+  * }
+  * @endcode
+  * 
+  * To make things even easier, the ELM library provides an auto-builder
+  * and frier of string buffer called @ref elm::_ 
+  * that avoids the need to declare the string buffer. The previous example
+  * uses below this feature:
+  * 
+  * @code
+  * for(int i = 0; i < 10; i++)
+  * 	my_function(_ << "Hello world: " << i << io:endl);
+  * @endcode
+  */
+
+
 /**
  * @class String
  * An immutable implementation of the string data type. Refer to
  * @ref StringBuffer for long concatenation string building.
+ * @ingroup string
  */
 
  /* Empty buffer */
@@ -350,4 +453,9 @@ void String::toc(void) const {
  * @return		True if the string ends with, false else.
  */
 
+
+/**
+ * @class CString
+ * @ingroup string
+ */
 }	// elm
