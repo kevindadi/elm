@@ -1,8 +1,23 @@
 /*
- * $Id$
- * Copyright (c) 2004-06, IRIT - UPS.
+ *	$Id$
+ *	Output class implementation
  *
- * src/op_Output.cpp-- Output class implementation.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2004-07, IRIT UPS.
+ * 
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software 
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <elm/assert.h>
@@ -14,7 +29,7 @@
 namespace elm { namespace io {
 
 /**
- * @class Output <elm/io.h>
+ * @class Output
  * Formatted output class.
  * 
  * See @ref IntFormat to format integers. The code below show how to format
@@ -23,6 +38,8 @@ namespace elm { namespace io {
  * 	void *p;
  * 	cout << io::right(io::pad('0', io::width(32, io::hex(o)))) << io::endl;
  * @endcode
+ * 
+ * @ingroup ios
  */
 
 /**
@@ -365,12 +382,14 @@ void Output::print(const IntFormat fmt) {
  * @ref io::base, @ref io::bin, @ref io::hex, @ref op::width, @ref io::align,
  * @ref io::left, @ref io::center, @ref io::right, @ref io::pad,
  * @ref io::uppercase, @ref io::lowercase.
+ * @ingroup ios
  */
  
 /**
- * @var unsigned char IntFormat::base;
+ * @var IntFormat IntFormat::base;
  * Numeric base used to display the integer (default to 10).
  */
+
 /**
  * @var unsigned char IntFormat::width;
  * Width of the field where the integer will be displayed. Default 0 for
@@ -378,20 +397,24 @@ void Output::print(const IntFormat fmt) {
  * width, it will be aligned according the @ref IntFormat::align attribute
  * and padded according the @ref IntFormat::pad attribute.
  */
+
 /** 
  * @var unsigned IntFormat::align;
  * Alignment of integer in the field. One of LEFT, CENTER or RIGHT.
  */
+
 /**
  * @var unsigned IntFormat::upper;
  * If true, upper case characters will be used to display integer whose base
  * is greater than 10. If false (default), lower case characters will be used.
  */
+
 /**
  * @var unsigned IntFormat::sign;
  * If true, ever display the sign. If false (default), only display negative
  * sign.
  */
+
 /**
  * @var char IntFormat::pad;
  * Character used to pad the displayed integer in the field (default '0').
@@ -403,70 +426,93 @@ void Output::print(const IntFormat fmt) {
  * Format an integer with the given base.
  * @param base	Numeric base.
  * @param fmt	Displayed integer.
+ * @ingroup ios
  */
+
 /**
  * @fn IntFormat bin(IntFormat fmt);
  * Used a binary base to display an integer.
  * @param fmt	Displayed integer.
+ * @ingroup ios
  */
+
 /**
  * @fn IntFormat hex(IntFormat fmt);
  * Used an hexadecimal base to display an integer.
  * @param fmt	Displayed integer.
+ * @ingroup ios
  */
+
 /**
  * @fn IntFormat width(int width, IntFormat fmt);
  * Select the width of field where the integer will be displayed to.
  * @param width	Field width.
  * @param fmt	Displayed integer.
+ * @ingroup ios
  */
+
 /**
  * @fn IntFormat align(alignment_t align, IntFormat fmt);
  * Used the given alignment to display the integer in its field.
  * @param align		Alignment.
  * @param fmt		Displayed integer.
+ * @ingroup ios
  */
+
 /**
  * @fn IntFormat left(IntFormat fmt);
  * Align the integer to the left in its field.
  * @param fmt	Displayed integer.
+ * @ingroup ios
  */
+
 /**
  * @fn IntFormat right(IntFormat fmt);
  * Align the integer to the right in its field.
  * @param fmt	Displayed integer.
+ * @ingroup ios
  */
+
 /**
  * @fn IntFormat center(IntFormat fmt);
  * Center the integer in its field.
  * @param fmt	Displayed integer.
+ * @ingroup ios
  */
+
 /**
  * @fn IntFormat pad(char pad, IntFormat fmt);
  * Select the padding character.
  * @param pad	Padding character.
  * @param fmt	Displayed integer.
+ * @ingroup ios
  */
+
 /**
  * @fn IntFormat uppercase(IntFormat fmt);
  * Select uppercase characters for digits bigger than 10.
  * @param fmt	Displayed integer.
+ * @ingroup ios
  */
+
 /**
  * @fn IntFormat lowercase(IntFormat fmt);
  * Select lowercase characters for digits bigger than 10.
  * @param fmt	Displayed integer.
+ * @ingroup ios
  */
 
 } // io
 
 /**
  * Standard output.
+ * @ingroup ios
  */
 io::Output cout(io::stdout);
 
 /**
  * Standard error output.
+ * @ingroup ios
  */
 io::Output cerr(io::stderr);
 
