@@ -1,8 +1,23 @@
 /*
- * $Id$
- * Copyright (c) 2005, IRIT-UPS.
+ *	$Id$
+ *	FragTable class interface
  *
- * elm/genstruct/FragTable.h -- interface for FragTable class.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2005-07, IRIT UPS.
+ * 
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software 
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_GENSTRUCT_FRAGTABLE_H
 #define ELM_GENSTRUCT_FRAGTABLE_H
@@ -18,45 +33,72 @@ template <class T> class FragTable {
 	int size, msk, shf, used;
 public:
 	inline FragTable(int size_pow = 8);
+	inline FragTable(const FragTable& tab) { addAll(tab); }
 	inline ~FragTable(void);
 	
-	// Methods
-	inline bool isEmpty(void) const;
-	inline int length(void) const;
-	inline const T& get(int index) const;
-	inline T& get(int index);
-	inline void set(int index, const T& value) const;
-	inline void add(T value);
-	inline void clean(void);
-	int alloc(int count);
-	
-	// Operators
-	inline const T& operator[](int index) const;
-	inline T& operator[](int index);
-	inline FragTable<T>& operator+=(T value);
-	inline operator bool(void) const;
-	
-	// Iterator
+	// Collection concept
+	inline int count (void) const { return length(); }
+	inline bool isEmpty(void) const { return tab.length() == 0; }
+ 	inline operator bool (void) const { return !isEmpty(); }
+	inline bool contains(const T &item) const
+		{ for(int i = 0; i < length(); i++)
+			if(get(i) == item) return true; return false; } 
+
 	class Iterator: public PreIterator<Iterator, T> {
-	protected:
-		const FragTable<T>& arr;
-		int i, len;
 	public:
-		inline Iterator(const FragTable<T>& array);
+		inline Iterator(const FragTable<T>& array, int pos = 0);
+		inline Iterator(const Iterator& iter)
+			: arr(iter.arr), i(iter.i), len(iter.len) { }
 		inline void next(void);
 		inline const T& item(void) const;
 		inline bool ended(void) const;
+	protected:
+		const FragTable<T> *arr;
+		int i, len;
 	};
+ 	
+	// MutableCollection concept
+	inline void clear(void);
+	inline void add(const T &item);
+	template <template <class _> class C >
+	void addAll(const C<T> &items)
+		{ for(typename C<T>::Iterator i(items); i; i++) add(i); }
+	inline void remove(const T &item)
+		{ for(Iterator i(*this); i; i++) if(i == item) { remove(i); break; } }
+	inline void remove(const Iterator &iter) { removeAt(iter.i); }
+	template <template <class _> class C >
+	void removeAll(const C<T> &items)
+		{ for(typename C<T>::Iterator i(items); i; i++) remove(i); }
+
+	// Array concept
+	inline int length(void) const;
+	inline const T& get(int index) const;
+	inline int indexOf(const T &value, int start = 0) const
+		{ for(Iterator i(*this, start); i; i++)
+			if(i == value) return i.i; return -1; }
+	inline int lastIndexOf(const T &value, int start = -1) const
+		{ for(int i = (start < 0 ? length() : start) - 1; i >= 0; i--)
+			if(get(i) == value) return i; return -1; }
+	inline const T& operator[](int index) const { return get(index); }
 	
-	// MutableIterator class
-	class MutableIterator: public Iterator {
-		FragTable<T>& mtab;
-	public:
-		inline MutableIterator(FragTable<T>& table);
-		inline void set(const T& value);
-		inline T& item(void);
-		inline MutableIterator& operator=(const T& value);
-	};
+	// MutableArray concept
+	void shrink(int length);
+	inline void set(int index, const T &item);	
+	void set(const Iterator &iter, const T &item) { set(iter.i, item); }
+	inline T &get(int index);
+	inline T &operator[](int index) { return get(index); }
+	void insert(int index, const T &item);
+	inline void insert(const Iterator &iter, const T &item)
+		{ insert(iter.i, item); }
+	void removeAt(int index);
+	inline void removeAt(const Iterator &iter) { removeAt(iter.i); }
+	
+	// Methods
+	int alloc(int count);
+
+	// Deprecated
+	inline void clean(void) { clear(); }
+	inline FragTable<T>& operator+=(T value);	
 };
 
 
@@ -74,16 +116,11 @@ inline FragTable<T>::~FragTable(void) {
 }
 
 template <class T>
-inline void FragTable<T>::clean(void) {
+inline void FragTable<T>::clear(void) {
 	for(int i = 0; i < tab.length(); i++)
 		delete [] tab[i];
 	tab.setLength(0);
 	used = size;
-}
-
-template <class T>	
-inline bool FragTable<T>::isEmpty(void) const {
-	return tab.length() == 0;
 }
 
 template <class T>
@@ -104,13 +141,13 @@ inline T& FragTable<T>::get(int index) {
 }
 
 template <class T>
-inline void FragTable<T>::set(int index, const T& value) const {
+inline void FragTable<T>::set(int index, const T& value) {
 	ASSERTP(index >= 0 && index < length(), "index out of bounds");
 	tab[index >> shf][index & msk] = value;
 }
 
 template <class T>	
-inline void FragTable<T>::add(T value) {
+inline void FragTable<T>::add(const T& value) {
 	if(used >= size) {
 		tab.add(new T[size]);
 		used = 0;
@@ -119,24 +156,9 @@ inline void FragTable<T>::add(T value) {
 }
 
 template <class T>
-inline const T& FragTable<T>::operator[](int index) const {
-	return get(index);
-}
-
-template <class T>
-inline T& FragTable<T>::operator[](int index) {
-	return get(index);
-}
-
-template <class T>
 inline FragTable<T>& FragTable<T>::operator+=(T value) {
 	add(value);
 	return *this;
-}
-
-template <class T>
-inline FragTable<T>::operator bool(void) const {
-	return !isEmpty();
 }
 
 template <class T>
@@ -152,10 +174,47 @@ int FragTable<T>::alloc(int count) {
 }
 
 
+template <class T>
+void FragTable<T>::shrink(int length) {
+	ASSERTP(length < this->length(), "length too big");
+	int nl = (length + msk) >> shf;
+	for(int i = nl + 1; i < tab.length(); i++)
+		delete [] tab[i];
+	tab.setLength(nl + 1);
+	used = length & msk;
+	if(!used)
+		used = size; 
+}
+
+template <class T>
+void FragTable<T>::insert(int index, const T &item) {
+	ASSERTP(index >= 0 && index <= length(), "index out of bounds"); 
+	int len = length();
+	alloc(1);
+	for(int i = len - 1; i >= index; i--)
+		set(i + 1, get(i));
+	set(index, item);
+}
+
+
+template <class T>
+void FragTable<T>::removeAt(int index) {
+	int len = length();
+	for(int i = index + 1; i <= len; i++)
+		set(i - 1, get(i));
+	used--;
+	if(!used) {
+		delete [] tab[tab.length() - 1];
+		tab.setLength(tab.length() - 1);
+		used = size;
+	}
+}
+
+
 // FragTable<T>::Iterator inlines
 template <class T>
-inline FragTable<T>::Iterator::Iterator(const FragTable<T>& array)
-: arr(array), i(0), len(array.length()) {
+inline FragTable<T>::Iterator::Iterator(const FragTable<T>& array, int pos)
+: arr(&array), i(pos), len(array.length()) {
 }
 
 template <class T>
@@ -166,36 +225,12 @@ inline void FragTable<T>::Iterator::next(void) {
 
 template <class T>
 inline const T& FragTable<T>::Iterator::item(void) const {
-	return arr.get(i);
+	return arr->get(i);
 }
 
 template <class T>
 inline bool FragTable<T>::Iterator::ended(void) const {
 	return i >= len;
-}
-
-
-// FragTable<T>::MutableIterator inlines
-template <class T>
-inline FragTable<T>::MutableIterator::MutableIterator(FragTable<T>& table)
-: Iterator(table), mtab(table) {
-}
-
-
-template <class T>
-inline T& FragTable<T>::MutableIterator::item(void) {
-	return mtab.get(Iterator::i);
-}
-
-template <class T>
-inline void FragTable<T>::MutableIterator::set(const T& value) {
-	mtab.set(Iterator::i, value);
-}
-
-template <class T>
-inline typename FragTable<T>::MutableIterator&
-FragTable<T>::MutableIterator::operator=(const T& value) {
-	mtab.set(Iterator::i, value);
 }
 
 } } // elm::genstruct
