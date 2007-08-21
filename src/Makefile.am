@@ -19,11 +19,14 @@ libelm_la_SOURCES= \
 	debug_CrashHandler.cpp \
 	checksum_Fletcher.cpp \
 	Collection.cpp \
+	genstruct.h \
 	genstruct_DLList.cpp \
 	genstruct_FragTable.cpp \
 	genstruct_HashTable.cpp \
 	genstruct_SLList.cpp \
 	genstruct_DAGNode.cpp \
+	genstruct_SortedBinMap.cpp \
+	genstruct_SortedBinTree.cpp \
 	genstruct_SortedSLList.cpp \
 	genstruct_Tree.cpp \
 	genstruct_VectorQueue.cpp \
