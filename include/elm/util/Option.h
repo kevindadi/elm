@@ -17,92 +17,32 @@ extern const OptionalNone none;
 
 // Optional value
 template <class T> class Option {
+public:
+	inline Option(void): one(false) { }
+	inline Option(const OptionalNone& none): one(false) { }
+	inline Option(const T& value): one(true), val(value) { }
+	inline Option(const Option<T> &opt): one(opt.one), val(opt.val) { }
+	inline bool isOne(void) const { return one; }
+	inline bool isNone(void) const { return !one; }
+	inline const T& value(void) const { return val; }
+	
+	inline operator bool(void) const { return isOne(); }
+	inline const T& operator*(void) const { return val; }
+	inline operator const T&(void) const { return val; }
+	inline Option<T>& operator=(const Option<T>& opt)
+		{ one = opt.one; val = opt.val; }
+	inline Option<T>& operator=(const T& value)
+		{ one = true; val = value; }
+
+private:
 	bool one;
 	T val;
-public:
-	// Constructors
-	inline Option(void);
-	inline Option(const OptionalNone& none);
-	inline Option(const T& value);
-	inline Option(const Option<T> &opt);
-	
-	// Accessors
-	inline bool isOne(void) const;
-	inline bool isNone(void) const;
-	inline T value(void) const;
-	
-	// Operators
-	inline operator bool(void) const;
-	inline T operator*(void) const;
-	inline operator T(void) const;
-	inline Option<T>& operator=(const Option<T>& opt);
-	inline Option<T>& operator=(const T& value);
 };
 
 
 // Fast Option building
 template <class T>
 inline Option<T> some(const T& val) { return Option<T>(val); };
-
-
-// Option<T> inlines
-template <class T>
-inline Option<T>::Option(void): one(false) {
-}
-
-template <class T>
-inline Option<T>::Option(const OptionalNone& none): one(false) {
-}
-
-template <class T>
-inline Option<T>::Option(const T& value): one(true), val(value) {
-}
-
-template <class T>
-inline Option<T>::Option(const Option<T> &opt): one(opt.one), val(opt.val) {
-}
-
-template <class T>
-inline bool Option<T>::isOne(void) const {
-	return one;
-}
-
-template <class T>
-inline bool Option<T>::isNone(void) const {
-	return !one;
-}
-
-template <class T>
-inline T Option<T>::value(void) const {
-	return val;
-}
-
-template <class T>
-inline Option<T>::operator bool(void) const {
-	return one;
-}
-
-template <class T>
-inline T Option<T>::operator*(void) const {
-	return val;
-}
-
-template <class T>
-inline Option<T>::operator T(void) const {
-	return val;
-}
-
-template <class T>
-inline Option<T>& Option<T>::operator=(const Option<T>& opt) {
-	one = opt.one;
-	val = opt.val;
-}
-
-template <class T>
-inline Option<T>& Option<T>::operator=(const T& value) {
-	one = true;
-	val = value;
-}
 
 } // elm
 
