@@ -16,10 +16,17 @@
 namespace elm {
 
 // Comparator class
-template <class T> class Comparator {
+template <class T>
+class Comparator {
 public:
-	static Comparator<T>& def;
-	virtual int compare(T v1, T v2) = 0;
+	static int compare(const T& v1, const T& v2);
+};
+
+// Specific comparator implementation
+template <>
+class Comparator<int> {
+public:
+	static int compare(int v1, int v2) { return v1 - v2; }
 };
 
 };	// elm
