@@ -1,8 +1,23 @@
 /*
- * $Id$
- * Copyright (c) 2004, IRIT UPS.
+ *	$Id$
+ *	Vector class interface
  *
- * elm/genstruct/Vector.h -- Vector class interface.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2004-07, IRIT UPS.
+ * 
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software 
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_GENSTRUCT_VECTOR_H
 #define ELM_GENSTRUCT_VECTOR_H
@@ -54,7 +69,7 @@ public:
 	// Stack processing
 	inline void push(const T& value);
 	inline const T pop(void);
-	inline const T top(void);
+	inline const T& top(void) const;
 	
 	// Iterator
 	class Iterator: public PreIterator<Iterator, T> {
@@ -214,7 +229,7 @@ template <class T> inline const T Vector<T>::pop(void) {
 	return tab[--cnt];
 }
 
-template <class T> inline const T Vector<T>::top(void) {
+template <class T> inline const T& Vector<T>::top(void) const {
 	ASSERTP(cnt > 0, "no more data in the stack");
 	return tab[cnt - 1];
 }

@@ -1,121 +1,213 @@
 /*
- * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ *	$Id$
+ *	SortedBinTree class interface
  *
- * elm/genstruct/SortedBinTree.h -- binary tree interface.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2004-07, IRIT UPS.
+ * 
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software 
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_GENSTRUCT_SORTEDBINTREE_H
 #define ELM_GENSTRUCT_SORTEDBINTREE_H
 
 #include <elm/utility.h>
-#include <elm/inhstruct/SortedBinTree.h>
+#include <elm/Iterator.h>
+#include <elm/genstruct/Vector.h>
+#include <elm/genstruct/VectorQueue.h>
+#include <elm/inhstruct/BinTree.h>
 
 namespace elm { namespace genstruct {
 
-template <class T> class SortedBinTree: private inhstruct::SortedBinTree {
+// DefaultKey class
+template <class T, class C = Comparator<T> >
+class DefaultKey {
+public:
+	typedef T t;
+	static const t& key(const T& v) { return v; }
+	static int compare(const t& k1, const t& k2)
+		{ return C::compare(k1, k2); }
+};
 
-	// Node class
-	class Node: public inhstruct::SortedBinTree::Node {
-	public:
-		T val;
-		inline Node(const T value);
-	};
-	
-	Comparator<T>& comp;
-protected:
-	virtual int compare(inhstruct::SortedBinTree::Node *node1,
-		inhstruct::SortedBinTree::Node *node2);
+// SortedBinTree class implements MutableCollection
+template <class T, class K = DefaultKey<T> >
+class SortedBinTree {
+	typedef typename K::t key_t;
 public:
 	
-	// Visitor class
-	class Visitor: private inhstruct::SortedBinTree::Visitor {
-		friend class SortedBinTree<T>;
-		virtual int process(inhstruct::BinTree::Node *node);
+	// Methods
+	inline SortedBinTree(void) { }
+	SortedBinTree(const SortedBinTree<T, K>& tree);
+	inline ~SortedBinTree(void) { clear(); }
+	
+	// Accessors
+	inline bool isEmpty(void) { return root.isEmpty(); }
+	inline int count(void) { return root.count(); }
+	inline Option<const T> get(const key_t& value) const
+		{ Node *node = find(value); if(node) return node->val; else return none; }
+	inline const T& get(const key_t& value, const T& def) const
+		{ Node *node = find(value); if(node) return node->val; else return def; }
+	inline bool contains(const key_t& value) const { return find(value); }
+ 	inline operator bool(void) const { return !isEmpty(); }
+
+	// Mutators
+	void clear(void);
+	void add(const T &item);
+	template <template <class _> class S>
+	void addAll (const S<T> &items) {
+		for(typename S<T>::Iterator iter(items); iter; iter++)
+			add(iter);
+	}
+	void remove(const key_t& item);
+	template <template <class _> class S>
+	void removeAll(const S<T> &items) {
+		for(typename S<T>::Iterator iter(items); iter; iter++)
+			remove(iter);
+	}
+
+private:
+	class Node: public inhstruct::BinTree::Node {
 	public:
-		virtual int process(T value) = 0;
+		inline Node(const T& value): val(value) { } 
+		T val;
+	};
+	
+	inhstruct::BinTree root;
+	Node *find(const key_t& item) const;
+	void replace(Node *parent, Node *old, Node *_new);
+
+public:
+
+	// Iterator class
+	class Iterator: public PreIterator<Iterator, T> {
+	public:
+		inline Iterator(const SortedBinTree& tree)
+			{ stack.push((Node *)tree.root.root()); }
+		inline Iterator(const Iterator& iter)
+			{ stack = iter.stack; }
+		bool ended(void) const { return !stack; }
+		void next(void) {
+			Node *top = stack.pop();
+			if(top->right())
+				stack.push((Node *)top->right());
+			if(top->left())
+				stack.push((Node *)top->left());
+		}
+		const T& item(void) const { return stack.top()->val; }
+	private:
+		Vector<Node *> stack;
 	};
 
-	// Methods
-	inline SortedBinTree(void);
-	inline SortedBinTree(Comparator<T>& comp);
-	inline bool isEmpty(void);
-	inline int count(void);
-	inline Option<T> get(const T value);
-	inline bool contains(const T value);
-	void insert(const T value);
-	void remove(const T value);
-	void visit(Visitor *visitor);
+	// Mutators
+	inline void remove(const Iterator& iter)
+		{ remove(((Node *)iter.stack[0]).val); }
 };
-	
-// BinTree<T>::Node methods
-template <class T> inline SortedBinTree<T>::Node::Node(const T value): val(value) {
+
+template <class T, class K>
+inline typename SortedBinTree<T, K>::Node *
+SortedBinTree<T, K>::find(const key_t& value) const {
+	Node *node = (Node *)root.root();
+	while(node) {
+		int cmp = K::compare(value, K::key(node->val));
+		if(cmp == 0)
+			break;
+		else if(cmp < 0)
+			node = (Node *)node->right();
+		else
+			node = (Node *)node->left();
+	}
+	return node;
 }
 
-
-// BinTree<T>::Visitor methods
-template <class T> int SortedBinTree<T>::Visitor::process(inhstruct::BinTree::Node *node) {
-	return process(((Node *)node)->val);
-}
-
-
-// SortedBinTree<T> methods
-template <class T>
-inline SortedBinTree<T>::SortedBinTree(void): comp(Comparator<T>::def) {
-}
-
-template <class T>
-inline SortedBinTree<T>::SortedBinTree(Comparator<T>& comparator)
-: comp(comparator) {
-}
-
-template <class T>
-inline bool SortedBinTree<T>::isEmpty(void) {
-	return inhstruct::SortedBinTree::isEmpty();
-}
-
-template <class T>
-inline int SortedBinTree<T>::count(void) {
-	return inhstruct::SortedBinTree::count();
-}
-
-template <class T>
-inline bool SortedBinTree<T>::contains(const T value) {
-	Node test_node(value);
-	Node *found_node = (Node *)inhstruct::SortedBinTree::get(&test_node);
-	return found_node != 0;
-}
-
-template <class T>
-inline Option<T> SortedBinTree<T>::get(const T value) {
-	Node test_node(value);
-	Node *found_node = get(&test_node);
-	if(found_node)
-		return Option<T>(found_node.val);
-	else
-		return Option<T>();
-}
-
-template <class T>
-void SortedBinTree<T>::insert(const T value) {
+template <class T, class K>
+void SortedBinTree<T, K>::add(const T& value) {
+	Node *node = (Node *)root.root();
 	Node *new_node = new Node(value);
-	inhstruct::SortedBinTree::insert(new_node);
+	const typename K::t &key = K::key(value);
+	if(!node)
+		root.setRoot(new_node);
+	else
+		while(node) {
+			int cmp = K::compare(key, K::key(node->val));
+			if(cmp <= 0) {
+				if(!node->right()) {
+					node->insertRight(new_node);
+					break;
+				}
+				else
+					node = (Node *)node->right();
+			}
+			else {
+				if(!node->left()) {
+					node->insertLeft(new_node);
+					break;
+				}
+				else
+					node = (Node *)node->left();
+			}
+		}
 }
 
-template <class T>
-void SortedBinTree<T>::remove(const T value) {
-	Node test_node(value);
-	remove(&test_node);
+template <class T, class K>
+void SortedBinTree<T, K>::clear(void) {
+	VectorQueue<Node *> todo;
+	todo.put((Node *)root.root());
+	while(todo) {
+		Node *node = todo.get();
+		if(node->left())
+			todo.put((Node *)node->left());
+		if(node->right())
+			todo.put((Node *)node->right());
+		delete node;
+	}
 }
 
-template <class T>
-void SortedBinTree<T>::visit(SortedBinTree<T>::Visitor *visitor) {
-	BinTree::visit(visitor);
+template <class T, class K>
+void SortedBinTree<T, K>::replace(Node *parent, Node *old, Node *_new) {
+	if(!parent)
+		root.setRoot(_new);
+	else if(parent->left() == old)
+		parent->insertLeft(_new);
+	else
+		parent->insertRight(_new);
 }
 
-template <class T>
-int SortedBinTree<T>::compare(inhstruct::SortedBinTree::Node *node1,
-inhstruct::SortedBinTree::Node *node2) {
-	return comp.compare(((Node *)node1)->val, ((Node *)node2)->val);
+template <class T, class K>
+void SortedBinTree<T, K>::remove(const key_t& value) {
+	Node *node = (Node *)root.root(), *parent = 0;
+	while(true) {
+		ASSERT(node);
+		int cmp = K::compare(value, K::key(node->val));
+		if(cmp == 0)
+			break;
+		parent = node;
+		if(cmp < 0)
+			node = (Node *)node->right();
+		else
+			node = (Node *)node->left();
+	}
+	Node *left = (Node *)node->left(), *right = (Node *)node->right();
+	delete node;
+	if(!left)
+		replace(parent, node, right);
+	else if(!right)
+		replace(parent, node, left);
+	else {
+		replace(parent, node, left);
+		for(node = left; node->right(); node = (Node *)node->right());
+		node->insertRight(right);
+	}
 }
 
 } } // elm::genstruct
