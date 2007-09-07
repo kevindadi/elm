@@ -29,5 +29,6 @@ includeelm_HEADERS = \
 	options.h \
 	rtti.h \
 	string.h \
+	types.h \
 	utility.h \
 	xom.h
