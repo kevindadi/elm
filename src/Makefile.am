@@ -35,7 +35,6 @@ libelm_la_SOURCES= \
 	inhstruct_BinTree.cpp \
 	inhstruct_SortedBinTree.cpp \
 	inhstruct_DLList.cpp \
-	inhstruct_AVLTree.cpp \
 	io_OutStream.cpp \
 	io_UnixOutStream.cpp \
 	io_Input.cpp \
@@ -92,6 +91,8 @@ libelm_la_SOURCES= \
 	util_VarArg.cpp \
 	util_Version.cpp \
 	utility.cpp
+
+#	inhstruct_AVLTree.cpp
 
 
 if HAS_LIBXML

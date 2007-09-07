@@ -1,6 +1,7 @@
 # $Id$
 
 noinst_PROGRAMS	=	test serial2 unserial2
+# new_avl
 noinst_LTLIBRARIES = myplugin.la
 
 INCLUDES	= -I../include
@@ -18,7 +19,6 @@ test_DEPENDENCIES = ../src/libelm.la myplugin.la
 test_SOURCES		=\
 						test.cc \
 						test_autostr.cpp \
-						test_avl.cpp \
 						test_bitvector.cpp \
 						test_dllist.cpp \
 						test_file.cpp \
@@ -33,14 +33,14 @@ test_SOURCES		=\
 						test_process.cpp \
 						test_ref.cpp \
 						test_sllist.cpp \
-						test_sorted_bintree.cpp \
 						test_string.cpp \
 						test_string_buffer.cpp \
 						test_table.cpp \
 						test_utility.cpp \
 						test_vararg.cpp \
 						test_vector.cpp \
-						test_vector_queue.cpp
+						test_vector_queue.cpp \
+						test_sorted_bintree.cpp
 
 if HAS_LIBXML
 test_SOURCES += \
@@ -65,5 +65,10 @@ serial2_SOURCES		= serial2.cpp
 unserial2_LDADD = -dlopen force ../src/libelm.la
 unserial2_DEPENDENCIES = ../src/libelm.la
 unserial2_SOURCES		= unserial2.cpp
+
+# new_avl program
+#new_avl_LDADD = ../src/libelm.la
+#new_avl_DEPENDENCIES = ../src/libelm.la
+#new_avl_SOURCES=new_avl.cpp
 
 TESTS = ./test

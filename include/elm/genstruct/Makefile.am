@@ -1,6 +1,5 @@
 includeelmgenstructdir=$(includedir)/elm/genstruct
 includeelmgenstruct_HEADERS = \
-	AVLTree.h \
 	DLList.h \
 	FragTable.h \
 	HashTable.h \
@@ -14,3 +13,4 @@ includeelmgenstruct_HEADERS = \
 	Vector.h \
 	VectorQueue.h 
 
+#	AVLTree.h
