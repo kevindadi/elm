@@ -25,7 +25,7 @@ template <class T> class DAGNode {
 public:
 
 	// Constructors / Destructors
-	inline DAGNode(T& _value);	
+	inline DAGNode(const T& _value);	
 	inline ~DAGNode(); 
 
 	// Mutators
@@ -61,7 +61,7 @@ inline T& DAGNode<T>::useValue(void) {
 }
 
 template <class T>
-inline DAGNode<T>::DAGNode(T& _value) : value(_value), deleted(false) {
+inline DAGNode<T>::DAGNode(const T& _value) : value(_value), deleted(false) {
 
 }
 
