@@ -31,21 +31,21 @@ public:
 inline StringBuffer::StringBuffer(int capacity, int increment)
 : io::Output(_stream), _stream(capacity, increment) {
 	String::buffer_t str = { 0 };
-	_stream.write((char *)&str, sizeof(unsigned short));
+	_stream.write((char *)&str, sizeof(short));
 }
 
 inline String StringBuffer::toString(void) {
 	int len = length();
 	_stream.write('\0');
-	return String((String::buffer_t *)_stream.detach(), sizeof(unsigned short), len);
+	return String((String::buffer_t *)_stream.detach(), sizeof(short), len);
 }
 
 inline int StringBuffer::length(void) const {
-	return _stream.size() - sizeof(unsigned short);
+	return _stream.size() - sizeof(short);
 }
 
 inline void StringBuffer::reset(void) {
-	_stream.setSize(sizeof(String::buffer_t));
+	_stream.setSize(sizeof(short));
 }
 
 inline io::OutStream& StringBuffer::stream(void) {
@@ -54,8 +54,8 @@ inline io::OutStream& StringBuffer::stream(void) {
 
 inline String StringBuffer::copyString(void) {
 	return String(
-		_stream.block() + sizeof(unsigned short),
-		_stream.size() - sizeof(unsigned short));
+		_stream.block() + sizeof(short),
+		_stream.size() - sizeof(short));
 }
 
 } // elm
