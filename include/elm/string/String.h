@@ -7,6 +7,7 @@
 #ifndef ELM_STRING_STRING_H
 #define ELM_STRING_STRING_H
 
+#include <assert.h>
 #include <elm/string/CString.h>
 
 namespace elm {
@@ -28,9 +29,13 @@ class String {
 
 	// Internals
 	void copy(const char *str, int _len);
-	void lock(void) const { ((buffer_t *)buf)->use++; };
+	void lock(void) const { ((buffer_t *)buf)->use++; }
 	void toc(void) const;
-	void unlock(void) const { ((buffer_t *)buf)->use--; if(!((buffer_t *)buf)->use) delete [] buf; };
+	void unlock(void) const {
+		((buffer_t *)buf)->use--;
+		if(!((buffer_t *)buf)->use && buf != (char *)&empty_buf)
+			delete [] buf;
+	}
 	inline String(const char *_buf, int _off, int _len): buf(_buf), off(_off), len(_len) { lock(); };
 	static String concat(const char *s1, int l1, const char *s2, int l2);
 	inline String(buffer_t *buffer, int offset, int length)
