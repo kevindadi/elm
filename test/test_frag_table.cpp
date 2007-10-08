@@ -48,6 +48,7 @@ void test_frag_table(void) {
 			break;
 		}
 	CHECK(test_iter);
+	CHECK_EQUAL(i, 123);
 	
 	// Test assignment
 	for(int i = 0, j = 122; i < j; i++, j--) {
