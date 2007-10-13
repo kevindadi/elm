@@ -22,7 +22,8 @@ public:
 		OK = 0,
 		NO_PLUGIN,
 		NO_HOOK,
-		BAD_VERSION
+		BAD_VERSION,
+		NO_MAGIC
 	} error_t;
 
 private:	

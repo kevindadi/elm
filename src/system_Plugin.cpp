@@ -185,7 +185,8 @@ Plugin::Plugin(
 	_hook(hook),
 	state(0),
 	_handle(0),
-	_aliases(aliases)
+	_aliases(aliases),
+	magic(MAGIC)
 {
 	if(hook)
 		static_plugins.add(this);

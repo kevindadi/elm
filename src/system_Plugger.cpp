@@ -231,6 +231,13 @@ Plugin *Plugger::plugFile(String path) {
 		onWarning(_ << "invalid plugin found at \"" << path << "\"");
 		return 0;
 	}
+	
+	// Check the magic
+	if(plugin->magic != Plugin::MAGIC) {
+		err = NO_MAGIC;
+		onWarning(_ << "invalid plugin found at \"" << path << "\"");
+		return 0;
+	}
 		
 	// Check plugger version
 	if(!plugin->pluggerVersion().accepts(per_vers)) {
@@ -272,7 +279,9 @@ String Plugger::lastErrorMessage(void) {
 	case NO_HOOK:
 		return "Found plugin does not contain a hook symbol.";
 	case BAD_VERSION:
-		return "Found plug-in is incompatible.";		
+		return "Found plug-in is incompatible.";
+	case NO_MAGIC:
+		return "Found plugin does not match the plugin signature.";		
 	default:
 		ASSERTP(0, "unknown error");
 	}
