@@ -20,7 +20,8 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
- #include <elm/string.h>
+#include <elm/string.h>
+#include <elm/assert.h>
  
  namespace elm {
  
@@ -452,6 +453,44 @@ void String::toc(void) const {
  * @param str	String to compare.
  * @return		True if the string ends with, false else.
  */
+
+
+/**
+ * Find the first occurence of a substring.
+ * @param string	String to look for.
+ * @param pos		Start position.
+ */
+int String::indexOf(const String& string, int pos) {
+	ASSERTP(string, "cannot look for an empty string");
+	while(pos >= 0) {
+		pos = indexOf(string[0], pos);
+		if(pos >= 0) {
+			if(substring(pos, string.length()) == string) 
+				return pos;
+			else
+				pos++;
+		}
+	}
+}
+
+
+/**
+ * Find the last occurence of a substring.
+ * @param string	String to look for.
+ * @param pos		Position to start to look before.
+ */
+int String::lastIndexOf(const String& string, int pos) {
+	ASSERTP(string, "cannot look for an empty string");
+	while(pos >= 0) {
+		pos = lastIndexOf(string[0], pos);
+		if(pos >= 0) {
+			if(substring(pos, string.length()) == string) 
+				return pos;
+			else
+				pos--;
+		}
+	}
+}
 
 
 /**
