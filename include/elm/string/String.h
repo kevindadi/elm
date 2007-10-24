@@ -84,9 +84,12 @@ public:
 	inline int indexOf(char chr) const { return indexOf(chr, 0); };
 	inline int indexOf(char chr, int pos) const
 		{ for(const char *p = chars() + pos; p < chars() + len; p++) if(*p == chr) return p - chars(); return -1; };
+	int indexOf(const String& str, int pos = 0);
 	inline int lastIndexOf(char chr) const { return lastIndexOf(chr, length()); };
 	inline int lastIndexOf(char chr, int pos) const
 		{ for(const char *p = chars() + pos - 1; p >= chars(); p--) if(*p == chr) return p - chars(); return -1; };
+	inline int lastIndexOf(const String& str) { return lastIndexOf(str, length()); }
+	int lastIndexOf(const String& str, int pos);
 
 	inline bool startsWith(const char *str) const;
 	inline bool startsWith(const CString str) const;
