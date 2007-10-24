@@ -308,5 +308,15 @@ void test_string(void) {
 		CHECK(s3.endsWith(s) == false);
 	}
 	
+	// (last)indexOf tests
+	{
+		elm::String s = "12345\n---\nfsdmlkjsmflk";
+		elm::String l = "\n---\n";
+		CHECK(s.indexOf(l) == 5);
+		CHECK(s.indexOf("bof") < 0);
+		CHECK(s.lastIndexOf(l) == 5);
+		CHECK(s.lastIndexOf("bof") < 0);
+	}
+	
 	CHECK_END;
 }
