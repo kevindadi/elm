@@ -78,6 +78,7 @@ libelm_la_SOURCES= \
 	system_System.cpp \
 	system_SystemException.cpp \
 	system_SystemIO.cpp \
+	util_AutoDestructor.cpp \
 	util_BitVector.cpp \
 	util_Formatter.cpp \
 	util_HashKey.cpp \
