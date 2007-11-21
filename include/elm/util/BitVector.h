@@ -1,8 +1,23 @@
 /*
- * $Id$
- * Copyright (c) 2005, IRIT UPS.
+ *	$Id$
+ *	deprecated support interface
  *
- * elm/util/BitVector.h -- BitVector class interface.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2005-07, IRIT UPS.
+ * 
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software 
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_UTIL_BIT_VECTOR_H
 #define ELM_UTIL_BIT_VECTOR_H
@@ -16,13 +31,8 @@ namespace elm {
 
 // BitVector class
 class BitVector {
-	unsigned char *bits;
-	int _size;
-	inline void mask(void) const;
-	inline int bytes(void) const;
-	inline int byte_index(int index) const;
-	inline int bit_index(int index) const;
 public:
+	inline BitVector(void): _size(0), bits(0) { }
 	inline BitVector(int size, bool set = false);
 	inline BitVector(const BitVector& vec);
 	BitVector(const BitVector& vec, int new_size);
@@ -35,6 +45,7 @@ public:
 	inline bool includesStrictly(const BitVector &vec) const;
 	inline bool equals(const BitVector& vec) const;
 	int countBits(void) const;
+	inline void resize(int new_size);
 	
 	inline void set(int index) const;
 	inline void set(int index, bool value) const;
@@ -86,6 +97,14 @@ public:
 	inline bool operator<=(const BitVector& vec) const;
 	inline bool operator>(const BitVector& vec) const;
 	inline bool operator>=(const BitVector& vec) const;
+
+private:
+	unsigned char *bits;
+	int _size;
+	inline void mask(void) const;
+	inline int bytes(void) const;
+	inline int byte_index(int index) const;
+	inline int bit_index(int index) const;
 };
 
 
@@ -127,7 +146,8 @@ inline BitVector::BitVector(const BitVector& vec): _size(vec.size()) {
 }
 
 inline BitVector::~BitVector(void) {
-	delete [] bits;
+	if(bits)
+		delete [] bits;
 }
 
 inline int BitVector::size(void) const {
@@ -293,8 +313,12 @@ inline BitVector BitVector::operator-(const BitVector& vec) const {
 }
 
 inline BitVector& BitVector::operator=(const BitVector& vec) {
+	if(bytes() != vec.bytes()) {
+		delete bits;
+		_size = vec._size;
+		bits = new unsigned char[bytes()];
+	}
 	copy(vec);
-	return *this;
 }
 
 inline BitVector& BitVector::operator|=(const BitVector& vec) {
@@ -360,6 +384,16 @@ inline void BitVector::OneIterator::next(void) {
 	do
 		i++;
 	while(i < bvec.size() && !bvec.bit(i));
+}
+
+inline void BitVector::resize(int new_size) {
+	int new_bytes = (new_size + 7) >> 3; 
+	if(bytes() != new_bytes) {
+		if(bits)
+			delete [] bits;
+		bits = new unsigned char[new_bytes];
+	}
+	_size = new_size;
 }
 
 } // elm
