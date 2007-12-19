@@ -74,4 +74,17 @@ CString InStream::lastErrorMessage(void) {
 	return "";
 }
 
+
+// NullInStream class
+static class NullInStream: public InStream {
+public:
+	virtual int read(void *buffer, int size) { return 0; }
+} _null;
+
+
+/**
+ * An input stream that is always at end.
+ */
+InStream& InStream::null = _null;
+
 } } // elm::io

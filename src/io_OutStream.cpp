@@ -67,4 +67,18 @@ CString OutStream::lastErrorMessage(void) {
 	return "";
 }
 
+
+// NullOutStream class
+static class NullOutStream: public OutStream {
+public:
+	virtual int write(const char *buffer, int size) { }
+	virtual int flush(void) { }	
+} _null;
+
+
+/**
+ * Provides an output stream that does nothing.
+ */
+OutStream& OutStream::null = _null;
+
 } } // elm::io
