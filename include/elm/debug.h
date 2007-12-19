@@ -17,15 +17,15 @@ namespace elm {
 #	define BREAK(cond)
 #	define HERE
 #else
-#	define TRACE elm::trace(__FILE__, __LINE__)
+#	define TRACE elm::trace(__FILE__, __LINE__, __PRETTY_FUNCTION__)
 #	define BREAK(cond)	if(cond)
 #	define HERE { int x = 0; };
 #endif
 
 // Inlines
-inline void trace(CString file, int line) {
-	cerr << "TRACE(" << file << ':' << line << ")\n";
-	cerr.flush();
+inline void trace(CString file, int line, CString fun) {
+	elm::cerr << "TRACE(" << file << ':' << line << ":" << fun << ")\n";
+	elm::cerr.flush();
 }
 	
 }	// elm
