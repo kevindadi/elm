@@ -118,6 +118,7 @@
  * An immutable implementation of the string data type. Refer to
  * @ref StringBuffer for long concatenation string building.
  * @ingroup string
+ * @warning This string class is bound to strings of less than 65535 characters.
  */
 
  /* Empty buffer */
