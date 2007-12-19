@@ -54,6 +54,7 @@ public:
 	inline void addFirst(const T& value);
 	inline void addLast(const T& value);
 	inline void addAfter(const Iterator& pos, const T& value);
+	inline void add(const T& value) { addFirst(value); }
 	inline void removeFirst(void);
 	inline void removeLast(void);
 	inline void removeNext(const Iterator& pos);
