@@ -8,6 +8,7 @@
 #define ELM_GENSTRUCT_TABLE_H
 
 #include <elm/assert.h>
+#include <elm/deprecated.h>
 
 namespace elm { namespace genstruct {
 
@@ -26,8 +27,6 @@ public:
 	
 	// Accessors
 	inline int count(void) const;
-	inline const T *table(void) const;
-	inline T *table(void);
 	inline const T& get(int index) const;
 	inline T& get(int index);
 	inline void set(int index, const T& value);
@@ -41,6 +40,10 @@ public:
 	inline T& operator[](int index);
 	inline Table<T>& operator=(const Table& table);
 	inline operator bool(void) const;
+
+	// Deprecated
+	inline const T *table(void) const;
+	inline T *table(void);
 };
 
 
@@ -87,11 +90,13 @@ inline int Table<T>::count(void) const {
 
 template <class T>
 inline const T *Table<T>::table(void) const {
+	ELM_DEPRECATED
 	return tab;
 }
 
 template <class T>
 inline T *Table<T>::table(void) {
+	ELM_DEPRECATED
 	return tab;
 }
 
