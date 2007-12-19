@@ -76,6 +76,8 @@ template <> struct type_info<signed long>: public scalar_t {
 	static inline CString name(void) { return "<long>"; }
 };
 template <> struct type_info<unsigned long>: public scalar_t {
+	static const unsigned long max = 0xffffffff;
+	static const unsigned long min = 0;
 	static inline CString name(void) { return "<unsigned long>"; }
 };
 template <> struct type_info<signed long long>: public scalar_t {
