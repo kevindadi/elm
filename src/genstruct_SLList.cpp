@@ -28,8 +28,10 @@ namespace elm { namespace genstruct {
 /**
  * @class SLList <elm/genstruct/SLList.h>
  * This class provides a generic implementation of single-link lists.
- * To traverse, you ay use its @ref Iterator and @ref Editor may be used to
- * modify it.
+ * 
+ * @par Implemented concepts:
+ * @ref elm::concept::MutableCollection
+ * 
  * @param T	Type of data stored in the list.
  * @ingroup gen_datastruct
  */
@@ -109,7 +111,7 @@ namespace elm { namespace genstruct {
 
 
 /**
- * @class SLList::Iterator <elm/genstruct/SLList.h>
+ * @class SLList::Iterator
  * Iterator for generic single link-list.
  */
 
@@ -141,35 +143,5 @@ namespace elm { namespace genstruct {
  * @fn void SLList::Iterator::next(void);
  * Go to the next item.
  */
-
-
-/**
- * @class SLList::Editor <elm/genstruct/SLList.h>
- * Implements an editor for the generic single-link list.
- */
-
-
-/**
- * @fn SLList::Editor::Editor(SLList& list);
- * Build an editor on the given list.
- * @param list	List to iterate on.
- */
-
-
-/**
- * @fn void SLList::Editor::addAfter(T item);
- * Add an item after the current one.
- * @param item	Item to add.
- * @warning It is an error to call this method if the end of the list is
- * reached.
- */
-
-
-/**
- * @fn void SLList::Editor::removeNext(void);
- * Remove the next item from the list.
- * @warning It is an error to call this method if the end of the list is
- * reached.
- */ 
 
 } } // elm::genstruct

@@ -1,8 +1,23 @@
 /*
- * $Id$
- * Copyright (c) 2005, IRIT-UPS.
+ *	$Id$
+ *	SLList class interface
  *
- * sllist.h -- single link list interface.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2004-07, IRIT UPS.
+ * 
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software 
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_GENSTRUCT_SLLIST_H
 #define ELM_GENSTRUCT_SLLIST_H
@@ -27,38 +42,51 @@ template <class T> class SLList {
 
 public:
 	inline ~SLList(void);
+	
+	// Collection concept
+	inline int count(void) const;
+	inline bool contains (const T &item) const;
+	inline bool isEmpty(void) const;
+	inline operator bool(void) const { return !isEmpty(); }
 
 	// Iterator class
 	class Iterator: public PreIterator<Iterator, T> {
-		friend class SLList;
-		Node *node;
 	public:
-
-		inline Iterator();
+		inline Iterator(void);
 		inline Iterator(const SLList& _list);
 		inline Iterator(const Iterator& source);
 		
-		inline void operator=(const Iterator& source);
 		inline bool ended(void) const;
 		inline T item(void) const;
 		inline void next(void);
-	};
 
-	// Accessors
+		// Deprecated
+		//inline void operator=(const Iterator& source);	// !!TODO!!
+
+	private:
+		friend class SLList;
+		Node *node;
+	};
+	
+	// Mutable collection
+	inline void clear(void);
+	inline void add(const T& value) { addFirst(value); }
+	template <template<class _> class C>
+		inline void addAll (const C<T> &items);
+	inline void remove(const T& value);
+	template <template<class _> class C>
+		inline void removeAll (const C<T> &items);
+	inline void remove(const Iterator &iter) { remove(iter); }
+	
+	// Specific
 	inline T first(void) const;
 	inline T last(void) const;
-	inline int count(void) const;
-	inline bool isEmpty(void) const;
-
-	// Mutators
 	inline void addFirst(const T& value);
 	inline void addLast(const T& value);
 	inline void addAfter(const Iterator& pos, const T& value);
-	inline void add(const T& value) { addFirst(value); }
 	inline void removeFirst(void);
 	inline void removeLast(void);
 	inline void removeNext(const Iterator& pos);
-	inline void remove(const T& value);
 };
 
 
@@ -70,14 +98,31 @@ template <class T> inline typename SLList<T>::Node *SLList<T>::Node::next(void) 
 }
 
 // SLList class
-
-template <class T> inline SLList<T>::~SLList(void) {
+template <class T>
+inline void SLList<T>::clear(void) {
 	while(!list.isEmpty()) {
 		Node *node = (Node *)list.first();
 		list.removeFirst();
 		delete node;
-	}
-}      
+	}	
+}
+
+template <class T> inline SLList<T>::~SLList(void) {
+	clear();
+}
+
+template <class T> template <template<class _> class C>
+inline void SLList<T>::addAll(const C<T> &items) {
+	for(typename C<T>::Iterator iter; iter; iter++)
+		add(iter);
+}
+
+template <class T> template <template<class _> class C>
+inline void SLList<T>::removeAll (const C<T> &items) {
+	for(typename C<T>::Iterator iter; iter; iter++)
+		remove(iter);	
+}
+
 template <class T> inline T SLList<T>::first(void) const {
 	return ((Node *)list.first())->val;
 }
@@ -117,6 +162,14 @@ template <class T> inline bool SLList<T>::isEmpty(void) const {
 	return list.isEmpty();
 };
 
+template <class T>
+inline bool SLList<T>::contains (const T &item) const {
+	for(Iterator iter(*this); iter; iter++)
+		if(item == iter)
+			return true;
+	return false;
+}
+
 
 // SLList::Iterator class
 template <class T> inline SLList<T>::Iterator::Iterator(const SLList& _list)
@@ -129,10 +182,10 @@ template <class T> inline SLList<T>::Iterator::Iterator(const Iterator& source)
 template <class T> inline SLList<T>::Iterator::Iterator()
 : node(0) {
 }
-template <class T> inline void SLList<T>::Iterator::operator=(const Iterator& source)
+/*template <class T> inline void SLList<T>::Iterator::operator=(const Iterator& source)
 {
 	node = source.node;
-}
+}*/
 template <class T> inline bool SLList<T>::Iterator::ended(void) const {
 	return !node;
 }
