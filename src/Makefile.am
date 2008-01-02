@@ -14,6 +14,7 @@ DEFS=@ELM_DEBUG_DEFS@
 
 libelm_la_SOURCES= \
 	concepts.h \
+	doc.h \
 	block_DynBlock.cpp \
 	debug.cpp \
 	debug_CrashHandler.cpp \
