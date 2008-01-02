@@ -37,12 +37,16 @@ namespace elm { namespace concept {
  * @li @ref elm::concept::MutableCollection
  * @li @ref elm::concept::MutableMap
  * @li @ref elm::concept::Queue
+ * @li @ref elm::concept::Set
  * @li @ref elm::concept::Stack
  * 
  * @par Value Concepts
  * @li @ref elm::concept::Comparator
  * @li @ref elm::concept::PartialComparator
  * @li @ref elm::concept::Hash
+ * 
+ * @par Other Concepts
+ * @li @ref elm::concept::Graph
  * 
  * @par Note
  * The <i>This</i> class represents the actual class itself in the concepts and must
@@ -162,6 +166,10 @@ public:
 
 /**
  * This concept provides way to have collections whose content may be modified.
+ * 
+ * @par Implemented by:
+ * @ref elm::genstruct::SLList
+ * 
  * @param T	Type of items in the collection.
  * @ingroup concepts
  */
@@ -203,6 +211,24 @@ public:
 	 * @param iter	Iter giving the item to remove.
 	 */
 	void remove(const Iterator<T>& iter);
+};
+
+
+/**
+ * This concept provides methods to handle a set of object. Usually, sets
+ * provides efficient way to look for, insert or remove items.
+ * @param T	Type of stored items.
+ */
+template <class T>
+class Set: public MutableCollection<T> {
+public:
+	
+	/**
+	 * Insert an item in the set avoiding item duplication.
+	 * @note	If the set does not support duplicate, add() is may be
+	 *			implemented as an insert.
+	 */
+	void insert(const T& item);
 };
 
 
