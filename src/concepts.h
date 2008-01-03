@@ -30,8 +30,10 @@ namespace elm { namespace concept {
  * 
  * @par Collection Concepts
  * @li @ref elm::concept::Array
+ * @li @ref elm::concept::BiDiList;
  * @li @ref elm::concept::Collection
  * @li @ref elm::concept::Iterator
+ * @li @ref elm::concept::List;
  * @li @ref elm::concept::Map
  * @li @ref elm::concept::MutableArray
  * @li @ref elm::concept::MutableCollection
@@ -166,9 +168,6 @@ public:
 
 /**
  * This concept provides way to have collections whose content may be modified.
- * 
- * @par Implemented by:
- * @ref elm::genstruct::SLList
  * 
  * @param T	Type of items in the collection.
  * @ingroup concepts
@@ -636,6 +635,111 @@ class MutableMap: public  Map, public  MutableCollection {
 	 * @param iter	Iterator to use.
 	 */
 	void remove(const ValueIterator& iter);
+};
+
+
+/**
+ * A list is an ordered sequence of items. It implements the MutableCollection
+ * concept but the iterator traverse the list in the sequence of the items.
+ * @ingroup concepts
+ */
+template <class T>
+class List: public MutableCollection<T> {
+public:
+	
+	/**
+	 * Get the first item of the list.
+	 * @return	First item.
+	 */
+	const T& first(void);
+	
+	/**
+	 * Get the last item of the list.
+	 * @return	Last item.
+	 */
+	const T& last(void);
+	
+	/**
+	 * Add an item as the first item before other items..
+	 * @param item	Item to add.
+	 */
+	void addFirst(const T& item);
+	
+	/**
+	 * Add an item as the last item after other items.
+	 * @param item	Item to add.
+	 */
+	void addLast(const T& item);
+	
+	/**
+	 * Remove the first item.
+	 */
+	void removeFirst(void);
+	
+	/**
+	 * Remove the last item.
+	 */
+	void removeLast(void);
+	
+	/**
+	 * Add an item after another one.
+	 * @param pos	Position to add after.
+	 * @param item	Item to add.
+	 */
+	void addAfter(const Iterator<T>& pos, const T& item);
+	
+	/**
+	 * Add an item before another one.
+	 * @param pos	Position to add before.
+	 * @param item	Item to add.
+	 */
+	void addBefore(const Iterator<T>& pos, const T& item);
+	
+	/**
+	 * Change an item in the list.
+	 * @param pos	Position of the item to change.
+	 * @param item	New item to replace with.
+	 */
+	void set(const Iterator<T>& pos, const T& item);
+};
+
+
+/**
+ * A bidirectionnal list that may be as efficiently forward traversed as
+ * backward traversed. Mainly, it provides a BackIterator class for
+ * back traversal.
+ * 
+ * @par Implemented by:
+ * @ref elm::genstruct::SLList
+ * 
+ * @ingroup concepts
+ */
+template <class T>
+class BiDiList: public List<T> {
+public:
+	
+	/**
+	 * Iterator for forward traversal of the list.
+	 */
+	class Iterator: public List<T>::Iterator {
+	public:
+		Iterator(const BiDiList<T>& list);
+		Iterator(const Iterator<T>& iter);
+		Iterator(const BackIterator<T>& iter);
+		Iterator& operator=(const BackIterator<T>& iter);
+	}
+	
+	/**
+	 * Iterator for backward traversal of the list.
+	 */
+	class BackIterator: public Iterator<T> {
+	public:
+		BackIterator(const BiDiList<T>& list);
+		BackIterator(const BackIterator<T>& iter);
+		BackIterator(const Iterator<T>& iter);
+		BackIterator& operator=(const BackIterator<T>& iter);		
+		BackIterator& operator=(const Iterator<T>& iter);		
+	};
 };
 
 } } // elm::concept
