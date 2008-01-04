@@ -1,8 +1,23 @@
 /*
- * $Id$
- * Copyright (c) 2005, IRIT-UPS.
+ *	$Id$
+ *	DLList class implementation
  *
- * test_dllist.cpp -- unit tests for DLList class.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2004-08, IRIT UPS.
+ * 
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software 
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <elm/util/test.h>
@@ -123,12 +138,12 @@ void test_dllist(void) {
 	
 	// Check back iteration
 	{
-		datastruct::DLList<int> list;
+		genstruct::DLList<int> list;
 		for(int i = 0; i < 10; i++)
 			list.addLast(i);
 		int n = 9;
-		for(datastruct::DLList<int>::Iterator iter(list.fromLast()); iter;
-		iter--, n--)
+		for(genstruct::DLList<int>::BackIterator iter(list); iter;
+		iter++, n--)
 			CHECK_EQUAL(*iter, n); 
 	}
 
