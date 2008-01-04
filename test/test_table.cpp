@@ -7,6 +7,7 @@
 
 #include <elm/util/test.h>
 #include <elm/genstruct/Table.h>
+#include <elm/genstruct/BoolTable.h>
 
 using namespace elm;
 using namespace elm::genstruct;
@@ -64,6 +65,15 @@ void test_table(void) {
 		cout << "tt.tab[3] = TopTable(4);\n";
 		tt.tab[3] = TopTable(4);
 		cout << "END\n";
+	}
+	
+	// Boolean table
+	{
+		AllocatedTable<bool> tab(1024);
+		tab[0] = false;
+		CHECK(tab[0] == false);
+		tab[1] = true;
+		CHECK(tab[1] == true);
 	}
 	CHECK_END;
 }
