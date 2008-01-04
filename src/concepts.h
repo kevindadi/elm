@@ -3,7 +3,7 @@
  *	Concepts documentation
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2007, IRIT UPS.
+ *	Copyright (c) 2007-08, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -59,6 +59,11 @@ namespace elm { namespace concept {
  * This concept is matched by all iterators. It provides a way to traverse
  * a collection of items. Class matching this concept must defines the
  * following methods.
+ * 
+ * @par Implemented by:
+ * @ref elm::genstruct::DLList
+ * @ref elm::genstruct::SLList
+ * 
  * @param T	Type of items of the collection.
  * @ingroup concepts
  */
@@ -216,7 +221,13 @@ public:
 /**
  * This concept provides methods to handle a set of object. Usually, sets
  * provides efficient way to look for, insert or remove items.
+ * 
+ * @par Implemented by:
+ * @ref elm::genstruct::DLList
+ * @ref elm::genstruct::SLList
+ * 
  * @param T	Type of stored items.
+ * @ingroup	concepts
  */
 template <class T>
 class Set: public MutableCollection<T> {
@@ -641,6 +652,11 @@ class MutableMap: public  Map, public  MutableCollection {
 /**
  * A list is an ordered sequence of items. It implements the MutableCollection
  * concept but the iterator traverse the list in the sequence of the items.
+ *
+ * @par Implemented by:
+ * @ref elm::genstruct::DLList
+ * @ref elm::genstruct::SLList
+ * 
  * @ingroup concepts
  */
 template <class T>
@@ -710,7 +726,7 @@ public:
  * back traversal.
  * 
  * @par Implemented by:
- * @ref elm::genstruct::SLList
+ * @ref elm::genstruct::DLList
  * 
  * @ingroup concepts
  */
@@ -727,7 +743,7 @@ public:
 		Iterator(const Iterator<T>& iter);
 		Iterator(const BackIterator<T>& iter);
 		Iterator& operator=(const BackIterator<T>& iter);
-	}
+	};
 	
 	/**
 	 * Iterator for backward traversal of the list.
