@@ -1,8 +1,23 @@
 /*
- * $Id$
- * Copyright (c) 2004, IRIT-UPS.
+ *	$Id$
+ *	DLList class interface
  *
- * elm/genstruct/DLList.h -- DLList class interface.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2004-08, IRIT UPS.
+ * 
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software 
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_GENSTRUCT_DLLIST_H
 #define ELM_GENSTRUCT_DLLIST_H
@@ -29,58 +44,78 @@ class DLList {
 public:
 	inline ~DLList(void);
 
-	// Accessors
+	class AbstractIterator {
+	public:
+		inline AbstractIterator(const DLList<T>& _list, DLNode *_cur)
+			: list(&_list.list), cur(_cur) { }
+		inline AbstractIterator(const AbstractIterator& iter)
+			: list(iter.list), cur(iter.cur) { }
+		inline AbstractIterator& operator=(const AbstractIterator& iter)
+			{ list = iter.list; cur = iter.cur; }
+	protected:
+		const inhstruct::DLList *list;
+		DLNode *cur;
+	};
+
+	// Collection concept
+	inline int count(void) const;
+	inline bool contains(const T& value) const;
+	inline bool isEmpty(void) const;
+	inline operator bool(void) const { return !isEmpty(); }
+	
+	class Iterator: public PreIterator<Iterator, T>, public AbstractIterator {
+	public:
+		inline Iterator(const DLList& _list)
+			: AbstractIterator(_list, (DLNode *)_list.list.first()) { }
+		inline Iterator(const AbstractIterator& iter)
+			: AbstractIterator(iter) { }
+		inline Iterator& operator=(const AbstractIterator& iter)
+			{ AbstractIterator::operator=(iter); return *this; }
+		
+		inline bool ended(void) const { return this->cur->atEnd(); }
+		inline const T& item(void) const { return this->cur->value(); }
+		inline void next(void) { this->cur = (DLNode *)this->cur->next(); }
+	};
+	
+	// MutableCollection concept
+	inline void clear(void);
+	inline void add(const T& item) { addLast(item); }
+	template <template <class _> class C> inline void addAll(const C<T>& items);
+	inline void remove(const T& value);
+	template <template <class _> class C> inline void removeAll(const C<T>& items);
+	void remove(const AbstractIterator &iter);
+	
+	// List concept
 	inline const T& first(void) const;
 	inline const T& last(void) const;
-	inline bool isEmpty(void) const;
-	inline int count(void) const;
-	inline bool contains(const T value) const;
-	inline operator bool(void) const { return !isEmpty(); }
-
-	// Mutators
-	inline void remove(const T value);
-	inline void addFirst(const T value);
-	inline void addLast(const T value);
+	inline void addFirst(const T& value);
+	inline void addLast(const T& value);
 	inline void removeFirst(void);
 	inline void removeLast(void);
-	inline void removeAll(const T& item);
-	inline void clear(void);
-	
-	// Iterator class
-	class Iterator: public PreIterator<Iterator, T> {
-	protected:
-		const inhstruct::DLList& list;
-		DLNode *cur;
+	inline void addAfter(const AbstractIterator &pos, const T& item)
+		{ ASSERTP(!pos.cur->atEnd(), "insert after end");
+		pos.cur->insertAfter(new DLNode(item)); }
+	inline void addBefore(const AbstractIterator &pos, const T& item)
+		{ ASSERTP(!pos.cur->atBegin(), "insert before begin");
+		pos.cur->insertBefore(new DLNode(item)); }
+	inline void set(const AbstractIterator &pos, const T& item)
+		{ ASSERTP(!pos.cur->atBegin() && !pos.cur->atEnd(), "bad position");
+		pos.cur->val = item; }
+
+	// BiDiList concept
+	class BackIterator: public PreIterator<Iterator, T>, public AbstractIterator {
 	public:
-		inline Iterator(const DLList& _list);
-		inline Iterator(const Iterator& iter);
-		inline bool ended(void) const;
-		inline const T& item(void) const;
-		inline void next(void);
-		inline void previous(void);
-		inline void first(void);
-		inline void last(void);
-		inline Iterator& operator--(int) { previous(); };
+		inline BackIterator(const DLList& _list)
+			: AbstractIterator(_list,	(DLNode *)_list.list.last()) { }
+		inline BackIterator(const AbstractIterator& iter)
+			: AbstractIterator(iter) { }
+		inline BackIterator& operator=(const BackIterator& iter)
+			{ AbstractIterator::operator=(iter); return *this; }
+		
+		inline bool ended(void) const { return this->cur->atBegin(); }
+		inline const T& item(void) const { return this->cur->value(); }
+		inline void next(void) { this->cur = (DLNode *)this->cur->previous(); }
 	};
-	
-	// Editor class
-	class Editor: public Iterator {
-		inline inhstruct::DLList& elist(void) const;
-	public:
-		inline Editor(DLList& list);
-		inline Editor(const Editor& editor);
-		inline T& item(void) const;
-		inline T& operator*(void) const;		
-		inline void remove(void);
-		inline void removeNext(void);
-		inline void removePrevious(void);
-		inline void insertAfter(const T value);
-		inline void insertBefore(const T value);
-	};
-	
-	// Iterator generation
-	Iterator fromFirst(void) const;
-	Iterator fromLast(void) const;
 };
 
 
@@ -109,10 +144,10 @@ template <class T> bool DLList<T>::isEmpty(void) const {
 template <class T> int DLList<T>::count(void) const {
 	return list.count();
 }
-template <class T> void DLList<T>::addFirst(const T value) {
+template <class T> void DLList<T>::addFirst(const T& value) {
 	list.addFirst(new DLNode(value));
 }
-template <class T> void DLList<T>::addLast(const T value) {
+template <class T> void DLList<T>::addLast(const T& value) {
 	list.addLast(new DLNode(value));
 }
 template <class T> void DLList<T>::removeFirst(void) {
@@ -121,28 +156,18 @@ template <class T> void DLList<T>::removeFirst(void) {
 template <class T> void DLList<T>::removeLast(void) {
 	list.removeLast();
 }
-template <class T> void DLList<T>::remove(const T value) {
+template <class T> void DLList<T>::remove(const T& value) {
 	for(DLNode *cur = (DLNode *)list.first(); !cur->atEnd(); cur = (DLNode *)cur->next())
 		if(cur->value() == value) {
 			cur->remove();
 			break;
 		}
 }
-template <class T> bool DLList<T>::contains(const T value) const {
+template <class T> bool DLList<T>::contains(const T& value) const {
 	for(DLNode *cur = (DLNode *)list.first(); !cur->atEnd(); cur = (DLNode *)cur->next())
 		if(cur->value() == value)
 			return true;
 	return false;
-}
-
-template <class T>
-inline void DLList<T>::removeAll(const T& item) {
-	for(Editor cur(*this); cur; ) {
-		if(*cur == item)
-			cur.remove();
-		else
-			cur++;
-	}
 }
 
 template <class T> void DLList<T>::clear(void) {
@@ -154,89 +179,21 @@ template <class T> void DLList<T>::clear(void) {
 	}
 }
 
-template <class T> typename DLList<T>::Iterator DLList<T>::fromFirst(void) const {
-	return Iterator(*this);
+template <class T> template <template <class _> class C>
+inline void DLList<T>::addAll(const C<T>& items) {
+	for(typename C<T>::Iterator iter(items); iter; iter++)
+		add(iter);
 }
 
-template <class T> typename DLList<T>::Iterator DLList<T>::fromLast(void) const {
-	Iterator iter(*this);
-	iter.last();
-	return iter;
-}
-
-
-// DList<T>::Iterator methods
-template <class T> DLList<T>::Iterator::Iterator(const DLList<T>& _list)
-: list(_list.list) {
-		cur = (DLNode *)list.first();
+template <class T> template <template <class _> class C>
+inline void DLList<T>::removeAll(const C<T>& items) {
+	for(typename C<T>::Iterator iter(items); iter; iter++)
+		remove(iter);	
 }
 
 template <class T>
-inline DLList<T>::Iterator::Iterator(const DLList<T>::Iterator& iter)
-: list(iter.list), cur(iter.cur) {
-}
-
-template <class T> bool DLList<T>::Iterator::ended(void) const {
-	return cur->atEnd() || cur->atBegin();
-}
-
-template <class T> const T& DLList<T>::Iterator::item(void) const {
-	return cur->value();
-}
-
-template <class T> void DLList<T>::Iterator::next(void) {
-	cur = (DLNode *)cur->next();
-}
-
-template <class T> void DLList<T>::Iterator::previous(void) {
-	cur = (DLNode *)cur->previous();
-}
-
-template <class T> void DLList<T>::Iterator::first(void) {
-	cur = (DLNode *)list.first();
-}
-
-template <class T> void DLList<T>::Iterator::last(void) {
-	cur = (DLNode *)list.last();
-}
-
-
-// DLList<T>::Editor methods
-template <class T> inhstruct::DLList& DLList<T>::Editor::elist(void) const {
-	return (DLList<T>&)list;
-}
-
-template <class T> DLList<T>::Editor::Editor(DLList& list): Iterator(list) {
-}
-
-template <class T>
-inline DLList<T>::Editor::Editor(const Editor& editor): Iterator(editor) {
-}
-
-template <class T> T& DLList<T>::Editor::item(void) const {
-	return this->cur->value();
-}
-template <class T> T& DLList<T>::Editor::operator*(void) const {
-	return item();
-}
-template <class T> void DLList<T>::Editor::remove(void) {
-	DLNode *to_remove = this->cur;
-	DLList<T>::Iterator::next();
-	to_remove->remove();
-}
-template <class T> void DLList<T>::Editor::removeNext(void) {
-	this->cur->removeNext();
-}
-template <class T> void DLList<T>::Editor::removePrevious(void) {
-	this->cur->removePrevious();
-}
-template <class T> void DLList<T>::Editor::insertAfter(const T value) {
-	this->cur->insertAfter(new DLNode(value));
-}
-template <class T> void DLList<T>::Editor::insertBefore(const T value) {
-	this->cur->insertBefore(new DLNode(value));
-}
-
+void DLList<T>::remove(const AbstractIterator &iter)
+	{ iter.cur.remove(); }
 
 } }	// elm::genstruct
 

@@ -3,7 +3,7 @@
  *	DLList class implementation
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2004-07, IRIT UPS.
+ *	Copyright (c) 2004-08, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -25,25 +25,15 @@
 namespace elm { namespace genstruct {
 
 /**
- * @class DLList <elm/genstruct/DLList.cpp>
+ * @class DLList
  * A generic implementation of a double-link list. It may be traversed using
- * the @ref Iterator class or modified using @ref Editor class.
+ * the @ref Iterator class or @ref BackIterator class.
+ * 
+ * @par Implemented Concepts
+ * @ref elm::concept::BiDiList
+ * 
  * @param T	Type of items stored in the list.
  * @ingroup gen_datastruct
- */
-
-
-/**
- * @fn Iterator DLList::fromFirst(void) const;
- * Get an iterator on the first item of the list.
- * @return	Iterator on the first item.
- */
-
-
-/**
- * @fn Iterator DLList::fromLast(void) const;
- * Get an iterator on the last item of the last.
- * @return	Iterator on the last item.
  */
 
 
@@ -51,7 +41,7 @@ namespace elm { namespace genstruct {
  * @fn T DLList::first(void) const;
  * Get the first item of the list.
  * @return	First item.
- * @warning It is an error to call this method on empty list.
+ * @warning It is an error to call this method on an empty list.
  */
 
 
@@ -59,7 +49,7 @@ namespace elm { namespace genstruct {
  * @fn T DLList::last(void) const;
  * Get the last item of the list.
  * @return	Last item.
- * @warning It is an error to call this method on empty list.
+ * @warning It is an error to call this method on an empty list.
  */
 
 
@@ -124,22 +114,14 @@ namespace elm { namespace genstruct {
 
 
 /**
- * @fn void DLList::removeAll(const T& item);
- * Remove all items matching the given one. Notice that the T item type must
- * implement the equality / inequality operators.
- * @param item	Item to remove.
- */
-
-
-/**
  * @fn void DLList::clear(void);
  * Remove all items from the list.
  */
 
 
 /**
- * @class DLList::Iterator <elm/genstruct/DLList.h>
- * Bidirectionnal iterator on the list @ref DLList.
+ * @class DLList::Iterator
+ * Forward iterator on a list of type @ref DLList.
  */
 
 
@@ -151,117 +133,30 @@ namespace elm { namespace genstruct {
 
 
 /**
- * @fn DLList::Iterator::Iterator(const Iterator& iter);
+ * @fn DLList::Iterator::Iterator(const AbstractIterator& iter);
  * Build an iterator by cloning the given one.
  * @param iter	Iterator to clone.
  */
 
 
 /**
- * @fn bool DLList::Iterator::ended(void) const;
- * Test if the end or the begin is reached.
- * @return	True if the end is reached, false else.
+ * @class DLList::BackIterator
+ * Backward iterator on a list of type @ref DLList.
  */
 
 
 /**
- * @fn inline T DLList::Iterator::item(void) const;
- * Get the current item.
- * @return	Current item.
+ * @fn DLList::BackIterator::BackIterator(const DLList& list);
+ * Build a backward iterator on the given list.
+ * @param list	List to iterate on.
  */
 
 
 /**
- * @fn void DLList::Iterator::next(void);
- * Go to the next item.
+ * @fn DLList::BackIterator::BackIterator(const AbstractIterator& iter);
+ * Build a backward iterator by cloning the given one.
+ * @param iter	Iterator to clone.
  */
 
-
-/**
- * @fn void DLList::Iterator::previous(void);
- * Go to the previous item.
- */
-
-
-/**
- * @fn void DLList::Iterator::first(void);
- * Go to the first item of the list.
- */
-
-
-/**
- * @fn void DLList::Iterator::last(void);
- * Go to the last item of the list.
- */
-
-
-/**
- * @class DLList::Editor <elm/genstruct/DLList.h>
- * Bidirectionnal editor on a @ref DLList list.
- */
-
-
-/**
- * @fn DLList::Editor::Editor(DLList& list);
- * Build an editor on the given list.
- * @param list	List to edit.
- */
-
-
-/**
- * @fn DLList::Editor::Editor(const Editor& editor);
- * Build an editor by cloning an existing one.
- * @param editor	Editor to clone.
- */
-
-
-/**
- * @fn T& DLList::Editor::item(void) const;
- * Get a reference on the current item to allow assignment.
- * @return	Current item reference.
- */
-
-
-/**
- * @fn T& DLList::Editor::operator*(void) const;
- * Same as @ref item().
- */
-
-
-/**
- * @fn void DLList::Editor::remove(void);
- * Remove the current item from the list (go to the next item).
- * @warning It is an error to call this method when no more item is selected.
- */
-
-
-/**
- * @fn void DLList::Editor::removeNext(void);
- * Remove the next item from the list.
- * @warning It is an error to call this method when no more item is selected.
- */
-
-
-/**
- * @fn void DLList::Editor::removePrevious(void);
- * Remove the previous item from the list.
- * @warning It is an error to call this method when no more item is selected.
- */
-
-
-/**
- * @fn void DLList::Editor::insertAfter(const T item);
- * Insert an item after the current one.
- * @param item	Item to insert.
- * @warning It is an error to call this method when no more item is selected.
- */
-
-
-/**
- * @fn void DLList::Editor::insertBefore(const T item);
- * Insert an item before the current one.
- * @param item	Item to insert.
- * @warning It is an error to call this method when no more item is selected.
- */
 
 } } // elm::genstruct
