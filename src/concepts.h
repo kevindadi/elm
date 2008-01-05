@@ -60,10 +60,6 @@ namespace elm { namespace concept {
  * a collection of items. Class matching this concept must defines the
  * following methods.
  * 
- * @par Implemented by:
- * @ref elm::genstruct::DLList
- * @ref elm::genstruct::SLList
- * 
  * @param T	Type of items of the collection.
  * @ingroup concepts
  */
@@ -123,6 +119,11 @@ public:
  * This concepts provides methods to handle collection. A collection is an
  * unordered list of items.
  * @param T	Type of items stored in the collection.
+ * 
+ * @par Implemented by:
+ * @ref elm::genstruct::DLList,
+ * @ref elm::genstruct::SLList
+ * 
  * @ingroup concepts
  */
 template <class T>
@@ -473,9 +474,9 @@ public:
  * @param T	Type of objects to compare.
  * 
  * @par Implemented by:
- * @ref elm::Comparator
- * @ref elm::SubstractComparator
- * @ref elm::CompareComparator
+ * @ref elm::Comparator,
+ * @ref elm::SubstractComparator,
+ * @ref elm::CompareComparator,
  * @ref elm::AssocComparator
  * 
  * @ingroup concepts
