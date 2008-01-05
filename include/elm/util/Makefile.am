@@ -4,6 +4,7 @@ includeelmutil_HEADERS = \
 	AutoDestructor.h \
 	AutoPtr.h \
 	BitVector.h \
+	Comparator.h \
 	delegate.h \
 	Exception.h \
 	HashKey.h \

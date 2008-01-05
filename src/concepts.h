@@ -471,6 +471,13 @@ public:
  * This concept must be implemented by classes providing comparisons of values
  * (strict order).
  * @param T	Type of objects to compare.
+ * 
+ * @par Implemented by:
+ * @ref elm::Comparator
+ * @ref elm::SubstractComparator
+ * @ref elm::CompareComparator
+ * @ref elm::AssocComparator
+ * 
  * @ingroup concepts
  */
 template <class T>
