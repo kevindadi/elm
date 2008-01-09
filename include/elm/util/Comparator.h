@@ -74,6 +74,15 @@ public:
 template <class K, class T> class Comparator<Pair<K, T> >
 	: public AssocComparator<K, T> { };
 
+
+// ReverseComparator class
+template <class T, template <class _> class C>
+class ReverseComparator {
+public:
+	static inline int compare(const T& v1, const T& v2)
+		{ return -C<T>::compare(v1, v2); }
+};
+	
 } // elm
 
 #endif /* ELM_COMPARATOR_H_ */
