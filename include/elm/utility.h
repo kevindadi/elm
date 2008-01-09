@@ -1,8 +1,23 @@
 /*
- * $Id$
- * Copyright (c) 2006 - IRIT-UPS <casse@irit.fr>
+ *	$Id$
+ *	Shortcut to include many utilities.
  *
- * utility.h -- useful classes interfaces.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2006-07, IRIT UPS.
+ * 
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software 
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_UTILITY_H
 #define ELM_UTILITY_H
@@ -11,24 +26,6 @@
 #include <elm/util/Option.h>
 #include <elm/util/Pair.h>
 #include <elm/util/MessageException.h>
-//#include <elm/util/HashKey.h>
-
-namespace elm {
-
-// Comparator class
-template <class T>
-class Comparator {
-public:
-	static int compare(const T& v1, const T& v2);
-};
-
-// Specific comparator implementation
-template <>
-class Comparator<int> {
-public:
-	static int compare(int v1, int v2) { return v1 - v2; }
-};
-
-};	// elm
+#include <elm/util/Comparator.h>
 
 #endif	// ELM_UTILITY_H
