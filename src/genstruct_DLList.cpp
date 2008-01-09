@@ -30,6 +30,7 @@ namespace elm { namespace genstruct {
  * the @ref Iterator class or @ref BackIterator class.
  * 
  * @par Implemented Concepts
+ * @ref elm::concept::MutableList
  * @ref elm::concept::BiDiList
  * 
  * @param T	Type of items stored in the list.
