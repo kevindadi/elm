@@ -37,6 +37,7 @@ namespace elm { namespace concept {
  * @li @ref elm::concept::Map
  * @li @ref elm::concept::MutableArray
  * @li @ref elm::concept::MutableCollection
+ * @li @ref elm::concept::MutableList
  * @li @ref elm::concept::MutableMap
  * @li @ref elm::concept::Queue
  * @li @ref elm::concept::Set
@@ -658,7 +659,7 @@ class MutableMap: public  Map, public  MutableCollection {
 
 
 /**
- * A list is an ordered sequence of items. It implements the MutableCollection
+ * A list is an ordered sequence of items. It implements the @ref Collection
  * concept but the iterator traverse the list in the sequence of the items.
  *
  * @par Implemented by:
@@ -668,7 +669,7 @@ class MutableMap: public  Map, public  MutableCollection {
  * @ingroup concepts
  */
 template <class T>
-class List: public MutableCollection<T> {
+class List: public Collection<T> {
 public:
 	
 	/**
@@ -681,7 +682,23 @@ public:
 	 * Get the last item of the list.
 	 * @return	Last item.
 	 */
-	const T& last(void);
+	const T& last(void);	
+};
+
+
+/**
+ * A list is an ordered sequence of items. It implements the MutableCollection
+ * concept but the iterator traverse the list in the sequence of the items.
+ *
+ * @par Implemented by:
+ * @ref elm::genstruct::DLList
+ * @ref elm::genstruct::SLList
+ * 
+ * @ingroup concepts
+ */
+template <class T>
+class MutableList: public List<T>, public MutableCollection<T> {
+public:
 	
 	/**
 	 * Add an item as the first item before other items..

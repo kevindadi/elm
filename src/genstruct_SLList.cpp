@@ -30,7 +30,7 @@ namespace elm { namespace genstruct {
  * This class provides a generic implementation of single-link lists.
  * 
  * @par Implemented concepts:
- * @ref elm::concept::List
+ * @ref elm::concept::MutableList
  * 
  * @param T	Type of data stored in the list.
  * @ingroup gen_datastruct
