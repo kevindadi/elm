@@ -1,6 +1,15 @@
 # $Id$
 
-noinst_PROGRAMS	=	test serial2 unserial2
+check_PROGRAMS = \
+	serial2 \
+	unserial2 \
+	test \
+	test_sorted_sllist \
+	test_tree
+
+all_checks: $(check_PROGRAMS)
+
+
 # new_avl
 noinst_LTLIBRARIES = myplugin.la
 
@@ -66,9 +75,19 @@ unserial2_LDADD = -dlopen force ../src/libelm.la
 unserial2_DEPENDENCIES = ../src/libelm.la
 unserial2_SOURCES		= unserial2.cpp
 
+# test_tree program
+test_tree_LDADD			= ../src/libelm.la
+test_tree_DEPENDENCIES	= ../src/libelm.la
+test_tree_SOURCES		= test_tree.cpp
+
 # new_avl program
-#new_avl_LDADD = ../src/libelm.la
-#new_avl_DEPENDENCIES = ../src/libelm.la
-#new_avl_SOURCES=new_avl.cpp
+new_avl_LDADD = ../src/libelm.la
+new_avl_DEPENDENCIES = ../src/libelm.la
+new_avl_SOURCES=new_avl.cpp
+
+# test_sorted_sllist program
+test_sorted_sllist_LDADD = ../src/libelm.la
+test_sorted_sllist_DEPENDENCIES = ../src/libelm.la
+test_sorted_sllist_SOURCES=test_sorted_sllist.cpp
 
 TESTS = ./test
