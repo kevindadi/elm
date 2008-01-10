@@ -30,10 +30,11 @@ namespace elm { namespace concept {
  * 
  * @par Collection Concepts
  * @li @ref elm::concept::Array
- * @li @ref elm::concept::BiDiList;
+ * @li @ref elm::concept::BiDiList
  * @li @ref elm::concept::Collection
+ * @li @ref elm::concept::Equiv
  * @li @ref elm::concept::Iterator
- * @li @ref elm::concept::List;
+ * @li @ref elm::concept::List
  * @li @ref elm::concept::Map
  * @li @ref elm::concept::MutableArray
  * @li @ref elm::concept::MutableCollection
@@ -119,7 +120,9 @@ public:
 /**
  * This concepts provides methods to handle collection. A collection is an
  * unordered list of items.
+ * 
  * @param T	Type of items stored in the collection.
+ * @param E	Equivallence relation to use.
  * 
  * @par Implemented by:
  * @ref elm::genstruct::DLList,
@@ -127,7 +130,7 @@ public:
  * 
  * @ingroup concepts
  */
-template <class T>
+template <class T, template <class _> E = Equiv<T> >
 class Collection {
 public:
 
@@ -478,7 +481,8 @@ public:
  * @ref elm::Comparator,
  * @ref elm::SubstractComparator,
  * @ref elm::CompareComparator,
- * @ref elm::AssocComparator
+ * @ref elm::AssocComparator,
+ * @ref elm::ReverseComparator
  * 
  * @ingroup concepts
  */
@@ -494,6 +498,31 @@ public:
 	 * 			>0 else.
 	 */
 	static int compare(const T& object1, const T& object2);
+};
+
+
+/**
+ * This class provides methods to test for equality.
+ * 
+ * @par Implemented by:
+ * @ref elm::Equiv
+ * @ref elm::CompareEquiv
+ * @ref elm::EqualsEquiv
+ * 
+ * @param T		Type of values to test.
+ * @ingroup concepts
+ */
+template <class T>
+class Equiv {
+public:
+	
+	/**
+	 * Test if two values are equal.
+	 * @param val1	First value to test for equality.
+	 * @param val2	Second value to test for equality.
+	 * @return		True if both values are equal, false else.
+	 */
+	static bool equals(const T& val1, const T& val2);
 };
 
 

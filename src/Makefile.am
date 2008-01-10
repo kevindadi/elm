@@ -83,6 +83,7 @@ libelm_la_SOURCES= \
 	util_BitVector.cpp \
 	util_Comparator.cpp \
 	util_delegate.cpp \
+	util_Equiv.cpp \
 	util_Formatter.cpp \
 	util_HashKey.cpp \
 	util_Initializer.cpp \
