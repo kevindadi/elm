@@ -3,7 +3,7 @@
  *	SLList class interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2004-07, IRIT UPS.
+ *	Copyright (c) 2004-08, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -24,12 +24,14 @@
 
 #include <elm/assert.h>
 #include <elm/Iterator.h>
-
+#include <elm/util/Equiv.h>
 #include <elm/inhstruct/SLList.h>
+
 namespace elm { namespace genstruct {
 
 // SLList class
-template <class T> class SLList {
+template <class T, class E = Equiv<T> >
+class SLList {
 	inhstruct::SLList list;
 	
 	// Node class
@@ -92,15 +94,17 @@ public:
 
 
 // SLList::Node inlines
-template <class T> SLList<T>::Node::Node(const T value): val(value) {
+template <class T, class E>
+SLList<T, E>::Node::Node(const T value): val(value) {
 }
-template <class T> inline typename SLList<T>::Node *SLList<T>::Node::next(void) const {
+template <class T, class E>
+inline typename SLList<T, E>::Node *SLList<T>::Node::next(void) const {
 	return (Node *)SLNode::next();
 }
 
 // SLList class
-template <class T>
-inline void SLList<T>::clear(void) {
+template <class T, class E>
+inline void SLList<T, E>::clear(void) {
 	while(!list.isEmpty()) {
 		Node *node = (Node *)list.first();
 		list.removeFirst();
@@ -108,66 +112,67 @@ inline void SLList<T>::clear(void) {
 	}	
 }
 
-template <class T> inline SLList<T>::~SLList(void) {
+template <class T, class E>
+inline SLList<T, E>::~SLList(void) {
 	clear();
 }
 
-template <class T> template <template<class _> class C>
-inline void SLList<T>::addAll(const C<T> &items) {
+template <class T, class E> template <template<class _> class C>
+inline void SLList<T, E>::addAll(const C<T> &items) {
 	for(typename C<T>::Iterator iter; iter; iter++)
 		add(iter);
 }
 
-template <class T> template <template<class _> class C>
-inline void SLList<T>::removeAll (const C<T> &items) {
+template <class T, class E> template <template<class _> class C>
+inline void SLList<T, E>::removeAll (const C<T> &items) {
 	for(typename C<T>::Iterator iter; iter; iter++)
 		remove(iter);	
 }
 
-template <class T>
-inline const T& SLList<T>::first(void) const {
+template <class T, class E>
+inline const T& SLList<T, E>::first(void) const {
 	return ((Node *)list.first())->val;
 }
 
-template <class T>
-inline const T& SLList<T>::last(void) const {
+template <class T, class E>
+inline const T& SLList<T, E>::last(void) const {
 	return ((Node *)list.last())->val;
 }
 
-template <class T>
-inline int SLList<T>::count(void) const {
+template <class T, class E>
+inline int SLList<T, E>::count(void) const {
 	return list.count();
 }
 
-template <class T>
-inline void SLList<T>::addFirst(const T &value) {
+template <class T, class E>
+inline void SLList<T, E>::addFirst(const T &value) {
 	list.addFirst(new Node(value));
 }
 
-template <class T>
-inline void SLList<T>::addLast(const T &value) {
+template <class T, class E>
+inline void SLList<T, E>::addLast(const T &value) {
 	list.addLast(new Node(value));
 }
 
-template <class T>
-inline void SLList<T>::removeFirst(void) {
+template <class T, class E>
+inline void SLList<T, E>::removeFirst(void) {
 	Node *node = (Node *)list.first();
 	list.removeFirst();
 	delete node;
 }
 
-template <class T>
-inline void SLList<T>::removeLast(void) {
+template <class T, class E>
+inline void SLList<T, E>::removeLast(void) {
 	Node *node = (Node *)list.last();
 	list.removeLast();
 	delete node;
 }
 
-template <class T>
-inline void SLList<T>::remove(const T &value) {
+template <class T, class E>
+inline void SLList<T, E>::remove(const T &value) {
 	for(Node *prv = 0, *cur = (Node *)list.first(); cur;
 	prv = cur, cur = cur->next())
-		if(cur->val == value) {
+		if(E::equals(cur->val, value)) {
 			if(!prv)
 				list.removeFirst();
 			else
@@ -175,42 +180,42 @@ inline void SLList<T>::remove(const T &value) {
 		}
 }
 
-template <class T>
-inline bool SLList<T>::isEmpty(void) const {
+template <class T, class E>
+inline bool SLList<T, E>::isEmpty(void) const {
 	return list.isEmpty();
 };
 
-template <class T>
-inline bool SLList<T>::contains (const T &item) const {
+template <class T, class E>
+inline bool SLList<T, E>::contains (const T &item) const {
 	for(Iterator iter(*this); iter; iter++)
-		if(item == iter)
+		if(E::equals(item, iter))
 			return true;
 	return false;
 }
 
-template <class T>
-inline void SLList<T>::addAfter(const Iterator& pos, const T& value) {
+template <class T, class E>
+inline void SLList<T, E>::addAfter(const Iterator& pos, const T& value) {
 	ASSERT(pos.node);
 	pos.node->insertAfter(new Node(value));
 }
 
-template <class T>
-inline void SLList<T>::addBefore(const Iterator& pos, const T& value) {
+template <class T, class E>
+inline void SLList<T, E>::addBefore(const Iterator& pos, const T& value) {
 	if(!pos.prev)
 		addFirst(value);
 	else
 		pos.prev->insertAfter(new Node(value));
 }
 
-template <class T>
-inline void SLList<T>::set(const Iterator &pos, const T &item) {
+template <class T, class E>
+inline void SLList<T, E>::set(const Iterator &pos, const T &item) {
 	ASSERT(pos.node);
 	pos.node->val = item;
 }
 
 
-template <class T>
-inline void SLList<T>::remove(const Iterator &iter) {
+template <class T, class E>
+inline void SLList<T, E>::remove(const Iterator &iter) {
 	ASSERT(iter.node);
 	if(!iter.prev)
 		removeFirst();
@@ -220,28 +225,34 @@ inline void SLList<T>::remove(const Iterator &iter) {
 
 
 // SLList::Iterator class
-template <class T> inline SLList<T>::Iterator::Iterator(const SLList& _list)
+template <class T, class E>
+inline SLList<T, E>::Iterator::Iterator(const SLList& _list)
 : node((Node *)_list.list.first()), prev(0) {
 }
 
-template <class T> inline SLList<T>::Iterator::Iterator(const Iterator& source)
+template <class T, class E>
+inline SLList<T, E>::Iterator::Iterator(const Iterator& source)
 : node(source.node), prev(source.prev) {
 }
 
-template <class T> inline SLList<T>::Iterator::Iterator()
+template <class T, class E>
+inline SLList<T, E>::Iterator::Iterator()
 : node(0), prev(0) {
 }
 
-template <class T> inline bool SLList<T>::Iterator::ended(void) const {
+template <class T, class E>
+inline bool SLList<T, E>::Iterator::ended(void) const {
 	return !node;
 }
 
-template <class T> inline T SLList<T>::Iterator::item(void) const {
+template <class T, class E>
+inline T SLList<T, E>::Iterator::item(void) const {
 	ASSERT(node);
 	return node->val;
 }
 
-template <class T> inline void SLList<T>::Iterator::next(void) {
+template <class T, class E>
+inline void SLList<T, E>::Iterator::next(void) {
 	ASSERT(node);
 	prev = node;
 	node = node->next();

@@ -30,6 +30,7 @@ namespace elm { namespace genstruct {
 // SortedSLList class
 template <class T, class R = Comparator<T> >
 class SortedSLList {
+	typedef genstruct::SLList<T, CompareEquiv<T, R> > list_t;
 public:
 	inline SortedSLList(void) { }
 	SortedSLList(SortedSLList & source): list(source.list) { }
@@ -43,13 +44,13 @@ public:
 	inline bool isEmpty(void) const { return list.isEmpty(); }
 	inline operator bool(void) const { return !list.isEmpty(); }
 
-	class Iterator: public genstruct::SLList<T>::Iterator {
+	class Iterator: public list_t::Iterator {
 	public:
 		inline Iterator(void) { }
 		inline Iterator(const SortedSLList& _list)
-			: genstruct::SLList<T>::Iterator(_list.list) { }
+			: list_t::Iterator(_list.list) { }
 		inline Iterator(const Iterator& source)
-			: genstruct::SLList<T>::Iterator(source) { }
+			: list_t::Iterator(source) { }
 	};
 	
 	// MutableCollection concept
@@ -68,56 +69,11 @@ public:
 	inline const T& last(void) const { return list.last(); }
 	
 private:
-	genstruct::SLList<T> list;
-	//inline typename genstruct::SLList<T>::Iterator elements(void) const;
+	list_t list;
 };
 
 
-/*template <class T, class R> inline SortedSLList<T,R>::Iterator::Iterator(const SortedSLList<T,R> &_list)
-:genstruct::SLList<T>::Iterator(_list.elements()) {
-	
-}
-template <class T, class R> inline SortedSLList<T,R>::Iterator::Iterator(const Iterator &source)
-:genstruct::SLList<T>::Iterator(source) {
-	
-}
-template <class T, class R> inline SortedSLList<T,R>::Iterator::Iterator()
-:genstruct::SLList<T>::Iterator() {
-	
-}*/
-
-/*template <class T, class R> inline T SortedSLList<T,R>::first(void) const {
-	return list.first();
-}*/
-
-/*template <class T, class R> inline T SortedSLList<T,R>::last(void) const {
-	return list.last();
-}
-template <class T, class R> inline int SortedSLList<T,R>::count(void) const {
-	return list.count();
-}
-template <class T, class R> inline bool SortedSLList<T,R>::isEmpty(void) const {
-	return list.isEmpty();
-}
-template <class T, class R> inline typename genstruct::SLList<T>::Iterator SortedSLList<T,R>::elements(void) const {
-	return typename genstruct::SLList<T>::Iterator(list);
-}*/
-
-
-/*template <class T, class R> inline void SortedSLList<T,R>::removeFirst(void) {
-	list.removeFirst();
-}
-template <class T, class R> inline void SortedSLList<T,R>::removeLast(void) {
-	list.removeLast();
-}
-template <class T, class R> inline void SortedSLList<T,R>::removeNext(const typename genstruct::SortedSLList<T,R>::Iterator& pos) {
-	list.removeNext(pos);
-}*/
-/*template <class T, class R> inline void SortedSLList<T,R>::remove(const T& value) {
-	list.remove(value);
-
-}*/
-
+// SortedSLList inlines
 template <class T, class R>
 void SortedSLList<T,R>::add(const T& value) {
 	for(Iterator current(*this); current; current++)					
