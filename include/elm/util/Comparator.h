@@ -24,6 +24,7 @@
 
 #include <elm/string.h>
 #include <elm/util/Pair.h>
+#include <elm/util/Equiv.h>
 
 namespace elm {
 
@@ -82,7 +83,16 @@ public:
 	static inline int compare(const T& v1, const T& v2)
 		{ return -C<T>::compare(v1, v2); }
 };
-	
+
+
+// CompareEquiv class
+template <class T, class C = Comparator<T> >
+class CompareEquiv {
+public:
+	static inline bool equals(const T& v1, const T& v2)
+		{ return C::compare(v1, v2) == 0; }
+};
+
 } // elm
 
 #endif /* ELM_COMPARATOR_H_ */
