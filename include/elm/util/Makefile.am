@@ -6,6 +6,7 @@ includeelmutil_HEADERS = \
 	BitVector.h \
 	Comparator.h \
 	delegate.h \
+	Equiv.h \
 	Exception.h \
 	HashKey.h \
 	Initializer.h \
