@@ -27,5 +27,6 @@
 #include <elm/util/Pair.h>
 #include <elm/util/MessageException.h>
 #include <elm/util/Comparator.h>
+#include <elm/util/Equiv.h>
 
 #endif	// ELM_UTILITY_H
