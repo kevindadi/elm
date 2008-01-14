@@ -19,6 +19,7 @@ public:
 	inline Pair(const T1& _fst, const T2& _snd);
 	inline Pair(const Pair<T1, T2>& pair);
 	inline Pair<T1, T2>& operator=(const Pair<T1, T2>& pair);
+	inline bool operator==(const Pair<T1, T2>& pair) const;
 };
 
 
@@ -47,6 +48,11 @@ template <class T1, class T2>
 inline Pair<T1, T2>& Pair<T1, T2>::operator=(const Pair<T1, T2>& pair) {
 	fst = pair.fst;
 	snd = pair.snd;
+}
+
+template <class T1, class T2>
+inline bool Pair<T1, T2>::operator==(const Pair<T1, T2>& pair)  const {
+	return ((fst== pair.fst) && (snd == pair.snd));
 }
 
 } // elm
