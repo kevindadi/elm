@@ -28,7 +28,7 @@
 namespace elm { namespace genstruct {
 
 // DLList<T> class
-template <class T>
+template <class T, class E = Equiv<T> >
 class DLList {
 	
 	// DLNode class
@@ -88,6 +88,17 @@ public:
 	// List concept
 	inline const T& first(void) const;
 	inline const T& last(void) const;
+	inline Iterator find(const T& item) const {
+		Iterator iter(*this);
+		for(; iter; iter++) if(E::equals(item, iter)) break;
+		return iter;
+	}
+	inline Iterator find(const T& item, const Iterator& iter) const {
+		for(iter++; iter; iter++) if(E::equals(item, iter)) break;
+		return iter;
+	}
+	
+	// MutabeList concept
 	inline void addFirst(const T& value);
 	inline void addLast(const T& value);
 	inline void removeFirst(void);
@@ -120,57 +131,55 @@ public:
 
 
 // DLList<T>::DLNode methods
-template <class T> DLList<T>::DLNode::DLNode(const T value): val(value) {
-}
-template <class T> const T& DLList<T>::DLNode::value(void) const {
-	return val;
-}
+template <class T, class E>
+DLList<T, E>::DLNode::DLNode(const T value): val(value) { }
+template <class T, class E>
+const T& DLList<T, E>::DLNode::value(void) const { return val; }
 
 
 // DLList<T> methods
-template <class T> inline DLList<T>::~DLList(void) {
-	clear();
-}
+template <class T, class E> inline DLList<T, E>::~DLList(void) { clear(); }
 
-template <class T> const T& DLList<T>::first(void) const {
-	return ((DLNode *)list.first())->value();
-}
-template <class T> const T& DLList<T>::last(void) const {
-	return ((DLNode *)list.last())->value();
-}
-template <class T> bool DLList<T>::isEmpty(void) const {
-	return list.isEmpty();
-}
-template <class T> int DLList<T>::count(void) const {
+template <class T, class E> const T& DLList<T, E>::first(void) const
+	{ return ((DLNode *)list.first())->value(); }
+
+template <class T, class E> const T& DLList<T, E>::last(void) const
+	{ return ((DLNode *)list.last())->value(); }
+
+template <class T, class E> bool DLList<T, E>::isEmpty(void) const
+	{ return list.isEmpty(); }
+
+template <class T, class E> int DLList<T, E>::count(void) const {
 	return list.count();
 }
-template <class T> void DLList<T>::addFirst(const T& value) {
-	list.addFirst(new DLNode(value));
-}
-template <class T> void DLList<T>::addLast(const T& value) {
-	list.addLast(new DLNode(value));
-}
-template <class T> void DLList<T>::removeFirst(void) {
-	list.removeFirst();
-}
-template <class T> void DLList<T>::removeLast(void) {
-	list.removeLast();
-}
-template <class T> void DLList<T>::remove(const T& value) {
+template <class T, class E> void DLList<T, E>::addFirst(const T& value)
+	{ list.addFirst(new DLNode(value)); }
+
+template <class T, class E> void DLList<T, E>::addLast(const T& value)
+	{ list.addLast(new DLNode(value)); }
+
+template <class T, class E> void DLList<T, E>::removeFirst(void)
+	{ list.removeFirst(); }
+
+template <class T, class E> void DLList<T, E>::removeLast(void)
+	{ list.removeLast(); }
+
+template <class T, class E> void DLList<T, E>::remove(const T& value) {
 	for(DLNode *cur = (DLNode *)list.first(); !cur->atEnd(); cur = (DLNode *)cur->next())
-		if(cur->value() == value) {
+		if(E::equals(cur->value(), value)) {
 			cur->remove();
 			break;
 		}
 }
-template <class T> bool DLList<T>::contains(const T& value) const {
+
+template <class T, class E> bool DLList<T, E>::contains(const T& value) const {
 	for(DLNode *cur = (DLNode *)list.first(); !cur->atEnd(); cur = (DLNode *)cur->next())
-		if(cur->value() == value)
+		if(E::equals(cur->value(), value))
 			return true;
 	return false;
 }
 
-template <class T> void DLList<T>::clear(void) {
+template <class T, class E> void DLList<T, E>::clear(void) {
 	DLNode *node;
 	while(!list.isEmpty()) {
 		DLNode *node = (DLNode *)list.first();
@@ -179,20 +188,20 @@ template <class T> void DLList<T>::clear(void) {
 	}
 }
 
-template <class T> template <template <class _> class C>
-inline void DLList<T>::addAll(const C<T>& items) {
+template <class T, class E> template <template <class _> class C>
+inline void DLList<T, E>::addAll(const C<T>& items) {
 	for(typename C<T>::Iterator iter(items); iter; iter++)
 		add(iter);
 }
 
-template <class T> template <template <class _> class C>
-inline void DLList<T>::removeAll(const C<T>& items) {
+template <class T, class E> template <template <class _> class C>
+inline void DLList<T, E>::removeAll(const C<T>& items) {
 	for(typename C<T>::Iterator iter(items); iter; iter++)
 		remove(iter);	
 }
 
-template <class T>
-void DLList<T>::remove(const AbstractIterator &iter)
+template <class T, class E>
+void DLList<T, E>::remove(const AbstractIterator &iter)
 	{ iter.cur.remove(); }
 
 } }	// elm::genstruct

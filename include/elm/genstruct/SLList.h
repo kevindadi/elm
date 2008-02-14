@@ -80,6 +80,17 @@ public:
 	// List concept
 	inline const T& first(void) const;
 	inline const T& last(void) const;
+	inline Iterator find(const T& item) const {
+		Iterator iter(*this);
+		for(; iter; iter++) if(E::equals(item, iter)) break;
+		return iter;
+	}
+	inline Iterator find(const T& item, const Iterator& iter) const {
+		for(iter++; iter; iter++) if(E::equals(item, iter)) break;
+		return iter;
+	}
+	
+	// MutableList concept
 	inline void addFirst(const T& value);
 	inline void addLast(const T& value);
 	inline void addAfter(const Iterator& pos, const T& value);
@@ -87,9 +98,6 @@ public:
 	inline void removeFirst(void);
 	inline void removeLast(void);
 	inline void set(const Iterator &pos, const T &item);
-
-	// Deprecated
-	// inline void removeNext(const Iterator& pos);
 };
 
 
