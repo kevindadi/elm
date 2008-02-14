@@ -28,9 +28,20 @@
 
 namespace elm {
 
+// PreComparator class
+template <class T, class C>
+class PreComparator {
+public:
+	static inline const T& min(const T& v1, const T& v2)
+		{ return C::compare(v1, v2) < 0 ? v1 : v2; }
+	static inline const T& max(const T& v1, const T& v2)
+		{ return C::compare(v1, v2) > 0 ? v1 : v2; }
+};
+
+
 // Comparator class
 template <class T>
-class Comparator {
+class Comparator: public PreComparator<T, Comparator<T> > {
 public:
 	static inline int compare(const T& v1, const T& v2)
 		{ if(v1 == v2) return 0; else if(v1 > v2) return 1; else return -1; }
@@ -38,7 +49,7 @@ public:
 
 // SubstractComparator class
 template <class T>
-class SubstractComparator {
+class SubstractComparator: public PreComparator<T, SubstractComparator<T> > {
 public:
 	static inline int compare(const T& v1, const T& v2) { return v1 - v2; }
 };
@@ -56,7 +67,7 @@ template <> class Comparator<unsigned long long>: public SubstractComparator<uns
 
 // CompareComparator class
 template <class T>
-class CompareComparator {
+class CompareComparator: public PreComparator<T, CompareComparator<T> > {
 public:
 	static inline int compare(const T& v1, const T& v2) { return v1.compare(v2); }
 };
@@ -66,7 +77,7 @@ template <> class Comparator<string>: public CompareComparator<string> { };
 
 // AssocComparator class
 template <class K, class T, class C = Comparator<K> >
-class AssocComparator {
+class AssocComparator: public PreComparator<Pair<K, T>, AssocComparator<K, T, C> > {
 public:
 	typedef Pair<K, T> pair_t;
 	static inline int compare(const pair_t& v1, const pair_t& v2)
@@ -77,11 +88,11 @@ template <class K, class T> class Comparator<Pair<K, T> >
 
 
 // ReverseComparator class
-template <class T, template <class _> class C>
-class ReverseComparator {
+template <class T, class C>
+class ReverseComparator: public PreComparator<T, ReverseComparator<T, C > > {
 public:
 	static inline int compare(const T& v1, const T& v2)
-		{ return -C<T>::compare(v1, v2); }
+		{ return -C::compare(v1, v2); }
 };
 
 
@@ -92,6 +103,13 @@ public:
 	static inline bool equals(const T& v1, const T& v2)
 		{ return C::compare(v1, v2) == 0; }
 };
+
+
+// Useful inlines
+template <class T> inline int min(const T& x, const T& y)
+	{ return Comparator<T>::min(x, y); }
+template <class T> inline int max(const T& x, const T y)
+	{ return Comparator<T>::max(x, y); }
 
 } // elm
 
