@@ -126,7 +126,7 @@ inline IntFormat::IntFormat(unsigned char value): val(value) {
 	init(false);
 }
 	
-inline IntFormat::IntFormat(short value): val(value) {
+inline IntFormat::IntFormat(signed short value): val(value) {
 	init(true);
 }
 
