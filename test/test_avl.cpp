@@ -9,9 +9,13 @@
 #include <elm/inhstruct/AVLTree.h>
 #include <elm/genstruct/AVLTree.h>
 #include <elm/io.h>
-
+ #include <stdlib.h>
+ 
 using namespace elm::inhstruct;
 using namespace elm;
+
+#define VAL_MAX		1000
+#define TEST_CNT	1000
 
 /* My node */
 class MyNode: public AVLTree::Node {
@@ -55,6 +59,19 @@ protected:
 	}
 };
 
+
+// Dump the tree
+void dump(MyNode *node, int tab = 0) {
+	if(!node)
+		return;
+	for(int i = 0; i < tab; i++)
+		cout << "  ";
+	cout << node->v << io::endl;
+	dump((MyNode *)node->left(), tab + 1);
+	dump((MyNode *)node->right(), tab + 1);
+}
+
+
 // genstruct::AVLTree<int>::Visitor
 class GenVisitor: public genstruct::AVLTree<int>::Visitor {
 	TestCase& __case;
@@ -85,7 +102,7 @@ void test_avl(void) {
 		CHECK(tree.isEmpty());
 		for(int i = 0; i < 10; i++) {
 			nodes[i] = new MyNode(i);
-			tree.insert(nodes[i]);
+			tree.insert(/*nodes[i]*/new MyNode(i));
 		}
 		CHECK(!tree.isEmpty());
 		for(int i = 0; i < 10; i++)
@@ -101,16 +118,23 @@ void test_avl(void) {
 	
 		// Remove some nodes
 		int removes[3] = { 9, 8, 5 };
+		//dump((MyNode *)tree.root());
 		for(int i = 0; i < 3; i++) {
+			cout << "BEFORE\n";
+			dump((MyNode *)tree.root());
+			cout << "REMOVE " << removes[i] << io::endl;
 			tree.remove(nodes[removes[i]]);
+			cout << "AFTER\n";
+			dump((MyNode *)tree.root());
 			CHECK(!tree.contains(nodes[removes[i]]));
 			#ifdef ELM_DEBUG_AVLTREE
 				tree.dump();
 			#endif
 			nodes[removes[i]] = 0;
-			for(int j = 0; j < 10; j++)
+			for(int j = 0; j < 10; j++) {
 				if(nodes[j])
 					CHECK(tree.contains(nodes[j]));
+			}	
 		}
 		#ifdef ELM_DEBUG_AVLTREE
 			tree.dump();
@@ -143,6 +167,53 @@ void test_avl(void) {
 		
 		// Clean up
 		tree.clean();
+	}
+	
+	// Robustness test
+	{
+		bool failed = false;
+		genstruct::AVLTree<int> tree;
+		int t[VAL_MAX];
+		for(int i = 0; i < VAL_MAX; i++)
+			t[i] = 0;
+		for(int cnt = 0; !failed && cnt < TEST_CNT; cnt++) {
+			
+			// Do operation
+			int op = rand();
+			int idx = int(double(op >> 1) * VAL_MAX / RAND_MAX);
+			if(op % 2 == 0) {
+				cout << cnt << ". add " << idx << io::endl;
+				tree.insert(idx);
+				t[idx] = 1;	
+			}			
+			else {
+				if(!t[idx]) {
+					int base = idx++;
+					while(!t[idx] && idx != base)
+						idx = (idx + 1) % VAL_MAX;
+					if(idx == base)
+						continue;
+				}
+				cout << cnt << ". remove " << idx << io::endl;
+				tree.remove(idx);
+				t[idx] = 0;
+			}
+			
+			// Check the content
+			for(int i = 0; i < VAL_MAX; i++) {
+				if(t[i] && !tree.contains(i)) {
+					failed = true;
+					cerr << "ERROR:" << i << " not in the tree !\n";
+					break;
+				}
+				if(!t[i] && tree.contains(i)) {
+					failed = true;
+					cerr << "ERROR:" << i << " in the tree !\n";
+					break;
+				}
+			}
+		}
+		CHECK(!failed); 
 	}
 	
 	CHECK_END;
