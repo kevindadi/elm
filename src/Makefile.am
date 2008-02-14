@@ -21,6 +21,7 @@ libelm_la_SOURCES= \
 	checksum_Fletcher.cpp \
 	Collection.cpp \
 	genstruct.h \
+	genstruct_AssocList.cpp \
 	genstruct_DLList.cpp \
 	genstruct_FragTable.cpp \
 	genstruct_HashTable.cpp \
@@ -79,6 +80,7 @@ libelm_la_SOURCES= \
 	system_System.cpp \
 	system_SystemException.cpp \
 	system_SystemIO.cpp \
+	type_info.cpp \
 	util_AutoDestructor.cpp \
 	util_BitVector.cpp \
 	util_Comparator.cpp \
