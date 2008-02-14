@@ -4,7 +4,9 @@ check_PROGRAMS = \
 	serial2 \
 	unserial2 \
 	test \
+	test_assoc_list \
 	test_sorted_sllist \
+	test_type_info \
 	test_tree
 
 all_checks: $(check_PROGRAMS)
@@ -89,5 +91,15 @@ new_avl_SOURCES=new_avl.cpp
 test_sorted_sllist_LDADD = ../src/libelm.la
 test_sorted_sllist_DEPENDENCIES = ../src/libelm.la
 test_sorted_sllist_SOURCES=test_sorted_sllist.cpp
+
+# test_assoc_list program
+test_assoc_list_LDADD = ../src/libelm.la
+test_assoc_list_DEPENDENCIES = ../src/libelm.la
+test_assoc_list_SOURCES=test_assoc_list.cpp
+
+# test_assoc_list program
+test_type_info_LDADD = ../src/libelm.la
+test_type_info_DEPENDENCIES = ../src/libelm.la
+test_type_info_SOURCES=test_type_info.cpp
 
 TESTS = ./test
