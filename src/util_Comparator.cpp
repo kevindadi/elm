@@ -41,6 +41,24 @@ namespace elm {
 
 
 /**
+ * @fn const T& Comparator::min(const T& v1, const T& v2);
+ * Get the minimum of two values.
+ * @param v1	First value.
+ * @param v2	Second value.
+ * @return		Minimum of v1 and v2.
+ */
+
+
+/**
+ * @fn const T& Comparator::max(const T& v1, const T& v2);
+ * Get the maximum of two values.
+ * @param v1	First value.
+ * @param v2	Second value.
+ * @return		Maximum of v1 and v2.
+ */
+
+
+/**
  * @class SubstractComparator
  * Implementation of the @ref elm::concept::Comparator for values supporting
  * a substraction operator returning an integer.
