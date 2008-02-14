@@ -40,7 +40,7 @@ public:
 
 	// Collection concept
 	inline int count (void) const { return list.count(); }
-	bool contains (const T &item);
+	bool contains(const T &item) const;
 	inline bool isEmpty(void) const { return list.isEmpty(); }
 	inline operator bool(void) const { return !list.isEmpty(); }
 
@@ -51,6 +51,10 @@ public:
 			: list_t::Iterator(_list.list) { }
 		inline Iterator(const Iterator& source)
 			: list_t::Iterator(source) { }
+	private:
+		friend class SortedSLList;
+		inline Iterator(const typename list_t::Iterator& iter)
+			: list_t::Iterator(iter) { }
 	};
 	
 	// MutableCollection concept
@@ -67,6 +71,10 @@ public:
 	// List concept
 	inline const T& first(void) const { return list.first(); }
 	inline const T& last(void) const { return list.last(); }
+	inline Iterator find(const T& item) const
+		{ return Iterator(list.find(item)); }
+	inline Iterator find(const T& item, const Iterator& iter) const
+		{ return list.find(item, iter); }
 	
 private:
 	list_t list;
@@ -85,7 +93,7 @@ void SortedSLList<T,R>::add(const T& value) {
 }
 
 template <class T, class R>
-bool SortedSLList<T, R>::contains (const T &item) {
+bool SortedSLList<T, R>::contains (const T &item) const {
 	for (Iterator current(*this); current; current++) {
 		int cmp = R::compare(item,  *current);
 		if(cmp > 0)
