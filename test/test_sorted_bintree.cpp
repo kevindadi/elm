@@ -118,7 +118,7 @@ void test_sorted_bintree(void) {
 			// Full check
 			for(int j = 0; j < cnt; j++)
 				ASSERT(map.get(vals[j], 0));
-		}	
+		}
 		CHECK(!error);		
 	}
 	
