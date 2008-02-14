@@ -216,7 +216,7 @@ Plugin *Plugger::plugFile(String path) {
 	#endif
 	if(!handle) {
 		err = NO_PLUGIN;
-		onError(_ << "invalid plugin found at \"" << path << "\"");
+		onError(_ << "invalid plugin found at \"" << path << "\" (no handle)");
 		return 0;
 	}
 
@@ -228,14 +228,14 @@ Plugin *Plugger::plugFile(String path) {
 	#endif
 	if(!plugin) {
 		err = NO_HOOK;
-		onWarning(_ << "invalid plugin found at \"" << path << "\"");
+		onWarning(_ << "invalid plugin found at \"" << path << "\" (no hook)");
 		return 0;
 	}
 	
 	// Check the magic
 	if(plugin->magic != Plugin::MAGIC) {
 		err = NO_MAGIC;
-		onWarning(_ << "invalid plugin found at \"" << path << "\"");
+		onWarning(_ << "invalid plugin found at \"" << path << "\" (bad magic)");
 		return 0;
 	}
 		
