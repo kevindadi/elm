@@ -32,7 +32,6 @@ namespace elm { namespace concept {
  * @li @ref elm::concept::Array
  * @li @ref elm::concept::BiDiList
  * @li @ref elm::concept::Collection
- * @li @ref elm::concept::Equiv
  * @li @ref elm::concept::Iterator
  * @li @ref elm::concept::List
  * @li @ref elm::concept::Map
@@ -46,11 +45,15 @@ namespace elm { namespace concept {
  * 
  * @par Value Concepts
  * @li @ref elm::concept::Comparator
+ * @li @ref elm::concept::Equiv
  * @li @ref elm::concept::PartialComparator
  * @li @ref elm::concept::Hash
  * 
  * @par Other Concepts
  * @li @ref elm::concept::Graph
+ * @li @ref elm::concept::Key
+ * @li @ref elm::concept::KeyLooker
+ * @li @ref elm::concept::MutableKeyLooker
  * 
  * @par Note
  * The <i>This</i> class represents the actual class itself in the concepts and must
@@ -158,6 +161,10 @@ public:
 	 */
 	operator bool(void);
 	
+	/**
+	 * Iterator on the items of the collection. No assertion can be made
+	 * about the order of traversal of the collection items.
+	 */
 	class Iterator: public concept::Iterator<T> {
 	public:
 	
@@ -219,7 +226,7 @@ public:
 	 * Remove a value using an iterator.
 	 * @param iter	Iter giving the item to remove.
 	 */
-	void remove(const Iterator<T>& iter);
+	void remove(const Iterator<T>& iter);	
 };
 
 
@@ -641,20 +648,20 @@ public:
 	/**
 	 * Iterator giving access to keys and values stored in the map.
 	 */
-	class ValueIterator: public Iterator<Pair<K, T> > {
+	class PairIterator: public Iterator<Pair<K, T> > {
 	public:
 	
 		/**
 		 * An iterator on values and keys of the map.
 		 * @param map	Map to iterate on.
 		 */
-		ValueIterator(const Map<T>& map);
+		PairIterator(const Map<T>& map);
 		
 		/**
 		 * An iterator by copy.
 		 * @param iter	Iterator to copy.
 		 */
-		ValueIterator(const ValueIterator& iter);
+		PairIterator(const ValueIterator& iter);
 	};
 };
 
@@ -664,8 +671,9 @@ public:
  * @ingroup concepts
  */
 template <class K, class T>
-class MutableMap: public  Map, public  MutableCollection {
-
+class MutableMap: public  Map, public  Collection {
+public:
+	
 	/**
 	 * Put a new value in the map.
 	 * @param key	Key of the item to put.
@@ -683,7 +691,7 @@ class MutableMap: public  Map, public  MutableCollection {
 	 * Remove an item using an iterator.
 	 * @param iter	Iterator to use.
 	 */
-	void remove(const ValueIterator& iter);
+	void remove(const PairIterator& iter);
 };
 
 
@@ -710,8 +718,23 @@ public:
 	/**
 	 * Get the last item of the list.
 	 * @return	Last item.
+	 */ 
+	const T& last(void);
+	
+	/**
+	 * Find the iterator of the item equal to the given one in the list.
+	 * @param item	Item to look for.
+	 * @return		Iterator on the found item, ended item if not found.
 	 */
-	const T& last(void);	
+	Iterator<T> find(const T& item);
+
+	/**
+	 * Find the iterator of the item equal to the given one in the list.
+	 * @param item	Item to look for.
+	 * @param iter	Position to start from.
+	 * @return		Iterator on the found item, ended item if not found.
+	 */
+	Iterator<T> find(const T& item, const Iterator& start);
 };
 
 
@@ -810,6 +833,60 @@ public:
 		BackIterator& operator=(const BackIterator<T>& iter);		
 		BackIterator& operator=(const Iterator<T>& iter);		
 	};
+};
+
+
+/**
+ * This class are used for data whose only a part represents an identifier
+ * when comparison must be done.
+ * @param K		Type of the key.
+ * @param T		Type of the item.
+ */
+template <class K, class T>
+class Key {
+public:
+	
+	/**
+	 * Type of the key.
+	 */
+	typedef K key_t;
+	
+	/**
+	 * Get the key from a value.
+	 * @param value	Value to get the key of.
+	 * @return		Key of the current value.
+	 */
+	const K& key(const T& value);
+};
+
+/**
+ * A collection that supports key embodied in data.
+ * @param T	Type of stored objects.
+ * @param K	Identification class (must implements the Identified<?, T> concept).
+ */
+template <class T, class I>
+class KeyLooker {
+public:
+
+	/**
+	 * Look for a value in the collection with the given key.
+	 * @param key	Key of the object to get.
+	 * @return		Objec matching the key or null if not found.
+	 */
+	const T *look(const K::key_t& key) const;
+};
+
+template <class T, class I>
+class MutableKeyLooker: pubic Lookable<T, I> {	
+public:
+
+	/**
+	 * Look for a value in the collection with the given key that may
+	 * possibly modified.
+	 * @param key	Key of the object to get.
+	 * @return		Objec matching the key or null if not found.
+	 */
+	T *look(const K::key_t& key);
 };
 
 } } // elm::concept
