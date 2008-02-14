@@ -30,6 +30,7 @@ includeelm_HEADERS = \
 	options.h \
 	rtti.h \
 	string.h \
+	type_info.h \
 	types.h \
 	utility.h \
 	xom.h
