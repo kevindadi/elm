@@ -13,3 +13,5 @@ unserial2
 test_sorted_sllist
 new_avl
 test_tree
+test_type_info
+test_assoc_list
