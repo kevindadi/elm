@@ -15,3 +15,4 @@ new_avl
 test_tree
 test_type_info
 test_assoc_list
+test_io
