@@ -37,7 +37,7 @@
 
 // DEPRECATED macro
 #ifndef ELM_NO_DEPRECATED_SHORTCUT
-#	define DEPRECATED(fn, body) ELM_DEPRECATED(fn, body)
+#	define DEPRECATED ELM_DEPRECATED
 #endif
 
 #endif /* ELM_DEPRECATED_H */
