@@ -48,8 +48,10 @@ public:
 	int flush(void)
 		{ return 0; }
 
-	virtual pos_t pos(void)
+	virtual pos_t pos(void) const
 		{ return lseek(fd, 0, SEEK_CUR); }
+	virtual size_t size(void) const
+		{ struct stat s; fstat(fd, &s); return s.st_size; }
 	virtual bool moveTo(pos_t pos)
 		{ return lseek(fd, pos, SEEK_SET) == pos; }
 	virtual bool moveForward(pos_t pos)
@@ -69,9 +71,16 @@ private:
 
 
 /**
- * @fn pos_t RandomAccessStream::pos(void);
+ * @fn pos_t RandomAccessStream::pos(void) const;
  * Get the current position in the file.
  * @return	Current position.
+ */
+
+
+/**
+ * size_t RandomAccessStream::size(void) const; 
+ * Get the size of the current stream.
+ * @return	Stream size.
  */
 
 
