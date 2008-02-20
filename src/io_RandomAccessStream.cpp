@@ -1,0 +1,159 @@
+/*
+ *	$Id$
+ *	RandomAccessStream class implementation
+ *
+ *	This file is part of OTAWA
+ *	Copyright (c) 2008, IRIT UPS.
+ * 
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software 
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+#include <elm/deprecated.h>
+#include <elm/assert.h>
+#include <elm/io/RandomAccessStream.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <string.h>
+#include <errno.h>
+#include <fcntl.h>
+
+namespace elm { namespace io {
+
+// UnixRandomAccessStream class
+class UnixRandomAccessStream: public RandomAccessStream {
+public:
+	inline UnixRandomAccessStream(int _fd): fd(_fd) { }
+	virtual ~UnixRandomAccessStream(void)
+		{ close(fd); }
+	
+	virtual int read(void *buffer, int size)
+		{ return ::read(fd, buffer, size); }
+	virtual int write(const char *buffer, int size)
+		{ return ::write(fd, buffer, size); }
+	cstring lastErrorMessage(void)
+		{ DEPRECATED; return strerror(errno); }
+	int flush(void)
+		{ return 0; }
+
+	virtual pos_t pos(void)
+		{ return lseek(fd, 0, SEEK_CUR); }
+	virtual bool moveTo(pos_t pos)
+		{ return lseek(fd, pos, SEEK_SET) == pos; }
+	virtual bool moveForward(pos_t pos)
+		{ return lseek(fd, pos, SEEK_CUR) == pos; }
+	virtual bool moveBackward(pos_t _pos)
+		{ return lseek(fd, pos() - _pos, SEEK_SET) == _pos; }
+
+private:
+	int fd;
+};
+
+
+/**
+ * @class RandomAccessStream
+ * A stream allowing to move the read/write head along the file.
+ */
+
+
+/**
+ * @fn pos_t RandomAccessStream::pos(void);
+ * Get the current position in the file.
+ * @return	Current position.
+ */
+
+
+/**
+ * @fn bool RandomAccessStream::moveTo(pos_t pos) = 0;
+ * Move the read/write pointer to the given position.
+ * @param pos	Position to set the pointer to.
+ * @return		True if the operation succeeded, false else.
+ */
+
+
+/**
+ * @fn bool RandomAccessStream::moveForward(pos_t pos);
+ * Move the read/write pointer to the given position, relatively to the current
+ * position.
+ * @param pos	Relative position to move to.
+ * @return		True if the operation succeeded, false else.
+ */
+
+
+/**
+ * @fn bool RandomAccessStream::moveBackward(pos_t pos);
+ * Move the read/write pointer to the given position, relatively back from the
+ * current position.
+ * @param pos	Relative position to move backward from.
+ * @return		True if the operation succeeded, false else.
+ */
+
+
+/**
+ * @fn void RandomAccessStream::resetPos(void);
+ * Reset the position of the read/write pointer to the start of the file.
+ */
+
+
+// Build the flags
+static inline int makeFlags(RandomAccessStream::access_t access) {
+	switch(access) {
+	case RandomAccessStream::READ: return O_RDONLY;
+	case RandomAccessStream::WRITE: return O_WRONLY;
+	case RandomAccessStream::READ_WRITE: return O_RDWR;
+	default: ASSERT(false);
+	}
+}
+
+
+/**
+ * Open a random access stream from a file.
+ * @param path			Path of the file to open.
+ * @param access		Type of access (one of READ, WRITE, READ_WRITE).
+ * @return				Opened file.
+ * @throws IOException	Thrown if there is an error.
+ */
+RandomAccessStream *RandomAccessStream::openFile(
+	const system::Path& path,
+	access_t access )
+{
+	int fd = ::open(&path.toString(), makeFlags(access));
+	if(fd < 0)
+		throw IOException(_ << "cannot open \"" << path << "\": " << strerror(errno));
+	else
+		return new UnixRandomAccessStream(fd);
+};
+
+
+/**
+ * Create a random access stream from a file, removing it if it already exists.
+ * @param path			Path of the file to open.
+ * @param access		Type of access (one of READ, WRITE, READ_WRITE).
+ * @return				Opened file.
+ * @throws IOException	Thrown if there is an error.
+ */
+RandomAccessStream *RandomAccessStream::createFile(
+	const system::Path& path,
+	access_t access)
+{
+	ASSERTP(access != READ, "file creation requires at least a write mode");
+	int fd = ::open(&path.toString(), makeFlags(access) | O_CREAT | O_TRUNC, 0666);
+	if(fd < 0)
+		throw IOException(_ << "cannot create \"" << path << "\": " << strerror(errno));
+	else
+		return new UnixRandomAccessStream(fd);
+}
+
+} } // elm::io

@@ -37,17 +37,18 @@ libelm_la_SOURCES= \
 	inhstruct_BinTree.cpp \
 	inhstruct_SortedBinTree.cpp \
 	inhstruct_DLList.cpp \
-	io_OutStream.cpp \
-	io_UnixOutStream.cpp \
-	io_Input.cpp \
-	io_Output.cpp \
-	io_InFileStream.cpp \
-	io_InStream.cpp \
-	io_OutFileStream.cpp \
-	io_UnixInStream.cpp \
-	io_IOException.cpp \
-	io_BlockOutStream.cpp \
 	io_BlockInStream.cpp \
+	io_BlockOutStream.cpp \
+	io_InFileStream.cpp \
+	io_Input.cpp \
+	io_InStream.cpp \
+	io_IOException.cpp \
+	io_OutFileStream.cpp \
+	io_Output.cpp \
+	io_OutStream.cpp \
+	io_RandomAccessStream.cpp \
+	io_UnixInStream.cpp \
+	io_UnixOutStream.cpp \
 	Iterator.cpp \
 	option_Option.cpp \
 	option_StandardOption.cpp \
