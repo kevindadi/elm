@@ -32,13 +32,15 @@ namespace elm { namespace io {
 class RandomAccessStream: public InStream, public OutStream  {
 public:
 	typedef unsigned long long pos_t;
+	typedef unsigned long long size_t;
 	typedef enum access_t {
 		READ,
 		WRITE,
 		READ_WRITE
 	} access_t;
 	
-	virtual pos_t pos(void) = 0;
+	virtual pos_t pos(void) const = 0;
+	virtual size_t size(void) const = 0; 
 	virtual bool moveTo(pos_t pos) = 0;
 	virtual bool moveForward(pos_t pos) = 0;
 	virtual bool moveBackward(pos_t pos) = 0;
