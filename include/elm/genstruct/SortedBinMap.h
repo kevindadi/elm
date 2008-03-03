@@ -28,51 +28,29 @@
 
 namespace elm { namespace genstruct {
 
+template <class K, class T>
+class DefaultIdent<Pair<K, T> > {
+public:
+	typedef K key_t;
+	static const K& key(const Pair<K, T>& pair) { return pair.fst; }
+};
+
 // SortedBinMap class
 template <class K, class T, class C = Comparator<K> >
 class SortedBinMap {
+	typedef Pair<K, T> value_t;
+	typedef genstruct::SortedBinTree<value_t, C> tree_t;
 public:
 	inline SortedBinMap(void) { }
 	inline SortedBinMap(const SortedBinMap& map): tree(map.tree) { }
 	
-	// Accessors
+	// Collection concept
 	inline int count(void) const { return tree.count(); }
 	inline bool contains(const K &item) const { return tree.contains(item); }
 	inline bool isEmpty(void) const { return tree.isEmpty(); }
  	inline operator bool(void) const { return !isEmpty(); }
-	
-	// Map
-	inline Option<const T> get(const K &key) const {
-		Option<const T&> res = tree.get(key);
-		if(res)
-			return res.snd;
-		else
-			return none;
-	}
-	
-	inline T get(const K &key, const T &def) const {
-		Option<const value_t> res = tree.get(key);
-		if(res)
-			return (*res).snd;
-		else
-			return def;
-	}
 
-	inline void put(const K& key, const T& value) { tree.add(value_t(key, value)); }
-	inline void remove(const K& key) { tree.remove(key); }
-
-private:
-	typedef Pair<K, T> value_t; 
-	typedef struct {
-		typedef K t;
-		static const K& key(const value_t& v) { return v.fst; }
-		static int compare(const K& v1, const K& v2)
-			{ return C::compare(v1, v2); }
-	} Key;
-	genstruct::SortedBinTree<value_t, Key> tree;
-
-public:
-
+	// Iterator class
 	class Iterator: public PreIterator<Iterator, T> {
 	public:
 		inline Iterator(const SortedBinMap& map): iter(map.tree) { }
@@ -81,9 +59,21 @@ public:
 		inline void next(void) { iter.next(); }
 		const T &item(void) const { return iter.snd; }
 	private:
-		typename SortedBinTree<value_t>::Iterator iter;
+		typename tree_t::Iterator iter;
 	};
+	
+	// Map concept
+	inline const T& get(const K &key, const T &def) const {
+		const value_t *val = tree.look(key);
+		return val ? val->snd : def;
+	}
+	inline Option<const T> get(const K &key) const {
+		const value_t *res = tree.look(key);
+		return res ? res.snd : none;
+	}
+	inline bool hasKey(const K &key) const { return look(key); }
 
+	// KeyIterator class
 	class KeyIterator: public PreIterator<KeyIterator, K> {
 	public:
 		inline KeyIterator(const SortedBinMap& map): iter(map.tree) { }
@@ -92,19 +82,31 @@ public:
 		inline void next(void) { iter.next(); }
 		const T &item(void) const { return iter.fst; }
 	private:
-		typename SortedBinTree<value_t>::Iterator iter;
+		typename tree_t::Iterator iter;
 	};
-
-	class ValueIterator: public SortedBinTree<value_t>::Iterator {
+	
+	// PairIterator class
+	class PairIterator: public PreIterator<PairIterator, K> {
 	public:
-		inline ValueIterator(const SortedBinMap& map):
-			SortedBinTree<value_t>::Iterator(map.tree) { }
-		inline ValueIterator(const ValueIterator& iter):
-			SortedBinTree<value_t>::Iterator(iter) { }
+		inline PairIterator(const SortedBinMap& map): iter(map.tree) { }
+		inline PairIterator(const PairIterator& _): iter(_) { }
+		inline bool ended(void) const { return iter.ended(); }
+		inline void next(void) { iter.next(); }
+		const value_t &item(void) const { return iter; }
+	private:
+		typename tree_t::Iterator iter;
 	};
+	
+	// MutableMap concept
+	inline void put(const K& key, const T& value)
+		{ tree.add(value_t(key, value)); }
+	inline void remove(const K& key)
+		{ value_t *val = tree.look(key); if(val) tree.remove(*val); }
+	inline void remove(const PairIterator& iter)
+		{ tree.remove(iter.iter); }
 
-	// Mutators
-	inline void remove(const ValueIterator& iter) { tree.remove(iter.iter); }
+private:
+	genstruct::SortedBinTree<value_t, C> tree;
 };
 
 } } // elm::genstruct
