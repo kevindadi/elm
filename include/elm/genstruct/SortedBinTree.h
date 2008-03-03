@@ -30,52 +30,19 @@
 
 namespace elm { namespace genstruct {
 
+#include <elm/util/Comparator.h>
+
 // DefaultKey class
-template <class T, class C = Comparator<T> >
-class DefaultKey {
+template <class T>
+class DefaultIdent {
 public:
-	typedef T t;
-	static const t& key(const T& v) { return v; }
-	static int compare(const t& k1, const t& k2)
-		{ return C::compare(k1, k2); }
+	typedef T key_t;
+	static const T& key(const T& v) { return v; }
 };
 
 // SortedBinTree class implements MutableCollection
-template <class T, class K = DefaultKey<T> >
+template <class T, class C = Comparator<T>, class K = DefaultIdent<T> >
 class SortedBinTree {
-	typedef typename K::t key_t;
-public:
-	
-	// Methods
-	inline SortedBinTree(void) { }
-	SortedBinTree(const SortedBinTree<T, K>& tree);
-	inline ~SortedBinTree(void) { clear(); }
-	
-	// Accessors
-	inline bool isEmpty(void) { return root.isEmpty(); }
-	inline int count(void) { return root.count(); }
-	inline Option<const T> get(const key_t& value) const
-		{ Node *node = find(value); if(node) return node->val; else return none; }
-	inline const T& get(const key_t& value, const T& def) const
-		{ Node *node = find(value); if(node) return node->val; else return def; }
-	inline bool contains(const key_t& value) const { return find(value); }
- 	inline operator bool(void) const { return !isEmpty(); }
-
-	// Mutators
-	void clear(void);
-	void add(const T &item);
-	template <template <class _> class S>
-	void addAll (const S<T> &items) {
-		for(typename S<T>::Iterator iter(items); iter; iter++)
-			add(iter);
-	}
-	void remove(const key_t& item);
-	template <template <class _> class S>
-	void removeAll(const S<T> &items) {
-		for(typename S<T>::Iterator iter(items); iter; iter++)
-			remove(iter);
-	}
-
 private:
 	class Node: public inhstruct::BinTree::Node {
 	public:
@@ -83,11 +50,18 @@ private:
 		T val;
 	};
 	
-	inhstruct::BinTree root;
-	Node *find(const key_t& item) const;
-	void replace(Node *parent, Node *old, Node *_new);
-
 public:
+	
+	// Methods
+	inline SortedBinTree(void) { }
+	SortedBinTree(const SortedBinTree<T, C>& tree);
+	inline ~SortedBinTree(void) { clear(); }
+
+	// Collection concept
+	inline int count(void) const { return root.count(); }
+	inline bool contains(const T& value) const { return find(K::key(value)); }
+	inline bool isEmpty(void) const { return root.isEmpty(); }
+ 	inline operator bool(void) const { return !isEmpty(); }
 
 	// Iterator class
 	class Iterator: public PreIterator<Iterator, T> {
@@ -99,27 +73,50 @@ public:
 		bool ended(void) const { return !stack; }
 		void next(void) {
 			Node *top = stack.pop();
-			if(top->right())
-				stack.push((Node *)top->right());
-			if(top->left())
-				stack.push((Node *)top->left());
+			if(top->right()) stack.push((Node *)top->right());
+			if(top->left()) stack.push((Node *)top->left());
 		}
 		const T& item(void) const { return stack.top()->val; }
 	private:
 		Vector<Node *> stack;
 	};
+	
+	// MutableCollection concept
+	void clear(void);
+	void add(const T &item);
+	template <template <class _> class S>
+	void addAll (const S<T> &items) {
+		for(typename S<T>::Iterator iter(items); iter; iter++)
+			add(iter);
+	}
+	void remove(const T& item);
+	template <template <class _> class S>
+	void removeAll(const S<T> &items) {
+		for(typename S<T>::Iterator iter(items); iter; iter++)
+			remove(iter);
+	}
+	inline void remove(const Iterator &iter) {
+		remove(*iter);
+	}
 
-	// Mutators
-	inline void remove(const Iterator& iter)
-		{ remove(((Node *)iter.stack[0]).val); }
+	// MutableLookable<K> implementation
+	inline const T *look(const typename K::key_t& key) const
+		{ Node * node = find(key); return node ? &node->val : 0; }
+	inline T *look(const typename K::key_t& key) 
+		{ Node * node = find(key); return node ? (T *)&node->val : 0; }
+
+private:
+	inhstruct::BinTree root;
+	Node *find(const typename K::key_t& item) const;
+	void replace(Node *parent, Node *old, Node *_new);
 };
 
-template <class T, class K>
-inline typename SortedBinTree<T, K>::Node *
-SortedBinTree<T, K>::find(const key_t& value) const {
+template <class T, class C, class K>
+inline typename SortedBinTree<T, C, K>::Node *
+SortedBinTree<T, C, K>::find(const typename K::key_t& value) const {
 	Node *node = (Node *)root.root();
 	while(node) {
-		int cmp = K::compare(value, K::key(node->val));
+		int cmp = C::compare(value, K::key(node->val));
 		if(cmp == 0)
 			break;
 		else if(cmp < 0)
@@ -130,16 +127,15 @@ SortedBinTree<T, K>::find(const key_t& value) const {
 	return node;
 }
 
-template <class T, class K>
-void SortedBinTree<T, K>::add(const T& value) {
+template <class T, class C, class K>
+void SortedBinTree<T, C, K>::add(const T& value) {
 	Node *node = (Node *)root.root();
 	Node *new_node = new Node(value);
-	const typename K::t &key = K::key(value);
 	if(!node)
 		root.setRoot(new_node);
 	else
 		while(node) {
-			int cmp = K::compare(key, K::key(node->val));
+			int cmp = C::compare(K::key(value), K::key(node->val));
 			if(cmp <= 0) {
 				if(!node->right()) {
 					node->insertRight(new_node);
@@ -159,8 +155,8 @@ void SortedBinTree<T, K>::add(const T& value) {
 		}
 }
 
-template <class T, class K>
-void SortedBinTree<T, K>::clear(void) {
+template <class T, class C, class K>
+void SortedBinTree<T, C, K>::clear(void) {
 	VectorQueue<Node *> todo;
 	todo.put((Node *)root.root());
 	while(todo) {
@@ -173,8 +169,8 @@ void SortedBinTree<T, K>::clear(void) {
 	}
 }
 
-template <class T, class K>
-void SortedBinTree<T, K>::replace(Node *parent, Node *old, Node *_new) {
+template <class T, class C, class K>
+void SortedBinTree<T, C, K>::replace(Node *parent, Node *old, Node *_new) {
 	if(!parent)
 		root.setRoot(_new);
 	else if(parent->left() == old)
@@ -183,12 +179,12 @@ void SortedBinTree<T, K>::replace(Node *parent, Node *old, Node *_new) {
 		parent->insertRight(_new);
 }
 
-template <class T, class K>
-void SortedBinTree<T, K>::remove(const key_t& value) {
+template <class T, class C, class K>
+void SortedBinTree<T, C, K>::remove(const T& value) {
 	Node *node = (Node *)root.root(), *parent = 0;
 	while(true) {
 		ASSERT(node);
-		int cmp = K::compare(value, K::key(node->val));
+		int cmp = C::compare(K::key(value), K::key(node->val));
 		if(cmp == 0)
 			break;
 		parent = node;
