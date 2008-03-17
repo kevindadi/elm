@@ -1,15 +1,16 @@
 includeelmiodir=$(includedir)/elm/io
 includeelmio_HEADERS = \
+	BlockInStream.h \
+	BlockOutStream.h \
 	InFileStream.h \
 	InStream.h \
-	OutStream.h \
+	Input.h \
 	io.h \
+	OutStream.h \
 	OutFileStream.h \
 	Output.h \
-	Input.h \
+	RandomAccessStream.h \
 	UnixInStream.h \
-	UnixOutStream.h \
-	BlockOutStream.h \
-	BlockInStream.h
+	UnixOutStream.h
 
 
