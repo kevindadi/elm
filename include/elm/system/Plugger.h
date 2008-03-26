@@ -40,7 +40,7 @@ private:
 
 public:
 	Plugger(CString hook, const Version& plugger_version, String paths = "*");
-	~Plugger(void);
+	virtual ~Plugger(void);
 	void addPath(String path);
 	void removePath(String path);
 	void resetPaths(void);
