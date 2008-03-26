@@ -21,6 +21,7 @@ protected:
 	virtual int process(io::OutStream& out, char chr) = 0;
 public:
 	Formatter(char esc = '%');
+	virtual ~Formatter(void) { }
 	int format(io::InStream& in, io::OutStream& out = io::stdout);
 	inline char escape(void) const;
 };

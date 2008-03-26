@@ -60,7 +60,7 @@ protected:
 public:
 	Plugin(CString name, const Version& plugger_version, CString hook = "",
 		const aliases_t& aliases = aliases_t::EMPTY);
-	~Plugin(void);
+	virtual ~Plugin(void);
 	inline CString name(void) const;
 	inline CString description(void) const;
 	inline CString licence(void) const;
