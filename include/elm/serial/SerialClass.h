@@ -28,6 +28,7 @@ private:
 	
 public:
 	SerialClass(elm::CString name);
+	virtual ~SerialClass(void) { }
 	inline CString name(void) const { return _name; };
 	static SerialClass *find(CString name);
 	
