@@ -43,7 +43,7 @@ int BinTree::count(BinTree::Node *node) const {
 bool BinTree::contains(BinTree::Node *current, Node *node) const {
 	if(!current)
 		return false;
-	else if(current = node)
+	else if(current == node)
 		return true;
 	else if(contains(current->left(), node))
 		return true;
