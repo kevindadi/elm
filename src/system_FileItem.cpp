@@ -62,7 +62,7 @@ namespace system {
 
 /**
  */ 
-FileItem::FileItem(Path path, ino_t inode): _path(path), usage(0), ino(inode) {
+FileItem::FileItem(Path path, ino_t inode):	usage(0), _path(path), ino(inode) {
 	ASSERTP(path, "null path");
 }
 

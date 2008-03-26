@@ -176,6 +176,7 @@ void Element::appendChild(String text) {
 Node *Element::copy(void) {
 	// !!TODO!!
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 
@@ -197,6 +198,7 @@ Node *Element::copy(void) {
 Attribute *Element::getAttribute(int index) {
 	// !!TODO!!
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 
@@ -209,6 +211,7 @@ Attribute *Element::getAttribute(int index) {
 Attribute *Element::getAttribute(String name) {
 	// !!TODO!!
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 
@@ -222,6 +225,7 @@ Attribute *Element::getAttribute(String name) {
 Attribute *Element::getAttribute(String localName, String ns) {
 	// !!TODO!!
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 
@@ -233,6 +237,7 @@ Attribute *Element::getAttribute(String localName, String ns) {
 int	Element::getAttributeCount(void) {
 	// !!TODO!!
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 
@@ -382,6 +387,7 @@ String Element::getLocalName(void) {
 int	Element::getNamespaceDeclarationCount(void) {
 	// !!TODO!!
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 
@@ -420,6 +426,7 @@ String Element::getNamespacePrefix(void) {
 String Element::getNamespacePrefix(int index) {
 	// !!TODO!!
 	ASSERTP(0, "unsupported");
+	return "";
 }
 
 
@@ -445,6 +452,7 @@ String Element::getNamespaceURI(void) {
 String Element::getNamespaceURI(String prefix) {
 	// !!TODO!!
 	ASSERTP(0, "unsupported");
+	return "";
 }
 
 
@@ -456,6 +464,7 @@ String Element::getNamespaceURI(String prefix) {
 String Element::getQualifiedName(void) {
 	// !!TODO!!
 	ASSERTP(0, "unsupported");
+	return "";
 }
 
 
@@ -488,10 +497,12 @@ void Element::insertChild(String text, int position) {
 Attribute *Element::removeAttribute(Attribute *attribute) {
 	// !!TODO!! Check if the attribute is owned by the current element.
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 Nodes *Element::removeChildren(void) {
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 void Element::removeNamespaceDeclaration(String prefix) {
@@ -516,10 +527,12 @@ void Element::setNamespaceURI(String uri) {
 
 String Element::toString(void) {
 	ASSERTP(0, "unsupported");
+	return "";
 }
 
 String Element::toXML(void) {
 	ASSERTP(0, "unsupported");
+	return "";
 }
 
 } } // elm::xom

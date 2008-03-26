@@ -59,6 +59,7 @@ const String XIncluder::NS = XINCLUDE_NS;
 Document *XIncluder::resolve(Document *in) {
 	// !!TODO!!
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 
@@ -79,6 +80,7 @@ Document *XIncluder::resolve(Document *in) {
 Document *XIncluder::resolve(Document *in, Builder& builder) {
 	// !!TODO!!
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 

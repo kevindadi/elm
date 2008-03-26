@@ -63,7 +63,7 @@ unsigned long hash_string(const char *chars, int length) {
 	unsigned long h = 0, g;
 	for(int i = 0; i < length; i++) {
 		h = (h << 4) + chars[i];
-		if(g = h & 0xf0000000) {
+		if((g = h & 0xf0000000)) {
 			h = h ^ (g >> 24);
 			h = h ^ g;
 		}
@@ -80,7 +80,7 @@ unsigned long hash_cstring(const char *chars) {
 	unsigned long h = 0, g;
 	for(; *chars; chars++) {
 		h = (h << 4) + *chars;
-		if(g = h & 0xf0000000) {
+		if((g = h & 0xf0000000)) {
 			h = h ^ (g >> 24);
 			h = h ^ g;
 		}
