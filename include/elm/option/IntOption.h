@@ -61,7 +61,7 @@ public:
 	
 	// Operators
 	inline operator int(void) const { return val; };
-	inline IntOption& operator=(int value) { val = value; };
+	inline IntOption& operator=(int value) { val = value; return *this; };
 };
 
 } } // elm::option
