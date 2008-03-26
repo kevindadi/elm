@@ -23,6 +23,7 @@ class Unserializer;
 template <class T>
 class SerialTable: public genstruct::AllocatedTable<T> {
 public:
+	virtual ~SerialTable(void) { }
 	inline SerialTable(void);
 	inline SerialTable(T *table, int count);
  	inline SerialTable(const genstruct::Table<T> &table);
