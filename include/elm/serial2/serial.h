@@ -199,7 +199,7 @@ template <class T> AbstractType& from_type<T>::type(const T& v) {
 class AbstractEnum: public AbstractType {
 public:
 	inline AbstractEnum(CString name, value_t *values)
-		: _values(values), AbstractType(name) { }
+		: AbstractType(name), _values(values) { } 
 	inline CString nameOf(int v) {
 		for(value_t *vals = _values; vals->name(); vals++)
 			if(vals->value() == v)

@@ -17,6 +17,7 @@ class AbstractEnum;
 // Serializer class
 class Serializer {
 public:
+	virtual ~Serializer(void) { }
 	virtual void flush(void) = 0;
 
 	// Complex type serializers

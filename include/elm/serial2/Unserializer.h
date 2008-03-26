@@ -14,6 +14,7 @@ class AbstractType;
 // Unserializer class
 class Unserializer {
 public:
+	virtual ~Unserializer(void) { }
 	virtual void flush(void) = 0;
 
 	// Complex type serializers
