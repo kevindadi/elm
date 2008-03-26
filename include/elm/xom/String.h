@@ -73,6 +73,7 @@ inline void String::free(void) {
 
 inline String& String::operator=(const String& str) {
 	buf = str.buf;
+	return *this;
 }
 
 inline String::operator CString(void) const {

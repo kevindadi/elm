@@ -32,6 +32,7 @@ class NodeFactory {
 	virtual Element	*makeElement(void *node);
 	virtual Text *makeText(void *node);
 public:
+	virtual ~NodeFactory(void) { }
 	/*virtual Document *startMakingDocument(void);
 	virtual Element *startMakingElement(void); 
 	virtual Nodes *makeAttribute(void);
