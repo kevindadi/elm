@@ -46,7 +46,7 @@ void test_RandomAccessStream(void) {
 		int read_data[sizeof(data) / sizeof(int)];
 		CHECK(stream->read((char *)read_data, sizeof(read_data)) == sizeof(read_data));
 		delete stream;
-		for(int i = 0; i < sizeof(data) / sizeof(int); i++)
+		for(int i = 0; i < (int)(sizeof(data) / sizeof(int)); i++)
 			CHECK_EQUAL(read_data[i], data[i]);
 	}
 	
