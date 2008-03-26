@@ -23,6 +23,7 @@ public:
 
 protected:
 	inline CrashHandler(void) { }
+	virtual ~CrashHandler(void) { }
 
 private:
 	static CrashHandler *current_handler; 
