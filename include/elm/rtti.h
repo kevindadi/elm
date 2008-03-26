@@ -110,6 +110,7 @@ class AbstractClass {
 public:
 	inline AbstractClass(CString name, AbstractClass *base = 0)
 		: _name(name), _base(base) { };
+	virtual ~AbstractClass(void) { }
 	inline CString name(void) const { return _name; };
 	inline AbstractClass *base(void) const { return _base; };
 	virtual void *instantiate(void) = 0;

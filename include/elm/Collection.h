@@ -21,6 +21,7 @@ template <class T> class MutableCollection;
 // Abstract collection class
 template <class T> class Collection {
 public:
+	virtual ~Collection(void) { }
 	
 	// Simple access
 	virtual int count(void);

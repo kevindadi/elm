@@ -25,6 +25,7 @@ public:
 // IteratorInst class
 template <class T> class IteratorInst {
 public:
+	virtual ~IteratorInst(void) { }
 	virtual bool ended(void) const = 0;
 	virtual T item(void) const = 0;
 	virtual void next(void) = 0;
@@ -69,6 +70,7 @@ public:
 // MutableIteratorInst class
 template <class T> class MutableIteratorInst {
 public:
+	virtual ~MutableIteratorInst(void) { }
 	virtual bool ended(void) const = 0;
 	virtual T& item(void) = 0;
 	virtual void next(void) = 0;
