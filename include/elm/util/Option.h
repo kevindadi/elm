@@ -30,9 +30,9 @@ public:
 	inline const T& operator*(void) const { return val; }
 	inline operator const T&(void) const { return val; }
 	inline Option<T>& operator=(const Option<T>& opt)
-		{ one = opt.one; val = opt.val; }
+		{ one = opt.one; val = opt.val; return *this; }
 	inline Option<T>& operator=(const T& value)
-		{ one = true; val = value; }
+		{ one = true; val = value; return *this; }
 
 private:
 	bool one;
