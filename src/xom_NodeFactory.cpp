@@ -44,10 +44,12 @@ NodeFactory NodeFactory::default_factory;
 
 Attribute *NodeFactory::makeAttribute(void *node) {
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 Comment *NodeFactory::makeComment(void *node) {
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 
@@ -61,6 +63,7 @@ Document *NodeFactory::makeDocument(void *node) {
 
 ProcessingInstruction *NodeFactory::makeProcessingInstruction(void *node) {
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 

@@ -57,10 +57,12 @@ Document::Document(Element *root_element): ParentNode(0) {
 	
 Node *Document::copy(void) {
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 String Document::getBaseURI(void) {
 	ASSERTP(0, "unsupported");
+	return "";
 }
 
 
@@ -78,14 +80,17 @@ Element *Document::getRootElement(void) {
 
 String Document::getValue(void) {
 	ASSERTP(0, "unsupported");
+	return "";
 }
 
 Node *Document::removeChild(int position) {
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 Node *Document::removeChild(Node *child) {
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 void Document::replaceChild(Node *old_child, Node *new_child) {
@@ -102,10 +107,12 @@ void Document::setRootElement(Element *root) {
 
 String Document::toString(void) {
 	ASSERTP(0, "unsupported");
+	return "";
 }
 
 String Document::toXML(void) {
 	ASSERTP(0, "unsupported");
+	return "";
 }
 
 } } // elm::xom
