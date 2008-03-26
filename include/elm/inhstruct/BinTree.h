@@ -27,6 +27,7 @@ public:
 	// Visitor class
 	class Visitor {
 	public:
+		virtual ~Visitor(void) { }
 		virtual int process(Node *node) = 0;
 	};
 	

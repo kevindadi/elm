@@ -22,6 +22,7 @@ protected:
 	virtual int compare(Node *node1, Node *node2) = 0;
 
 public:
+	virtual ~SortedBinTree(void) { }
 	
 	// Accessors
 	inline bool isEmpty(void);
