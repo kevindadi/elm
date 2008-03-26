@@ -95,7 +95,7 @@ void Directory::Iterator::go(void) {
 /**
  */
 Directory::Iterator::Iterator(Directory *directory)
-: dir(0), file(0), path(directory->path()) {
+: path(directory->path()), dir(0), file(0)  {
 	errno = 0;
 	dir = opendir(&directory->path().toString());
 	if(!dir)

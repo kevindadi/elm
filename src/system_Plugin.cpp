@@ -180,11 +180,11 @@ Plugin::Plugin(
 	CString hook,
 	const aliases_t& aliases
 ) :
+	_hook(hook),
 	_name(name),
 	per_vers(plugger_version),
-	_hook(hook),
-	state(0),
 	_handle(0),
+	state(0),
 	_aliases(aliases),
 	magic(MAGIC)
 {
@@ -334,7 +334,6 @@ void Plugin::step(void) {
 Plugin *Plugin::get(CString hook, CString name) {
 	
 	// Find the plugin
-	Plugin *found = 0;
 	for(int i = 0; i < static_plugins.length(); i++)
 		if(static_plugins[i]->hook() == hook
 		&& static_plugins[i]->matches(name))
