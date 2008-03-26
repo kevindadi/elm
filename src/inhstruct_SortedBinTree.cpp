@@ -208,6 +208,7 @@ SortedBinTree::Node *SortedBinTree::remove(Node *node, Node *rem_node) {
 			node->insertLeft(remove(node->left(), rem_node));
 		else
 			node->insertRight(remove(node->right(), rem_node));
+		return node;
 	}
 }
 
