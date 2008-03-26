@@ -26,9 +26,9 @@ namespace elm { namespace checksum {
  * Build a new Fletcher checksum builder.
  */
 Fletcher::Fletcher(void)
-:	len(0),
-	sum1(0xffff),
+:	sum1(0xffff),
 	sum2(0xffff),
+	len(0),
 	size(0)
 {
 }

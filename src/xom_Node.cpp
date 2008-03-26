@@ -148,7 +148,7 @@ Node::kind_t Node::kind(void) const {
     	NONE					// XML_DOCB_DOCUMENT_NODE
 	};
 	
-	ASSERT(NODE(node)->type < sizeof(kinds) / sizeof(kind_t));
+	ASSERT(NODE(node)->type < (int)(sizeof(kinds) / sizeof(kind_t)));
 	return kinds[NODE(node)->type];
 }
 
@@ -246,6 +246,7 @@ String Node::getBaseURI(void) {
  */
 Node *Node::internGetChild(int index) {
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 
@@ -299,7 +300,7 @@ Document *Node::getDocument(void) {
  * If the node has no parent, then the context position is 1, and the context
  * size is 1.
  * @par
- * Queries such as /*, //, and /* //p that refer to the root node do work when
+ * Queries such as / *, //, and / * //p that refer to the root node do work when
  * operating with a context node that is not part of a document. However,
  * the query / (return the root node) throws an XPathException when applied to
  * a node that is not part of the document. Furthermore the top-level node in
@@ -310,7 +311,7 @@ Document *Node::getDocument(void) {
  * Element parent = new Element("parent");
  * Element child = new Element("child");
  * parent.appendChild(child);
- * Nodes results = child.query("/*");
+ * Nodes results = child.query("/ *");
  * Node result = result.get(0);
  * @endcode
  * @param xpath the XPath expression to evaluate
@@ -322,6 +323,7 @@ Document *Node::getDocument(void) {
  */
 Nodes *Node::query(const String& xpath, XPathContext *context) {
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 
@@ -364,6 +366,7 @@ String Node::internToXML(void) {
  */
 Nodes *Node::query(const String& xpath) {
 	ASSERTP(0, "unsupported");
+	return 0;
 }
 
 } } // elm::xom
