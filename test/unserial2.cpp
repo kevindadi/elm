@@ -24,6 +24,7 @@ class MySubClass {
 public:
 	MySubClass(void) { }
 	MySubClass(char _c, MyClass *_back): c(_c), back(_back) { };
+	virtual ~MySubClass(void) { }
 };
 SERIALIZE(MySubClass);
 
@@ -37,6 +38,7 @@ class MyClass {
 public:
 	MyClass(void) { };
 	MyClass(int _x): x(_x), sub('a', this), sub2(new MySubClass('b', 0)) { };
+	virtual ~MyClass(void) { }
 };
 SERIALIZE(MyClass);
 
@@ -46,6 +48,7 @@ class ItemClass {
 	SERIALIZABLE(ItemClass, DFIELD(x, 666))
 public:
 	int x;
+	virtual ~ItemClass(void) { }
 	virtual int getX(void) { return x; };
 };
 SERIALIZE(ItemClass);
@@ -55,6 +58,7 @@ SERIALIZE(ItemClass);
 class Item2Class: public ItemClass {
 	SERIALIZABLE(Item2Class, BASE(ItemClass))
 public:
+	~Item2Class(void) { }
 	virtual int getX(void) { return 666; };
 };
 SERIALIZE(Item2Class);
@@ -81,6 +85,7 @@ public:
 	genstruct::AllocatedTable<ItemClass *> list3;
 	enum_t en;
 	SimpleClass(void): x(111), c('a'), f(0.1), str("ok"), en(VAL1) { }
+	virtual ~SimpleClass(void) { }
 };
 SERIALIZE(SimpleClass);
 
