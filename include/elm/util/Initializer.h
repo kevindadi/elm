@@ -16,7 +16,7 @@ class Initializer {
 		struct node_t *next;
 		T *object;
 		inline node_t(T *_object, struct node_t *_next)
-		: object(_object), next(_next) { }
+		: next(_next), object(_object) { }
 	} node_t;
 	
 	static node_t *list;
