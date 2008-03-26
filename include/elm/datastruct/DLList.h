@@ -18,6 +18,7 @@ template <class T>
 class DLList: public Collection<T> {
 	genstruct::DLList<T> list;
 public:
+	virtual ~DLList(void) { }
 
 	// Accessors
 	inline T first(void) const;

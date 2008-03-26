@@ -14,6 +14,7 @@ namespace elm { namespace datastruct {
 // Map class
 template <class K, class T> class Map {
 public:
+	virtual ~Map(void) { }
 	virtual void put(const K key, const T value) = 0;
 	virtual const Option<T> get(const K key) = 0;
 	virtual const T get(const K key, const T def) = 0;

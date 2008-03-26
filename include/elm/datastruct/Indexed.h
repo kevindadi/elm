@@ -14,6 +14,7 @@ namespace elm { namespace datastruct {
 // Indexed interface
 template <class T> class Indexed {
 public:
+	virtual ~Indexed(void) { }
 	virtual int length(void) const = 0;
 	virtual T get(int index) const = 0;
 	virtual void set(int index, const T value) = 0;
