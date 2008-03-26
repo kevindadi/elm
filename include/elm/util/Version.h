@@ -101,6 +101,7 @@ inline Version& Version::operator=(const Version& version) {
 	_major = version._major;
 	_minor = version._minor;
 	_release = version._release;
+	return *this;
 }
 
 inline bool Version::operator==(const Version& version) const {
