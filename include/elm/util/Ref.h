@@ -29,7 +29,7 @@ public:
 	inline Ref<T>& operator=(const Ref<T>& ref)
 		{ ptr = ref.ptr; return *this; }
 	inline Ref<T>& operator=(const T& val)
-		{ *ptr = val; }
+		{ *ptr = val; return *this; }
 };
 
 // Display
