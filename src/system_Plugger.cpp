@@ -284,6 +284,7 @@ String Plugger::lastErrorMessage(void) {
 		return "Found plugin does not match the plugin signature.";		
 	default:
 		ASSERTP(0, "unknown error");
+		return "";
 	}
 }
 
@@ -368,8 +369,13 @@ void Plugger::Iterator::go(void) {
  * Build a new iterator.
  * @param plugger	Used plugger.
  */
-Plugger::Iterator::Iterator(Plugger& _plugger): plugger(_plugger), path(-1),
-file(0), i(-1), statics(_plugger.statics()) {
+Plugger::Iterator::Iterator(Plugger& _plugger)
+:	plugger(_plugger),
+	statics(_plugger.statics()),
+	i(-1),
+	path(-1),
+	file(0)
+{
 	go();
 }
 
