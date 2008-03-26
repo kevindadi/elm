@@ -54,6 +54,7 @@ int Input::get(void) {
 		default:
 			throw IOException(strm->lastErrorMessage());
 		}
+	return res;
 }
 
 
