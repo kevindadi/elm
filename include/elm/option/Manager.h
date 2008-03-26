@@ -51,6 +51,7 @@ protected:
 	CString free_argument_description;
 	virtual void process(String arg);
 public:
+	virtual ~Manager(void) { }
 	void addOption(Option *option);
 	void removeOption(Option *option);
 	void parse(int argc, char **argv);
