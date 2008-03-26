@@ -50,6 +50,7 @@ protected:
 	String internGetValue(void);
 	String internToXML(void);
 public:
+	virtual ~Node(void) { }
 	inline void *getNode(void) const;
 
 	kind_t kind(void) const;
