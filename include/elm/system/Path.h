@@ -88,6 +88,7 @@ inline bool Path::contains(Path& path) const {
 
 inline Path& Path::operator=(Path& path) {
 	buf = path.buf;
+	return *this;
 }
 
 inline bool Path::operator==(Path& path) {
