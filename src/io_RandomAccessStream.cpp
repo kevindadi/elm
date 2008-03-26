@@ -53,11 +53,11 @@ public:
 	virtual size_t size(void) const
 		{ struct stat s; fstat(fd, &s); return s.st_size; }
 	virtual bool moveTo(pos_t pos)
-		{ return lseek(fd, pos, SEEK_SET) == pos; }
+		{ return (pos_t)lseek(fd, pos, SEEK_SET) == pos; }
 	virtual bool moveForward(pos_t pos)
-		{ return lseek(fd, pos, SEEK_CUR) == pos; }
+		{ return (pos_t)lseek(fd, pos, SEEK_CUR) == pos; }
 	virtual bool moveBackward(pos_t _pos)
-		{ return lseek(fd, pos() - _pos, SEEK_SET) == _pos; }
+		{ return (pos_t)lseek(fd, pos() - _pos, SEEK_SET) == _pos; }
 
 private:
 	int fd;
@@ -122,7 +122,7 @@ static inline int makeFlags(RandomAccessStream::access_t access) {
 	case RandomAccessStream::READ: return O_RDONLY;
 	case RandomAccessStream::WRITE: return O_WRONLY;
 	case RandomAccessStream::READ_WRITE: return O_RDWR;
-	default: ASSERT(false);
+	default: ASSERT(false); return 0;
 	}
 }
 

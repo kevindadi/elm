@@ -122,7 +122,7 @@
  */
 
  /* Empty buffer */
- String::buffer_t String::empty_buf = { 1, 0 };
+ String::buffer_t String::empty_buf = { 1, { 0 } };
  
  /**
   * Make a string by copying the given character array.
@@ -472,6 +472,7 @@ int String::indexOf(const String& string, int pos) {
 				pos++;
 		}
 	}
+	return -1;
 }
 
 
@@ -491,6 +492,7 @@ int String::lastIndexOf(const String& string, int pos) {
 				pos--;
 		}
 	}
+	return -1;
 }
 
 
