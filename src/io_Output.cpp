@@ -315,14 +315,14 @@ void Output::format(CString fmt, VarArg& args) {
 	int size = vsnprintf(buf, sizeof(buf), &fmt, args.args());
 	
 	// It's ok
-	if(size <= sizeof(buf))
+	if(size <= (int)sizeof(buf))
 		strm->write(buf, size);
 	
 	// Else use a bigger one
 	else {
 		char newbuf[size + 1];
 		size = vsnprintf(newbuf, sizeof(newbuf), &fmt, args.args());
-		ASSERT(size <= sizeof(newbuf));
+		ASSERT(size <= (int)sizeof(newbuf));
 		strm->write(newbuf, size);
 	}
 }
