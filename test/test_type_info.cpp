@@ -52,7 +52,7 @@ int main(void) {
 
 	CHECK(type_info<int>::null == 0);
 	CHECK(type_info<int>::is_signed == true);
-	CHECK(type_info<int>::min == -0x80000000);
+	CHECK(type_info<int>::min == (int)-0x80000000);
 	CHECK(type_info<int>::max == 0x7fffffff);		 
 		 
 	CHECK(type_info<unsigned>::null == 0);
@@ -62,7 +62,7 @@ int main(void) {
 
 	CHECK(type_info<long>::null == 0);
 	CHECK(type_info<long>::is_signed == true);
-	CHECK(type_info<long>::min == -0x80000000);
+	CHECK(type_info<long>::min == (long)-0x80000000);
 	CHECK(type_info<long>::max == 0x7fffffff);		 
 		 
 	CHECK(type_info<unsigned long>::null == 0);
@@ -72,7 +72,7 @@ int main(void) {
 
 	CHECK(type_info<long long>::null == 0);
 	CHECK(type_info<long long>::is_signed == true);
-	CHECK(type_info<long long>::min == -0x8000000000000000LL);
+	CHECK(type_info<long long>::min == (long long)-0x8000000000000000LL);
 	CHECK(type_info<long long>::max == 0x7fffffffffffffffLL);		 
 		 
 	CHECK(type_info<unsigned long long>::null == 0);
