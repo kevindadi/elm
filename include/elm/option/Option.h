@@ -39,6 +39,7 @@ typedef enum usage_t {
 // Option class
 class Option {
 public:
+	virtual ~Option(void) { }
 	void output(io::Output& out);
 	virtual char shortName(void) = 0;
 	virtual CString longName(void) = 0;
