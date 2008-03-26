@@ -180,7 +180,6 @@ template <class T, class E> bool DLList<T, E>::contains(const T& value) const {
 }
 
 template <class T, class E> void DLList<T, E>::clear(void) {
-	DLNode *node;
 	while(!list.isEmpty()) {
 		DLNode *node = (DLNode *)list.first();
 		list.removeFirst();

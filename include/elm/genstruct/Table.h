@@ -59,6 +59,7 @@ public:
 	inline void free(void);
 	inline AllocatedTable<T>& operator=(const AllocatedTable<T>& table) {
 		*this = (const Table<T>&)table;
+		return *this;
 	}
 	inline AllocatedTable<T>& operator=(const Table<T>& table);
 };
@@ -201,6 +202,7 @@ inline AllocatedTable<T>& AllocatedTable<T>::operator=(const Table<T>& table) {
 	Table<T>::tab = new T[table.count()];
 	for(int i = 0; i < table.count(); i++)
 		(*this)[i] = table[i];
+	return *this;
 }
 
 } } // elm::genstruct
