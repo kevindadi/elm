@@ -48,6 +48,7 @@ template <class T1, class T2>
 inline Pair<T1, T2>& Pair<T1, T2>::operator=(const Pair<T1, T2>& pair) {
 	fst = pair.fst;
 	snd = pair.snd;
+	return *this;
 }
 
 template <class T1, class T2>
