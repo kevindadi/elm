@@ -130,6 +130,7 @@ class A {
 	int z;
 public:
 	A(void): x(111), y(666), z(0) { };
+	virtual ~A(void) { }
 	static serial2::Class<A> __class;
 	virtual serial2::AbstractType& __getSerialClass(void) const { return __class; };
 	template <class T> void __visit(T& e) {

@@ -26,6 +26,7 @@ class MySubClass {
 public:
 	MySubClass(void) { }
 	MySubClass(char _c, MyClass *_back): c(_c), back(_back) { };
+	virtual ~MySubClass(void) { }
 };
 
 
@@ -39,6 +40,7 @@ class MyClass {
 public:
 	MyClass(void) { };
 	MyClass(int _x): x(_x), sub('a', this), sub2(new MySubClass('b', 0)) { };
+	virtual ~MyClass(void) { }
 };
 
 
@@ -49,6 +51,7 @@ class ItemClass {
 public:
 	int x;
 	virtual int getX(void) { return x; };
+	virtual ~ItemClass(void) { }
 };
 
 
@@ -57,6 +60,7 @@ class Item2Class: public ItemClass {
 	SERIALIZABLE
 public:
 	virtual int getX(void) { return 666; };
+	virtual ~Item2Class(void) { }
 };
 
 
@@ -80,6 +84,7 @@ public:
 	serial::SerialTable<ItemClass *> list3;
 	enum_t en;
 	SimpleClass(void): x(111), c('a'), f(0.1), str("ok"), en(VAL1) { }
+	virtual ~SimpleClass(void) { }
 };
 //CString values[] = { "VAL1", "VAL2", "VAL3", "" };
 SERIALIZABLE_ENUM(SimpleClass::enum_t);
