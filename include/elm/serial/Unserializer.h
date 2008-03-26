@@ -19,6 +19,7 @@ class Unserializer {
 	template <class T> void process(T& val) { read(val); };
 
 public:
+	virtual ~Unserializer(void) { }
 	
 	// Read control
 	template <class T> inline void read(T& val) {

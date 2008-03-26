@@ -25,6 +25,7 @@ protected:
 	virtual void delayObject(const void *ptr, delay_t fun) = 0;
 
 public:
+	virtual ~Serializer(void) { }
 	virtual void close(void) = 0;
 	
 	// Write methods
