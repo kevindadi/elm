@@ -71,8 +71,8 @@ CString OutStream::lastErrorMessage(void) {
 // NullOutStream class
 static class NullOutStream: public OutStream {
 public:
-	virtual int write(const char *buffer, int size) { }
-	virtual int flush(void) { }	
+	virtual int write(const char *buffer, int size) { return size; }
+	virtual int flush(void) { return 0; }	
 } _null;
 
 
