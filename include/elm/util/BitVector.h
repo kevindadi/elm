@@ -32,7 +32,7 @@ namespace elm {
 // BitVector class
 class BitVector {
 public:
-	inline BitVector(void): _size(0), bits(0) { }
+	inline BitVector(void): bits(0), _size(0) { }
 	inline BitVector(int size, bool set = false);
 	inline BitVector(const BitVector& vec);
 	BitVector(const BitVector& vec, int new_size);
@@ -319,6 +319,7 @@ inline BitVector& BitVector::operator=(const BitVector& vec) {
 		bits = new unsigned char[bytes()];
 	}
 	copy(vec);
+	return *this;
 }
 
 inline BitVector& BitVector::operator|=(const BitVector& vec) {
