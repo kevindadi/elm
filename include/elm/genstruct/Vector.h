@@ -48,17 +48,17 @@ public:
 	inline void set(int index, const T value);
 	inline T& operator[](int index);
 	inline T operator[](int index) const;
-	bool contains(const T value) const;
-	int indexOf(const T value, int start = 0) const;
-	int lastIndexOf(const T value, int start = -1) const;
+	bool contains(const T& value) const;
+	int indexOf(const T& value, int start = 0) const;
+	int lastIndexOf(const T& value, int start = -1) const;
 	inline operator bool(void) const;
 	
 	// Mutators
 	inline void add(void);
-	inline void add(const T value);
+	inline void add(const T& value);
 	void removeAt(int index);
-	inline void remove(const T value);
-	void insert(int index, const T value);
+	inline void remove(const T& value);
+	void insert(int index, const T& value);
 	inline void clear(void);
 	void grow(int new_cap);
 	void setLength(int new_length);
@@ -136,19 +136,19 @@ template <class T> T& Vector<T>::operator[](int index) {
 template <class T> T Vector<T>::operator[](int index) const {
 	return get(index);
 }
-template <class T> bool Vector<T>::contains(const T value) const {
+template <class T> bool Vector<T>::contains(const T& value) const {
 	for(int i = 0; i < cnt; i++)
 		if(value == tab[i])
 			return true;
 	return false;
 }
-template <class T> int Vector<T>::indexOf(const T value, int start) const {
+template <class T> int Vector<T>::indexOf(const T& value, int start) const {
 	for(int i = start; i < cnt; i++)
 		if(value == tab[i])
 			return i;
 	return -1;
 }
-template <class T> int Vector<T>::lastIndexOf(const T value, int start) const {
+template <class T> int Vector<T>::lastIndexOf(const T& value, int start) const {
 	ASSERTP(start <= cnt, "index out of bounds");
 	for(int i = (start < 0 ? cnt : start) - 1; i >= 0; i--)
 		if(value == tab[i])
@@ -159,7 +159,7 @@ template <class T> Vector<T>::operator bool(void) const {
 	return cnt != 0;
 }
 
-template <class T> void Vector<T>::add(const T value) {
+template <class T> void Vector<T>::add(const T& value) {
 	if(cnt >= cap)
 		grow(cap * 2);
 	tab[cnt++] = value;
@@ -177,11 +177,11 @@ template <class T> void Vector<T>::removeAt(int index) {
 		tab[i - 1] = tab[i];
 	cnt--;
 }
-template <class T> void Vector<T>::remove(const T value) {
+template <class T> void Vector<T>::remove(const T& value) {
 	int i = indexOf(value);
 	if(i >= 0) removeAt(i);
 }
-template <class T> void Vector<T>::insert(int index, const T value) {
+template <class T> void Vector<T>::insert(int index, const T& value) {
 	ASSERTP(index <= cnt, "index out of bounds");
 	if(cnt >= cap)
 		grow(cap * 2);
