@@ -22,10 +22,11 @@
 
 #include <elm/assert.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <fcntl.h>
 #include <errno.h>
 #include <elm/system/System.h>
 #include <elm/system/SystemException.h>
-#include <stdlib.h>
 
 namespace elm { namespace system {
 
@@ -139,10 +140,20 @@ PipeOutStream::~PipeOutStream(void) {
  */
 Pair<PipeInStream *, PipeOutStream *> System::pipe(void) {
 	int fds[2];
+	
+	// Create the pair
 	if(::pipe(fds) < 0) {
 		ASSERT(errno != EFAULT);
 		throw SystemException(errno, "pipe creation");
 	}
+	
+	/* Configure the close-on-exec flag
+	 * !!WARNING!! added to implement a working ProcessBuilder: I'm not sure
+	 * if it is the best way to do this (yet it is POSIX compliant). */
+	fcntl(fds[0], F_SETFD, FD_CLOEXEC);
+	fcntl(fds[1], F_SETFD, FD_CLOEXEC);
+	
+	// Return result
 	return pair(
 		new PipeInStream(fds[0]),
 		new PipeOutStream(fds[1]));
