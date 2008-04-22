@@ -3,7 +3,7 @@
  *	SLList class implementation
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2004-07, IRIT UPS.
+ *	Copyright (c) 2004-08, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ namespace elm { namespace genstruct {
 
 
 /**
- * @fn T SLList::first(void) const;
+ * @fn const T& SLList::first(void) const;
  * Get the first item of the list.
  * @return	First item.
  * @warning	It is an error to call this method if the list is empty.
@@ -47,7 +47,7 @@ namespace elm { namespace genstruct {
 
 
 /**
- * @fn T SLList::last(void) const;
+ * @fn const T& SLList::last(void) const;
  * Get the last item of the list. Remark that this method is really inefficient.
  * Its working time is in O(n), n number of nodes in the list. Use it only with
  * small list or revert to more powerful data structures.
@@ -71,14 +71,14 @@ namespace elm { namespace genstruct {
 
 
 /**
- * @fn void SLList::addFirst(const T item);
+ * @fn void SLList::addFirst(const T& item);
  * Add the given item at the first position in the list.
  * @param item	Item to add.
  */
 
 
 /**
- * @fn void SLList::addLast(const T item);
+ * @fn void SLList::addLast(const T& item);
  * Add the given item at the last position in the list. Remark that this method is really inefficient.
  * Its working time is in O(n), n number of nodes in the list. Use it only with
  * small list or revert to more powerful data structures.
@@ -103,7 +103,7 @@ namespace elm { namespace genstruct {
 
 
 /**
- * @fn void SLList::remove(const T item);
+ * @fn void SLList::remove(const T& item);
  * Remove the given item from the list or just one if the list contains many
  * items equals to the given one. The item type T must support the equality /
  * inequality operators.
