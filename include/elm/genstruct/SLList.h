@@ -59,7 +59,7 @@ public:
 		inline Iterator(const Iterator& source);
 		
 		inline bool ended(void) const;
-		inline T item(void) const;
+		inline const T& item(void) const;
 		inline void next(void);
 
 	private:
@@ -254,7 +254,7 @@ inline bool SLList<T, E>::Iterator::ended(void) const {
 }
 
 template <class T, class E>
-inline T SLList<T, E>::Iterator::item(void) const {
+inline const T& SLList<T, E>::Iterator::item(void) const {
 	ASSERT(node);
 	return node->val;
 }
