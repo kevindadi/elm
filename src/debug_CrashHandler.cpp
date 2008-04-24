@@ -161,7 +161,7 @@ public:
 		
 		// Look for the ELM_DEBUG variable
 		const char *elm_debug = getenv("ELM_DEBUG");
-		if(elm_debug && strcasecmp(elm_debug, "no") == 0)
+		if(!elm_debug || strcasecmp(elm_debug, "yes") != 0)
 			return;
 	
 		// Install the crash handler
