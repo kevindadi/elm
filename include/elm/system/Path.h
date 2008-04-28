@@ -44,6 +44,14 @@ public:
 	inline bool contains(Path& path) const;
 	static Path current(void);
 	static Path home(void);
+
+	// path testing
+	bool exists(void) const;
+	bool isFile(void) const;
+	bool isDir(void) const;
+	bool isReadable(void) const;
+	bool isWritable(void) const;
+	bool isExecutable(void) const;
 	
 	// Operator
 	inline Path& operator=(const char *str) { buf = str; return *this; }

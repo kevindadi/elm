@@ -22,6 +22,9 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include <elm/genstruct/Vector.h>
 #include <elm/system/Path.h>
 #include <elm/system/SystemException.h>
@@ -334,6 +337,71 @@ Path Path::setExtension(CString new_extension) {
 		nbuf << buf.substring(0, pos);
 	nbuf << '.' << new_extension;
 	return nbuf.toString();
+}
+
+
+/**
+ * Test if the path matches a file, a directory or any file system object.
+ * @return	True if it exists (or is not accessible), false else.
+ */
+bool Path::exists(void) const {
+	int res = ::access(&toString(), F_OK);
+	return res == 0 || errno != ENOENT;
+}
+
+
+/**
+ * Test if the path matches a file.
+ * @return	True if it is a file (and is accessible), false else.
+ */
+bool Path::isFile(void) const {
+	struct stat buf;
+	int res = stat(&toString(), &buf);
+	if(res != 0)
+		return false;
+	return S_ISREG(buf.st_mode);
+}
+
+
+/**
+ * Test if the path matches a directory.
+ * @return	True if it is a directory (and is accessible), false else.
+ */
+bool Path::isDir(void) const {
+	struct stat buf;
+	int res = stat(&toString(), &buf);
+	if(res != 0)
+		return false;
+	return S_ISDIR(buf.st_mode);	
+}
+
+
+/**
+ * Test if the path matches a readable file system object.
+ * @return	True if it readable (and accessible), false else.
+ */
+bool Path::isReadable(void) const {
+	int res = ::access(&toString(), R_OK);
+	return res == 0;
+}
+
+
+/**
+ * Test if the path matches a writable file system object.
+ * @return	True if it writable (and accessible), false else.
+ */
+bool Path::isWritable(void) const {
+	int res = ::access(&toString(), W_OK);
+	return res == 0;
+}
+
+/**
+ * Test if the path matches an executable file system object.
+ * @return	True if it executable (and accessible), false else.
+ */
+bool Path::isExecutable(void) const {
+	int res = ::access(&toString(), X_OK);
+	return res == 0;
 }
 
 } } // elm::system
