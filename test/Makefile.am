@@ -17,15 +17,16 @@ all_checks: $(check_PROGRAMS)
 noinst_LTLIBRARIES = myplugin.la
 
 INCLUDES	= -I../include
+AM_CXXFLAGS = -Wall
 if HAS_LIBXML
-AM_CXXFLAGS = -DHAS_LIBXML
+AM_CXXFLAGS += -DHAS_LIBXML
 endif
 if IS_SHARED
-AM_CXXFLAGS = -DIS_SHARED
+AM_CXXFLAGS += -DIS_SHARED
 endif
 
 # Test program
-test_LDADD = -dlopen force -dlopen myplugin.la ../src/libelm.la
+test_LDADD = -dlopen force -dlopen myplugin.la ../src/libelm.la -lefence
 test_DEPENDENCIES = ../src/libelm.la myplugin.la
 
 test_SOURCES		=\
@@ -63,7 +64,7 @@ endif
 
 # MyPlugin plugin
 myplugin_la_LDFLAGS	= -module -rpath @abs_builddir@
-myplugin_la_LIBADD = ../src/libelm.la
+myplugin_la_LIBADD = ../src/libelm.la  -lefence
 myplugin_la_DEPS = ../src/libelm.la
 myplugin_la_SOURCES	= plugin.cpp
 

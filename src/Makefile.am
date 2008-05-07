@@ -2,7 +2,7 @@ lib_LTLIBRARIES=libelm.la
 
 INCLUDES=-I../include @INCLTDL@
 
-AM_CXXFLAGS = @LIBXML_CFLAGS@
+AM_CXXFLAGS = @LIBXML_CFLAGS@ -Wall
 
 libelm_la_LDFLAGS=-version-info 0:1:0
 libelm_la_LIBADD = @LIBLTDL@
@@ -39,6 +39,7 @@ libelm_la_SOURCES= \
 	inhstruct_DLList.cpp \
 	io_BlockInStream.cpp \
 	io_BlockOutStream.cpp \
+	io_BufferedInStream.cpp \
 	io_InFileStream.cpp \
 	io_Input.cpp \
 	io_InStream.cpp \
