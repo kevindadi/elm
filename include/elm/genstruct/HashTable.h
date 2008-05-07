@@ -70,6 +70,18 @@ public:
 		inline T item(void) const { return this->node->value; }
 		inline const K& key(void) const { return this->node->key; };
 	};
+	// SameKeyIterator
+	class SameKeyIterator: public PreIterator<SameKeyIterator, T> {
+		const HashTable<K, T, H>& htab;
+		K &key;
+		node_t *node;	
+		int i;	
+	public:
+		inline SameKeyIterator(const HashTable<K, T, H>& _htab, K &_key);
+		inline bool ended(void) const;
+		inline void next(void);
+		inline T item(void) const { return this->node->value; }
+	};
 };
 
 
@@ -185,6 +197,27 @@ void HashTable<K, T, H>::putAll(const HashTable<K, T, H>& htab) {
 	for(int i = 0; i < htab.size; i++)
 		for(node_t *node = htab.tab[i]; node; node = node->next) 
 			put(node->key, node->value);
+}
+
+
+// SameKeyIterator methods
+template <class K, class T, class H>
+HashTable<K, T, H>::SameKeyIterator::SameKeyIterator(const HashTable<K, T, H>& _htab, K &_key):
+htab(_htab), key(_key) {
+	i = H::hash(key) % size;
+	for (node = htab.tab[i]; node && (node->key != key); node = node->next);
+	ASSERT(node != NULL);
+}
+
+template <class K, class T, class H>
+bool HashTable<K, T, H>::SameKeyIterator::ended(void) const {	
+	return (node == NULL);
+}
+
+template <class K, class T, class H>
+void HashTable<K, T, H>::SameKeyIterator::next(void) {	
+	node = node->next;
+	for (node = htab.tab[i]; node && (node->key != key); node = node->next);
 }
 
 
