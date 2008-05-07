@@ -37,9 +37,10 @@ public:
 	long val;
 	unsigned char base;
 	unsigned char width;
-	unsigned align : 6;
+	unsigned align : 5;
 	unsigned upper : 1;
 	unsigned sign : 1;
+	unsigned displaySign : 1;
 	char pad;
 };
 
@@ -154,6 +155,11 @@ inline IntFormat oct(IntFormat fmt) {
 inline IntFormat hex(IntFormat fmt) {
 	fmt.base = 16;
 	fmt.sign = false;
+	return fmt;
+}
+
+inline IntFormat sign(IntFormat fmt) {
+	fmt.displaySign = true;
 	return fmt;
 }
 
