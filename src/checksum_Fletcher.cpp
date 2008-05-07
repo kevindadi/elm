@@ -60,11 +60,15 @@ void Fletcher::add(void) {
  */
 void Fletcher::put(io::InStream& in) {
 	while(true) {
-		int result = in.read(half + size, 2 - size);
-		if(result < 0)
-			throw MessageException("elm::checksum::Fletcher: error during stream read");
-		size += result;
-		if(size != 2)
+		while(size < 2) {
+			int result = in.read(half + size, 2 - size);
+			if(result < 0)
+				throw MessageException("elm::checksum::Fletcher: error during stream read");
+			if(!result)
+				break;
+			size += result;
+		}
+		if(!size)
 			break;
 		size = 0;
 		add();
