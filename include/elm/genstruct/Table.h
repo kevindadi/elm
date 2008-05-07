@@ -144,6 +144,7 @@ template <class T>
 inline Table<T>& Table<T>::operator=(const Table& table) {
 	copy(table);
 	//cout << "Table::operator=(" << this << ", " << &table << ")\n";
+	return *this;
 }
 
 template <class T>
