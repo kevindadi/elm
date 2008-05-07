@@ -344,6 +344,8 @@ void Output::print(const IntFormat fmt) {
 	char *res = horner(buffer + 32, uval, fmt.base, fmt.upper ? 'A' : 'a');
 	if(fmt.sign && fmt.val < 0)
 		*(--res) = '-';
+        if (fmt.displaySign && fmt.val > 0) 
+                *(--res) = '+';                
 	int size = buffer + 32 - res;
 	
 	// Compute pads
