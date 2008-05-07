@@ -40,7 +40,7 @@ namespace elm { namespace io {
 
 
 /**
- * @fn int InStream::read(char *buffer, int size);
+ * @fn int InStream::read(void *buffer, int size);
  * Read some bytes from the stream and store them in the given buffer.
  * This method does not ever read as many bytes as available in the buffer even if the stream
  * is not ended. Insteadn a read returning 0 bytes means the end of stream is reached.
