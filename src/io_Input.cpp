@@ -99,7 +99,7 @@ void Input::back(int chr) {
  * @return	Read boolean value.
  */	
 bool Input::scanBool(void) {
-	char *pattern;
+	const char *pattern;
 	bool res;
 	
 	// Look first character
