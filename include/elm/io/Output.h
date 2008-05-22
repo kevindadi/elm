@@ -100,6 +100,7 @@ inline void IntFormat::init(bool _sign) {
 	pad = ' ';
 	upper = false;
 	sign = _sign;
+	displaySign = false;
 };
 
 
