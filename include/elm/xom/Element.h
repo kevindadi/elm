@@ -7,6 +7,7 @@
 #ifndef ELM_XOM_ELEMENT_H
 #define ELM_XOM_ELEMENT_H
 
+#include <elm/util/Option.h>
 #include <elm/xom/ParentNode.h>
 
 namespace elm { namespace xom {

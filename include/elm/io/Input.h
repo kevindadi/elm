@@ -7,7 +7,7 @@
 #ifndef ELM_IO_INPUT_H
 #define ELM_IO_INPUT_H
 
-#include <elm/utility.h>
+#include <elm/string.h>
 #include <elm/io/InStream.h>
 
 namespace elm { namespace io {
