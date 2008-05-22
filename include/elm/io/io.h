@@ -7,7 +7,7 @@
 #ifndef ELM_IO_IO_H
 #define ELM_IO_IO_H
 
-#include <elm/utility.h>
+#include <elm/util/MessageException.h>
 #include <elm/system/SystemIO.h>
 #include <elm/io/Output.h>
 #include <elm/io/Input.h>
