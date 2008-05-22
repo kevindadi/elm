@@ -11,6 +11,7 @@
 #include <elm/serial2/Serializer.h>
 #include <elm/genstruct/HashTable.h>
 #include <elm/genstruct/VectorQueue.h>
+#include <elm/util/Pair.h>
 
 namespace elm { namespace serial2 {
 
