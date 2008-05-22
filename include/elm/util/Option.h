@@ -7,6 +7,8 @@
 #ifndef ELM_UTIL_OPTION_H
 #define ELM_UTIL_OPTION_H
 
+#include <elm/assert.h>
+
 namespace elm {
 
 // OptionalNone value
@@ -24,11 +26,14 @@ public:
 	inline Option(const Option<T> &opt): one(opt.one), val(opt.val) { }
 	inline bool isOne(void) const { return one; }
 	inline bool isNone(void) const { return !one; }
-	inline const T& value(void) const { return val; }
+	inline const T& value(void) const
+		{ ASSERTP(one, "no value in option"); return val; }
 	
 	inline operator bool(void) const { return isOne(); }
-	inline const T& operator*(void) const { return val; }
-	inline operator const T&(void) const { return val; }
+	inline const T& operator*(void) const
+		{ ASSERTP(one, "no value in option");  return val; }
+	inline operator const T&(void) const
+		{ ASSERTP(one, "no value in option"); return val; }
 	inline Option<T>& operator=(const Option<T>& opt)
 		{ one = opt.one; val = opt.val; return *this; }
 	inline Option<T>& operator=(const T& value)
