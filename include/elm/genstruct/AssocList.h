@@ -23,6 +23,7 @@
 #define ELM_GENSTRUCT_ASSOCLIST_H_
 
 #include <elm/type_info.h>
+#include <elm/util/Option.h>
 #include <elm/util/Comparator.h>
 #include <elm/genstruct/SortedSLList.h>
 
