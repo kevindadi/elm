@@ -94,7 +94,7 @@ void XOMUnserializer::readPointer(SerialClass& clazz, void *&ptr) {
 	SerialClass *uclass = &clazz;
 	
 	// Is there a reference ?
-	CString id = ctx.elem->getAttributeValue("ref");
+	Option<xom::String> id = ctx.elem->getAttributeValue("ref");
 	if(id) {
 		ref_t *ref = refs.get(id, 0);
 		if(!ref) {
@@ -108,16 +108,18 @@ void XOMUnserializer::readPointer(SerialClass& clazz, void *&ptr) {
 	else {
 		
 		// Find the class
-		CString clazz_name = ctx.elem->getAttributeValue("class");
-		if(clazz_name) {
-			uclass = SerialClass::find(clazz_name);
+		string clazz_name;
+		Option<xom::String> name = ctx.elem->getAttributeValue("class");
+		if(name) {
+			clazz_name = name;
+			uclass = SerialClass::find(&clazz_name);
 			if(!uclass)
 				throw io::IOException(_ << "no class " << clazz_name);
 		}
 		
 		// Build the object
 		ptr = uclass->create();
-		beginObject(clazz_name, ptr);
+		beginObject(&clazz_name, ptr);
 		uclass->unserialize(ptr, *this);
 		endObject();
 	}
@@ -127,7 +129,7 @@ void XOMUnserializer::readPointer(SerialClass& clazz, void *&ptr) {
 /**
  */
 void XOMUnserializer::beginObject(CString name, void *ptr) {
-	xom::String id = ctx.elem->getAttributeValue("id");
+	Option<xom::String> id = ctx.elem->getAttributeValue("id");
 	if(id) {
 		ref_t *ref = refs.get(id, 0);
 		if(ref)
