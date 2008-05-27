@@ -94,7 +94,7 @@ void XOMUnserializer::onPointer(AbstractType& clazz, void **ptr) {
 	AbstractType *uclass = &clazz;
 	
 	// Is there a reference ?
-	CString id = ctx.elem->getAttributeValue("ref");
+	Option<xom::String> id = ctx.elem->getAttributeValue("ref");
 	if(id) {
 		ref_t *ref = refs.get(id, 0);
 		if(!ref) {
@@ -108,9 +108,11 @@ void XOMUnserializer::onPointer(AbstractType& clazz, void **ptr) {
 	else {
 		
 		// Find the class
-		CString clazz_name = ctx.elem->getAttributeValue("class");
-		if(clazz_name) {
-			uclass = AbstractType::getType(clazz_name);
+		string clazz_name = clazz.name();
+		Option<xom::String> name = ctx.elem->getAttributeValue("class");
+		if(name) {
+			clazz_name = name;
+			uclass = AbstractType::getType(&clazz_name);
 			if(!uclass)
 				throw io::IOException(_ << "no class " << clazz_name);
 		}
@@ -126,7 +128,7 @@ void XOMUnserializer::onPointer(AbstractType& clazz, void **ptr) {
 /**
  */
 void XOMUnserializer::beginObject(AbstractType& type, void *ptr) {
-	xom::String id = ctx.elem->getAttributeValue("id");
+	Option<xom::String> id = ctx.elem->getAttributeValue("id");
 	if(id) {
 		ref_t *ref = refs.get(id, 0);
 		if(ref)
