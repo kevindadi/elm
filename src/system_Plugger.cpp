@@ -216,7 +216,7 @@ Plugin *Plugger::plugFile(String path) {
 	#endif
 	if(!handle) {
 		err = NO_PLUGIN;
-		onError(_ << "invalid plugin found at \"" << path << "\" (no handle)");
+		onError(_ << "invalid plugin found at \"" << path << "\" (no handle): " << lt_dlerror());
 		return 0;
 	}
 
