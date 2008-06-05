@@ -33,10 +33,12 @@ libelm_la_SOURCES= \
 	genstruct_Tree.cpp \
 	genstruct_VectorQueue.cpp \
 	genstruct_Table.cpp \
-	inhstruct_SLList.cpp \
+	genstruct_Tree.cpp \
 	inhstruct_BinTree.cpp \
 	inhstruct_SortedBinTree.cpp \
 	inhstruct_DLList.cpp \
+	inhstruct_SLList.cpp \
+	inhstruct_Tree.cpp \
 	io_BlockInStream.cpp \
 	io_BlockOutStream.cpp \
 	io_BufferedInStream.cpp \
