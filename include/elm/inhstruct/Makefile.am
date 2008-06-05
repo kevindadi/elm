@@ -3,7 +3,8 @@ includeelminhstruct_HEADERS = \
 	BinTree.h \
 	DLList.h \
 	SLList.h \
-	SortedBinTree.h
+	SortedBinTree.h \
+	Tree.h
 	
 #	AVLTree.h
 
