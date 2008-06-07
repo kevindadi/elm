@@ -43,11 +43,11 @@ public:
 	inline int capacity(void) const;
 	inline int length(void) const;
 	inline bool isEmpty(void) const;	
-	inline T get(int index) const;
+	inline const T& get(int index) const;
 	inline T& item(int index);
 	inline void set(int index, const T value);
 	inline T& operator[](int index);
-	inline T operator[](int index) const;
+	inline const T& operator[](int index) const;
 	bool contains(const T& value) const;
 	int indexOf(const T& value, int start = 0) const;
 	int lastIndexOf(const T& value, int start = -1) const;
@@ -122,7 +122,7 @@ template <class T> T& Vector<T>::item(int index) {
 	ASSERTP(index < cnt, "index out of bounds");
 	return tab[index];
 }
-template <class T> T Vector<T>::get(int index) const {
+template <class T> const T& Vector<T>::get(int index) const {
 	ASSERTP(index < cnt, "index out of bounds");
 	return tab[index];
 }
@@ -133,7 +133,7 @@ template <class T> void Vector<T>::set(int index, const T value) {
 template <class T> T& Vector<T>::operator[](int index) {
 	return item(index);
 }
-template <class T> T Vector<T>::operator[](int index) const {
+template <class T> const T& Vector<T>::operator[](int index) const {
 	return get(index);
 }
 template <class T> bool Vector<T>::contains(const T& value) const {
