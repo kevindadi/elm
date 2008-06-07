@@ -32,10 +32,17 @@ class Tree: private inhstruct::Tree {
 public:
 	inline Tree(const T& value): _value(value) { }
 	
+	inline const T& data(void) const { return _value; }
+	inline T& data(void) { return _value; }
+	
 	// Accessors
-	inline Tree *children(void) const
+	inline const Tree *children(void) const
 		{ return static_cast<Tree *>(inhstruct::Tree::children()); }
-	inline Tree *sibling(void) const
+	inline Tree *children(void)
+		{ return static_cast<Tree *>(inhstruct::Tree::children()); }
+	inline const Tree *sibling(void) const
+		{ return static_cast<Tree *>(inhstruct::Tree::sibling()); }
+	inline Tree *sibling(void)
 		{ return static_cast<Tree *>(inhstruct::Tree::sibling()); }
 	bool hasChild(Tree *tree) const
 		{ return inhstruct::Tree::hasChild(tree); }
@@ -82,92 +89,7 @@ public:
 	
 private:
 	T _value;
-	
-
-/*public:
-	
-	// Accessors
-	inline const T& value(void) const { return _value; }
-	inline T& value(void) { return _value; }
-	inline const Tree<T> *children(void) const { return _children; }
-	inline Tree<T> *children(void) { return _children; }
-	inline const Tree<T> *sibling(void) const { return _sibling; }
-	inline Tree<T> *sibling(void) { return _sibling; }
-	
-	// Mutators
-	inline void addChild(Tree<T> *tree);
-	inline void addSibling(Tree<T> *tree);
-	inline void removeChild(void);
-	inline void removeSibling(void);
-	inline void clear(void);
-	void deleteAll(void);
-	
-	// Operators
-	inline operator bool(void) const { return _children; }
-	inline operator const T&(void) const { return value(); }
-	inline operator T&(void) { return value(); }
-	inline Tree<T>& operator=(const T& value) { _value = value; }
-	inline const T& operator*(void) const { return value(); }
-	inline T& operator*(void) { return value(); }
-	inline Tree<T>& operator+=(Tree<T> *tree) { addChild(tree); return *this; }
-	
-	// Iterator class
-	class Iterator: public PreIterator<Iterator, T> {
-		const Tree<T> *cur;
-	public:
-		inline Iterator(const Tree<T> *tree): cur(tree->children()) { }
-		inline const T& item(void) const { return cur->value(); }
-		inline bool ended(void) const { return cur; }
-		inline void next(void) { cur = cur->sibling(); }
-	};*/
 };
-
-// Tree inlines
-/*template <class T>
-inline void Tree<T>::addChild(Tree<T> *tree) {
-	assert(!tree->_sibling);
-	tree->_sibling = _children;
-	_children = tree;
-}
-
-template <class T>
-inline void Tree<T>::addSibling(Tree<T> *tree) {
-	assert(!tree->_sibling);
-	tree->_sibling = _sibling;
-	_sibling = tree;
-}
-
-template <class T>
-inline void Tree<T>::removeChild(void) {
-	assert(_children);
-	Tree<T> *next = _children->_sibling;
-	_children->_sibling = 0;
-	_children = next;
-}
-
-template <class T>
-inline void Tree<T>::removeSibling(void) {
-	assert(_sibling);
-	Tree<T> *next = _sibling->_sibling;
-	_sibling->_sibling = 0;
-	_sibling = next;
-}
-
-template <class T>
-inline void Tree<T>::clear(void) {
-	while(_children)
-		removeChild();
-}
-
-template <class T>
-void Tree<T>::deleteAll(void) {
-	while(_children) {
-		Tree<T> *tree = _children;
-		removeChild();
-		tree->deleteAll();
-	}
-	delete this;
-}*/
 
 } } // elm:genstruct
 
