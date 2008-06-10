@@ -140,12 +140,37 @@ char Input::scanChar(void) {
 
 
 /**
+ * Test if the character is in the base and return the matching digit.
+ * @param chr	Character to test.
+ * @param base	Base of the read.
+ * @return		Matching digit or not (-1).
+ */
+static inline int test_base(char chr, int base) {
+	if(base < 10) {
+		if(chr >= '0' && chr < '0' + base)
+			return chr - '0';
+		else
+			return -1;
+	}
+	else if(chr >= '0' && chr <= '9')
+		return chr - '0';
+	else if(chr >= 'a' && chr < 'a' + base - 10)
+		return chr - 'a' + 10;
+	else if(chr >= 'A' && chr < 'A' + base - 10)
+		return chr - 'A' + 10;
+	else
+		return -1;
+}
+
+
+/**
  * Scan a decimal integer.
  * @return	Integer value.
  */
 long Input::scanInt(void) {
 	unsigned long val = 0;
 	bool neg = false;
+	int base = 10;
 	
 	// Read sign
 	int chr = get();
@@ -156,14 +181,35 @@ long Input::scanInt(void) {
 	else if(chr == '+')
 		chr = get();
 	
-	// Read the characters
-	if(chr < '0' || chr > '9')
+	// Read the base
+	if(chr == '0')
+		switch(chr = get()) {
+		case 'x': case 'X':
+			base = 16;
+			chr = get();
+			break;
+		case 'b': case 'B':
+			base = 2;
+			chr = get();
+			break;
+		default:
+			if(chr < '0' || chr > '7') {
+				back(chr);
+				return 0;
+			}
+			base = 8;
+			break;
+		}
+	int digit = test_base(chr, base);
+	if(digit < 0)
 		throw IOException("bad formatted integer");
-	while(chr >= '0' && chr <= '9') {
-		val = val * 10 + (chr - '0');
+	while(digit >= 0) {
+		val = val * base + digit;
 		chr = get();
+		digit = test_base(chr, base);
 	}
-	back(chr);
+	if(chr >= 0)
+		back(chr);
 	return neg ? -val : val;
 }
 
