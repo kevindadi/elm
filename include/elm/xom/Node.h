@@ -66,6 +66,9 @@ public:
 	virtual Nodes *query(const String& xpath);
 	virtual Nodes *query(const String& xpath, XPathContext *context);
 	virtual String toXML(void) = 0;
+	
+	// Non-XOM methods
+	int line(void) const;
 };
 
 
