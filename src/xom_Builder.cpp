@@ -55,6 +55,9 @@ Builder::Builder(void): validate(false), fact(&default_factory) {
  */
 Document *Builder::build(CString system_id) {
 	
+	// Configuration
+	xmlLineNumbersDefault(1);
+	
 	// Read the file
 	xmlDoc *xml_doc = xmlReadFile(system_id, NULL,
 		(validate ? XML_PARSE_DTDVALID : 0)
