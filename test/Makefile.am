@@ -85,9 +85,9 @@ test_tree_DEPENDENCIES	= ../src/libelm.la
 test_tree_SOURCES		= test_tree.cpp
 
 # new_avl program
-new_avl_LDADD = ../src/libelm.la
-new_avl_DEPENDENCIES = ../src/libelm.la
-new_avl_SOURCES=new_avl.cpp
+#new_avl_LDADD = ../src/libelm.la
+#new_avl_DEPENDENCIES = ../src/libelm.la
+#new_avl_SOURCES=new_avl.cpp
 
 # test_sorted_sllist program
 test_sorted_sllist_LDADD = ../src/libelm.la
