@@ -369,4 +369,14 @@ Nodes *Node::query(const String& xpath) {
 	return 0;
 }
 
+
+/**
+ * Get the line of the node in the source file (if any).
+ * @return	File line of the node, -1 if no one is found.
+ */
+int Node::line(void) const {
+	return xmlGetLineNo(NODE(node));
+}
+
+
 } } // elm::xom
