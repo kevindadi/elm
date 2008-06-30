@@ -3,7 +3,7 @@
  *	String class implementation
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2003-07, IRIT UPS.
+ *	Copyright (c) 2003-08, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -185,7 +185,7 @@ void String::toc(void) const {
 		char *nbuf = new char[sizeof(buffer_t) + len]; 
 		buffer_t *nsbuf = (buffer_t *)nbuf;
 		nsbuf->use = 1;
-		memcpy(nsbuf->buf, sbuf->buf, len);
+		memcpy(nsbuf->buf, chars(), len);
 		unlock();
 		nsbuf->buf[len] = '\0';
 		off = zero_off;
