@@ -10,6 +10,7 @@ includeelmutil_HEADERS = \
 	Exception.h \
 	Formatter.h \
 	HashKey.h \
+	IndexedIterator.h \
 	Initializer.h \
 	MessageException.h \
 	Option.h \
