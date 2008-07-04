@@ -32,11 +32,13 @@ elm::serial::SerialClass& __make_class(elm::CString name) {
 #define SERIALIZE(clazz, fields) \
 	REFLEXIVITY(clazz) \
 	void clazz::__serialize(elm::serial::Serializer& _serializer) const  { \
-		const bool __serial = true; \
+		bool __serial; \
+		__serial = true; \
 		fields; \
 	} \
 	void clazz::__serialize(elm::serial::Unserializer& _serializer) { \
-		const bool __serial = false; \
+		bool __serial; \
+		__serial = false; \
 		fields; \
 	} \
 	namespace elm { namespace serial { \
