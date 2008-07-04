@@ -36,7 +36,7 @@ void test_option(void) {
 	try {
 		// Unknown option
 		{
-			char *argv[] = { "command", "--bad", 0 };
+			const char *argv[] = { "command", "--bad", 0 };
 			CHECK_EXCEPTION(OptionException, man.parse(2, argv));
 		};
 
@@ -46,17 +46,17 @@ void test_option(void) {
 			enum_opt = two;
 			CHECK(enum_opt == two);
 			{
-				char *argv[] = { "command", "-e", "one", 0 };
+				const char *argv[] = { "command", "-e", "one", 0 };
 				man.parse(3, argv);
 				CHECK(enum_opt == one);
 			}
 			{
-				char *argv[] = { "command", "-e", "two", 0 };
+				const char *argv[] = { "command", "-e", "two", 0 };
 				man.parse(3, argv);
 				CHECK(enum_opt == two);
 			}
 			{
-				char *argv[] = { "command", "-e", "four", 0 };
+				const char *argv[] = { "command", "-e", "four", 0 };
 				CHECK_EXCEPTION(OptionException, man.parse(3, argv));
 			}
 		}

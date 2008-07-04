@@ -40,7 +40,7 @@ class Manager {
 	genstruct::Vector<Option *> options;
 	Option *findShortName(char name);
 	Option *findLongName(CString name);
-	void processOption(Option *option, int& i, int argc, char **argv,
+	void processOption(Option *option, int& i, int argc, const char **argv,
 		const char *earg);
 protected:
 	CString program;
@@ -54,7 +54,7 @@ public:
 	virtual ~Manager(void) { }
 	void addOption(Option *option);
 	void removeOption(Option *option);
-	void parse(int argc, char **argv);
+	void parse(int argc, const char **argv);
 	void displayHelp(void);
 };
 
