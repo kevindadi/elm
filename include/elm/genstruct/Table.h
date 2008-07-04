@@ -1,14 +1,30 @@
 /*
- * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ *	$Id$
+ *	Table and AllocatedTable class interfaces
  *
- * elm/genstruct/Table.h -- Table and AllocatedTable class implementation.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2004-08, IRIT UPS.
+ * 
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software 
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_GENSTRUCT_TABLE_H
 #define ELM_GENSTRUCT_TABLE_H
 
 #include <elm/assert.h>
 #include <elm/deprecated.h>
+#include <elm/util/IndexedIterator.h>
 
 namespace elm { namespace genstruct {
 
@@ -26,7 +42,7 @@ public:
 	inline Table(const Table<T>& table);
 	
 	// Accessors
-	inline int count(void) const;
+	inline int size(void) const { return cnt; }
 	inline const T& get(int index) const;
 	inline T& get(int index);
 	inline void set(int index, const T& value);
@@ -41,7 +57,15 @@ public:
 	inline Table<T>& operator=(const Table& table);
 	inline operator bool(void) const;
 
+	// Iterator class
+	class Iterator: public IndexedIterator<Iterator, T, Table<T> > {
+	public:
+		inline Iterator(const Table<T>& table): IndexedIterator<Iterator, T, Table<T> >(table) { }
+		inline Iterator(const Iterator &iter): IndexedIterator<Iterator, T, Table<T> >(iter) { }
+	};
+
 	// Deprecated
+	inline int count(void) const { return cnt; }
 	inline const T *table(void) const;
 	inline T *table(void);
 };
@@ -83,11 +107,6 @@ template <class T>
 inline Table<T>::Table(const Table<T>& table): tab(table.tab), cnt(table.cnt) {
 }
 
-
-template <class T>
-inline int Table<T>::count(void) const {
-	return cnt;
-};
 
 template <class T>
 inline const T *Table<T>::table(void) const {
