@@ -37,8 +37,13 @@ void test_table(void) {
 		CHECK(tab[1] == 1);
 		CHECK(tab[2] == 2);
 		CHECK(tab[3] == 3);
-		CHECK(tab.count() == 4);
-		CHECK(tab.table() == t);
+		CHECK(tab.size() == 4);
+		int i = 0;
+		for(Table<int>::Iterator n(tab); !n.ended(); n++, i++) {
+			CHECK(i < 4);
+			CHECK(n == t[i]);
+		}
+		CHECK(i == 4);
 	}
 	
 	// Assignment tests
