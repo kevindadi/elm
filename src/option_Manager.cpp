@@ -179,7 +179,7 @@ void Manager::processOption(
 	Option *option,
 	int& i,
 	int argc,
-	const char **argv,
+	Manager::argv_t argv,
 	const char *earg
 ) {
 
@@ -252,7 +252,7 @@ class BadArgumentException {
  * @param argc	Argument count.
  * @param argv	Argument vector.
  */
-void Manager::parse(int argc, const char **argv) {
+void Manager::parse(int argc, Manager::argv_t argv) {
 	ASSERTP(argv, "null argv");
 	ASSERTP(argc > 0, "negative argc");
 	for(int i = 1; i < argc; i++) {

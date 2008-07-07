@@ -37,11 +37,14 @@ public:
 
 // Manager
 class Manager {
-	genstruct::Vector<Option *> options;
-	Option *findShortName(char name);
-	Option *findLongName(CString name);
-	void processOption(Option *option, int& i, int argc, const char **argv,
-		const char *earg);
+public:
+	typedef const char * const *argv_t;
+	virtual ~Manager(void) { }
+	void addOption(Option *option);
+	void removeOption(Option *option);
+	void parse(int argc, argv_t argv);
+	void displayHelp(void);
+
 protected:
 	CString program;
 	CString version;
@@ -50,12 +53,12 @@ protected:
 	CString description;
 	CString free_argument_description;
 	virtual void process(String arg);
-public:
-	virtual ~Manager(void) { }
-	void addOption(Option *option);
-	void removeOption(Option *option);
-	void parse(int argc, const char **argv);
-	void displayHelp(void);
+
+private:
+	genstruct::Vector<Option *> options;
+	Option *findShortName(char name);
+	Option *findLongName(CString name);
+	void processOption(Option *option, int& i, int argc, argv_t argv, const char *earg);
 };
 
 } } //elm::option
