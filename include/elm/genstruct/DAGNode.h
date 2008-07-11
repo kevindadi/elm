@@ -4,7 +4,7 @@
  *
  * DAGNode.h -- DAG interface.
  */
-#ifndef ELM_GENSTRUCT_DAGNODE_H
+#ifndef ELM_GENSTRUCT_DAGNODE_H 
 #define ELM_GENSTRUCT_DAGNODE_H
 
 #include <elm/assert.h>
@@ -30,11 +30,10 @@ public:
 
 	// Mutators
 	inline void addChild(DAGNode *child);
-	inline void delChild(DAGNode *child);	
+	inline void removeChild(DAGNode *child);	
 	
 	// Accessors
 	inline T& useValue(void);
-	inline bool isDeleted(void);
 
 	// Iterator class
 	class Iterator: public PreIterator<Iterator, DAGNode*> {
@@ -70,25 +69,18 @@ inline DAGNode<T>::~DAGNode() {
 }
 
 template <class T>
-inline bool DAGNode<T>::isDeleted() {
-	return(deleted);
-}
-
-template <class T>
 inline void DAGNode<T>::addChild(DAGNode *child) {
 	this->children.addFirst(child);
 }
 
 template <class T>
-inline void DAGNode<T>::delChild(DAGNode *child) {
-	child->deleted = true;
+inline void DAGNode<T>::removeChild(DAGNode *child) {
 	this->children.remove(child);
 }
 
 // DAGNode::Iterator class
 template <class T> inline DAGNode<T>::Iterator::Iterator(const DAGNode& _node)
 : iter(typename SLList<DAGNode*>::Iterator(_node.children)) {
-	skipDeleted();	
 }
 
 template <class T> inline DAGNode<T>::Iterator::Iterator(const Iterator& source)
@@ -107,7 +99,7 @@ template <class T> inline DAGNode<T>* DAGNode<T>::Iterator::item(void) const {
 }
 template <class T> inline void DAGNode<T>::Iterator::next(void) {
 	iter.next();
-	skipDeleted();
+
 }
 
 template <class T> inline void DAGNode<T>::Iterator::skipDeleted(void) {
