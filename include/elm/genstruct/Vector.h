@@ -204,8 +204,14 @@ template <class T> void Vector<T>::grow(int new_cap) {
 	tab = new_tab;
 }
 template <class T> void Vector<T>::setLength(int new_length) {
-	ASSERTP(new_length >= 0 && new_length <= cnt, "new length must be in [0, current length]");
-	cnt = new_length;
+	int new_cap; 
+	ASSERTP(new_length >= 0, "new length must be >= 0");
+	
+	for (new_cap = 1; new_cap < new_length; new_cap *= 2); 
+	if (new_cap > cap) {
+		grow(new_cap);
+	}
+	cnt = new_length;	
 }
 
 template <class T> inline void Vector<T>::copy(const Vector& vec) {
