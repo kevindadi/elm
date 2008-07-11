@@ -87,6 +87,7 @@ libelm_la_SOURCES= \
 	type_info.cpp \
 	util_AutoDestructor.cpp \
 	util_BitVector.cpp \
+	util_Cleaner.cpp \
 	util_Comparator.cpp \
 	util_delegate.cpp \
 	util_Equiv.cpp \

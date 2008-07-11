@@ -5,6 +5,7 @@ check_PROGRAMS = \
 	unserial2 \
 	test \
 	test_assoc_list \
+	test_cleaner \
 	test_io \
 	test_sorted_sllist \
 	test_type_info \
@@ -108,5 +109,10 @@ test_type_info_SOURCES=test_type_info.cpp
 test_io_LDADD = ../src/libelm.la
 test_io_DEPENDENCIES = ../src/libelm.la
 test_io_SOURCES=test_io.cpp
+
+# test_cleaner program
+test_cleaner_LDADD = ../src/libelm.la
+test_cleaner_DEPENDENCIES = ../src/libelm.la
+test_cleaner_SOURCES=test_cleaner.cpp
 
 TESTS = ./test
