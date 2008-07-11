@@ -38,12 +38,6 @@ namespace elm {
 
 
 /**
- * @fn void Cleaner::clean(void);
- * This method is called by the @ref CleanList to perform the clean up activity.
- */
-
-
-/**
  * @class Deletor
  * A deletor is a cleaner that invoke delete on a passed pointer.
  * @param T		Type of the deleted object.
@@ -55,14 +49,6 @@ namespace elm {
  * Build a deletor on the given object.
  * @param object	Object to delete at cleanup.
  * @seealso deletor()
- */
-
-
-/**
- * @fn Cleaner *deletor(T *object);
- * Build and return a @ref Deletor on the given object.
- * @param object	Object to delete.
- * @return			Cleaner performing the deletion.
  */
 
 
@@ -99,8 +85,8 @@ namespace elm {
  * @p
  * @code
  * {
- * 	CleanList clean;
- *  int *p = clean(new int);
+ * 	CleanList to_clean;
+ *  int *p = to_clean(new int);
  *	...
  * }	// p deletion automatically performed at clean deletion
  * @endcode
