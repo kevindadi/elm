@@ -100,8 +100,7 @@ Directory::Iterator::Iterator(Directory *directory)
 	dir = opendir(&directory->path().toString());
 	if(!dir)
 		throw SystemException(errno, "file");
-	for(int i = 0; i < 3; i++)
-		go();	// Skip "." and ".."
+	go();
 }
 
 
