@@ -20,6 +20,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <elm/io.h>
 #include <elm/util/MessageException.h>
 
 namespace elm {
@@ -40,12 +41,14 @@ namespace elm {
  */
 MessageException::MessageException(const String& message)
 : msg(message) {
+	//cerr << "elm::MessageException::MessageException(\"" << message << "\")\n";
 }
 
 
 /**
  */	
 String MessageException::message(void) {
+	//cerr << "elm::MessageException::message() = \"" << msg << "\"\n";
 	return msg;
 }
 

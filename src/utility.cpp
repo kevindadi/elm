@@ -72,6 +72,7 @@ Exception::~Exception(void) {
  * @return	Exception message.
  */
 String Exception::message(void) {
+	//cerr << "elm::Exception::message() = \"\"\n";
 	return "";	
 }
 
