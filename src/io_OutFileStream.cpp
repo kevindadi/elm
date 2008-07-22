@@ -3,7 +3,7 @@
  *	OutFileStream class implementation
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2004-07, IRIT UPS.
+ *	Copyright (c) 2004-08, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -34,13 +34,24 @@ namespace elm { namespace io {
  * @ingroup ios
  */
 
+
 /**
  * Build an output file stream by creating a new file or deleting an old one.
  * @param path Path of the file to wriet to.
  */
-OutFileStream::OutFileStream(CString path)
-: SystemOutStream(open(path.chars(), O_CREAT | O_TRUNC | O_WRONLY, 0777)) {
+OutFileStream::OutFileStream(const char *path)
+: SystemOutStream(open(path, O_CREAT | O_TRUNC | O_WRONLY, 0777)) {
 }
+
+
+/**
+ * Build an output file stream by creating a new file or deleting an old one.
+ * @param path Path of the file to wriet to.
+ */
+OutFileStream::OutFileStream(const Path& path)
+: SystemOutStream(open(&path.toString(), O_CREAT | O_TRUNC | O_WRONLY, 0777)) {
+}
+
 
 /**
  * Destructor (close the file if it is opened).
