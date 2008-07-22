@@ -1,21 +1,38 @@
 /*
- * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ *	$Id$
+ *	OutFileStream class interface
  *
- * elm/io/OutFileStream.h -- out file stream interface.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2007-8, IRIT UPS.
+ * 
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software 
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_IO_OUTFILESTREAM_H
 #define ELM_IO_OUTFILESTREAM_H
 
 #include <elm/string.h>
 #include <elm/system/SystemIO.h>
+#include <elm/system/Path.h>
 
 namespace elm { namespace io {
 
 // OutFileStream class
 class OutFileStream: public system::SystemOutStream {
 public:
-	OutFileStream(CString path);
+	OutFileStream(const char *path);
+	OutFileStream(const Path& path);
 	virtual ~OutFileStream(void);
 	inline bool isReady(void) const { return fd() >= 0; };
 	void close();
