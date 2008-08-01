@@ -24,6 +24,7 @@
 
 #include <elm/genstruct/Vector.h>
 #include <elm/option/Option.h>
+#include <elm/util/Version.h>
 #include <elm/util/MessageException.h>
 
 namespace elm { namespace option {
@@ -47,7 +48,7 @@ public:
 
 protected:
 	CString program;
-	CString version;
+	Version version;
 	CString author;
 	CString copyright;
 	CString description;
