@@ -6,6 +6,7 @@
  */
 
 #include <elm/util/test.h>
+#include <elm/io/OutFileStream.h>
 #include <elm/io.h>
 #include <elm/string.h>
 

@@ -28,6 +28,12 @@ EnumOption<int>::value_t vals[] = {
 };
 EnumOption<int> enum_opt(man, 'e', "enum", "", vals);
 
+class MyCommand: public Manager {
+public:
+	MyCommand(void) {
+		version = "1.2.3";
+	}
+};
 
 // test_option()
 void test_option(void) {

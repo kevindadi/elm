@@ -17,7 +17,7 @@ void test_file(void) {
 	CHECK_BEGIN("file");
 
 	// Read directory
-	FileItem *file = FileItem::get(Path::current());
+	FileItem *file = FileItem::get(system::Path::current());
 	CHECK(file);
 	Directory *dir = file->toDirectory();
 	CHECK(dir);
