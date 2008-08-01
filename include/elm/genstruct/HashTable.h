@@ -1,12 +1,29 @@
 /*
- * $Id$
- * Copyright (c) 2004, IRIT-UPS.
+ *	$Id$
+ *	genstruct::HashTable class interface
  *
- * elm/genstruct/HashTable.h -- HashTable class interface.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2004-08, IRIT UPS.
+ * 
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software 
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_GENSTRUCT_HASHTABLE_H
 #define ELM_GENSTRUCT_HASHTABLE_H
 
+#include <elm/deprecated.h>
+#include <elm/util/Pair.h>
 #include <elm/Iterator.h>
 #include <elm/util/HashKey.h>
 
@@ -26,14 +43,14 @@ class HashTable {
 	node_t **tab;
 	node_t *find(const K& key);
 	
-	// Iterator
-	class Iterator {
+	// InternIterator
+	class InternIterator {
 		const HashTable<K, T, H>& htab;
 		int i;
 	protected:
 		node_t *node;
 	public:
-		inline Iterator(const HashTable<K, T, H>& htab);
+		inline InternIterator(const HashTable<K, T, H>& htab);
 		inline bool ended(void) const;
 		inline void next(void);
 	};
@@ -56,20 +73,28 @@ public:
 	void remove(const K& key);
 	void clear(void);
 
-	// KeyIterator
-	class KeyIterator: public Iterator, public PreIterator<KeyIterator, K> {
+	// KeyIterator class
+	class KeyIterator: public InternIterator, public PreIterator<KeyIterator, K> {
 	public:
-		inline KeyIterator(const HashTable<K, T, H>& htab): Iterator(htab) { };
+		inline KeyIterator(const HashTable<K, T, H>& htab): InternIterator(htab) { };
 		inline K item(void) const { return this->node->key; }
 	};
 
-	// ItemIterator
-	class ItemIterator: public Iterator, public PreIterator<ItemIterator, T> {
+	// Iterator class
+	class Iterator: public InternIterator, public PreIterator<Iterator, T> {
 	public:
-		inline ItemIterator(const HashTable<K, T, H>& htab): Iterator(htab) { };
+		inline Iterator(const HashTable<K, T, H>& htab): InternIterator(htab) { };
 		inline T item(void) const { return this->node->value; }
 		inline const K& key(void) const { return this->node->key; };
 	};
+
+	// PairIterator class
+	class PairIterator: public InternIterator, public PreIterator<PairIterator, Pair<K, T> > {
+	public:
+		inline PairIterator(const HashTable<K, T, H>& htab): InternIterator(htab) { };
+		inline Pair<K, T> item(void) const { return pair(this->node->key, this->node->value); }
+	};
+
 	// SameKeyIterator
 	class SameKeyIterator: public PreIterator<SameKeyIterator, T> {
 		const HashTable<K, T, H>& htab;
@@ -81,6 +106,14 @@ public:
 		inline bool ended(void) const;
 		inline void next(void);
 		inline T item(void) const { return this->node->value; }
+	};
+
+	// Deprecated
+	class ItemIterator: public InternIterator, public PreIterator<ItemIterator, T> {
+	public:
+		inline ItemIterator(const HashTable<K, T, H>& htab): InternIterator(htab) { DEPRECATED };
+		inline T item(void) const { return this->node->value; }
+		inline const K& key(void) const { return this->node->key; };
 	};
 };
 
@@ -223,7 +256,7 @@ void HashTable<K, T, H>::SameKeyIterator::next(void) {
 
 // Iterator methods
 template <class K, class T, class H>
-HashTable<K, T, H>::Iterator::Iterator(const HashTable<K, T, H>& _htab):
+HashTable<K, T, H>::InternIterator::InternIterator(const HashTable<K, T, H>& _htab):
 htab(_htab) {
 	for(i = 0; i < htab.size; i++)
 		if(htab.tab[i]) {
@@ -233,12 +266,12 @@ htab(_htab) {
 }
 
 template <class K, class T, class H>
-bool HashTable<K, T, H>::Iterator::ended(void) const {
+bool HashTable<K, T, H>::InternIterator::ended(void) const {
 	return i >= htab.size;
 }
 
 template <class K, class T, class H>
-void HashTable<K, T, H>::Iterator::next(void) {
+void HashTable<K, T, H>::InternIterator::next(void) {
 	node = node->next;
 	if(!node)
 		for(i++; i < htab.size; i++)
