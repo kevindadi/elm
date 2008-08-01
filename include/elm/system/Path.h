@@ -35,6 +35,7 @@ public:
 	static const char PATH_SEPARATOR = ':';
 	
 	// Constructors
+	inline Path(void) { }
 	inline Path(const char *path);
 	inline Path(CString path);
 	inline Path(const String& path);
