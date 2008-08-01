@@ -3,7 +3,7 @@
  *	Version class implementation
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2005-07, IRIT UPS.
+ *	Copyright (c) 2005-08, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  */
 
 #include <elm/util/Version.h>
+#include <elm/io/BlockInStream.h>
 
 namespace elm {
 
@@ -104,6 +105,64 @@ namespace elm {
  * @param version	Version to compare with.
  * @return			0 for equality, <0 if current is less than passed one,
  * 					>0 else.
+ */
+
+
+/**
+ * Set a version from a text string. The text string must have the following
+ * form: [0-9]+(\.[0-9]+([0-9]+)?)?. If the string does not match, the
+ * version 0.0.0 is set.
+ * @param text	Text containing the version.
+ * @return		Current version.
+ */
+Version& Version::operator=(const string& text) {
+	string val, all = text;
+	io::Input in;
+	
+	try {
+		// major
+		{
+			int pos = all.indexOf('.');
+			if(pos < 0)
+				return *this;
+			val = all.substring(0, pos);
+			all = all.substring(pos + 1);
+			io::BlockInStream stream(val);
+			in.setStream(stream);
+			in >> _major;
+		}
+		
+		// minor
+		{
+			int pos = all.indexOf('.');
+			if(pos < 0)
+				return *this;
+			val = all.substring(0, pos);
+			all = all.substring(pos + 1);
+			io::BlockInStream stream(val);
+			in.setStream(stream);
+			in >> _minor;
+		}
+		
+		// release
+		{
+			io::BlockInStream stream(all);
+			in.setStream(stream);
+			in >> _release;
+		}
+	}
+	catch(elm::Exception& e) {
+		*this = ZERO;
+	}
+	return *this;
+}
+
+
+/**
+ * @fn Version::Version(const string& text);
+ * Build a version from a string.
+ * @see operator=(const string& text)
+ * @param text	String to build from.
  */
 
 

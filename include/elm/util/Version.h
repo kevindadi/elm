@@ -1,8 +1,23 @@
 /*
- * $Id$
- * Copyright (c) 2005, IRIT-UPS.
+ *	$Id$
+ *	Version class interface
  *
- * elm/util/Version.h -- Version class interface.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2005-08, IRIT UPS.
+ * 
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software 
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_UTIL_VERSION_H
 #define ELM_UTIL_VERSION_H
@@ -13,15 +28,15 @@
 namespace elm {
 
 class Version {
-	unsigned char _major;
-	unsigned char _minor;
-	unsigned short _release;
 public:
 	static const Version ZERO;
 
 	// Constructors
 	inline Version(int major = 0, int minor = 0, int release = 0);
 	inline Version(const Version& version);
+	inline Version(const char *text) { *this = string(text); }
+	inline Version(const cstring text) { *this = string(text); }
+	inline Version(const string& text) { *this = text; }
 	inline Version nextRelease(void) const;
 	inline Version nextMinor(void) const;
 	inline Version nextMajor(void) const;
@@ -36,12 +51,19 @@ public:
 	// Operators
 	inline operator bool(void) const;
 	inline Version& operator=(const Version& version);
+	inline Version& operator=(const char *text) { return *this = string(text); }
+	inline Version& operator=(const cstring text) { return *this = string(text); }
+	Version& operator=(const string& text);
 	inline bool operator==(const Version& version) const;
 	inline bool operator!=(const Version& version) const;
 	inline bool operator>(const Version& version) const;
 	inline bool operator>=(const Version& version) const;
 	inline bool operator<(const Version& version) const;
 	inline bool operator<=(const Version& version) const;
+private:
+	unsigned char _major;
+	unsigned char _minor;
+	unsigned short _release;
 };
 
 io::Output& operator<<(io::Output& out, const Version& version);
