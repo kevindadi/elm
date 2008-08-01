@@ -8,6 +8,7 @@
 #include <elm/util/test.h>
 #include <elm/utility.h>
 #include <elm/util/HashKey.h>
+#include <elm/util/Version.h>
 
 using namespace elm;
 
@@ -61,6 +62,19 @@ void test_utility(void) {
 		CHECK(HashKey<CString>::equals(s1, s1) == true);
 		CHECK(HashKey<CString>::equals(s1, s3) == true);
 		CHECK(HashKey<CString>::equals(s1, s2) == false);
+	}
+	
+	// Version test
+	{
+		try {
+			Version v = "1.2.3";
+			CHECK(v.major() == 1);
+			CHECK(v.minor() == 2);
+			CHECK(v.release() == 3);
+		}
+		catch(elm::Exception& e) {
+			cerr << "EXCEPTION: " << e.message() << io::endl;
+		}
 	}
 	
 	// Comparators tests
