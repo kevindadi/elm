@@ -23,7 +23,7 @@
 #define ELM_GENSTRUCT_SORTEDBINTREE_H
 
 #include <elm/utility.h>
-#include <elm/Iterator.h>
+#include <elm/PreIterator.h>
 #include <elm/genstruct/Vector.h>
 #include <elm/genstruct/VectorQueue.h>
 #include <elm/inhstruct/BinTree.h>
