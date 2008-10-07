@@ -23,7 +23,15 @@
 #define ELM_SYSTEM_SYSTEM_H
 
 #include <elm/util/Pair.h>
+#include <elm/system/Path.h>
 #include <elm/system/SystemIO.h>
+#include <elm/system/SystemException.h>
+
+namespace elm { namespace io {
+	class InStream;
+	class OutStream;
+	class RandomAccessStream;
+} } // elm::io
 
 namespace elm { namespace system {
 
@@ -46,8 +54,20 @@ public:
 // System class
 class System {
 public:
-	static Pair<PipeInStream *, PipeOutStream *> pipe(void);
+	typedef int access_t;
+	static const int READ = 1;
+	static const int WRITE = 2;
+	static const int READ_WRITE = READ | WRITE; 
+
+	static Pair<PipeInStream *, PipeOutStream *> pipe(void) throw(SystemException);
 	static unsigned int random(unsigned int top);
+	static io::OutStream *createFile(const Path& path) throw(SystemException);
+	static io::OutStream *appendFile(const Path& path) throw(SystemException);
+	static io::InStream *readFile(const Path& path) throw(SystemException);
+	static io::RandomAccessStream *openRandomFile(const Path& path, access_t access = READ)
+		throw(SystemException);
+	static io::RandomAccessStream *createRandomFile(const Path& path, access_t access = READ)
+		throw(SystemException);
 };
 
 } } // elm::system

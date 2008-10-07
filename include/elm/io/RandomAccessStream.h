@@ -25,6 +25,7 @@
 #include <elm/io/InStream.h>
 #include <elm/io/OutStream.h>
 #include <elm/system/Path.h>
+#include <elm/system/SystemException.h>
 
 namespace elm { namespace io {
 
@@ -33,11 +34,10 @@ class RandomAccessStream: public InStream, public OutStream  {
 public:
 	typedef unsigned long long pos_t;
 	typedef unsigned long long size_t;
-	typedef enum access_t {
-		READ,
-		WRITE,
-		READ_WRITE
-	} access_t;
+	typedef int access_t;
+	static const int READ = 1;
+	static const int WRITE = 2;
+	static const int READ_WRITE = READ | WRITE; 
 	
 	virtual pos_t pos(void) const = 0;
 	virtual size_t size(void) const = 0; 
@@ -46,9 +46,9 @@ public:
 	virtual bool moveBackward(pos_t pos) = 0;
 	virtual void resetPos(void) { moveTo(0); }
 	static RandomAccessStream *openFile(const system::Path& path,
-		access_t access = READ);
+		access_t access = READ) throw(system::SystemException);
 	static RandomAccessStream *createFile(const system::Path& path,
-		access_t access = WRITE);
+		access_t access = WRITE) throw(system::SystemException);
 };
 
 } } // elm::io

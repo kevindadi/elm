@@ -7,7 +7,7 @@
 #ifndef ELM_SYSTEM_PLUGGER_H
 #define ELM_SYSTEM_PLUGGER_H
 
-#include <elm/Iterator.h>
+#include <elm/PreIterator.h>
 #include <elm/system/Plugin.h>
 #include <elm/genstruct/Vector.h>
 #include <elm/system/Directory.h>

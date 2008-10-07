@@ -9,7 +9,7 @@
 
 #include <sys/types.h>
 #include <dirent.h>
-#include <elm/Iterator.h>
+#include <elm/PreIterator.h>
 #include <elm/system/FileItem.h>
 
 namespace elm { namespace system {

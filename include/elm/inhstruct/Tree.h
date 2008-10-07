@@ -22,7 +22,7 @@
 #ifndef ELM_INHSTRUCT_TREE_H
 #define ELM_INHSTRUCT_TREE_H
 
-#include <elm/Iterator.h>
+#include <elm/PreIterator.h>
 #include <elm/assert.h>
 
 namespace elm { namespace inhstruct {

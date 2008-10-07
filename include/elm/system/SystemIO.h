@@ -15,6 +15,7 @@ namespace elm { namespace system {
 // SystemInStream class
 class SystemInStream: public io::UnixInStream {
 protected:
+	friend class System;
 	inline SystemInStream(int fd): UnixInStream(fd) { }
 	inline ~SystemInStream(void) { }
 }; 
@@ -22,6 +23,7 @@ protected:
 // SystemOutStream class
 class SystemOutStream: public io::UnixOutStream {
 protected:
+	friend class System;
 	inline SystemOutStream(int fd): UnixOutStream(fd) { };
 	inline ~SystemOutStream(void) { }
 }; 
