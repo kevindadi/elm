@@ -1,137 +1,180 @@
 /*
- * $Id$
- * Copyright (c) 2005, IRIT-UPS <caasse@irit.fr>
+ *	$Id$
+ *	AVLTree class interface
  *
- * elm/genstruct/AVLTree.h -- AVL binary tree interface.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2008, IRIT UPS.
+ * 
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software 
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_GENSTRUCT_AVLTREE_H
 #define ELM_GENSTRUCT_AVLTREE_H
 
 #include <elm/utility.h>
-#include <elm/inhstruct/AVLTree.h>
+#include <elm/PreIterator.h>
 
 namespace elm { namespace genstruct {
 
-// Generic AVLTree
-template <class T>
-class AVLTree: private inhstruct::AVLTree {
-
-	// Node class
-	class Node: public inhstruct::AVLTree::Node {
-	public:
-		T val;
-		inline Node(const T value);
-		#ifdef ELM_DEBUG_AVLTREE
-			virtual void dump(void)  { };
-		#endif
-	};
-	
-	Comparator<T>& comp;
+// Private class
+class AbstractAVLTree {
 protected:
-	virtual int compare(inhstruct::AVLTree::Node *node1,
-		inhstruct::AVLTree::Node *node2);
-public:
+	inline AbstractAVLTree(void): root(0), cnt(0) { }
 
-	// Visitor class
-	class Visitor: private inhstruct::AVLTree::Visitor {
-		friend class AVLTree<T>;
-		virtual int process(inhstruct::BinTree::Node *node);
+	class Node {
 	public:
-		virtual int process(T value) = 0;
+		inline Node(void): balance(0) { links[0] = links[1] = 0; }
+		Node *links[2];
+		signed char balance;
 	};
 
-	// Constructors
-	inline AVLTree(void);
-	inline AVLTree(Comparator<T>& comp);
-	
-	// Accessors
-	inline int count(void);
-	inline bool isEmpty(void);
-	inline bool contains(const T value);
-	inline Option<T> get(const T value);
-	void visit(Visitor *visitor);
-	
-	// Mutators
-	void insert(const T value);
-	void remove(const T value);
-	void clean(void);
+	void insert(unsigned char da[], int dir, Node *node, Node *q, Node *y, Node *z);
+	void remove(Node *pa[], unsigned char da[], int k, Node *p);
+
+	Node *root;
+	int cnt;
 };
 
-// AVLTree<T>::Node methods
-template <class T> inline AVLTree<T>::Node::Node(const T value): val(value) {
-}
 
+// AVLTree class
+template <class T, class C = elm::Comparator<T> >
+class AVLTree: public AbstractAVLTree {
+	static const int MAX_HEIGHT = 32;
+protected:
+	class Node: public AbstractAVLTree::Node {
+	public:
+		inline Node(const T& item): data(item) { }
+		T data;
+		inline Node *left(void) const { return (Node *)links[0]; }
+		inline Node *right(void) const { return (Node *)links[1]; }
+		inline Node *succ(int dir) const { return (Node *)links[dir]; }
+	};
 
-// AVLTree<T>::Visitor methods
-template <class T> int AVLTree<T>::Visitor::process(inhstruct::BinTree::Node *node) {
-	return process(((Node *)node)->val);
-}
+	const Node *find(const T& item) const {
+		for(const Node *p = (Node *)root; p;) {
+			int cmp = C::compare(item, p->data);
+			if(cmp < 0)
+				p = p->left();
+			else if(cmp > 0)
+				p = p->right();
+			else
+				return p;
+		}
+		return NULL;
+    }
 
+public:
 
-// AVLTree<T> methods
-template <class T>
-inline AVLTree<T>::AVLTree(void): comp(Comparator<T>::def) {
-}
+	// Collection concept
+	inline int count(void) const { return cnt; }
+	inline bool contains(const T& item) const { return find(item) != NULL; }
+	inline bool isEmpty(void) const { return cnt == 0; }
+	inline operator bool(void) const { return !isEmpty(); }
 
-template <class T>
-inline AVLTree<T>::AVLTree(Comparator<T>& comparator)
-: comp(comparator) {
-}
+	template <template <class _> class Co>
+	inline bool containsAll(const Co<T>& coll) const
+		{ for(typename Co<T>::Iterator iter(coll); iter; iter++)
+			if(!contains(iter)) return false; return true; }
 
-template <class T>
-inline bool AVLTree<T>::isEmpty(void) {
-	return inhstruct::AVLTree::isEmpty();
-}
+	// Iterator class	
+	class Iterator: public PreIterator<T, Iterator> {
+	public:
+		inline Iterator(const AVLTree<T, C>& tree): sp(stack)
+			{ *sp = (Node *)root; if(*sp) sp++; }
+		inline Iterator(const Iterator& iter): sp(stack + iter.sp - iter.stack)
+			{ for(Node **p = stack, **q = iter.stack; q < sp; p++, q++) *p = *q; }
+		inline bool ended(void) const { return sp == stack; }
+		void next(void) {
+			Node *node = *--sp;
+			if(node->left()) *sp++ = node->left();
+			if(node->right()) *sp++ = node->right();
+		}
+		inline const T& item(void) const { return sp->data; }
+	private:
+		Node *stack[MAX_HEIGHT + 1], **sp;
+	};	
+	
+	// MutableCollection concept
+	void clear(void) {
+		Node *stack[MAX_HEIGHT + 1], *sp = stack;
+		if(root)
+			*sp++ = (Node *)root;
+		while(sp != stack) {
+			Node *node = *--sp;
+			if(node->left()) *sp++ = node->left();
+			if(node->right()) *sp++ = node->right();
+			delete node;
+		}
+	}
+	
+	void add(const T& item) {
+		unsigned char da[MAX_HEIGHT];
+		int k = 0;
+		Node *z = (Node *)&root;
+		Node *y = (Node *)root, *q, *p;
 
-template <class T>
-inline int AVLTree<T>::count(void) {
-	return inhstruct::AVLTree::count();
-}
+		// finding the insertion position
+		unsigned char dir = 0;
+		for(q = z, p = y; p != NULL; q = p, p = p->succ(dir)) {
+			int cmp = C::compare(item, p->data);
+			if(p->balance != 0) {
+     			z = q;
+     			y = p;
+     			k = 0;
+			}
+			dir = cmp > 0;
+			da[k++] = dir;
+		}
+		
+		// node creation
+		Node *node = new Node(item);
+		AbstractAVLTree::insert(da, dir, node, q, y, z);
+	}
+	
+	template <template <class _> class Co>
+	inline void addAll(const Co<T>& coll)
+		{ for(typename Co<T>::Iterator iter(coll); iter; iter++) add(iter); }
+	
+	void remove(const T& item) {
+		AbstractAVLTree::Node *pa[MAX_HEIGHT];
+		unsigned char da[MAX_HEIGHT];
+		int k;
 
-template <class T>
-inline bool AVLTree<T>::contains(const T value) {
-	Node test_node(value);
-	Node *found_node = (Node *)inhstruct::AVLTree::get(&test_node);
-	return found_node != 0;
-}
-
-template <class T>
-inline Option<T> AVLTree<T>::get(const T value) {
-	Node test_node(value);
-	Node *found_node = get(&test_node);
-	if(found_node)
-		return Option<T>(found_node.val);
-	else
-		return Option<T>();
-}
-
-template <class T>
-void AVLTree<T>::insert(const T value) {
-	Node *new_node = new Node(value);
-	inhstruct::AVLTree::insert(new_node);
-}
-
-template <class T>
-void AVLTree<T>::remove(const T value) {
-	Node test_node(value);
-	inhstruct::AVLTree::remove(&test_node);
-}
-
-template <class T>
-void AVLTree<T>::visit(AVLTree<T>::Visitor *visitor) {
-	BinTree::visit(visitor);
-}
-
-template <class T>
-int AVLTree<T>::compare(inhstruct::AVLTree::Node *node1,
-inhstruct::AVLTree::Node *node2) {
-	return comp.compare(((Node *)node1)->val, ((Node *)node2)->val);
-}
-
-template <class T>
-void AVLTree<T>::clean(void) {
-	inhstruct::AVLTree::clean();
-}
+		// find the item
+		k = 0;
+		Node *p = (Node *)&root;
+		for(int cmp = - 1; cmp != 0; cmp = C::compare(item, p->data)) {
+			int dir = cmp > 0;
+			pa[k] = p;
+			da[k++] = dir ;
+			p = p->succ(dir);
+			ASSERTP(p != NULL, "removed item not in the tree");
+		}
+		
+		// remove the item
+		AbstractAVLTree::remove(pa, da, k, p);
+		delete p;
+		cnt--;
+		
+	}
+	
+	template <template <class _> class Co>
+	inline void removeAll(const Co<T>& coll)
+		{ for(typename Co<T>::Iterator iter(coll); iter; iter++) remove(iter); }
+	
+	inline void remove(const Iterator& iter) { remove(iter.item()); }
+};
 
 } }	// elm::genstruct
 
