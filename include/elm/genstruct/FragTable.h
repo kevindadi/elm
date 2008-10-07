@@ -53,6 +53,7 @@ public:
 		inline const T& item(void) const;
 		inline bool ended(void) const;
 	protected:
+		friend class FragTable;
 		const FragTable<T> *arr;
 		int i, len;
 	};

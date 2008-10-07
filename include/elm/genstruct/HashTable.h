@@ -24,7 +24,7 @@
 
 #include <elm/deprecated.h>
 #include <elm/util/Pair.h>
-#include <elm/Iterator.h>
+#include <elm/PreIterator.h>
 #include <elm/util/HashKey.h>
 
 namespace elm { namespace genstruct {
