@@ -23,6 +23,7 @@
 #include <elm/deprecated.h>
 #include <elm/assert.h>
 #include <elm/io/RandomAccessStream.h>
+#include <elm/system/System.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -31,38 +32,6 @@
 #include <fcntl.h>
 
 namespace elm { namespace io {
-
-// UnixRandomAccessStream class
-class UnixRandomAccessStream: public RandomAccessStream {
-public:
-	inline UnixRandomAccessStream(int _fd): fd(_fd) { }
-	virtual ~UnixRandomAccessStream(void)
-		{ close(fd); }
-	
-	virtual int read(void *buffer, int size)
-		{ return ::read(fd, buffer, size); }
-	virtual int write(const char *buffer, int size)
-		{ return ::write(fd, buffer, size); }
-	cstring lastErrorMessage(void)
-		{ DEPRECATED; return strerror(errno); }
-	int flush(void)
-		{ return 0; }
-
-	virtual pos_t pos(void) const
-		{ return lseek(fd, 0, SEEK_CUR); }
-	virtual size_t size(void) const
-		{ struct stat s; fstat(fd, &s); return s.st_size; }
-	virtual bool moveTo(pos_t pos)
-		{ return (pos_t)lseek(fd, pos, SEEK_SET) == pos; }
-	virtual bool moveForward(pos_t pos)
-		{ return (pos_t)lseek(fd, pos, SEEK_CUR) == pos; }
-	virtual bool moveBackward(pos_t _pos)
-		{ return (pos_t)lseek(fd, pos() - _pos, SEEK_SET) == _pos; }
-
-private:
-	int fd;
-};
-
 
 /**
  * @class RandomAccessStream
@@ -137,12 +106,9 @@ static inline int makeFlags(RandomAccessStream::access_t access) {
 RandomAccessStream *RandomAccessStream::openFile(
 	const system::Path& path,
 	access_t access )
+	throw(system::SystemException)
 {
-	int fd = ::open(&path.toString(), makeFlags(access));
-	if(fd < 0)
-		throw IOException(_ << "cannot open \"" << path << "\": " << strerror(errno));
-	else
-		return new UnixRandomAccessStream(fd);
+	return system::System::openRandomFile(path, access);
 };
 
 
@@ -156,13 +122,9 @@ RandomAccessStream *RandomAccessStream::openFile(
 RandomAccessStream *RandomAccessStream::createFile(
 	const system::Path& path,
 	access_t access)
+	throw(system::SystemException)
 {
-	ASSERTP(access != READ, "file creation requires at least a write mode");
-	int fd = ::open(&path.toString(), makeFlags(access) | O_CREAT | O_TRUNC, 0666);
-	if(fd < 0)
-		throw IOException(_ << "cannot create \"" << path << "\": " << strerror(errno));
-	else
-		return new UnixRandomAccessStream(fd);
+	return system::System::createRandomFile(path, access);
 }
 
 } } // elm::io

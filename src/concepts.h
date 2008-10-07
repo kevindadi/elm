@@ -151,6 +151,15 @@ public:
 	bool contains(const T& item);
 	
 	/**
+	 * Test if the given collection is contained in the current one.
+	 * @param collection	Collection to test.
+	 * @return				True if it is contained, false else.
+	 * @param C				Type of the collection to test.
+	 */
+	template <template <class _> class C>
+	bool containsAll(const C<T>& collection);
+	
+	/**
 	 * Test if the collection si empty.
 	 * @return	True if the collection is empty, false else.
 	 */
