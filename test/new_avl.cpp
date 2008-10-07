@@ -34,7 +34,7 @@ protected:
 	
 	class Stack {
 	public:
-		inline Stack(AbstractAVLTree& _tree): tree(_tree), top(0)
+		inline Stack(AbstractAVLTree& _tree): top(0), tree(_tree)
 			{ nodes[0] = tree.root; }
 		inline void push(int dir) {
 			dirs[top] = dir;
@@ -45,12 +45,13 @@ protected:
 		inline void set(Node *node) {
 			nodes[top] = node;
 			if(!top) tree.root = node;
-			else nodes[top - 1]->link[dirs[top - 1]] = node;
+			else nodes[top - 1]->link[static_cast<int>(dirs[top - 1])] = node;
 		}
 		inline bool atLeaf(void) const { return !nodes[top]; }
 		inline Node *node(void) { return nodes[top]; }
 		inline bool atRoot(void) const { return !top; }
 		inline int height(void) const { return nodes[top]->height; }
+		inline bool isEmpty(void) const { return top < 0; }
 		inline int diff(int dir = 0) {
 			int h0 = nodes[top]->link[dir] ? nodes[top]->link[dir]->height : 0;
 			int h1 = nodes[top]->link[!dir] ? nodes[top]->link[!dir]->height : 0;
@@ -82,35 +83,32 @@ protected:
 	void balance(Stack& stack) {
 		while(true) {
 			int old_height = stack.height();
-			switch(stack.diff()) {
-			case -2:
+			int diff = stack.diff();
+			if(diff <= -2)
 				balance(stack, 1);
-				break;
-			case -1: case 0: case 1:
-				break;
-			case 2:
+			else if(diff >= 2)
 				balance(stack, 0);
-				break;
-			}
 			stack.computeHeight();
 			if(stack.atRoot())
 				return;
-			if(old_height == stack.height())
-				return;
+			/*if(old_height == stack.height())
+				return;*/
 			stack.pop();
 		}
 	}
 
-	/*void removeNode(Step *path, Node *node) {
-		join(path, node->link[0], node->link[1]);
-		balance(path);
-	}*/
+	void remove(Stack& stack) {
+		join(stack);
+		dump();
+		if(!stack.isEmpty())
+			balance(stack);
+	}
 	
 private:
 
 	void rotate(Stack& stack, int dir) {
 		Node *node = stack.node();
-		Node *subl = node->link[dir], *subr = node->link[!dir];
+		Node *subl = node->link[dir]/*, *subr = node->link[!dir]*/;
 		Node *subll = subl->link[dir], *sublr = subl->link[!dir];
 		subl->link[dir] = subll;
 		subl->link[!dir] = node;
@@ -136,35 +134,31 @@ private:
 		}
 	}	
 
-	/*void join(Step *path0, Node *node1, Node *node2) {
-		Step *path = path0;
-		Node *nodes[2] = { node1, node2 };
-		
-		// Perform the join
+	void join(Stack& stack) {
+		Node *nodes[2] = { stack.node()->link[0], stack.node()->link[1] }; 
 		while(true) {
 			if(!nodes[0]) {
-				path->set(nodes[1]);
-				break;
+				stack.set(nodes[1]);
+				stack.pop();
+				return;
 			}
 			else if(!nodes[1]) {
-				path->set(nodes[0]);
-				break;
+				stack.set(nodes[0]);
+				stack.pop();
+				return;
 			}
 			else {
-				int dir = nodes[0]->height > nodes[1]->height; 
-				path->set(nodes[!dir]);
-				path++;
-				*path = Step(nodes[!dir], dir);
-				nodes[!dir] = nodes[!dir]->link[dir];
+				int dir = nodes[0]->height <= nodes[1]->height;
+				stack.set(nodes[dir]);
+				stack.push(!dir);
+				nodes[dir] = stack.node();
 			}
 		}
-		
-		// Update the links and height
-		while(path != path0) {
-			path->computeHeight();
-			path--;
-		}
-	}*/
+	}
+	
+#	ifndef NDEBUG
+	virtual void dump(void) = 0;
+#endif
 };
 
 
@@ -225,25 +219,20 @@ public:
 		}
 	}
 	
-	/*void remove(const T& item) {
-		Step stack[MAX_HEIGHT];
-		int top = 1;
-		stack[0] = Step();
-		for(Node *cur = _root(); cur;) {
-			// stack[top++] = cur;
-			int cmp = C::compare(cur->val, item);
-			if(!cmp) {
-				removeNode(&stack[top - 1], cur);
-				delete cur;
+	void remove(const T& item) {
+		Stack stack(*this);
+		while(!stack.atLeaf()) {
+			Node *node = (Node *)stack.node();
+			int cmp = C::compare(node->val, item);
+			if(cmp)
+				stack.push(_dir(cmp));
+			else {
+				AbstractAVLTree::remove(stack);
 				return;
 			}
-			else {
-				stack[top++] = Step(cur, _dir(cmp));
-				cur = stack[top - 1].get();
-			}
 		}
-		ASSERTP(false, "item not in the graph");
-	}*/
+		ASSERTP(false, "item not in the tree");
+	}
 	
 #	ifndef NDEBUG
 		void check(Node *node) {
@@ -258,7 +247,7 @@ public:
 			check(_root());
 		}
 		
-		void dump(Node *node, int tab = 0) {
+		virtual void dump(Node *node, int tab = 0) {
 			for(int i = 0; i < tab; i++)
 				cout << '\t';
 			if(!node) {
@@ -306,22 +295,27 @@ int main(void) {
 		int v = rand();
 		
 		// Add-on
-		//if(!top || v & 0x1) {
+		if(!top || v & 0x1) {
 			int newi = (v >> 10) * COUNT / (RAND_MAX >> 10);
 			cout << "INSERTING " << newi << io::endl;
 			tree.insert(newi);
 			list[top++] = newi;
-		//}
+		}
 		
 		// Removal
-		/*else {
+		else {
 			int remi = (v >> 10) * top / ((RAND_MAX >> 10) + 1);
 			cout << "REMOVING " << list[remi] << io::endl; 
 			tree.remove(list[remi]);
+			if(list[remi] == 593) {
+				tree.dump();
+				tree.check();
+				return 1;
+			}
 			for(int i = remi + 1; i < top; i++)
 				list[i - 1] = list[i];
 			top--;
-		}*/
+		}
 		
 		// Check all
 		tree.dump();

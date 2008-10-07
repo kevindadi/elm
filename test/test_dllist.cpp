@@ -21,7 +21,7 @@
  */
 
 #include <elm/util/test.h>
-#include <elm/datastruct/DLList.h>
+#include <elm/genstruct/DLList.h>
 
 using namespace elm;
 
@@ -41,7 +41,7 @@ void test_dllist(void) {
 	
 	// Base tests
 	{
-		datastruct::DLList<int> l;
+		genstruct::DLList<int> l;
 		CHECK(l.isEmpty());
 		l.addLast(666);
 		CHECK(!l.isEmpty());
@@ -57,7 +57,7 @@ void test_dllist(void) {
 	
 	// Removal tests
 	{
-		datastruct::DLList<int> l;
+		genstruct::DLList<int> l;
 		l.addLast(0);
 		l.addLast(1);
 		l.addLast(2);
@@ -81,7 +81,7 @@ void test_dllist(void) {
 	
 	// Iterator test
 	{
-		datastruct::DLList<int> l;
+		genstruct::DLList<int> l;
 		l.addLast(0);
 		l.addLast(1);
 		l.addLast(2);
@@ -89,7 +89,7 @@ void test_dllist(void) {
 		l.addLast(4);
 		CHECK(l.count() == 5);
 		int i = 0;
-		for(Iterator<int> iter(l); iter; iter++, i++)
+		for(genstruct::DLList<int>::Iterator iter(l); iter; iter++, i++)
 			CHECK(*iter == i);
 	}
 	

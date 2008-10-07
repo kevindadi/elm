@@ -6,7 +6,7 @@
  */
 
 #include <elm/util/test.h>
-#include <elm/datastruct/HashTable.h>
+#include <elm/genstruct/HashTable.h>
 
 using namespace elm;
 
@@ -76,11 +76,6 @@ void test_hashtable(void) {
 			mask &= ~(1 << item);
 		}
 		CHECK(!mask);
-	}
-	
-	// datastruct test
-	{
-		datastruct::HashTable<int, int> htab;
 	}
 	
 	CHECK_END;

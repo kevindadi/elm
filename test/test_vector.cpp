@@ -6,7 +6,7 @@
  */
 
 #include <elm/util/test.h>
-#include <elm/datastruct/Vector.h>
+#include <elm/genstruct/Vector.h>
 
 using namespace elm;
 
@@ -16,7 +16,7 @@ void test_vector(void) {
 	
 	// Simple test
 	{
-		datastruct::Vector<int> v;
+		genstruct::Vector<int> v;
 		v.add(0);
 		v.add(1);
 		v.add(2);
@@ -30,7 +30,7 @@ void test_vector(void) {
 	
 	// Grow test
 	{
-		datastruct::Vector<int> v;
+		genstruct::Vector<int> v;
 		for(int i = 0; i < 32; i++)
 			v.add(i);
 		bool ok = true;
@@ -42,7 +42,7 @@ void test_vector(void) {
 	
 	// Insertion
 	{
-		datastruct::Vector<int> v;
+		genstruct::Vector<int> v;
 		v.add(0);
 		v.add(1);
 		v.add(3);
@@ -58,7 +58,7 @@ void test_vector(void) {
 	
 	// Contains and index
 	{
-		datastruct::Vector<int> v;
+		genstruct::Vector<int> v;
 		v.add(0);
 		v.add(1);
 		v.add(0);
@@ -79,7 +79,7 @@ void test_vector(void) {
 	
 	// Removal test
 	{
-		datastruct::Vector<int> v;
+		genstruct::Vector<int> v;
 		v.add(0);
 		v.add(1);
 		v.add(2);
@@ -121,10 +121,10 @@ void test_vector(void) {
 	
 	// addAll test
 	{
-		datastruct::Vector<int> v1, v2;
+		genstruct::Vector<int> v1, v2;
 		for(int i = 0; i < 10; i++)
 			v1.add(i);
-		v2.addAll(&v1);
+		v2.addAll(v1);
 		for(int i = 0; i < 10; i++)
 			CHECK(v2[i] == i);
 	}
