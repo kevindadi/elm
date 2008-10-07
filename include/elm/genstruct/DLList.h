@@ -23,7 +23,7 @@
 #define ELM_GENSTRUCT_DLLIST_H
 
 #include <elm/util/Equiv.h>
-#include <elm/Iterator.h>
+#include <elm/PreIterator.h>
 #include <elm/inhstruct/DLList.h>
 
 namespace elm { namespace genstruct {
