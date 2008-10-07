@@ -20,11 +20,9 @@ endif
 includeelmdir=$(includedir)/elm
 includeelm_HEADERS = \
 	assert.h \
-	Collection.h \
 	debug.h \
 	deprecated.h \
 	io.h \
-	Iterator.h \
 	PreIterator.h \
 	meta.h \
 	options.h \
