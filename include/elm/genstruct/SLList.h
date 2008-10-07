@@ -23,7 +23,7 @@
 #define ELM_GENSTRUCT_SLLIST_H
 
 #include <elm/assert.h>
-#include <elm/Iterator.h>
+#include <elm/PreIterator.h>
 #include <elm/util/Equiv.h>
 #include <elm/inhstruct/SLList.h>
 
