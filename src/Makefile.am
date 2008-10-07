@@ -19,9 +19,9 @@ libelm_la_SOURCES= \
 	debug.cpp \
 	debug_CrashHandler.cpp \
 	checksum_Fletcher.cpp \
-	Collection.cpp \
 	genstruct.h \
 	genstruct_AssocList.cpp \
+	genstruct_AVLTree.cpp \
 	genstruct_DLList.cpp \
 	genstruct_FragTable.cpp \
 	genstruct_HashTable.cpp \
