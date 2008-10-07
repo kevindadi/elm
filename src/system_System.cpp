@@ -20,11 +20,17 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <elm/assert.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <fcntl.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#include <elm/assert.h>
+#include <elm/deprecated.h>
+#include <elm/io/RandomAccessStream.h>
 #include <elm/system/System.h>
 #include <elm/system/SystemException.h>
 
@@ -138,7 +144,7 @@ PipeOutStream::~PipeOutStream(void) {
  * @return	Linked streams.
  * @throws	System exception.
  */
-Pair<PipeInStream *, PipeOutStream *> System::pipe(void) {
+Pair<PipeInStream *, PipeOutStream *> System::pipe(void) throw(SystemException) {
 	int fds[2];
 	
 	// Create the pair
@@ -168,6 +174,135 @@ Pair<PipeInStream *, PipeOutStream *> System::pipe(void) {
 unsigned int System::random(unsigned int top) {
 	int op = rand();
 	return int(double(op) * top / RAND_MAX);
+}
+
+
+/**
+ * Create a new file and open it to write.
+ * The created file must be fried by the caller (causing the file closure).
+ * @param path	Path of the file to open.
+ * @return		Opened file.
+ * @throws		SystemException	Thrown if there is an error.
+ */
+io::OutStream *System::createFile(const Path& path) throw(SystemException) {
+	int fd = ::open(&path.toString(), O_CREAT | O_TRUNC | O_WRONLY, 0777);
+	if(fd == -1)
+		throw SystemException(errno, "file creation");
+	return new SystemOutStream(fd);
+}
+
+
+/**
+ * Open a file for reading.
+ * The opened file must be fried by the caller (causing the closure).
+ * @param path	Path of the file to open.
+ * @return		Opened file.
+ * @throws		SystemException	Thrown if there is an error.
+ */
+io::InStream *System::readFile(const Path& path) throw(SystemException) {
+	int fd = ::open(&path.toString(), O_RDONLY);
+	if(fd == -1)
+		throw SystemException(errno, "file reading");
+	return new SystemInStream(fd);
+}
+
+/**
+ * Open a file for appending write.
+ * The opened file must be fried by the caller (causing the closure).
+ * @param path	Path of the file to open.
+ * @return		Opened file.
+ * @throws		SystemException	Thrown if there is an error.
+ */
+io::OutStream *System::appendFile(const Path& path) throw(SystemException) {
+	int fd = ::open(&path.toString(), O_APPEND | O_CREAT | O_WRONLY, 0777);
+	if(fd == -1)
+		throw SystemException(errno, "file appending");
+	return new SystemOutStream(fd);
+}
+
+
+// UnixRandomAccessStream class
+class UnixRandomAccessStream: public io::RandomAccessStream {
+public:
+	inline UnixRandomAccessStream(int _fd): fd(_fd) { }
+	virtual ~UnixRandomAccessStream(void)
+		{ close(fd); }
+	
+	virtual int read(void *buffer, int size)
+		{ return ::read(fd, buffer, size); }
+	virtual int write(const char *buffer, int size)
+		{ return ::write(fd, buffer, size); }
+	cstring lastErrorMessage(void)
+		{ DEPRECATED; return strerror(errno); }
+	int flush(void)
+		{ return 0; }
+
+	virtual pos_t pos(void) const
+		{ return lseek(fd, 0, SEEK_CUR); }
+	virtual size_t size(void) const
+		{ struct stat s; fstat(fd, &s); return s.st_size; }
+	virtual bool moveTo(pos_t pos)
+		{ return (pos_t)lseek(fd, pos, SEEK_SET) == pos; }
+	virtual bool moveForward(pos_t pos)
+		{ return (pos_t)lseek(fd, pos, SEEK_CUR) == pos; }
+	virtual bool moveBackward(pos_t _pos)
+		{ return (pos_t)lseek(fd, pos() - _pos, SEEK_SET) == _pos; }
+
+private:
+	int fd;
+};
+
+
+// Build the flags
+static inline int makeFlags(System::access_t access) {
+	switch(access) {
+	case System::READ: return O_RDONLY;
+	case System::WRITE: return O_WRONLY;
+	case System::READ_WRITE: return O_RDWR;
+	default: ASSERT(false); return 0;
+	}
+}
+
+
+/**
+ * Open a random access stream from a file.
+ * @param path			Path of the file to open.
+ * @param access		Type of access (one of READ, WRITE, READ_WRITE).
+ * @return				Opened file.
+ * @throws IOException	Thrown if there is an error.
+ */
+io::RandomAccessStream *System::openRandomFile(
+	const system::Path& path,
+	access_t access )
+	throw(SystemException)
+{
+	int fd = ::open(&path.toString(), makeFlags(access));
+	if(fd < 0)
+		throw SystemException(errno, _ << "cannot open \"" << path << "\"");
+	else
+		return new UnixRandomAccessStream(fd);
+};
+
+
+/**
+ * Create a random access stream from a file, removing it if it already exists.
+ * @param path			Path of the file to open.
+ * @param access		Type of access (one of READ, WRITE, READ_WRITE).
+ * @return				Opened file.
+ * @throws IOException	Thrown if there is an error.
+ */
+io::RandomAccessStream *System::createRandomFile(
+	const system::Path& path,
+	access_t access)
+	throw(SystemException)
+{
+	ASSERTP(access != READ, "file creation requires at least a write mode");
+	int fd = ::open(&path.toString(), makeFlags(access) | O_CREAT | O_TRUNC, 0666);
+	if(fd < 0)
+		throw SystemException(errno, _ << "cannot create \"" << path << "\"");
+	else
+		return new UnixRandomAccessStream(fd);
+	return 0;
 }
 
 } } // elm::system

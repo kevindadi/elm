@@ -1,11 +1,14 @@
 # $Id$
 
 check_PROGRAMS = \
+	avl \
+	new_avl \
 	serial2 \
 	unserial2 \
 	test \
 	test_assoc_list \
 	test_cleaner \
+	test_coll \
 	test_io \
 	test_sorted_sllist \
 	test_type_info \
@@ -86,9 +89,14 @@ test_tree_DEPENDENCIES	= ../src/libelm.la
 test_tree_SOURCES		= test_tree.cpp
 
 # new_avl program
-#new_avl_LDADD = ../src/libelm.la
-#new_avl_DEPENDENCIES = ../src/libelm.la
-#new_avl_SOURCES=new_avl.cpp
+avl_LDADD = ../src/libelm.la
+avl_DEPENDENCIES = ../src/libelm.la
+avl_SOURCES=avl.cpp
+
+# new_avl program
+new_avl_LDADD = ../src/libelm.la
+new_avl_DEPENDENCIES = ../src/libelm.la
+new_avl_SOURCES=new_avl.cpp
 
 # test_sorted_sllist program
 test_sorted_sllist_LDADD = ../src/libelm.la
@@ -114,5 +122,10 @@ test_io_SOURCES=test_io.cpp
 test_cleaner_LDADD = ../src/libelm.la
 test_cleaner_DEPENDENCIES = ../src/libelm.la
 test_cleaner_SOURCES=test_cleaner.cpp
+
+# test_coll program
+test_coll_LDADD = ../src/libelm.la
+test_coll_DEPENDENCIES = ../src/libelm.la
+test_coll_SOURCES=test_coll.cpp
 
 TESTS = ./test
