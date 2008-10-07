@@ -3,7 +3,7 @@
  *	deprecated support interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2005-07, IRIT UPS.
+ *	Copyright (c) 2005-08, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #include <elm/assert.h>
 #include <memory.h>
 #include <elm/io.h>
-#include <elm/Iterator.h>
+#include <elm/PreIterator.h>
 
 namespace elm {
 
