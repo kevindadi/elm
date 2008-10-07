@@ -3,7 +3,7 @@
  *	Vector class interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2004-07, IRIT UPS.
+ *	Copyright (c) 2004-08, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -23,8 +23,9 @@
 #define ELM_GENSTRUCT_VECTOR_H
 
 #include <elm/assert.h>
+#include <elm/deprecated.h>
 #include <elm/genstruct/Table.h>
-#include <elm/Iterator.h>
+#include <elm/PreIterator.h>
 
 namespace elm { namespace genstruct {
 
@@ -40,8 +41,8 @@ public:
 	inline ~Vector(void);
 	
 	// Accessors
+	int count(void) const { return cnt; }
 	inline int capacity(void) const;
-	inline int length(void) const;
 	inline bool isEmpty(void) const;	
 	inline const T& get(int index) const;
 	inline T& item(int index);
@@ -49,15 +50,35 @@ public:
 	inline T& operator[](int index);
 	inline const T& operator[](int index) const;
 	bool contains(const T& value) const;
+	template <template <class _> class C> inline bool containsAll(const C<T>& items)
+		{ for(typename C<T>::Iterator item(items); item; item++)
+			if(!contains(item)) return false; return true; }
 	int indexOf(const T& value, int start = 0) const;
 	int lastIndexOf(const T& value, int start = -1) const;
 	inline operator bool(void) const;
 	
+	// Iterator
+	class Iterator: public PreIterator<Iterator, T> {
+	public:
+		const Vector<T>& _vec;
+		int i;
+		inline Iterator(const Vector& vec);
+		inline Iterator(const Iterator& iter);
+		inline bool ended(void) const;
+		inline const T& item(void) const;
+		inline void next(void);
+	};
+
 	// Mutators
 	inline void add(void);
 	inline void add(const T& value);
+	template <template <class _> class C> inline void addAll(const C<T>& items)
+		{ for(typename C<T>::Iterator item(items); item; item++) add(item); }
 	void removeAt(int index);
 	inline void remove(const T& value);
+	inline void remove(const Iterator& iter) { removeAt(iter.i); }
+	template <template <class _> class C> inline void removeAll(const C<T>& items)
+		{ for(typename C<T>::Iterator item(items); item; item++) remove(item); }
 	void insert(int index, const T& value);
 	inline void clear(void);
 	void grow(int new_cap);
@@ -71,17 +92,8 @@ public:
 	inline const T pop(void);
 	inline const T& top(void) const;
 	
-	// Iterator
-	class Iterator: public PreIterator<Iterator, T> {
-		const Vector<T>& _vec;
-		int i;
-	public:
-		inline Iterator(const Vector& vec);
-		inline Iterator(const Iterator& iter);
-		inline bool ended(void) const;
-		inline T item(void) const;
-		inline void next(void);
-	};
+	// deprecared
+	inline int length(void) const { DEPRECATED return count(); }
 };
 
 
@@ -111,9 +123,6 @@ inline Table<T> Vector<T>::detach(void) {
 
 template <class T> int Vector<T>::capacity(void) const {
 	return cap;
-}
-template <class T> int Vector<T>::length(void) const {
-	return cnt;
 }
 template <class T> bool Vector<T>::isEmpty(void) const {
 	return cnt == 0;
@@ -254,7 +263,7 @@ inline bool Vector<T>::Iterator::ended(void) const {
 	return i >= _vec.length();
 }
 template <class T>
-inline T Vector<T>::Iterator::item(void) const {
+inline const T& Vector<T>::Iterator::item(void) const {
 	return _vec[i];
 }
 template <class T>
