@@ -78,13 +78,13 @@ void GDBCrashHandler::handle(void) {
 	else {
 		char number[16], buf[256], command[64];
 		char *args[] = {
-			"gdb",
+			(char *)"gdb",
 			buf,
 			number,
-			"-ex",
+			(char *)"-ex",
 			command,
-			"-ex",
-			"c",
+			(char *)"-ex",
+			(char *)"c",
 			0
 		};
 
