@@ -10,6 +10,7 @@
 #include <elm/genstruct/HashTable.h>
 #include <elm/genstruct/Vector.h>
 #include <elm/serial2/Unserializer.h>
+#include <elm/util/Pair.h>
 
 namespace elm {
 
@@ -66,9 +67,10 @@ private:
 	} patch_t;
 
 	typedef struct ref_t {
+		AbstractType& t;
 		void *ptr;
 		patch_t *patches;
-		inline ref_t(void *_ptr = 0): ptr(_ptr), patches(0) { };
+		inline ref_t(AbstractType& type, void *_ptr = 0) : t(type), ptr(_ptr), patches(0) { };
 		void put(void **_ptr);
 		void record(void *_ptr);
 	} ref_t;
@@ -83,6 +85,9 @@ private:
 	elm::io::Input in;
 	elm::genstruct::HashTable<CString,  ref_t *> refs;
 	elm::genstruct::Vector<context_t> stack;
+	elm::genstruct::Vector<Pair<cstring, ref_t *> > pending;
+	
+	void embed(AbstractType& clazz, void **ptr);
 }; 
 
 } } // elm::serial2
