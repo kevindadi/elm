@@ -147,7 +147,7 @@ OptionException::OptionException(const String& message)
  * @return		Found option or null.
  */
 Option *Manager::findShortName(char name) {
-	for(int i = 0; i < options.length(); i++)
+	for(int i = 0; i < options.count(); i++)
 		if(options[i]->shortName() == name)
 			return options[i];
 	return 0;
@@ -160,7 +160,7 @@ Option *Manager::findShortName(char name) {
  * @return		Found option or null.
  */
 Option *Manager::findLongName(CString name) {
-	for(int i = 0; i < options.length(); i++)
+	for(int i = 0; i < options.count(); i++)
 		if(options[i]->longName() == name)
 			return options[i];
 	return 0;
@@ -317,7 +317,7 @@ void Manager::displayHelp(void) {
 	/* Display syntax */
 	cerr << '\n'
 		 << "USAGE: " << program;
-	for(i = 0; i < options.length(); i++) {
+	for(i = 0; i < options.count(); i++) {
 		cerr << " [" << *options[i];
 		switch(options[i]->usage()) {
 		case arg_none:
@@ -339,7 +339,7 @@ void Manager::displayHelp(void) {
 	
 	/* Display option description */
 	if(options)
-		for(i = 0; i < options.length(); i++) {
+		for(i = 0; i < options.count(); i++) {
 			cerr << *options[i];
 			switch(options[i]->usage()) {
 			case arg_none:
