@@ -3,7 +3,7 @@
  *	VectorQueue class implementation
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2006-07, IRIT UPS.
+ *	Copyright (c) 2006-08, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ namespace elm { namespace genstruct {
  * @class VectorQueue<T>
  * This class implements a queue as an extendable vector.
  * @param T	Type of queued items.
+ * @param E Equivallence relation to use (default to @ref Equiv<T>).
  * @ingroup gen_datastruct
  */
  
@@ -88,6 +89,14 @@ namespace elm { namespace genstruct {
  * @fn void VectorQueue::reset(void);
  * Reset the queue to its initialstate (except for the capacity) and remove
  * all enqueued items.
+ */
+
+
+/**
+ * @fn bool VectorQueue::contains(const T& val) const;
+ * Test if the queue contains the given value.
+ * @param val	Value to look in the queue.
+ * @return		True if the value is found, false else.
  */
 
 } } // elm::genstruct
