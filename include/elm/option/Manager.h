@@ -41,9 +41,9 @@ class Manager {
 public:
 	typedef const char * const *argv_t;
 	virtual ~Manager(void) { }
-	void addOption(Option *option);
+	void addOption(Option *option) throw(OptionException);
 	void removeOption(Option *option);
-	void parse(int argc, argv_t argv);
+	void parse(int argc, argv_t argv) throw(OptionException);
 	void displayHelp(void);
 
 protected:

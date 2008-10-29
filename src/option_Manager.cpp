@@ -228,10 +228,15 @@ void Manager::process(String arg) {
 
 /**
  * Add an option to the manager.
- * @param option	Option to add.
+ * @param option				Option to add.
+ * @throw OptionException		If the short name or the long name is already used.
  */
-void Manager::addOption(Option *option) {
+void Manager::addOption(Option *option) throw(OptionException) {
 	ASSERTP(option, "null option");
+	if(option->shortName() && findShortName(option->shortName()))
+		throw OptionException(_ << "short name -" << option->shortName() << " already used");
+	if(option->longName() && findLongName(option->longName()))
+		throw OptionException(_ << "long name --" << option->shortName() << " already used");
 	options.add(option);
 }
 
@@ -249,10 +254,11 @@ class BadArgumentException {
 
 /**
  * Parse the given options.
- * @param argc	Argument count.
- * @param argv	Argument vector.
+ * @param argc				Argument count.
+ * @param argv				Argument vector.
+ * @throw OptionException	Thrown if the syntax contains an error.
  */
-void Manager::parse(int argc, Manager::argv_t argv) {
+void Manager::parse(int argc, Manager::argv_t argv) throw(OptionException) {
 	ASSERTP(argv, "null argv");
 	ASSERTP(argc > 0, "negative argc");
 	for(int i = 1; i < argc; i++) {
