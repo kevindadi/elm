@@ -62,7 +62,7 @@ void __unserialize(Unserializer& serializer, AllocatedTable<T>& tab) {
 template <class T>
 void __serialize(Serializer& serializer, const Vector<T>& vec) {
 	serializer.beginCompound();
-	for(int i = 0; i < vec.length(); i++) {
+	for(int i = 0; i < vec.count(); i++) {
 		serializer.onItem();
 		__serialize(serializer, vec[i]);
 	}
