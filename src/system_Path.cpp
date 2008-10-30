@@ -75,8 +75,8 @@ Path Path::canonical(void) {
 		if(!comp || comp == ".")
 			;
 		else if(comp == "..") {
-			if(comps.length() > 0)
-				comps.setLength(comps.length() - 1);
+			if(comps.count() > 0)
+				comps.setLength(comps.count() - 1);
 		}
 		else
 			comps.add(comp);

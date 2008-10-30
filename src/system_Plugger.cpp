@@ -113,7 +113,7 @@ Plugger::~Plugger(void) {
  * For internal use only.
  */
 void Plugger::leave(Plugin *plugin) {
-	for(int i = 0; i < pluggers.length(); i++)
+	for(int i = 0; i < pluggers.count(); i++)
 		pluggers[i]->plugins.remove(plugin);
 }
 
@@ -153,7 +153,7 @@ Plugin *Plugger::plug(CString name) {
 	err = OK;
 
 	// Look in opened plugins
-	for(int i = 0; i < plugins.length(); i++)
+	for(int i = 0; i < plugins.count(); i++)
 		if(plugins[i]->matches(name)) {
 			plugins[i]->plug(0);
 			return plugins[i];
@@ -165,7 +165,7 @@ Plugin *Plugger::plug(CString name) {
 		return plug(plugin, 0);
 	
 	// Load the plugin
-	for(int i = 0; i < paths.length(); i++) {
+	for(int i = 0; i < paths.count(); i++) {
 		StringBuffer buf;
 		#ifdef WITH_LIBTOOL
 			buf << paths[i] << "/" << name << ".la";		
@@ -325,9 +325,9 @@ void Plugger::onWarning(String message) {
 void Plugger::Iterator::go(void) {
 	
 	// Look in statics
-	if(i < statics.length()) {
+	if(i < statics.count()) {
 		i++;
-		while(i < statics.length()) {
+		while(i < statics.count()) {
 			/*cerr << "STATIC: " << i << " "
 				 << statics[i]->name() << " "
 				 << statics[i]->hook() << io::endl;*/
@@ -351,7 +351,7 @@ void Plugger::Iterator::go(void) {
 				file = 0;
 			}
 			path++;
-			if(path >= plugger.paths.length())
+			if(path >= plugger.paths.count())
 				break;
 			FileItem *item = FileItem::get(Path(plugger.paths[path]));
 			if(!item || !item->toDirectory())
@@ -398,7 +398,7 @@ Plugger::Iterator::~Iterator(void) {
  * @return	True if it is ended.
  */
 bool Plugger::Iterator::ended(void) const {
-	return path >= plugger.paths.length();
+	return path >= plugger.paths.count();
 }
 
 
@@ -407,7 +407,7 @@ bool Plugger::Iterator::ended(void) const {
  * @return	Current plugin name.
  */
 String Plugger::Iterator::item(void) const {
-	if(i < statics.length())
+	if(i < statics.count())
 		return statics[i]->name();
 	else {
 		Path path = (*file)->path();
@@ -431,7 +431,7 @@ void Plugger::Iterator::next(void) {
  * @return	Matching plugin.
  */
 Plugin *Plugger::Iterator::plug(void) const {
-	if(i < statics.length())
+	if(i < statics.count())
 		return plugger.plug(statics[i], 0);
 	else
 		return plugger.plugFile(file->item()->path().toString());

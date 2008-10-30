@@ -130,10 +130,10 @@ Process *ProcessBuilder::run(void) {
 		else {
 			
 			// Build arguments
-			char *tab[args.length() + 1];
-			for(int i = 0; i < args.length(); i++)
+			char *tab[args.count() + 1];
+			for(int i = 0; i < args.count(); i++)
 				tab[i] = (char *)&args[i];
-			tab[args.length()] = 0;
+			tab[args.count()] = 0;
 			
 			// Launch the command
 			execvp(tab[0], tab);

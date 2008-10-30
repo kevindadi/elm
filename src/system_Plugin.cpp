@@ -323,7 +323,7 @@ void Plugin::cleanup(void) {
  * For internal use only.
  */
 void Plugin::step(void) {
-	for(int i = unused_plugins.length() - 1; i >= 0; i--)
+	for(int i = unused_plugins.count() - 1; i >= 0; i--)
 		unused_plugins[i]->unplug();
 }
 
@@ -334,7 +334,7 @@ void Plugin::step(void) {
 Plugin *Plugin::get(CString hook, CString name) {
 	
 	// Find the plugin
-	for(int i = 0; i < static_plugins.length(); i++)
+	for(int i = 0; i < static_plugins.count(); i++)
 		if(static_plugins[i]->hook() == hook
 		&& static_plugins[i]->matches(name))
 			return static_plugins[i];
