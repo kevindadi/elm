@@ -60,7 +60,7 @@ void SerialTable<T>::__serialize(Unserializer& _serializer) {
 	genstruct::Vector<T> vec;
 	for(bool next = _serializer.beginList(); next; next = _serializer.nextItem()) {
 		vec.add();
-		_serializer >> vec[vec.length() - 1];
+		_serializer >> vec[vec.count() - 1];
 	}
 	_serializer.endList();
 	copy(vec.detach());

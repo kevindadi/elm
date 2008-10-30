@@ -38,7 +38,7 @@ public:
 	
 	// Collection concept
 	inline int count (void) const { return length(); }
-	inline bool isEmpty(void) const { return tab.length() == 0; }
+	inline bool isEmpty(void) const { return tab.count() == 0; }
  	inline operator bool (void) const { return !isEmpty(); }
 	inline bool contains(const T &item) const
 		{ for(int i = 0; i < length(); i++)
@@ -112,13 +112,13 @@ inline FragTable<T>::FragTable(int size_pow)
 
 template <class T>
 inline FragTable<T>::~FragTable(void) {
-	for(int i = 0; i < tab.length(); i++)
+	for(int i = 0; i < tab.count(); i++)
 		delete [] tab[i];
 }
 
 template <class T>
 inline void FragTable<T>::clear(void) {
-	for(int i = 0; i < tab.length(); i++)
+	for(int i = 0; i < tab.count(); i++)
 		delete [] tab[i];
 	tab.setLength(0);
 	used = size;
@@ -126,7 +126,7 @@ inline void FragTable<T>::clear(void) {
 
 template <class T>
 inline int FragTable<T>::length(void) const {
-	return ((tab.length() - 1) << shf) + used;
+	return ((tab.count() - 1) << shf) + used;
 }
 
 template <class T>
@@ -179,7 +179,7 @@ template <class T>
 void FragTable<T>::shrink(int length) {
 	ASSERTP(length < this->length(), "length too big");
 	int nl = (length + msk) >> shf;
-	for(int i = nl + 1; i < tab.length(); i++)
+	for(int i = nl + 1; i < tab.count(); i++)
 		delete [] tab[i];
 	tab.setLength(nl + 1);
 	used = length & msk;
@@ -205,8 +205,8 @@ void FragTable<T>::removeAt(int index) {
 		set(i - 1, get(i));
 	used--;
 	if(!used) {
-		delete [] tab[tab.length() - 1];
-		tab.setLength(tab.length() - 1);
+		delete [] tab[tab.count() - 1];
+		tab.setLength(tab.count() - 1);
 		used = size;
 	}
 }
@@ -215,7 +215,7 @@ void FragTable<T>::removeAt(int index) {
 // FragTable<T>::Iterator inlines
 template <class T>
 inline FragTable<T>::Iterator::Iterator(const FragTable<T>& array, int pos)
-: arr(&array), i(pos), len(array.length()) {
+: arr(&array), i(pos), len(array.count()) {
 }
 
 template <class T>
