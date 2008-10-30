@@ -31,7 +31,7 @@ inline Element *Elements::get(int index) const {
 }
 
 inline int Elements::size(void) const {
-	return elems.length();
+	return elems.count();
 }
 
 inline Element *Elements::operator[](int index) const {
