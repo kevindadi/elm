@@ -22,7 +22,6 @@
 #ifndef ELM_GENSTRUCT_HASHTABLE_H
 #define ELM_GENSTRUCT_HASHTABLE_H
 
-#include <elm/deprecated.h>
 #include <elm/util/Pair.h>
 #include <elm/PreIterator.h>
 #include <elm/util/HashKey.h>
@@ -111,7 +110,7 @@ public:
 	// Deprecated
 	class ItemIterator: public InternIterator, public PreIterator<ItemIterator, T> {
 	public:
-		inline ItemIterator(const HashTable<K, T, H>& htab): InternIterator(htab) { DEPRECATED };
+		inline ItemIterator(const HashTable<K, T, H>& htab): InternIterator(htab) { };
 		inline T item(void) const { return this->node->value; }
 		inline const K& key(void) const { return this->node->key; };
 	};

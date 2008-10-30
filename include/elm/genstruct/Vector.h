@@ -23,7 +23,6 @@
 #define ELM_GENSTRUCT_VECTOR_H
 
 #include <elm/assert.h>
-#include <elm/deprecated.h>
 #include <elm/genstruct/Table.h>
 #include <elm/PreIterator.h>
 
@@ -42,6 +41,7 @@ public:
 	
 	// Accessors
 	int count(void) const { return cnt; }
+	inline int length(void) const { return count(); }
 	inline int capacity(void) const;
 	inline bool isEmpty(void) const;	
 	inline const T& get(int index) const;
@@ -91,9 +91,6 @@ public:
 	inline void push(const T& value);
 	inline const T pop(void);
 	inline const T& top(void) const;
-	
-	// deprecared
-	inline int length(void) const { DEPRECATED return count(); }
 };
 
 
