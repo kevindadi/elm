@@ -106,7 +106,7 @@ template <class T, class E>
 SLList<T, E>::Node::Node(const T value): val(value) {
 }
 template <class T, class E>
-inline typename SLList<T, E>::Node *SLList<T>::Node::next(void) const {
+inline typename SLList<T, E>::Node *SLList<T, E>::Node::next(void) const {
 	return (Node *)SLNode::next();
 }
 
