@@ -41,7 +41,8 @@ namespace elm { namespace xom {
 
 
 void ParentNode::appendChild(Node *child) {
-	ASSERTP(0, "unsupported");
+	xmlNodePtr res = xmlAddChild(NODE(node), NODE(child->getNode()));
+	ASSERTP(res, "appendChild() failed");
 }
 
 
