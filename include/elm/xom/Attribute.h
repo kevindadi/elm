@@ -52,6 +52,10 @@ public:
 	virtual Node *copy(void);
 	virtual String getValue(void);
 	virtual String toXML(void);
+	virtual String 	getBaseURI (void);
+	virtual Node *getChild (int index);
+	virtual int getChildCount (void);
+
 	
 private:
 	friend class Element;

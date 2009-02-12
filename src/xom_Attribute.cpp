@@ -170,4 +170,27 @@ Attribute::Attribute(void *node): Node(node) {
 	ASSERT(node);
 }
 
+
+/**
+ */
+String getBaseURI (void) {
+	UNSUPPORTED;
+	return "";
+}
+
+
+/**
+ */
+Node *Attribute::getChild (int index) {
+	ASSERTP(false, "no child in attribute");
+	return 0;
+}
+
+
+/**
+ */
+int Attribute::getChildCount (void) {
+	return 0;
+}
+
 } }		// elm::xom
