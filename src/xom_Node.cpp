@@ -86,10 +86,23 @@ public:
  */
 
 
-// Node inlines
-Node::Node(void *_node): node(_node) {
-	ASSERT(node);
+/**
+ * Set the actual libxml node.
+ * @param _node		Node to set.
+ */
+void Node::setNode(void *_node) {
+	ASSERT(_node);
+	if(node)
+		NODE(node)->_private = 0;
+	node = _node;
 	NODE(node)->_private = this;
+}
+
+
+// Node inlines
+Node::Node(void *_node): node(0) {
+	if(_node)
+		setNode(_node);
 }
 
 

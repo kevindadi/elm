@@ -42,6 +42,7 @@ protected:
 	
 	void *node;
 	Node(void *_node);
+	void setNode(void *_node);
 	Node *make(void *node);
 	inline Node *get(void *node);
 	Node *internCopy(void);

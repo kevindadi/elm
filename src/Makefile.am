@@ -109,6 +109,7 @@ libelm_la_SOURCES= \
 
 if HAS_LIBXML
 libelm_la_SOURCES += \
+	xom_Attribute.cpp \
 	xom_Builder.cpp \
 	xom_Document.cpp \
 	xom_Element.cpp \
@@ -117,6 +118,7 @@ libelm_la_SOURCES += \
 	xom_Node.cpp \
 	xom_NodeFactory.cpp \
 	xom_ParentNode.cpp \
+	xom_Serializer.cpp \
 	xom_String.cpp \
 	xom_Text.cpp \
 	xom_XIncluder.cpp \

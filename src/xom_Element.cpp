@@ -25,6 +25,7 @@
 #include <elm/xom/Element.h>
 #include <elm/xom/Text.h>
 #include <elm/xom/Elements.h>
+#include <elm/xom/Attribute.h>
 
 namespace elm { namespace xom {
 
@@ -132,8 +133,13 @@ Element	*Element::shallowCopy(void) {
  * this element.
  */
 void Element::addAttribute(Attribute *attribute) {
-	// !!TODO!!
-	ASSERTP(0, "unsupported");
+	ASSERTP(attribute, "null attribute");
+	ASSERTP(!attribute->getNode(), "already added attribute");
+	xmlAttrPtr attr;
+	// !!TODO!! add support for namespace
+	attr = xmlSetProp(NODE(node), attribute->getLocalName(), attribute->getValue());
+	ASSERT(attr);
+	attribute->setNode(attr);
 }
 
 

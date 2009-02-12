@@ -1,5 +1,6 @@
 includeelmxomdir=$(includedir)/elm/xom
 includeelmxom_HEADERS = \
+	Attribute.h \
 	Builder.h \
 	Document.h \
 	Element.h \
@@ -8,6 +9,7 @@ includeelmxom_HEADERS = \
 	Node.h \
 	NodeFactory.h \
 	ParentNode.h \
+	Serializer.h \
 	String.h \
 	Text.h \
 	XIncluder.h
