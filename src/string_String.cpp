@@ -134,7 +134,7 @@
  	// empty string?
  	if(!_len) {
  		buf = (char *)&empty_buf;
- 		off =zero_off;
+ 		off = zero_off;
  		len = 0;
  		lock();
  	}
