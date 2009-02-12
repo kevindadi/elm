@@ -32,6 +32,7 @@ public:
 	virtual void addAttribute(Attribute *attribute);
 	virtual void addNamespaceDeclaration(String prefix, String uri);
 	virtual void appendChild(String text);
+	virtual void appendChild(Node *node);
 	virtual Node *copy(void);
 	virtual Attribute *getAttribute(int index);
 	virtual Attribute *getAttribute(String name);
