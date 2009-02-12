@@ -535,4 +535,9 @@ String Element::toXML(void) {
 	return "";
 }
 
+
+void Element::appendChild(Node *node) {
+	return ParentNode::appendChild(node);
+}
+
 } } // elm::xom
