@@ -23,6 +23,7 @@
 #define ELM_XOM_SERIALIZER_H_
 
 #include <elm/string.h>
+#include <elm/xom/String.h>
 #include <elm/io/Output.h>
 
 namespace elm {
@@ -74,14 +75,14 @@ protected:
 	virtual void write(ProcessingInstruction *instruction);
 	virtual void write(Text *text);
 	virtual void writeAttributes(Element *element);
-	virtual void writeAttributeValue(const string& value);
+	virtual void writeAttributeValue(String value);
 	virtual void writeChild(Node *node);
 	virtual void writeEmptyElementTag(Element *element);
 	virtual void writeEndTag(Element *element);
-	virtual void writeEscaped(const string& text);
+	virtual void writeEscaped(String text);
 	virtual void writeNamespaceDeclaration(const string& prefix, const string& uri);
 	virtual void writeNamespaceDeclarations(Element *element);
-	virtual void writeRaw(const string& text);
+	virtual void writeRaw(String text, int length = -1);
 	virtual void writeStartTag(Element *element);
 	virtual void writeXMLDeclaration(void);
 

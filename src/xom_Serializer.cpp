@@ -23,7 +23,43 @@
 #include <elm/xom/Serializer.h>
 #include <elm/xom.h>
 
+#define UNSUPPORTED	ASSERTP(false, "unsupported");
+
 namespace elm { namespace xom {
+
+/**
+ * Get the escape sequence matching the given character.
+ * Only support character under code 127.
+ * @param chr	Character to escape.
+ * @return		Escaped string.
+ */
+static String escapeSimple(char chr) {
+	switch(chr) {
+	case '"': return "&quote;";
+	case '&': return "&amp;"; 
+	case '<': return "&lt;";
+	case '>': return "&gt;";
+	case '\'': return "&apos;";
+	default: return "";
+	}	
+}
+
+
+/**
+ * Test if the character must be escaped in an attribute value.
+ * @param chr	Character to test.
+ * @return		True if it is attribute escapable, false else.
+ */
+static bool isAttrEscape(char chr) {
+	switch(chr) {
+	case '"':
+	case '&':
+	case '<':
+	case '>':	return true;
+	default: return false;
+	}
+}
+
 
 /**
  * Create a new serializer that uses the UTF-8 encoding.
@@ -89,6 +125,56 @@ void Serializer::breakLine(void) {
 
 
 /**
+ * Writes a string onto the underlying output stream. without escaping any characters.
+ * Non-ASCII characters that are not available in the current character set cause an IOException.
+ * @param text		the String to serialize
+ * @param length	length of the string (optional)
+ */
+void Serializer::writeRaw(String text, int length) {
+	if(length < 0)
+		length = text.length();
+	_out.stream().write(&text, length);
+}
+
+
+/**
+ * Writes a string onto the underlying output stream. Non-ASCII characters that are not available
+ * in the current character set are escaped using hexadecimal numeric character references.
+ * Carriage returns, line feeds, and tabs are also escaped using hexadecimal numeric character references
+ * in order to ensure their preservation on a round trip. The four reserved characters <, >, &, and " are
+ * escaped using the standard entity references &lt;, &gt;, &amp;, and &quot;. The single quote is not escaped.
+ * @param value	the attribute value to serialize
+ */
+void Serializer::writeAttributeValue(String value) {
+	int len = value.length();
+	for(int i = 0; i < len; i++) {
+		int j = i;
+		while(isAttrEscape(value[i]))
+			i++;
+		if(i > j)
+			writeRaw(&value + j, j - i);
+		if(i < len)
+			writeRaw(escapeSimple(value[i++]));
+	}
+}
+
+
+/**
+ * Writes all the attributes of the specified element onto the output stream,
+ * one at a time, separated by white space. If preserveBaseURI is true, and
+ * it is necessary to add an xml:base attribute to the element in order to preserve
+ * the base URI, then that attribute is also written here. Each individual attribute
+ * is written by invoking write(Attribute).
+ * @param element	the Element whose attributes are written
+ */
+void Serializer::writeAttributes(Element *element) {
+	int cnt = element->getAttributeCount();
+	for(int i = 0; i < cnt; i++)
+		write(element->getAttribute(i));
+}
+
+
+/**
  * Writes an attribute in the form name="value". Characters in the attribute value are escaped as necessary.
  * @param attribute the Attribute to write
  */
@@ -96,26 +182,196 @@ void Serializer::write(Attribute *attribute) {
 	writeRaw(" ");
 	writeRaw(attribute->getLocalName());
 	writeRaw("=\"");
+	writeAttributeValue(attribute->getValue());
 	writeRaw("\"");
 }
 
 
-void Serializer::write(Comment *comment) { }
-void Serializer::write(DocType *doctype) { }
-void Serializer::write(Document *doc) { }
-void Serializer::write(Element *element) { }
-void Serializer::write(ProcessingInstruction *instruction) { }
-void Serializer::write(Text *text) { }
-void Serializer::writeAttributes(Element *element) { }
-void Serializer::writeAttributeValue(const string& value) { }
-void Serializer::writeChild(Node *node) { }
-void Serializer::writeEmptyElementTag(Element *element) { }
-void Serializer::writeEndTag(Element *element) { }
-void Serializer::writeEscaped(const string& text) { }
-void Serializer::writeNamespaceDeclaration(const string& prefix, const string& uri) { }
-void Serializer::writeNamespaceDeclarations(Element *element) { }
-void Serializer::writeRaw(const string& text) { }
-void Serializer::writeStartTag(Element *element) { }
-void Serializer::writeXMLDeclaration(void) { }
+/**
+ * Serializes a document onto the output stream using the current options.
+ * @param doc	the Document to serialize
+ */
+void Serializer::write(Document *doc) {
+	ASSERTP(doc, "null document");
+	writeXMLDeclaration();
+	write(doc->getRootElement());
+}
+
+
+/**
+ * Writes a comment onto the output stream using the current options.
+ * Since character and entity references are not resolved in comments,
+ * comments can only be serialized when all characters they contain are available in the current encoding.
+ * @param comment	the Comment to serialize
+ */
+void Serializer::write(Comment *comment) {
+	UNSUPPORTED
+}
+
+
+/**
+ * Writes a DocType object onto the output stream using the current options.
+ * @param doctype	the document type declaration to serialize
+ */
+void Serializer::write(DocType *doctype) {
+	UNSUPPORTED
+}
+
+
+/**
+ * Serializes an element onto the output stream using the current options.
+ * The result is guaranteed to be well-formed. If element does not have a parent element,
+ * the output will also be namespace well-formed.
+ *
+ * If the element is empty, this method invokes writeEmptyElementTag. If the element is not empty, then:
+ * <ol>
+ * <li>It calls writeStartTag.</li>
+ * <li>It passes each of the element's children to writeChild in order.</li>
+ * <li>It calls writeEndTag.</li>
+ * </ol>
+ * 
+ * It may break lines or add white space if the serializer has been configured to indent or use a maximum line length. 
+ */
+void Serializer::write(Element *element) {
+	int cnt = element->getChildCount(); 
+	if(cnt == 0)
+		writeEmptyElementTag(element);
+	else {
+		writeStartTag(element);
+		for(int i = 0; i < cnt; i++)
+			this->writeChild(element->getChild(i));
+		writeEndTag(element);
+	}
+}
+
+
+/**
+ * Writes a processing instruction onto the output stream using the current options.
+ * Since character and entity references are not resolved in processing instructions,
+ * processing instructions can only be serialized when all characters they contain are
+ * available in the current encoding.
+ * 
+ * @param instruction	the ProcessingInstruction to serialize
+ */
+void Serializer::write(ProcessingInstruction *instruction) {
+	UNSUPPORTED
+}
+
+
+/**
+ * Writes a Text object onto the output stream using the current options.
+ * Reserved characters such as <, > and " are escaped using the standard entity
+ * references such as &lt;, &gt;, and &quot;.
+ * 
+ * Characters which cannot be encoded in the current character set (for example, Ω in ISO-8859-1)
+ * are encoded using character references.
+ * 
+ * @param text	the Text to serialize
+ */
+void Serializer::write(Text *text) {
+	ASSERTP(text, "null text");
+	writeEscaped(text->getValue());
+}
+
+
+/**
+ * Writes a child node onto the output stream using the current options.
+ * It is invoked when walking the tree to serialize the entire document.
+ * It is not called, and indeed should not be called, for either the Document node or for attributes.
+ * 
+ * @param node	the Node to serialize
+ */
+void Serializer::writeChild(Node *node) {
+	ASSERTP(node, "null node");
+	switch(node->kind()) {
+	case Node::ELEMENT: write(static_cast<Element *>(node)); return; 	
+	case Node::DOCUMENT: write(static_cast<Document *>(node)); return;
+	case Node::TEXT: write(static_cast<Text *>(node)); return;
+	default: UNSUPPORTED;
+	}
+}
+
+/**
+ * Writes an empty-element tag for the element including all its namespace declarations and attributes.
+ * 
+ * The writeAttributes method is called to write all the non-namespace-declaration attributes.
+ * The writeNamespaceDeclarations method is called to write all the namespace declaration attributes.
+ * 
+ *  If subclasses don't wish empty-element tags to be used, they can override this method to simply
+ * invoke writeStartTag followed by writeEndTag.
+ * 
+ * @param element	the element whose empty-element tag is written
+ */
+void Serializer::writeEmptyElementTag(Element *element) {
+	writeRaw("<");
+	writeRaw(element->getLocalName());
+	writeAttributes(element);
+	writeRaw("/>");
+}
+
+
+/**
+ * Writes the end-tag for an element in the form </name>.
+ * @param	element	the element whose end-tag is written
+ */
+void Serializer::writeEndTag(Element *element) {
+	writeRaw("</");
+	writeRaw(element->getLocalName());
+	writeRaw(">");
+}
+
+
+/**
+ * Writes a namespace declaration in the form xmlns:prefix="uri" or xmlns="uri".
+ * It does not write the spaces on either side of the namespace declaration.
+ * These are written by writeNamespaceDeclarations.
+ * @param prefix	the namespace prefix; the empty string for the default namespace
+ * @param uri		the namespace URI
+ */
+void Serializer::writeNamespaceDeclaration(const string& prefix, const string& uri) {
+	UNSUPPORTED
+}
+
+
+/**
+ * Writes all the namespace declaration attributes of the specified element
+ * onto the output stream, one at a time, separated by white space. Each individual
+ * declaration is written by invoking writeNamespaceDeclaration.
+ * 
+ * @param element	the Element whose namespace declarations are written
+ */
+void Serializer::writeNamespaceDeclarations(Element *element) {
+	UNSUPPORTED	
+}
+
+
+/**
+ * Writes the start-tag for the element including all its namespace declarations and attributes.
+ * 
+ * The writeAttributes method is called to write all the non-namespace-declaration attributes.
+ * The writeNamespaceDeclarations method is called to write all the namespace declaration attributes.
+ * 
+ * @param element	the element whose start-tag is written
+ */
+void Serializer::writeStartTag(Element *element) {
+	writeRaw("<");
+	writeRaw(element->getLocalName());
+	writeAttributes(element);
+	writeRaw(">");
+	
+}
+
+
+/**
+ * Writes the XML declaration onto the output stream, followed by a line break.
+ */
+void Serializer::writeXMLDeclaration(void) {
+	writeRaw("<?xml version=\"1.0\" encoding=\"");
+	writeRaw(_encoding.toCString());
+	writeRaw("?>\n");
+}
+
+
+void Serializer::writeEscaped(String text) { }
 
 } } // elm::xom

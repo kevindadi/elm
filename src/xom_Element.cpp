@@ -202,8 +202,13 @@ Node *Element::copy(void) {
  * @return the indexth attribute of this element 
  */
 Attribute *Element::getAttribute(int index) {
-	// !!TODO!!
-	ASSERTP(0, "unsupported");
+	int cnt = 0;
+	for(struct _xmlAttr *attr = NODE(node)->properties; attr; attr = attr->next) {
+		if(cnt == index)
+			return static_cast<Attribute *>(get(attr));
+		cnt++;
+	}
+	ASSERTP(false, "attribute index out of element bound");
 	return 0;
 }
 
@@ -241,9 +246,10 @@ Attribute *Element::getAttribute(String localName, String ns) {
  * @return the number of attributes in the container.
  */
 int	Element::getAttributeCount(void) {
-	// !!TODO!!
-	ASSERTP(0, "unsupported");
-	return 0;
+	int cnt = 0;
+	for(struct _xmlAttr *attr = NODE(node)->properties; attr; attr = attr->next)
+		cnt++;
+	return cnt;
 }
 
 
