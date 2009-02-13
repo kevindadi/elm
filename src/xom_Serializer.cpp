@@ -21,6 +21,7 @@
  */
 
 #include <elm/xom/Serializer.h>
+#include <elm/xom.h>
 
 namespace elm { namespace xom {
 
@@ -53,7 +54,7 @@ Serializer::Serializer(io::OutStream& out, string encoding)
 	_max_length(0),
 	_preserve(false),
 	_normalize(false)
-{	
+{
 }
 
 
@@ -92,25 +93,29 @@ void Serializer::breakLine(void) {
  * @param attribute the Attribute to write
  */
 void Serializer::write(Attribute *attribute) {
+	writeRaw(" ");
+	writeRaw(attribute->getLocalName());
+	writeRaw("=\"");
+	writeRaw("\"");
 }
 
 
-/*virtual void write(Comment *comment);
-virtual void write(DocType *doctype);
-virtual void write(Document *doc);
-virtual void write(Element *element);
-virtual void write(ProcessingInstruction *instruction);
-virtual void write(Text *text);
-virtual void writeAttributes(Element *element);
-virtual void writeAttributeValue(const string& value);
-virtual void writeChild(Node *node);
-virtual void writeEmptyElementTag(Element *element);
-virtual void writeEndTag(Element *element);
-virtual void writeEscaped(const string& text);
-virtual void writeNamespaceDeclaration(const string& prefix, const string& uri);
-virtual void writeNamespaceDeclarations(Element *element);
-virtual void writeRaw(const string& text);
-virtual void writeStartTag(Element *element);
-virtual void writeXMLDeclaration(void);*/
+void Serializer::write(Comment *comment) { }
+void Serializer::write(DocType *doctype) { }
+void Serializer::write(Document *doc) { }
+void Serializer::write(Element *element) { }
+void Serializer::write(ProcessingInstruction *instruction) { }
+void Serializer::write(Text *text) { }
+void Serializer::writeAttributes(Element *element) { }
+void Serializer::writeAttributeValue(const string& value) { }
+void Serializer::writeChild(Node *node) { }
+void Serializer::writeEmptyElementTag(Element *element) { }
+void Serializer::writeEndTag(Element *element) { }
+void Serializer::writeEscaped(const string& text) { }
+void Serializer::writeNamespaceDeclaration(const string& prefix, const string& uri) { }
+void Serializer::writeNamespaceDeclarations(Element *element) { }
+void Serializer::writeRaw(const string& text) { }
+void Serializer::writeStartTag(Element *element) { }
+void Serializer::writeXMLDeclaration(void) { }
 
 } } // elm::xom
