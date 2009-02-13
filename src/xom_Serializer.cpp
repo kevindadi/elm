@@ -62,6 +62,21 @@ static bool isAttrEscape(char chr) {
 
 
 /**
+ * Test if the character must be escaped in a text value.
+ * @param chr	Character to test.
+ * @return		True if it is text escapable, false else.
+ */
+static bool isTextEscape(char chr) {
+	switch(chr) {
+	case '&':
+	case '<':
+	case '>': return true;
+	default: return false;
+	}
+}
+
+
+/**
  * Create a new serializer that uses the UTF-8 encoding.
  * @param out_stream	the output stream to write the document on
  */
@@ -372,6 +387,25 @@ void Serializer::writeXMLDeclaration(void) {
 }
 
 
-void Serializer::writeEscaped(String text) { }
+/**
+ * Writes a string onto the underlying output stream.
+ * Non-ASCII characters that are not available in the current character set
+ * are encoded with numeric character references. The three reserved characters <, >, and &
+ * are escaped using the standard entity references &lt;, &gt;, and &amp;.
+ * Double and single quotes are not escaped.
+ * @param text	the parsed character data to serialize 
+ */
+void Serializer::writeEscaped(String text) {
+	int len = text.length();
+	for(int i = 0; i < len; i++) {
+		int j = i;
+		while(isTextEscape(text[i]))
+			i++;
+		if(i > j)
+			writeRaw(&text + j, j - i);
+		if(i < len)
+			writeRaw(escapeSimple(text[i++]));
+	}
+}
 
 } } // elm::xom

@@ -23,6 +23,7 @@
 #include "xom_macros.h"
 #include <elm/assert.h>
 #include <elm/xom/Document.h>
+#include <elm/xom/Element.h>
 
 #define NODE(p) ((xmlNodePtr)(p))
 #define DOC(p) ((xmlDocPtr)(p))
@@ -52,8 +53,10 @@ Document::Document(Document *document): ParentNode(0) {
 }
 
 Document::Document(Element *root_element): ParentNode(xmlNewDoc((xmlChar *)"1.0")) {
+	ASSERTP(root_element, "null root element");
+	setRootElement(root_element);
 }
-	
+
 Node *Document::copy(void) {
 	ASSERTP(0, "unsupported");
 	return 0;
@@ -101,7 +104,8 @@ void Document::setBaseURI(String uri) {
 }
 
 void Document::setRootElement(Element *root) {
-	ASSERTP(0, "unsupported");
+	ASSERTP(root, "null root");
+	xmlSetTreeDoc(NODE(root->getNode()), DOC(node));
 }
 
 String Document::toString(void) {
