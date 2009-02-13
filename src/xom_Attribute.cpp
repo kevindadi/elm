@@ -173,7 +173,7 @@ Attribute::Attribute(void *node): Node(node) {
 
 /**
  */
-String getBaseURI (void) {
+String Attribute::getBaseURI (void) {
 	UNSUPPORTED;
 	return "";
 }
