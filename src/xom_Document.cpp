@@ -51,8 +51,7 @@ Document::Document(Document *document): ParentNode(0) {
 	ASSERTP(0, "unsupported");
 }
 
-Document::Document(Element *root_element): ParentNode(0) {
-	ASSERTP(0, "unsupported");
+Document::Document(Element *root_element): ParentNode(xmlNewDoc((xmlChar *)"1.0")) {
 }
 	
 Node *Document::copy(void) {
