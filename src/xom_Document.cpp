@@ -105,7 +105,7 @@ void Document::setBaseURI(String uri) {
 
 void Document::setRootElement(Element *root) {
 	ASSERTP(root, "null root");
-	xmlSetTreeDoc(NODE(root->getNode()), DOC(node));
+	xmlDocSetRootElement(DOC(node), NODE(root->getNode()));
 }
 
 String Document::toString(void) {

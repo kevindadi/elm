@@ -28,6 +28,28 @@
 namespace elm { namespace xom {
 
 /**
+ * @class Serializer
+ * 
+ * Outputs a Document object in a specific encoding using various options
+ * for controlling white space, normalization, indenting, line breaking, and base URIs.
+ * However, in general these options do affect the document's infoset. In particular,
+ * if you set either the maximum line length or the indent size to a positive value,
+ * then the serializer will not respect input white space. It may trim leading and
+ * trailing space, condense runs of white space to a single space, convert carriage
+ * returns and linefeeds to spaces, add extra space where none was present before,
+ * and otherwise muck with the document's white space. The defaults, however, preserve
+ * all significant white space including ignorable white space and boundary white space.
+ * 
+ * @warning This is a very limited version of the serializer:
+ * <ul>
+ * @li supports only UTF-8 encoding,
+ * @li no indentation, space, newline suppport.
+ * </ul>
+ *
+ * @author	H. Cassé <casse@irit.fr>
+ */
+
+/**
  * Get the escape sequence matching the given character.
  * Only support character under code 127.
  * @param chr	Character to escape.
@@ -209,6 +231,8 @@ void Serializer::write(Attribute *attribute) {
 void Serializer::write(Document *doc) {
 	ASSERTP(doc, "null document");
 	writeXMLDeclaration();
+	Element *element = doc->getRootElement();
+	ASSERTP(element, "null root element");
 	write(doc->getRootElement());
 }
 
