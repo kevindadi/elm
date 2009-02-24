@@ -24,6 +24,7 @@
 #include <elm/assert.h>
 #include <elm/xom/Document.h>
 #include <elm/xom/Element.h>
+#include <elm/xom/NodeFactory.h>
 
 #define NODE(p) ((xmlNodePtr)(p))
 #define DOC(p) ((xmlDocPtr)(p))
@@ -52,7 +53,10 @@ Document::Document(Document *document): ParentNode(0) {
 	ASSERTP(0, "unsupported");
 }
 
-Document::Document(Element *root_element): ParentNode(xmlNewDoc((xmlChar *)"1.0")) {
+Document::Document(Element *root_element):
+	ParentNode(xmlNewDoc((xmlChar *)"1.0")),
+	fact(&NodeFactory::default_factory)
+{
 	ASSERTP(root_element, "null root element");
 	setRootElement(root_element);
 }
