@@ -32,14 +32,14 @@ public:
 	// XOMUnserializer overload
 	virtual void flush(void);
 	virtual void beginObject(AbstractType& clazz, void *object);
-	virtual void endObject(void);
+	virtual void endObject(AbstractType& clazz, void *object);
 	virtual bool beginField(CString name);
 	virtual void endField(void);
 	virtual void onPointer(AbstractType& clazz, void **object);
-	virtual bool beginCompound(void);
+	virtual bool beginCompound(void*);
 	virtual int countItems(void);
 	virtual bool nextItem(void);
-	virtual void endCompound(void);
+	virtual void endCompound(void*);
 	virtual int onEnum(AbstractEnum& clazz); 
 	virtual void onValue(bool& v);
 	virtual void onValue(signed int& v);

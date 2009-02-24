@@ -25,13 +25,13 @@ public:
 
 	// Complex type serializers
 	virtual void beginObject(AbstractType& clazz, const void *object);
-	virtual void endObject(void);
+	virtual void endObject(AbstractType& clazz, const void *object);
 	virtual void beginField(CString name);
 	virtual void endField(void);
 	virtual void onPointer(AbstractType& clazz, const void *object);
-	virtual void beginCompound(void);
+	virtual void beginCompound(const void*);
 	virtual void onItem(void);
-	virtual void endCompound(void);
+	virtual void endCompound(const void*);
 	virtual void onEnum(const void *address, int value, AbstractEnum& clazz); 
 
 	// Base value serializers
