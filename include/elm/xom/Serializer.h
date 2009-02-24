@@ -61,6 +61,7 @@ public:
 	inline void setOutputStream(io::OutStream& out) { _out.setStream(out); }
 	inline void setPreserveBaseURI(bool preserve) { _preserve = preserve; }
 	inline void setUnicodeNormalizationFormC(bool normalize) { _normalize = normalize; }
+	virtual void write(Document *doc);
 	
 	void flush(void);
 
@@ -70,7 +71,6 @@ protected:
 	virtual void write(Attribute *attribute);
 	virtual void write(Comment *comment);
 	virtual void write(DocType *doctype);
-	virtual void write(Document *doc);
 	virtual void write(Element *element);
 	virtual void write(ProcessingInstruction *instruction);
 	virtual void write(Text *text);
@@ -91,6 +91,7 @@ private:
 	string _encoding;
 	string _line_separator;
 	int _indent, _max_length;
+	int _ilevel;
 	bool _preserve, _normalize;
 };
 
