@@ -19,12 +19,12 @@ using namespace genstruct;
 // Table serialization
 template <class T>
 void __serialize(Serializer& serializer, const Table<T>& tab) {
-	serializer.beginCompound();
+	serializer.beginCompound(&tab);
 	for(int i = 0; i < tab.count(); i++) {
 		serializer.onItem();
 		__serialize(serializer, tab[i]);
 	}
-	serializer.endCompound();
+	serializer.endCompound(&tab);
 }
 template <class T>
 void __serialize(Serializer& serializer, Table<T>& tab) {
@@ -48,30 +48,76 @@ void __unserialize(Unserializer& serializer, AllocatedTable<T>& tab) {
 		tab.allocate(0);
 	else {
 		tab.allocate(cnt);
-		ASSERT(serializer.beginCompound());
+		ASSERT(serializer.beginCompound(&tab));
 		for(int i = 0; i < cnt; i++) {
 			__unserialize(serializer, tab[i]);
 			serializer.nextItem();
 		}
-		serializer.endCompound();
+		serializer.endCompound(&tab);
 	}
 }
 
 
-// Vector serialization
-template <class T>
-void __serialize(Serializer& serializer, const Vector<T>& vec) {
-	serializer.beginCompound();
-	for(int i = 0; i < vec.count(); i++) {
-		serializer.onItem();
-		__serialize(serializer, vec[i]);
+// Collection serialization
+
+// common template
+template <template <class I> class Coll, class T>
+class CollecAC: public AbstractType {
+
+public:
+	static CollecAC __type;
+	
+	static inline AbstractType& type(void) { return __type; }
+	static inline AbstractType& type(const Coll<T>& v) { return __type; }
+
+	inline CollecAC() : AbstractType("Collection") {
+	};
+	
+	virtual void *instantiate(void) { return new Coll<T>(); }; 
+	
+	virtual void unserialize(Unserializer& unserializer, void *object) {
+	
+		Coll<T> &coll = *static_cast<Coll<T> *>(object);
+		int cnt = unserializer.countItems();
+		unserializer.beginCompound(&coll);
+		for (int i = 0; i < cnt; i++) {
+			T item;
+			__unserialize(unserializer, item);
+			coll.add(item);
+		}
+		unserializer.endCompound(&coll);
 	}
-	serializer.endCompound();
-}
-template <class T>
-void __serialize(Serializer& serializer, Vector<T>& vec) {
-	__serialize(serializer, (const Vector<T>&)vec);
-}
+	
+	virtual void serialize(Serializer& serializer, const void *object) {
+		const Coll<T> &coll = *static_cast<const Coll<T> *>(object);
+		serializer.beginCompound(&coll);
+		
+		for (typename Coll<T>::Iterator iter(coll); iter; iter++) {
+			serializer.onItem();
+			__serialize(serializer, *iter);
+		}
+		
+		serializer.endCompound(&coll);
+	}
+	
+	static inline void serialize(Serializer& s, const Coll<T>& v) { serialize(s, &v); }
+	static inline void unserialize(Unserializer& s, Coll<T>& v) { unserialize(s, &v); }
+};
+
+template <template <class I> class Coll, class T>
+CollecAC<Coll,T> CollecAC<Coll,T>::__type;
+
+
+
+// vector handling
+template <class T> struct from_class<Vector<T> > : public CollecAC<Vector, T> {
+};
+
+
+
+
+
+
 
 } } // elm::serial2
 
