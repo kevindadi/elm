@@ -106,8 +106,9 @@ Serializer::Serializer(io::OutStream& out)
 :	_out(out),
 	_encoding("UTF-8"),
 	_line_separator("\n"),
-	_indent(0),
+	_indent(2),
 	_max_length(0),
+	_ilevel(0),
 	_preserve(false),
 	_normalize(false)
 {
@@ -186,7 +187,7 @@ void Serializer::writeAttributeValue(String value) {
 	int len = value.length();
 	for(int i = 0; i < len; i++) {
 		int j = i;
-		while(isAttrEscape(value[i]))
+		while(i < len && !isAttrEscape(value[i]))
 			i++;
 		if(i > j)
 			writeRaw(&value + j, j - i);
@@ -216,7 +217,7 @@ void Serializer::writeAttributes(Element *element) {
  * @param attribute the Attribute to write
  */
 void Serializer::write(Attribute *attribute) {
-	writeRaw(" ");
+	writeRaw(" ", 1);
 	writeRaw(attribute->getLocalName());
 	writeRaw("=\"");
 	writeAttributeValue(attribute->getValue());
@@ -277,8 +278,10 @@ void Serializer::write(Element *element) {
 		writeEmptyElementTag(element);
 	else {
 		writeStartTag(element);
+		_ilevel ++;
 		for(int i = 0; i < cnt; i++)
 			this->writeChild(element->getChild(i));
+		_ilevel --;
 		writeEndTag(element);
 	}
 }
@@ -342,10 +345,13 @@ void Serializer::writeChild(Node *node) {
  * @param element	the element whose empty-element tag is written
  */
 void Serializer::writeEmptyElementTag(Element *element) {
+        for (int i = 0; i < (_ilevel*_indent); i++)
+	  writeRaw(" ", 1);
 	writeRaw("<");
 	writeRaw(element->getLocalName());
 	writeAttributes(element);
 	writeRaw("/>");
+	breakLine();
 }
 
 
@@ -354,9 +360,15 @@ void Serializer::writeEmptyElementTag(Element *element) {
  * @param	element	the element whose end-tag is written
  */
 void Serializer::writeEndTag(Element *element) {
+        if (element->getChild(element->getChildCount() - 1)->kind() == Node::ELEMENT) {
+          for (int i = 0; i < (_ilevel*_indent); i++)
+	    writeRaw(" ", 1);
+	}
+
 	writeRaw("</");
 	writeRaw(element->getLocalName());
 	writeRaw(">");
+	breakLine();
 }
 
 
@@ -393,11 +405,20 @@ void Serializer::writeNamespaceDeclarations(Element *element) {
  * @param element	the element whose start-tag is written
  */
 void Serializer::writeStartTag(Element *element) {
+        for (int i = 0; i < (_ilevel*_indent); i++)
+	  writeRaw(" ", 1);
+
 	writeRaw("<");
 	writeRaw(element->getLocalName());
 	writeAttributes(element);
 	writeRaw(">");
-	
+	/*
+	 * write a newline, except if there is a single, non-element, child. 
+	 */
+	if ((element->getChildCount() == 1) && (element->getChild(0)->kind() != Node::ELEMENT))
+	  return;
+	breakLine();
+	  
 }
 
 
@@ -407,7 +428,8 @@ void Serializer::writeStartTag(Element *element) {
 void Serializer::writeXMLDeclaration(void) {
 	writeRaw("<?xml version=\"1.0\" encoding=\"");
 	writeRaw(_encoding.toCString());
-	writeRaw("?>\n");
+	writeRaw("?>");
+	breakLine();
 }
 
 
@@ -423,7 +445,7 @@ void Serializer::writeEscaped(String text) {
 	int len = text.length();
 	for(int i = 0; i < len; i++) {
 		int j = i;
-		while(isTextEscape(text[i]))
+		while(i < len && !isTextEscape(text[i]))
 			i++;
 		if(i > j)
 			writeRaw(&text + j, j - i);
