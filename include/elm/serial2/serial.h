@@ -12,6 +12,7 @@
 #include <elm/serial2/Serializer.h>
 #include <elm/serial2/Unserializer.h>
 
+
 namespace elm { namespace serial2 {
 
 // Class information
@@ -21,14 +22,16 @@ template <class T> struct from_class {
 	static inline void serialize(Serializer& s, const T& v) {
 		s.beginObject(T::__class, &v);
 		((T&)v).__visit(s);
-		s.endObject();
+		s.endObject(T::__class, &v);
 	}
 	static inline void unserialize(Unserializer& s, T& v) {
 		s.beginObject(T::__class, &v);
 		v.__visit(s);
-		s.endObject();
+		s.endObject(T::__class, &v);
 	}
 };
+
+
 
 
 // Type information
@@ -48,8 +51,9 @@ template <class T> struct from_enum {
 	static inline void unserialize(Unserializer& s, T& v);
 };
 
-
 // Implementation
+
+
 template <class T> inline AbstractType& type(void) {
 	return _if<type_info<T>::is_class, from_class<T>,
 				typename _if<type_info<T>::is_enum, from_enum<T>, from_type<T> >::_
@@ -64,6 +68,7 @@ template <class T> inline AbstractType& type(const T& v) {
 
 
 // Serialization
+
 template <class T>
 inline void __serialize(Serializer& s, T *v) {
 	s.onPointer(type<T>(), v);
@@ -301,6 +306,9 @@ inline void __unserialize(Unserializer& s, const DefaultField<T>& field) {
 	else
 		field.value() = field.defaultValue();
 }
+
+
+
 
 } } // elm::serial2
 	

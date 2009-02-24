@@ -145,7 +145,7 @@ void XOMUnserializer::embed(AbstractType& clazz, void **ptr) {
 	*ptr = uclass->instantiate();
 	beginObject(*uclass, *ptr);
 	uclass->unserialize(*this, *ptr);
-	endObject();
+	endObject(clazz, ptr);
 }
 
 
@@ -155,16 +155,20 @@ void XOMUnserializer::onPointer(AbstractType& clazz, void **ptr) {
 	
 	// Is there a reference ?
 	Option<xom::String> id = ctx.elem->getAttributeValue("ref");
+
 	if(id) {
-		ref_t *ref = refs.get(id, 0);
-		if(!ref) {
-			ref = new ref_t(clazz);
-			pending.push(pair(cstring(*id), ref));
-			refs.put(id, ref);
+		if (id.value().compare("NULL")) {
+			*ptr = NULL;
+		} else {
+			ref_t *ref = refs.get(id, 0);
+			if(!ref) {
+				ref = new ref_t(clazz);
+				pending.push(pair(cstring(*id), ref));
+				refs.put(id, ref);
+			}
+			ref->put(ptr);
 		}
-		ref->put(ptr);
-	}
-	
+	}	
 	// Else it should be embedded
 	else
 		embed(clazz, ptr);
@@ -190,7 +194,7 @@ void XOMUnserializer::beginObject(AbstractType& type, void *ptr) {
 
 /**
  */
-void XOMUnserializer::endObject(void) {
+void XOMUnserializer::endObject(AbstractType& type, void *object) {
 }
 
 
@@ -215,7 +219,7 @@ void XOMUnserializer::endField(void) {
 
 /**
  */
-bool XOMUnserializer::beginCompound(void) {
+bool XOMUnserializer::beginCompound(void *object) {
 	int cnt = ctx.elem->getChildCount();
 	for(ctx.i = 0; ctx.i < cnt; ctx.i++) {
 		xom::Node *node = ctx.elem->getChild(ctx.i);
@@ -231,7 +235,7 @@ bool XOMUnserializer::beginCompound(void) {
 
 /**
  */
-void XOMUnserializer::endCompound(void) {
+void XOMUnserializer::endCompound(void *object) {
 }
 
 

@@ -64,7 +64,7 @@ void TextSerializer::beginObject(AbstractType& type, const void *object) {
 
 /**
  */
-void TextSerializer::endObject(void) {
+void TextSerializer::endObject(AbstractType& type, const void *object) {
 	suffix();
 	cout << "}";
 }
@@ -215,6 +215,7 @@ void TextSerializer::onValue(const double& v) {
  */
 void TextSerializer::onValue(const long double& v) {
 	prefix(type<long double>(), &v);
+	/* !! TODO !! */
 	cout << (double)v << ';';
 	suffix();
 }
@@ -252,7 +253,7 @@ void TextSerializer::onEnum(const void *address, int value, AbstractEnum& clazz)
 
 /**
  */
-void TextSerializer::beginCompound(void) {
+void TextSerializer::beginCompound(const void *object) {
 	level++;
 	cout << '{';
 }
@@ -266,7 +267,7 @@ void TextSerializer::onItem(void) {
 
 /**
  */
-void TextSerializer::endCompound(void) {
+void TextSerializer::endCompound(const void *object) {
 	cout << '}';
 	level--;
 }
