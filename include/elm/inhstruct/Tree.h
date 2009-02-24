@@ -62,6 +62,12 @@ public:
 	}
 
 	void appendChild(Tree *child);
+	inline void addSibling(Tree *newSibling) {
+		Tree *oldSibling = _sibling;	
+		newSibling->_sibling = oldSibling;
+		_sibling = newSibling;			
+	}
+	
 	inline void add(Tree *child) { prependChild(child); }
 	template <class TT> void addAll(const TT& coll)
 		{ for(typename TT::Iterator iter(coll); iter; iter++) add(*iter); } 
