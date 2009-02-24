@@ -72,6 +72,8 @@ public:
 		{ inhstruct::Tree::prependChild(child); }
 	inline void appendChild(Tree *child)
 		{ inhstruct::Tree::appendChild(child); }
+	inline void addSibling(Tree *newSibling)
+		{ inhstruct::Tree::addSibling(newSibling); }
 	inline void add(Tree *child)
 		{ inhstruct::Tree::add(child); }
 	template <class TT> void addAll(const TT& coll)
