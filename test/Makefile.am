@@ -30,7 +30,7 @@ AM_CXXFLAGS += -DIS_SHARED
 endif
 
 # Test program
-test_LDADD = -dlopen force -dlopen myplugin.la ../src/libelm.la -lefence
+test_LDADD = -dlopen force -dlopen myplugin.la ../src/libelm.la
 test_DEPENDENCIES = ../src/libelm.la myplugin.la
 
 test_SOURCES		=\
@@ -68,7 +68,7 @@ endif
 
 # MyPlugin plugin
 myplugin_la_LDFLAGS	= -module -rpath @abs_builddir@
-myplugin_la_LIBADD = ../src/libelm.la  -lefence
+myplugin_la_LIBADD = ../src/libelm.la
 myplugin_la_DEPS = ../src/libelm.la
 myplugin_la_SOURCES	= plugin.cpp
 
