@@ -12,7 +12,8 @@ check_PROGRAMS = \
 	test_io \
 	test_sorted_sllist \
 	test_type_info \
-	test_tree
+	test_tree \
+	test_alloc
 
 all_checks: $(check_PROGRAMS)
 
@@ -127,5 +128,10 @@ test_cleaner_SOURCES=test_cleaner.cpp
 test_coll_LDADD = ../src/libelm.la
 test_coll_DEPENDENCIES = ../src/libelm.la
 test_coll_SOURCES=test_coll.cpp
+
+# test_alloc program
+test_alloc_LDADD = ../src/libelm.la
+test_alloc_DEPENDENCIES = ../src/libelm.la
+test_alloc_SOURCES=test_alloc.cpp
 
 TESTS = ./test

@@ -86,6 +86,7 @@ AC_OUTPUT([
 	test/Makefile
 	include/Makefile
 	include/elm/Makefile
+	include/elm/alloc/Makefile
 	include/elm/block/Makefile
 	include/elm/checksum/Makefile
 	include/elm/datastruct/Makefile
