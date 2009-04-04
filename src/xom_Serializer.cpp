@@ -47,6 +47,7 @@ namespace elm { namespace xom {
  * </ul>
  *
  * @author	H. Cassé <casse@irit.fr>
+ * @ingroup xom
  */
 
 /**

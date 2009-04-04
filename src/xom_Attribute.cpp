@@ -37,6 +37,9 @@ namespace elm { namespace xom {
  * Attributes that declare namespaces such as xmlns="http://www.w3.org/TR/1999/xhtml" or
  * xmlns:xlink="http://www.w3.org/TR/1999/xlink" are stored separately on the elements where they appear.
  * They are never represented as Attribute objects. 
+ * 
+ * @author H. Cassé <casse@irit.fr>
+ * @ingroup xom
  */
 
 

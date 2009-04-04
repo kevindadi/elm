@@ -27,6 +27,7 @@
 #include <elm/xom/NodeFactory.h>
 #include <elm/xom/Element.h>
 #include <elm/xom/Text.h>
+#include <elm/xom/Attribute.h>
 
 namespace elm { namespace xom {
 
@@ -121,6 +122,9 @@ Node *Node::make(void *node) {
 		break;
 	case XML_TEXT_NODE:
 		result = fact->makeText(node);
+		break;
+	case XML_ATTRIBUTE_NODE:
+		result = new Attribute(node);
 		break;
 	default:
 		result = new UnsupportedNode(node);

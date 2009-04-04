@@ -59,6 +59,7 @@ public:
 	
 private:
 	friend class Element;
+	friend class Node;
 	Attribute(void *node);
 	mutable String ns, name, val;
 };
