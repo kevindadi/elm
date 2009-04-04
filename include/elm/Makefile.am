@@ -1,4 +1,5 @@
 SUBDIRS = \
+	alloc \
 	block \
 	checksum \
 	datastruct \
