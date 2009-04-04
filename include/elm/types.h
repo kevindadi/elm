@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2007-08, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_TYPES_H
@@ -25,7 +25,7 @@
 #include <elm/type_info.h>
 
 namespace elm {
-	
+
 // base types
 typedef signed char int8;
 typedef unsigned char uint8;
@@ -35,6 +35,10 @@ typedef signed long int32;
 typedef unsigned long uint32;
 typedef signed long long int64;
 typedef unsigned long long uint64;
+
+// other types
+typedef unsigned long size_t;
+typedef unsigned long offset_t;
 
 } // elm
 
