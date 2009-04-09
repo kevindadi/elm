@@ -44,6 +44,7 @@ libelm_la_SOURCES= \
 	io_BlockInStream.cpp \
 	io_BlockOutStream.cpp \
 	io_BufferedInStream.cpp \
+	io_BufferedOutStream.cpp \
 	io_InFileStream.cpp \
 	io_Input.cpp \
 	io_InStream.cpp \
