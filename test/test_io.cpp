@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2007-08, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
@@ -24,6 +24,9 @@
 #include <elm/io/RandomAccessStream.h>
 #include <elm/checksum/Fletcher.h>
 #include <elm/io/BufferedInStream.h>
+#include <elm/io/BufferedOutStream.h>
+#include <elm/io/InFileStream.h>
+#include <elm/system/System.h>
 
 using namespace elm;
 using namespace elm::io;
@@ -33,7 +36,7 @@ using namespace elm::checksum;
 void test_RandomAccessStream(void) {
 	CHECK_BEGIN("io::RandomAccessStream");
 	int data[] = { 111, 666, 0, 1, 2, 3 };
-	
+
 	// Write to the file
 	{
 		OutStream *stream = RandomAccessStream::createFile("random_access.txt");
@@ -41,7 +44,7 @@ void test_RandomAccessStream(void) {
 		CHECK(stream->write((char *)data, sizeof(data)) == sizeof(data));
 		delete stream;
 	}
-	
+
 	// Read from the file
 	{
 		InStream *stream = RandomAccessStream::openFile("random_access.txt");
@@ -52,7 +55,7 @@ void test_RandomAccessStream(void) {
 		for(int i = 0; i < (int)(sizeof(data) / sizeof(int)); i++)
 			CHECK_EQUAL(read_data[i], data[i]);
 	}
-	
+
 	// Random read the file
 	{
 		RandomAccessStream *stream = RandomAccessStream::openFile("random_access.txt");
@@ -66,12 +69,12 @@ void test_RandomAccessStream(void) {
 		delete stream;
 	}
 	CHECK_END
-}	
+}
 
 // test_BufferedInStream()
 void test_BufferedInStream(void) {
 	CHECK_BEGIN("io::BufferedInStream");
-	
+
 	{
 		InFileStream in1("test_io");
 		InFileStream _in("test_io");
@@ -92,7 +95,7 @@ void test_BufferedInStream(void) {
 		}
 		CHECK(done);
 	}
-	
+
 	unsigned long sum1;
 	{
 		Fletcher sum;
@@ -113,11 +116,55 @@ void test_BufferedInStream(void) {
 	CHECK(sum1 == sum2);
 	cerr << "sum1 = " << io::hex(sum1) << ", sum2 = " << io::hex(sum2) << io::endl;
 	CHECK_END
-}	
+}
+
+
+// BufferedOutStream class
+void test_BufferedOutStream(void) {
+	CHECK_BEGIN("io::BufferedOutStream");
+
+	// copy the file
+	{
+#		define BUF_SIZE 64
+		char buf[BUF_SIZE];
+		InStream *in = system::System::readFile("file.xml");
+		OutStream *str = system::System::createFile("out.xml");
+		BufferedOutStream out(*str, 32);
+		int len;
+		while((len = in->read(buf, system::System::random(BUF_SIZE))) > 0)
+			out.write(buf, len);
+	}
+
+	// compare the file
+	{
+		bool ok = true;
+		int res1, res2;
+		char buf1[BUF_SIZE], buf2[BUF_SIZE];
+		InStream *in1 = system::System::readFile("file.xml");
+		InStream *in2 = system::System::readFile("out.xml");
+		while(1) {
+			res1 = in1->read(buf1, BUF_SIZE);
+			res2 = in2->read(buf2, BUF_SIZE);
+			if(res1 != res2)
+				break;
+			if(res1 == 0)
+				break;
+			if(memcmp(buf1, buf2, BUF_SIZE) != 0) {
+				ok = false;
+				break;
+			}
+		}
+		CHECK(res1 == res2);
+		CHECK(ok);
+	}
+
+	CHECK_END;
+}
 
 int main(void) {
 	test_RandomAccessStream();
 	test_BufferedInStream();
+	test_BufferedOutStream();
 	return 0;
 }
 
