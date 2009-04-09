@@ -3,6 +3,7 @@ includeelmio_HEADERS = \
 	BlockInStream.h \
 	BlockOutStream.h \
 	BufferedInStream.h \
+	BufferedOutStream.h \
 	InFileStream.h \
 	InStream.h \
 	Input.h \
