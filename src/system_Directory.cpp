@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2005-07, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,12 +16,13 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <elm/assert.h>
 #include <sys/types.h>
+#include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
@@ -48,7 +49,7 @@ Directory *Directory::make(Path path) {
 	// Build the directory
 	if(mkdir(&path.toString(), 0777) < 0)
 		throw SystemException(errno, "file");
-	
+
 	// Get the file
 	FileItem *item = FileItem::get(path);
 	ASSERT(item);
@@ -82,7 +83,7 @@ Directory *Directory::toDirectory(void) {
  */
 void Directory::Iterator::go(void) {
 	errno = 0;
-	struct dirent *dirent = readdir(dir);
+	struct dirent *dirent = readdir((DIR *)dir);
 	if(dirent)
 		file = FileItem::get(path / Path(dirent->d_name));
 	else if(errno)
@@ -108,7 +109,7 @@ Directory::Iterator::Iterator(Directory *directory)
  */
 Directory::Iterator::~Iterator(void) {
 	if(dir)
-		closedir(dir);
+		closedir((DIR *)dir);
 	if(file)
 		file->release();
 }
