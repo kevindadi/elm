@@ -7,8 +7,6 @@
 #ifndef ELM_SYSTEM_DIRECTORY_H
 #define ELM_SYSTEM_DIRECTORY_H
 
-#include <sys/types.h>
-#include <dirent.h>
 #include <elm/PreIterator.h>
 #include <elm/system/FileItem.h>
 
@@ -26,7 +24,7 @@ public:
 	// Children iterator
 	class Iterator: public PreIterator<Iterator, FileItem *> {
 		Path path;
-		DIR *dir;
+		void *dir;
 		FileItem *file;
 		void go(void);
 	public:
