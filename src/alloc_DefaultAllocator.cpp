@@ -92,7 +92,7 @@ DefaultAllocator DefaultAllocator::DEFAULT;
  * @return		Allocated block.
  * @throw BadAlloc	Thrown if there is no more system memory.
  */
-void *DefaultAllocator::allocate(size_t size) throw(BadAlloc) {
+void *DefaultAllocator::allocate(t::size size) throw(BadAlloc) {
 	try {
 		return new char[size];
 	}

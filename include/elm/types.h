@@ -24,7 +24,7 @@
 
 #include <elm/type_info.h>
 
-namespace elm {
+namespace elm { namespace t {
 
 // base types
 typedef signed char int8;
@@ -37,9 +37,9 @@ typedef signed long long int64;
 typedef unsigned long long uint64;
 
 // other types
-typedef unsigned long size_t;
-typedef unsigned long offset_t;
+typedef unsigned long size;
+typedef unsigned long offset;
 
-} // elm
+} } // elm
 
 #endif // ELM_TYPES_H
