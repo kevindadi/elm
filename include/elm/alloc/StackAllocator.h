@@ -33,9 +33,9 @@ namespace elm {
 class StackAllocator {
 public:
 	static StackAllocator DEFAULT;
-	StackAllocator(size_t size = 4096);
+	StackAllocator(t::size size = 4096);
 	~StackAllocator(void);
-	void *allocate(size_t size) throw(BadAlloc);
+	void *allocate(t::size size) throw(BadAlloc);
 	inline void free(void *block) { }
 	void clear(void);
 
@@ -48,7 +48,7 @@ private:
 	void newChunk(void) throw(BadAlloc);
 	struct chunk_t *cur;
 	char *max, *top;
-	size_t _size;
+	t::size _size;
 };
 
 }		// elm
