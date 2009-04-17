@@ -58,7 +58,7 @@ StackAllocator StackAllocator::DEFAULT;
  * Build a new stack allocator.
  * @param size		The size in bytes of the chunks (default to 4Kb).
  */
-StackAllocator::StackAllocator(size_t size)
+StackAllocator::StackAllocator(t::size size)
 : cur(0), max(0),top(0),  _size(size) {
 	ASSERTP(_size, "null size is not accepted for chunks of StackAllocator")
 }
@@ -78,7 +78,7 @@ StackAllocator::~StackAllocator(void) {
  * @throws BadAlloc		If there is no more memory.
  * @note	The size must not be greater than the size of the chunks.
  */
-void *StackAllocator::allocate(size_t size) throw(BadAlloc) {
+void *StackAllocator::allocate(t::size size) throw(BadAlloc) {
 	ASSERTP(size <= _size, "allocated block too big !")
 	if(!cur || size_t(max - top) < size)
 		newChunk();

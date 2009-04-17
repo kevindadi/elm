@@ -29,7 +29,7 @@ using namespace elm;
 int main(int argc, char **argv) {
 	StackAllocator stack;
 	for(int i = 0; i < 1000; i++) {
-		elm::size_t size = system::System::random(4096);
+		elm::t::size size = system::System::random(4096);
 		cout << "allocate(" << size << ") = " << stack.allocate(size) << io::endl;
 	}
 }
