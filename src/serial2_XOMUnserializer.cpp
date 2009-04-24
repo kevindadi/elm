@@ -33,7 +33,7 @@ void XOMUnserializer::ref_t::put(void **_ptr) {
 
 
 /**
- */		
+ */
 void XOMUnserializer::ref_t::record(void *_ptr) {
 	ASSERT(_ptr);
 	ptr = _ptr;
@@ -49,7 +49,7 @@ void XOMUnserializer::ref_t::record(void *_ptr) {
 /**
  * Build the unserializer for using the given element.
  * @param element	XOM element to use.
- */				
+ */
 XOMUnserializer::XOMUnserializer(xom::Element *element)
 : doc(0) {
 	ctx.elem = element;
@@ -82,10 +82,10 @@ XOMUnserializer::~XOMUnserializer(void) {
 
 
 /**
- */	
+ */
 void XOMUnserializer::flush(void) {
 	if(pending) {
-		
+
 		// build ID dictionnary
 		genstruct::HashTable<CString, xom::Element *> elems;
 		genstruct::Vector<xom::Element *> todo;
@@ -101,23 +101,23 @@ void XOMUnserializer::flush(void) {
 					todo.push((xom::Element *)node);
 			}
 		}
-	
+
 		// look in references
 		while(pending) {
 			Pair<cstring, ref_t *> pair = pending.pop();
 			if(!pair.snd->ptr) {
-				
+
 				// look for the element
 				xom::Element *elem = elems.get(pair.fst, 0);
 				if(!elem)
 					throw MessageException(_ << "unresolved reference \"" << pair.fst << "\"");
 				ctx.elem = elem;
-				
+
 				// unserialize the object
 				void *obj;
 				embed(pair.snd->t, &obj);
 				pair.snd->record(obj);
-			} 			
+			}
 		}
 	}
 }
@@ -126,11 +126,11 @@ void XOMUnserializer::flush(void) {
 /**
  * Process the description of an object embedded in a pointer.
  * @param clazz		Type of embedded object.
- * @param ptr		Pointer to the clazz pointer. 
+ * @param ptr		Pointer to the clazz pointer.
  */
 void XOMUnserializer::embed(AbstractType& clazz, void **ptr) {
 	AbstractType *uclass = &clazz;
-	
+
 	// Find the class
 	string clazz_name = clazz.name();
 	Option<xom::String> name = ctx.elem->getAttributeValue("class");
@@ -140,7 +140,7 @@ void XOMUnserializer::embed(AbstractType& clazz, void **ptr) {
 		if(!uclass)
 			throw io::IOException(_ << "no class " << clazz_name);
 	}
-	
+
 	// Build the object
 	*ptr = uclass->instantiate();
 	beginObject(*uclass, *ptr);
@@ -152,12 +152,12 @@ void XOMUnserializer::embed(AbstractType& clazz, void **ptr) {
 /**
  */
 void XOMUnserializer::onPointer(AbstractType& clazz, void **ptr) {
-	
+
 	// Is there a reference ?
 	Option<xom::String> id = ctx.elem->getAttributeValue("ref");
 
 	if(id) {
-		if (id.value().compare("NULL")) {
+		if (id == "NULL") {
 			*ptr = NULL;
 		} else {
 			ref_t *ref = refs.get(id, 0);
@@ -168,7 +168,7 @@ void XOMUnserializer::onPointer(AbstractType& clazz, void **ptr) {
 			}
 			ref->put(ptr);
 		}
-	}	
+	}
 	// Else it should be embedded
 	else
 		embed(clazz, ptr);
