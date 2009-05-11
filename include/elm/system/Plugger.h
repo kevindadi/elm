@@ -11,6 +11,7 @@
 #include <elm/system/Plugin.h>
 #include <elm/genstruct/Vector.h>
 #include <elm/system/Directory.h>
+#include <elm/system/Path.h>
 
 namespace elm { namespace system {
 
@@ -26,8 +27,8 @@ public:
 		NO_MAGIC
 	} error_t;
 
-private:	
-	
+private:
+
 	static genstruct::Vector<Plugger *> pluggers;
 	CString _hook;
 	Version per_vers;
@@ -44,16 +45,16 @@ public:
 	void addPath(String path);
 	void removePath(String path);
 	void resetPaths(void);
-	Plugin *plug(CString name);
+	Plugin *plug(const string& path);
 	Plugin *plugFile(String path);
 	inline error_t lastError(void);
 	String lastErrorMessage(void);
 	inline String hook(void) const;
-	
+
 	// Error management
 	virtual void onError(String message);
 	virtual void onWarning(String message);
-	
+
 	// Iterator class
 	class Iterator: public PreIterator<Iterator, String> {
 		Plugger& plugger;

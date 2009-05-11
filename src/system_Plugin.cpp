@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2005-07, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
@@ -41,17 +41,17 @@ namespace elm { namespace system {
 
 /**
  * @defgroup plugins Plugins
- * 
+ *
  * @section use_plugins Using a Plugin
- * 
+ *
  * ELM provides classes to implement plugins in an OS-indepedent way. As this
  * system is based on the libtool package, it may be used on systems with
  * or without shared code facilities.
- * 
+ *
  * To use plugins, we need to entity kind. A plugin is a piece of code that
  * provides some service while the plugger allows to plug many different
  * plugins to implement this service.
- * 
+ *
  * In ELM, the plugger is declared with a hook - an identifier allowing
  * an application to have different kinds of services and matching plugins -
  * and a version for the current implemented plugin interface. For example,
@@ -62,7 +62,7 @@ namespace elm { namespace system {
  * elm::system::Plugger net_plugger("net_plugin", Version(1, 0, 0),
  * 	".:/usr/local/net_plugins");
  * @endcode
- * 
+ *
  * To open a specific plugin named, for example, "my_net_plugin", we have only
  * to call the method Plugger::plug().
  * @code
@@ -76,7 +76,7 @@ namespace elm { namespace system {
  * if(plugin == NULL)
  * 	cout << "ERROR: " << plugger.lastErrorMessage() << io::endl;
  * @endcode
- * 
+ *
  * Having just a plugin pointer does not provide any service. To do it, we have
  * usually to define an interface that is implemented by the plugin instance.
  * Let's call it "NetPlugin": it must be implement the elm::system::Plugin class.
@@ -98,14 +98,14 @@ namespace elm { namespace system {
  * NetPlugin *net_plugin = (NetPlugin *)plugin;
  * net_plugin->performService();
  * @endcode
- * 
+ *
  * When the plugin is no more needed, we can simply unplug it:
  * @code
  * net_plugin->unplug();
  * @endcode
- * 
+ *
  * @section creating_plugins Creating Plugins
- * 
+ *
  * To create a plugin, we have to define a class implementing the service
  * interface of the plugger to plug to. Let's conteinue the example started
  * in the example from the previous section. Notice that we must implemented
@@ -118,7 +118,7 @@ namespace elm { namespace system {
  * 		virtual void performService(void);
  * };
  * @endcode
- * 
+ *
  * Then, the constructor must pass to the elm::system::Plugin class the name
  * of the service to be hooked to the right plugger with the service version
  * supported by the plugin.
@@ -131,7 +131,7 @@ namespace elm { namespace system {
  * comparison will compare the version 1.0.0 (from the plugin) with the version
  * 1.2.0 (from the plugger) and will detect possible binary incompatibility and
  * prevent the invalid linkage.
- * 
+ *
  * Then we need to declare the plugin instance, a global variable with the
  * name of the service.
  * @code
@@ -152,7 +152,7 @@ namespace elm { namespace system {
  * @ref plugins for more details.
  * @ingroup plugins
  */
- 
+
 
 /**
  * List of static plugins.
@@ -175,7 +175,7 @@ genstruct::Vector<Plugin *> Plugin::unused_plugins;
  * @param aliases			Name aliases for the plugin.
  */
 Plugin::Plugin(
-	CString name,
+	string name,
 	const Version& plugger_version,
 	CString hook,
 	const aliases_t& aliases
@@ -205,11 +205,11 @@ Plugin::~Plugin(void) {
  * For internal use only.
  */
 void Plugin::plug(void *handle) {
-	
+
 	// Usage incrementation
 	if(state > 0)
 		state++;
-	
+
 	// Initialization
 	else if(state == 0) {
 		startup();
@@ -219,13 +219,13 @@ void Plugin::plug(void *handle) {
 			static_plugins.remove(this);
 		}
 	}
-	
+
 	// Revival for unused plugins
 	else if(state < 0) {
 		unused_plugins.remove(this);
 		state = 1;
 	}
-		
+
 	// Make other older
 	step();
 }
@@ -236,16 +236,16 @@ void Plugin::plug(void *handle) {
  */
 void Plugin::unplug(void) {
 	ASSERT(state);
-	
+
 	// Decrement usage
 	state--;
-	
+
 	// Plugin become unused ?
 	if(!state) {
 		unused_plugins.add(this);
 		state = -1;
 	}
-		
+
 	// Unused plugin become too old ?
 	else if(state < -MAX_AGE) {
 		Plugger::leave(this);
@@ -257,7 +257,7 @@ void Plugin::unplug(void) {
 			#else
 				dlclose(_handle);
 			#endif
-	}	
+	}
 }
 
 
@@ -278,7 +278,7 @@ void Plugin::cleanup(void) {
 
 
 /**
- * @fn String Plugin::name(void) const;
+ * @fn string Plugin::name(void) const;
  * Get the plugin name.
  * @return	Plugin name.
  */
@@ -331,14 +331,14 @@ void Plugin::step(void) {
 /**
  * For internal use only.
  */
-Plugin *Plugin::get(CString hook, CString name) {
-	
+Plugin *Plugin::get(cstring hook, const string& name) {
+
 	// Find the plugin
 	for(int i = 0; i < static_plugins.count(); i++)
 		if(static_plugins[i]->hook() == hook
 		&& static_plugins[i]->matches(name))
 			return static_plugins[i];
-	
+
 	// Not found
 	return 0;
 }
@@ -357,7 +357,7 @@ Plugin *Plugin::get(CString hook, CString name) {
  * @param name	Name to test.
  * @return		True if the name is matched, false else.
  */
-bool Plugin::matches(CString name) const {
+bool Plugin::matches(const string& name) const {
 	if(_name == name)
 		return true;
 	for(int i = 0; i < _aliases.count(); i++)

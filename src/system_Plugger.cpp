@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2005-07, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
@@ -67,7 +67,7 @@ genstruct::Vector<Plugger *> Plugger::pluggers;
  */
 Plugger::Plugger(CString hook, const Version& plugger_version, String _paths)
 : _hook(hook), per_vers(plugger_version), err(OK) {
-	
+
 	// Initialize DL library
 	#ifdef WITH_LIBTOOL
 		static bool preloaded = false;
@@ -78,11 +78,11 @@ Plugger::Plugger(CString hook, const Version& plugger_version, String _paths)
 			preloaded = true;
 		}
 	#endif
-	
+
 	// Look in the system paths
 	if(_paths == "*")
 		_paths = getenv("LD_LIBRARY_PATH");
-	
+
 	// Scan the paths
 	int index = _paths.indexOf(':');
 	while(index >= 0) {
@@ -93,7 +93,7 @@ Plugger::Plugger(CString hook, const Version& plugger_version, String _paths)
 	}
 	if(_paths)
 		paths.add(_paths);
-	
+
 	// Add to active pluggers
 	pluggers.add(this);
 }
@@ -146,10 +146,11 @@ void Plugger::resetPaths(void) {
 
 /**
  * Get a plugin by its name.
- * @param name	Name of the plugin to get.
+ * @param name	Name of the plugin to get (possibly containing '/'
+ * 				to access sub-directories).
  * @return		Found plugin or null.
  */
-Plugin *Plugger::plug(CString name) {
+Plugin *Plugger::plug(const string& name) {
 	err = OK;
 
 	// Look in opened plugins
@@ -158,17 +159,17 @@ Plugin *Plugger::plug(CString name) {
 			plugins[i]->plug(0);
 			return plugins[i];
 		}
-	
+
 	// Look in static plugins
 	Plugin *plugin = Plugin::get(_hook, name);
 	if(plugin)
 		return plug(plugin, 0);
-	
+
 	// Load the plugin
 	for(int i = 0; i < paths.count(); i++) {
 		StringBuffer buf;
 		#ifdef WITH_LIBTOOL
-			buf << paths[i] << "/" << name << ".la";		
+			buf << paths[i] << "/" << name << ".la";
 		#else
 			buf << paths[i] << "/" << name << ".so";
 		#endif
@@ -176,7 +177,7 @@ Plugin *Plugger::plug(CString name) {
 		if(plugin)
 			return plugin;
 	}
-	
+
 	// No plugin available
 	return 0;
 }
@@ -199,7 +200,7 @@ Plugin *Plugger::plug(Plugin *plugin, void *handle) {
  */
 Plugin *Plugger::plugFile(String path) {
 	err = OK;
-	
+
 	// Check existence of the file
 	system::FileItem *file = system::FileItem::get(path);
 	if(!file) {
@@ -207,7 +208,7 @@ Plugin *Plugger::plugFile(String path) {
 		return 0;
 	}
 	file->release();
-	
+
 	// Open shared library
 	#ifdef WITH_LIBTOOL
 		void *handle = lt_dlopen(&path);
@@ -236,21 +237,21 @@ Plugin *Plugger::plugFile(String path) {
 		onWarning(_ << "invalid plugin found at \"" << path << "\" (no hook)");
 		return 0;
 	}
-	
+
 	// Check the magic
 	if(plugin->magic != Plugin::MAGIC) {
 		err = NO_MAGIC;
 		onWarning(_ << "invalid plugin found at \"" << path << "\" (bad magic)");
 		return 0;
 	}
-		
+
 	// Check plugger version
 	if(!plugin->pluggerVersion().accepts(per_vers)) {
 		err = BAD_VERSION;
 		onWarning(_ << "bad version plugin found at \"" << path << "\"");
 		return 0;
 	}
-		
+
 	// Plug it
 	return plug(plugin, handle);
 }
@@ -286,7 +287,7 @@ String Plugger::lastErrorMessage(void) {
 	case BAD_VERSION:
 		return "Found plug-in is incompatible.";
 	case NO_MAGIC:
-		return "Found plugin does not match the plugin signature.";		
+		return "Found plugin does not match the plugin signature.";
 	default:
 		ASSERTP(0, "unknown error");
 		return "";
@@ -323,7 +324,7 @@ void Plugger::onWarning(String message) {
 /**
  */
 void Plugger::Iterator::go(void) {
-	
+
 	// Look in statics
 	if(i < statics.count()) {
 		i++;
@@ -336,14 +337,14 @@ void Plugger::Iterator::go(void) {
 			i++;
 		}
 	}
-	
+
 	// Look in files
 	while(true) {
-		
+
 		// Next file
 		if(file)
 			file->next();
-		
+
 		// Next path
 		if(!file || file->ended()) {
 			if(file) {
@@ -362,7 +363,7 @@ void Plugger::Iterator::go(void) {
 					continue;
 			}
 		}
-		
+
 		// Look current file
 		if(file->item()->path().toString().endsWith(".la"))
 			break;
