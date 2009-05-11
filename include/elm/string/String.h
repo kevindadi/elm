@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2004-08, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_STRING_STRING_H
@@ -31,7 +31,7 @@ namespace elm {
 class String {
 	friend class CString;
 	friend class StringBuffer;
-	
+
 	// Data structure
 	typedef struct buffer_t {
 		unsigned short use;
@@ -55,12 +55,12 @@ class String {
 	static String concat(const char *s1, int l1, const char *s2, int l2);
 	inline String(buffer_t *buffer, int offset, int length)
 		: buf((char *)buffer), off(offset), len(length) { lock(); };
-	
+
 public:
 	inline String(void): buf((char *)&empty_buf), off(zero_off), len(0) { lock(); };
 	inline String(const char *str, int _len) { copy(str, _len); };
-	inline String(const char *str) { copy(str, strlen(str)); };
-	inline String(const CString str) { copy(str.chars(), str.length()); };
+	inline String(const char *str) { if(!str) str = ""; copy(str, strlen(str)); };
+	inline String(cstring str) { copy(str.chars(), str.length()); };
 	inline String(const String& str): buf(str.buf), off(str.off), len(str.len) { lock(); };
 	inline ~String(void) { unlock(); };
 	inline String& operator=(const String& str)
@@ -68,8 +68,8 @@ public:
 	inline String& operator=(const CString str)
 		{ unlock(); copy(str.chars(), str.length()); return *this; };
 	inline String& operator=(const char *str)
-		{ unlock(); copy(str, strlen(str)); return *this; };
-	
+		{ if(!str) str = ""; unlock(); copy(str, strlen(str)); return *this; };
+
 	inline int length(void) const { return len; };
 	inline const char *chars(void) const { return buf + off; };
 	inline int compare(const String& str) const {
@@ -81,13 +81,13 @@ public:
 		int res = memcmp(chars(), str.chars(), len > slen ? slen : len);
 		return res ? res : len - slen;
 	};
-	
+
 	inline bool isEmpty(void) const { return !len; };
 	inline operator bool(void) const { return !isEmpty(); };
 
 	inline CString toCString(void) const { if(buf[off + len] != '\0') toc(); return chars(); };
 	inline const char *operator&(void) const { return toCString().chars(); };
-		
+
 	inline char charAt(int index) const { return buf[index + off]; };
 	inline char operator[](int index) const { return charAt(index); };
 	inline String substring(int _off) const { return String(buf, off + _off, len - _off); };
