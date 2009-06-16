@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2006-07, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
@@ -28,16 +28,17 @@
 #include <elm/xom/Element.h>
 #include <elm/xom/Text.h>
 #include <elm/xom/Attribute.h>
+#include <elm/xom/Nodes.h>
 
 namespace elm { namespace xom {
 
 /**
  * @defgroup xom XOM Module
- * 
+ *
  * @code
  * #include <elm/xom.h>
  * @endcode
- * 
+ *
  * This module support an implementation of the XOM API (http://www.xom.nu/)
  * for XML adapted to C++. All classes of this modules are contained in the
  * elm::xom namespace.
@@ -50,7 +51,7 @@ namespace elm { namespace xom {
  * @li as the method getValue() may in some cases build a new string,
  * @ref elm::xom::Text provides a more efficient method, getText(), to get its
  * content without need of memory management.
- * 
+ *
  * @internal XOM module is implemented on top of C library libxml2. As a
  * consequence, the used texts are encoded in UTF-8.
  */
@@ -164,7 +165,7 @@ Node::kind_t Node::kind(void) const {
     	NONE,					// XML_XINCLUDE_END = 20
     	NONE					// XML_DOCB_DOCUMENT_NODE
 	};
-	
+
 	ASSERT(NODE(node)->type < (int)(sizeof(kinds) / sizeof(kind_t)));
 	return kinds[NODE(node)->type];
 }
@@ -238,7 +239,7 @@ bool Node::equals(const Node * node) const {
  * @liOtherwise, (the element was created by a constructor rather then being
  * parsed from an existing document), the base URI of the nearest ancestor that
  * does have a base URI is returned. If no ancestors have a base URI, then the
- * empty string is returned. 
+ * empty string is returned.
  * @par
  * Absolutization takes place as specified by the XML Base specification.
  * However, it is not always possible to absolutize a relative URI, in which
@@ -254,8 +255,8 @@ String Node::getBaseURI(void) {
 /**
  * @fn Node *Node::getChild(int index);
  * Returns the child of this node at the specified position.
- * @param position the index of the child node to return 
- * @return the positionth child node of this node 
+ * @param position the index of the child node to return
+ * @return the positionth child node of this node
  */
 
 
@@ -333,8 +334,8 @@ Document *Node::getDocument(void) {
  * @endcode
  * @param xpath the XPath expression to evaluate
  * @param namespaces a collection of namespace prefix bindings used in the
- * XPath expression 
- * @return a list of all matched nodes; possibly empty 
+ * XPath expression
+ * @return a list of all matched nodes; possibly empty
  * @throw XPathException if there's a syntax error in the expression, the query
  * returns something other than a node-set
  */
@@ -376,8 +377,8 @@ String Node::internToXML(void) {
  * contain any namespace prefixes.
  * @par
  * No variables are bound. No namespace prefixes are bound.
- * @param xpath the XPath expression to evaluate 
- * @return a list of all matched nodes; possibly empty 
+ * @param xpath the XPath expression to evaluate
+ * @return a list of all matched nodes; possibly empty
  * @throw XPathException if there's a syntax error in the expression; or the
  * query returns something other than a node-set.
  */

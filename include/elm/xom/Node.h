@@ -25,7 +25,7 @@ class Node {
 	friend class Builder;
 	friend class Elements;
 	friend class XIncluder;
-	
+
 public:
 	typedef enum kind_t {
 		NONE = 0,
@@ -39,7 +39,7 @@ public:
 		NAMESPACE
 	} kind_t;
 protected:
-	
+
 	void *node;
 	Node(void *_node);
 	void setNode(void *_node);
@@ -67,7 +67,7 @@ public:
 	virtual Nodes *query(const String& xpath);
 	virtual Nodes *query(const String& xpath, XPathContext *context);
 	virtual String toXML(void) = 0;
-	
+
 	// Non-XOM methods
 	int line(void) const;
 };

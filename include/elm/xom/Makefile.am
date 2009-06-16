@@ -7,9 +7,11 @@ includeelmxom_HEADERS = \
 	Elements.h \
 	Exception.h \
 	Node.h \
+	Nodes.h \
 	NodeFactory.h \
 	ParentNode.h \
 	Serializer.h \
 	String.h \
 	Text.h \
-	XIncluder.h
+	XIncluder.h \
+	XSLTransform.h
