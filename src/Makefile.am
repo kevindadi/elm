@@ -2,12 +2,15 @@ lib_LTLIBRARIES=libelm.la
 
 INCLUDES=-I../include @INCLTDL@
 
-AM_CXXFLAGS = @LIBXML_CFLAGS@ -Wall
+AM_CXXFLAGS = @LIBXML_CFLAGS@ @LIBXSLT_CFLAGS@ -Wall
 
 libelm_la_LDFLAGS=-version-info 0:1:0
 libelm_la_LIBADD = @LIBLTDL@
 if HAS_LIBXML
 libelm_la_LIBADD += @LIBXML_LIBS@
+endif
+if HAS_LIBXSLT
+libelm_la_LIBADD += @LIBXSLT_LIBS@
 endif
 
 DEFS=@ELM_DEBUG_DEFS@
@@ -95,6 +98,7 @@ libelm_la_SOURCES= \
 	util_Comparator.cpp \
 	util_delegate.cpp \
 	util_Equiv.cpp \
+	util_ErrorHandler.cpp \
 	util_Formatter.cpp \
 	util_HashKey.cpp \
 	util_Initializer.cpp \
@@ -127,6 +131,10 @@ libelm_la_SOURCES += \
 	xom_Text.cpp \
 	xom_XIncluder.cpp \
 	xom_macros.h
+endif
+
+if HAS_LIBXSLT
+libelm_la_SOURCES += xom_XSLTransform.cpp
 endif
 
 if HAVE_GDB_CRASH_HANDLER

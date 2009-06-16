@@ -8,6 +8,7 @@ includeelmutil_HEADERS = \
 	Comparator.h \
 	delegate.h \
 	Equiv.h \
+	ErrorHandler.h \
 	Exception.h \
 	Formatter.h \
 	HashKey.h \
