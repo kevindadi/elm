@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2006-07, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
@@ -47,7 +47,7 @@ void *Element::makeNS(String name, String uri) {
 	const xmlChar *local_name = xmlSplitQName3(name, &len);
 	if(!local_name) {
 		node = xmlNewNode(NULL, name);
-		xmlNewNs(node, uri, NULL);
+		NODE(node)->ns = xmlNewNs(node, uri, NULL);
 	}
 	else {
 		node = xmlNewNode(NULL, local_name);
@@ -71,7 +71,7 @@ Element::Element(void *node): ParentNode(node) {
 
 /**
  * Creates a new element in no namespace.
- * @param name the name of the element 
+ * @param name the name of the element
  * @throw IllegalNameException if name is not a legal XML 1.0 non-colonized name.
  */
 Element::Element(String name): ParentNode(xmlNewNode(NULL, name)) {
@@ -82,9 +82,9 @@ Element::Element(String name): ParentNode(xmlNewNode(NULL, name)) {
 /**
  * Creates a new element in a namespace.
  * @param name the qualified name of the element
- * @param uri the namespace URI of the element 
- * @throw IllegalNameException if name is not a legal XML 1.0 name 
- * @throw NamespaceConflictException if name's prefix cannot be used with uri 
+ * @param uri the namespace URI of the element
+ * @throw IllegalNameException if name is not a legal XML 1.0 name
+ * @throw NamespaceConflictException if name's prefix cannot be used with uri
  * @throw MalformedURIException if uri is not an RFC 3986 absolute URI reference
  */
 Element::Element(String name, String uri): ParentNode(makeNS(name, uri)) {
@@ -124,9 +124,9 @@ Element	*Element::shallowCopy(void) {
 /**
  * Adds an attribute to this element, replacing any existing attribute with the
  * same local name and namespace URI.
- * @param attribute the attribute to add 
+ * @param attribute the attribute to add
  * @throw MultipleParentException if the attribute is already attached to an
- * element 
+ * element
  * @throw NamespaceConflictException - if the attribute's prefix is mapped to a
  * different namespace URI than the same prefix is mapped to by this element,
  * another attribute of this element, or an additional namespace declaration of
@@ -155,14 +155,13 @@ void Element::addAttribute(Attribute *attribute) {
  *
  * @param prefix the prefix to declare.
  * @param uri the absolute URI reference to map the prefix to.
- * @param MalformedURIException if URI is not an RFC 3986 URI reference 
- * @param IllegalNameException if prefix is not a legal XML non-colonized name 
+ * @param MalformedURIException if URI is not an RFC 3986 URI reference
+ * @param IllegalNameException if prefix is not a legal XML non-colonized name
  * @param NamespaceConflictException if the mapping conflicts with an existing
  * element, attribute, or additional namespace declaration
  */
 void Element::addNamespaceDeclaration(String prefix, String uri) {
-	// !!TODO!!
-	ASSERTP(0, "unsupported");
+	xmlNewNs(NODE(node), xom::String(uri), xom::String(prefix));
 }
 
 
@@ -199,7 +198,7 @@ Node *Element::copy(void) {
  * either end of the list (0 or getAttributeCount()-1) until there are no
  * attributes left.
  * @param index the attribute to return.
- * @return the indexth attribute of this element 
+ * @return the indexth attribute of this element
  */
 Attribute *Element::getAttribute(int index) {
 	int cnt = 0;
@@ -291,7 +290,7 @@ Option<String> Element::getAttributeValue(String localName, String ns) {
  */
 Elements *Element::getChildElements(void) {
 	Elements *elems = new Elements();
-	for(xmlNodePtr cur = NODE(node)->children; cur; cur = cur->next) 
+	for(xmlNodePtr cur = NODE(node)->children; cur; cur = cur->next)
 		if(cur->type == XML_ELEMENT_NODE)
 			elems->elems.add((Element *)make(cur));
 	return elems;
@@ -307,7 +306,7 @@ Elements *Element::getChildElements(void) {
  */
 Elements *Element::getChildElements(String name) {
 	Elements *elems = new Elements;
-	for(xmlNodePtr cur = NODE(node)->children; cur; cur = cur->next) 
+	for(xmlNodePtr cur = NODE(node)->children; cur; cur = cur->next)
 		if(cur->type == XML_ELEMENT_NODE
 		&& name == String(cur->name))
 			elems->elems.add((Element *)make(cur));
@@ -322,13 +321,13 @@ Elements *Element::getChildElements(String name) {
  * or the empty string as the namespace URI returns elements with the specified
  * name in no namespace. The elements returned are in document order.
  * @param localName The name of the elements included in the list.
- * @param namespaceURI The namespace URI of the elements included in the list. 
+ * @param namespaceURI The namespace URI of the elements included in the list.
  * @return A comatose list containing the child elements of this element with
  * the specified name in the specified namespace.
  */
 Elements *Element::getChildElements(String localName, String ns) {
 	Elements *elems = new Elements;
-	for(xmlNodePtr cur = NODE(node)->children; cur; cur = cur->next) 
+	for(xmlNodePtr cur = NODE(node)->children; cur; cur = cur->next)
 		if(cur->type == XML_ELEMENT_NODE
 		&& localName == String(cur->name)
 		&& ns == String(cur->ns->href))
@@ -362,7 +361,7 @@ Element	*Element::getFirstChildElement(String name) {
  * namespace, or null if there is no such element.
  */
 Element	*Element::getFirstChildElement(String localName, String ns) {
-	for(xmlNodePtr cur = NODE(node)->children; cur; cur = cur->next) 
+	for(xmlNodePtr cur = NODE(node)->children; cur; cur = cur->next)
 		if(cur->type == XML_ELEMENT_NODE
 		&& localName == String(cur->name)
 		&& ns == String(cur->ns->href))
@@ -371,7 +370,7 @@ Element	*Element::getFirstChildElement(String localName, String ns) {
 }
 
 
-/** 
+/**
  * Returns the local name of this element, not including the namespace prefix
  * or colon.
  * @return The local name of this element.
@@ -397,9 +396,10 @@ String Element::getLocalName(void) {
  * @return The number of namespaces declared by this element.
  */
 int	Element::getNamespaceDeclarationCount(void) {
-	// !!TODO!!
-	ASSERTP(0, "unsupported");
-	return 0;
+	int cnt = 0;
+	for(xmlNs *ns = NODE(node)->nsDef; ns; ns = ns->next)
+		cnt++;
+	return cnt;
 }
 
 
@@ -409,7 +409,7 @@ int	Element::getNamespaceDeclarationCount(void) {
  * @return The prefix of this element.
  */
 String Element::getNamespacePrefix(void) {
-	if(NODE(node)->ns)
+	if(NODE(node)->ns && NODE(node)->ns->prefix)
 		return NODE(node)->ns->prefix;
 	else
 		return "";
@@ -436,8 +436,15 @@ String Element::getNamespacePrefix(void) {
  * @return The prefix.
  **/
 String Element::getNamespacePrefix(int index) {
-	// !!TODO!!
-	ASSERTP(0, "unsupported");
+	for(xmlNs *ns = NODE(node)->nsDef; ns; ns = ns->next) {
+		if(index)
+			index--;
+		else if(ns->prefix)
+			return ns->prefix;
+		else
+			return "";
+	}
+	ASSERTP(false, "namespace index out of bounds");
 	return "";
 }
 
@@ -462,8 +469,9 @@ String Element::getNamespaceURI(void) {
  * @return The namespace URI mapped to prefix.
  */
 String Element::getNamespaceURI(String prefix) {
-	// !!TODO!!
-	ASSERTP(0, "unsupported");
+	for(xmlNs *ns = NODE(node)->nsDef; ns; ns = ns->next)
+		if(prefix == ns->prefix)
+			return ns->href;
 	return "";
 }
 
@@ -472,11 +480,20 @@ String Element::getNamespaceURI(String prefix) {
  * Returns the complete name of this element, including the namespace prefix if
  * this element has one.
  * @return The qualified name of this element.
+ * @warning	The string allocated by this call must be fried !
  */
 String Element::getQualifiedName(void) {
-	// !!TODO!!
-	ASSERTP(0, "unsupported");
-	return "";
+	typedef const char *s;
+	xmlNode *element = NODE(node);
+	if(!element->ns || !element->ns->prefix)
+		return strdup(s(element->name));
+	else {
+		char *buf = (char *)malloc(strlen(s(element->name)) + strlen(s(element->ns->prefix)) + 2);
+		strcpy(buf, s(element->ns->prefix));
+		strcat(buf, ":");
+		strcat(buf, s(element->name));
+		return buf;
+	}
 }
 
 
