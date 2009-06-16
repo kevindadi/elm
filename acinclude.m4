@@ -51,16 +51,16 @@ AC_DEFUN([ELM_CHECK_CONFIG], [
 			AC_MSG_CHECKING(for $2-$3)
 			curver=`$2-config --version`
 			AS_IF(
-				test "$curver" < "$3",
+				test "$curver" '<' "$3",
 				[AC_MSG_RESULT([bad version : $curver at least required !])],
 				[
 					AC_MSG_RESULT(yes)
 					HAS_$1=yes
 					AC_MSG_CHECKING($1_CFLAGS)
-					$1_CFLAGS=`$1-config --cflags`
+					$1_CFLAGS=`$2-config --cflags`
 					AC_MSG_RESULT($$1_CFLAGS)
 					AC_MSG_CHECKING($1_LIBS)
-					$1_LIBS=`$1-config --libs`
+					$1_LIBS=`$2-config --libs`
 					AC_MSG_RESULT($$1_LIBS)
 				])
 		])
