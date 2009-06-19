@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2006-07, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
@@ -40,9 +40,23 @@ namespace elm { namespace xom {
  */
 
 
+/**
+ * Appends a node to the children of this node.
+ * @param child		node to append to this node
+ * @note Fails if (1) if this node cannot have children of this type,
+ * 		(2) if child already has a parent.
+ */
 void ParentNode::appendChild(Node *child) {
-	xmlNodePtr res = xmlAddChild(NODE(node), NODE(child->getNode()));
-	ASSERTP(res, "appendChild() failed");
+	ASSERTP(!NODE(child->getNode())->parent, "node with multiple parent is forbidden");
+	xmlNode *cnode = NODE(child->getNode()), *pnode = NODE(node);
+
+	if(cnode->doc && cnode->doc != pnode->doc) {
+		xmlNodePtr old = cnode;
+		cnode = xmlDocCopyNode(cnode, pnode->doc, 1);
+		child->setNode(cnode);
+		freeNode(old);
+	}
+	xmlAddChild(pnode, cnode);
 }
 
 
@@ -56,7 +70,7 @@ Node *ParentNode::getChild(int position) {
 	for(int i = 0; i < position; i++, cur = cur->next)
 		ASSERTP(cur, "position out of bounds");
 	ASSERTP(cur, "position out of bounds");
-	return Node::make(cur);	
+	return Node::make(cur);
 }
 
 
@@ -79,7 +93,7 @@ int	ParentNode::getChildCount(void) {
  * @par
  * This method does a linear search through the node's children. On average, it
  * executes in O(N) where N is the number of children of the node.
- * @param child the node whose position is desired 
+ * @param child the node whose position is desired
  * @return the position of the argument node among the children of this node
  */
 int	ParentNode::indexOf(Node *child) {
@@ -102,10 +116,10 @@ int	ParentNode::indexOf(Node *child) {
  * All the other methods that add a node to the tree ultimately invoke this
  * method.
  * @param position where to insert the child
- * @param child the node to insert 
+ * @param child the node to insert
  * @throw IllegalAddException if this node cannot have a child of the argument's
  * type.
- * @throw MultipleParentException if child already has a parent 
+ * @throw MultipleParentException if child already has a parent
  */
 void ParentNode::insertChild(Node *child, int position) {
 	ASSERTP(child, "null node");
@@ -131,7 +145,7 @@ void ParentNode::insertChild(Node *child, int position) {
 /**
  * Removes the child of this node at the specified position. Indexes begin at 0
  * and count up to one less than the number of children in this node.
- * @param position index of the node to remove 
+ * @param position index of the node to remove
  * @param the node which was removed
  */
 Node *ParentNode::removeChild(int position) {
@@ -154,7 +168,7 @@ Node *ParentNode::removeChild(Node *child) {
  * Replaces an existing child with a new child node. If oldChild is not a child
  * of this node, then a NoSuchChildException is thrown.
  * @param oldChild the node removed from the tree
- * @param newChild the node inserted into the tree 
+ * @param newChild the node inserted into the tree
  * @throw MultipleParentException if newChild already has a parent.
  * @throw IllegalAddException if this node cannot have children of the type of
  * newChild.
