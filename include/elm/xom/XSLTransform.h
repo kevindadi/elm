@@ -65,7 +65,7 @@ public:
 	Document *transformDocument(Document *in ) throw(XSLException);
 
 private:
-	static void error_handler(void *ctx, void *error);
+	static void handle_error(void *ctx, const char *msg, ...);
 	Document *ss;
 	NodeFactory *fact;
 	genstruct::AssocList<string, string> params;
