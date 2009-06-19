@@ -26,20 +26,19 @@ protected:
 public:
 	Document(Document *document);
 	Document(Element *root_element);
-	
+	virtual ~Document(void);
+
 	virtual Node *copy(void);
 	virtual String getBaseURI(void);
 	// DocType	getDocType()
 	virtual Element *getRootElement(void);
 	virtual String getValue(void);
-	virtual Node *removeChild(int position);
-	virtual Node *removeChild(Node *child);
 	virtual void replaceChild(Node *old_child, Node *new_child);
 	virtual void setBaseURI(String uri);
 	// void	setDocType(DocType doctype)
 	virtual void setRootElement(Element *root);
 	virtual String toString(void);
-	virtual String toXML(void); 
+	virtual String toXML(void);
 };
 
 } } // elm::xom
