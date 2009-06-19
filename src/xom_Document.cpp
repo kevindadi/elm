@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2006-07, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
@@ -53,12 +53,26 @@ Document::Document(Document *document): ParentNode(0) {
 	ASSERTP(0, "unsupported");
 }
 
+
+/**
+ * Creates a new Document object with the specified root element.
+ * @param root - the root element of this document
+ * @warning		Fails if root already has a parent.
+ */
 Document::Document(Element *root_element):
-	ParentNode(xmlNewDoc((xmlChar *)"1.0")),
+	ParentNode(xmlNewDoc(BAD_CAST "1.0")),
 	fact(&NodeFactory::default_factory)
 {
 	ASSERTP(root_element, "null root element");
+	ASSERTP(!NODE(root_element->getNode())->parent, "root already has a parent");
 	setRootElement(root_element);
+}
+
+
+/**
+ */
+Document::~Document(void) {
+	xmlFreeDoc(DOC(node));
 }
 
 Node *Document::copy(void) {
@@ -81,22 +95,12 @@ Element *Document::getRootElement(void) {
 	if(!root)
 		return 0;
 	return (Element *)get(root);
-	
+
 }
 
 String Document::getValue(void) {
 	ASSERTP(0, "unsupported");
 	return "";
-}
-
-Node *Document::removeChild(int position) {
-	ASSERTP(0, "unsupported");
-	return 0;
-}
-
-Node *Document::removeChild(Node *child) {
-	ASSERTP(0, "unsupported");
-	return 0;
 }
 
 void Document::replaceChild(Node *old_child, Node *new_child) {
