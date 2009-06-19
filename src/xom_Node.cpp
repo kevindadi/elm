@@ -89,6 +89,31 @@ public:
 
 
 /**
+ * Free a tree of nodes.
+ */
+void Node::freeNode(void *_node) {
+	xmlNodePtr node = NODE(_node);
+	if(node->_private)
+		delete (Node *)node->_private;
+	else {
+		for(xmlNodePtr cur = node->children, next; cur; cur = next) {
+			next = cur->next;
+			freeNode(cur);
+		}
+		if(node->parent)
+			xmlUnlinkNode(node);
+		xmlFreeNode(node);
+	}
+}
+
+
+/**
+ */
+Node::~Node(void) {
+}
+
+
+/**
  * Set the actual libxml node.
  * @param _node		Node to set.
  */

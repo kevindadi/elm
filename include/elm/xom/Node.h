@@ -38,8 +38,9 @@ public:
 		DOCTYPE,
 		NAMESPACE
 	} kind_t;
-protected:
 
+protected:
+	friend class ParentNode;
 	void *node;
 	Node(void *_node);
 	void setNode(void *_node);
@@ -50,8 +51,9 @@ protected:
 	int internGetChildCount(void);
 	String internGetValue(void);
 	String internToXML(void);
+	static void freeNode(void *node);
 public:
-	virtual ~Node(void) { }
+	virtual ~Node(void);
 	inline void *getNode(void) const;
 
 	kind_t kind(void) const;
