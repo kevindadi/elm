@@ -153,23 +153,16 @@ String XSLTransform::toString(void) {
 
 
 // Global error handler
-void XSLTransform::error_handler(void * ctx, void *err) {
-	static error_level_t levels[] = {
-		level_none,
-		level_warning,
-		level_error,
-		level_fatal
-	};
-
+void XSLTransform::handle_error(void *ctx, const char *msg, ...) {
+	static const int buf_size = 1024;
 	XSLTransform *xslt = (XSLTransform *)ctx;
-	xmlError *error = (xmlError *)err;
-	StringBuffer buf;
-	buf << ": " << error->file << ":" << error->line << ":\n" << error->str1 << io::endl;
-	if(error->str2)
-		buf << '\t' << error->str2 << io::endl;
-	if(error->str3)
-		buf << '\t' << error->str3 << io::endl;
-	xslt->onError(levels[error->level], buf.toString());
+	char buf[buf_size];
+	va_list args;
+	va_start(args, msg);
+	vsnprintf(buf, buf_size, msg, args);
+	va_end(args);
+	buf[strlen(buf) - 1] = '\0';
+	xslt->onError(level_error, buf);
 }
 
 
@@ -192,7 +185,7 @@ Nodes XSLTransform::transform(Document *in) throw(XSLException) {
  * @param in	document to transform.
  * @return		transformed document.
  */
-Document *XSLTransform::transformDocument(Document *in ) throw(XSLException) {
+Document *XSLTransform::transformDocument(Document *in) throw(XSLException) {
 	xsltInit();
 
 	// prepare parameters
@@ -206,10 +199,12 @@ Document *XSLTransform::transformDocument(Document *in ) throw(XSLException) {
 	aparams[params.count()] = 0;
 
 	// perform the transformation
-	xmlSetStructuredErrorFunc(this, (xmlStructuredErrorFunc)error_handler);
-	xsltStylesheetPtr stylesheet = xsltParseStylesheetDoc(DOC(ss));
+	//xmlSetStructuredErrorFunc(this, (xmlStructuredErrorFunc)error_handler);
+	xsltSetGenericErrorFunc(this, handle_error);
+	xmlDoc *new_doc = xmlCopyDoc(DOC(ss->getNode()), 1);
+	xsltStylesheetPtr stylesheet = xsltParseStylesheetDoc(new_doc);
 	ASSERT(stylesheet);
-	xmlDoc *res = xsltApplyStylesheet(stylesheet, DOC(in), aparams);
+	xmlDoc *res = xsltApplyStylesheet(stylesheet, DOC(in->getNode()), aparams);
 
 	// clean up
 	delete [] aparams;
