@@ -196,14 +196,14 @@ Document *XSLTransform::transformDocument(Document *in) throw(XSLException) {
 		aparams[i++] = &(*iter).fst;
 		aparams[i++] = &(*iter).snd;
 	}
-	aparams[params.count()] = 0;
+	aparams[params.count() * 2] = 0;
 
 	// perform the transformation
-	//xmlSetStructuredErrorFunc(this, (xmlStructuredErrorFunc)error_handler);
 	xsltSetGenericErrorFunc(this, handle_error);
 	xmlDoc *new_doc = xmlCopyDoc(DOC(ss->getNode()), 1);
 	xsltStylesheetPtr stylesheet = xsltParseStylesheetDoc(new_doc);
-	ASSERT(stylesheet);
+	if(!stylesheet)
+		throw XSLException("can not compile stylesheet");
 	xmlDoc *res = xsltApplyStylesheet(stylesheet, DOC(in->getNode()), aparams);
 
 	// clean up
