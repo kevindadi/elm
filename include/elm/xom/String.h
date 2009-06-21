@@ -1,8 +1,23 @@
 /*
- * $Id$
- * Copyright (c) 2006, IRIT UPS.
+ *	$Id$
+ *	xom::String class interface
  *
- * elm/xom/String.h -- String class.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2006-09, IRIT UPS.
+ *
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_XOM_STRING_H
 #define ELM_XOM_STRING_H
@@ -24,65 +39,23 @@ class String: public CString {
 public:
 
 	// Constructors
-	inline String(void);
-	inline String(const char *str);
-	inline String(const char_t *str);
-	inline String(const CString& str);
-	inline String(const String& str);
-	
+	inline String(void) { }
+	inline String(const char *str): CString(str) { }
+	inline String(const char_t *str): CString((const char *)str) { }
+	inline String(const CString& str): CString(str) { }
+	inline String(const String& str): CString(str) { }
+
 	// Buffer management
-	
-	// Accessors
-	inline void copy(void);
-	inline void free(void);
-	
+	inline void copy(void) { buf = strdup(chars()); }
+	inline void free(void) { ::free((void *)buf); buf = ""; }
+
 	// Operators
-	inline String& operator=(const String& str);
-	inline operator CString(void) const;
-	inline operator char_t *(void) const;
+	inline String& operator=(const String& str) { buf = str.buf; return *this; }
+	inline operator CString(void) const { return (const char *)buf; }
+	inline operator char_t *(void) const { return (char_t *)buf; }
 };
-
-
-// String inlines
-inline String::String(void) {
-}
-
-inline String::String(const char *str)
-: CString(str) {
-}
-
-inline String::String(const char_t *str)
-: CString((const char *)str) {
-}
-
-inline String::String(const CString& str)
-: CString(str) {
-}
-
-inline String::String(const String& str): CString(str) {
-}
-
-inline void String::copy(void) {
-	buf = strdup(chars());
-}
-
-inline void String::free(void) {
-	::free((void *)buf);
-	buf = "";
-}
-
-inline String& String::operator=(const String& str) {
-	buf = str.buf;
-	return *this;
-}
-
-inline String::operator CString(void) const {
-	return (const char *)buf;
-}
-
-inline String::operator char_t *(void) const {
-	return (char_t *)buf;
-}
+inline io::Output& operator<<(io::Output& out, String str)
+	{ out << cstring(str); return out; }
 
 } } // elm::xom
 
