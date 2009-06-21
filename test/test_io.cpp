@@ -27,6 +27,7 @@
 #include <elm/io/BufferedOutStream.h>
 #include <elm/io/InFileStream.h>
 #include <elm/system/System.h>
+#include <elm/io/BlockInStream.h>
 
 using namespace elm;
 using namespace elm::io;
@@ -161,10 +162,54 @@ void test_BufferedOutStream(void) {
 	CHECK_END;
 }
 
+
+// BufferedOutStream class
+void test_Input(void) {
+	CHECK_BEGIN("io::BufferedOutStream");
+
+#	define TINPUT(t, c) \
+		{ \
+			io::BlockInStream stream(#c); \
+			io::Input in(stream); \
+			t v; \
+			in >> v; \
+			CHECK(v == c); \
+		}
+
+	try {
+		TINPUT(long, 666);
+		TINPUT(long, -666);
+		TINPUT(long, +666);
+		TINPUT(unsigned long, 666);
+
+		TINPUT(long, 0xff);
+		TINPUT(long, -0xff);
+		TINPUT(long, +0xff);
+		TINPUT(unsigned long, 0xff);
+
+		TINPUT(long long, 666);
+		TINPUT(long long, -666);
+		TINPUT(long long, +666);
+		TINPUT(unsigned long long, 666);
+
+		TINPUT(long long, 0xff);
+		TINPUT(long long, -0xff);
+		TINPUT(long long, +0xff);
+		TINPUT(unsigned long long, 0xff);
+	}
+	catch(elm::Exception& e) {
+		cerr << "ERROR: exception raised: " << e.message() << io::endl;
+	}
+
+	CHECK_END;
+}
+
+
 int main(void) {
 	test_RandomAccessStream();
 	test_BufferedInStream();
 	test_BufferedOutStream();
+	test_Input();
 	return 0;
 }
 
