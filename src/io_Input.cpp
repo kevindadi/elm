@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2006-07, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
@@ -27,7 +27,7 @@
 #include <ctype.h>
 
 namespace elm { namespace io {
-	
+
 /**
  * @class Input
  * This class provides formatted scanning to input streams.
@@ -97,11 +97,11 @@ void Input::back(int chr) {
 /**
  * Read a boolean value, that is, 'true' or 'false'.
  * @return	Read boolean value.
- */	
+ */
 bool Input::scanBool(void) {
 	const char *pattern;
 	bool res;
-	
+
 	// Look first character
 	int chr = get();
 	if(chr == 't') {
@@ -114,7 +114,7 @@ bool Input::scanBool(void) {
 	}
 	else
 		pattern = "";
-	
+
 	// Look other characters
 	while(*pattern == chr) {
 		pattern++;
@@ -164,24 +164,16 @@ static inline int test_base(char chr, int base) {
 
 
 /**
- * Scan a decimal integer.
+ * Scan a based unsigned long, decimal as a default.
+ * Supported base prefixes are '0', '0[xX]' or '0[bB]'.
  * @return	Integer value.
  */
-long Input::scanInt(void) {
+unsigned long Input::scanULong(void) {
 	unsigned long val = 0;
-	bool neg = false;
 	int base = 10;
-	
-	// Read sign
-	int chr = get();
-	if(chr == '-') {
-		neg = true;
-		chr = get();
-	}
-	else if(chr == '+')
-		chr = get();
-	
+
 	// Read the base
+	int chr = get();
 	if(chr == '0')
 		switch(chr = get()) {
 		case 'x': case 'X':
@@ -200,6 +192,80 @@ long Input::scanInt(void) {
 			base = 8;
 			break;
 		}
+
+	// read the digits
+	int digit = test_base(chr, base);
+	while(digit >= 0) {
+		if(digit < 0)
+			throw IOException("bad formatted integer");
+		unsigned long old = val;
+		val = val * base + digit;
+		if(val < old)
+			throw IOException("32-bits value too big");
+		chr = get();
+		digit = test_base(chr, base);
+	}
+	if(chr >= 0)
+		back(chr);
+	return val;
+}
+
+
+/**
+ * Scan a based long, decimal as a default.
+ * Supported base prefixes are '0', '0[xX]' or '0[bB]'.
+ * @return	Integer value.
+ */
+long Input::scanLong(void) {
+	unsigned long val = 0;
+	bool neg = false;
+
+	// Read sign
+	int chr = get();
+	if(chr == '-')
+		neg = true;
+	else if(chr != '+')
+		back(chr);
+
+	// get the value
+	val = scanULong();
+	if(val >= (1UL << 31))
+		throw IOException("32-bits value too big");
+	return neg ? -long(val) : val;
+}
+
+
+/**
+ * Scan a based unsigned long long, decimal as a default.
+ * Supported base prefixes are '0', '0[xX]' or '0[bB]'.
+ * @return	Integer value.
+ */
+unsigned long long Input::scanULLong(void) {
+	unsigned long long val = 0;
+	int base = 10;
+
+	// Read the base
+	int chr = get();
+	if(chr == '0')
+		switch(chr = get()) {
+		case 'x': case 'X':
+			base = 16;
+			chr = get();
+			break;
+		case 'b': case 'B':
+			base = 2;
+			chr = get();
+			break;
+		default:
+			if(chr < '0' || chr > '7') {
+				back(chr);
+				return 0;
+			}
+			base = 8;
+			break;
+		}
+
+	// read the digits
 	int digit = test_base(chr, base);
 	if(digit < 0)
 		throw IOException("bad formatted integer");
@@ -210,36 +276,31 @@ long Input::scanInt(void) {
 	}
 	if(chr >= 0)
 		back(chr);
-	return neg ? -val : val;
+	return val;
 }
 
 
 /**
- * Scan a decimal long integer.
- * @return	Read long value.
+ * Scan a based long long, decimal as a default.
+ * Supported base prefixes are '0', '0[xX]' or '0[bB]'.
+ * @return	Integer value.
  */
-long long Input::scanLong(void) {
+long long Input::scanLLong(void) {
 	unsigned long long val = 0;
 	bool neg = false;
-	
+
 	// Read sign
 	int chr = get();
-	if(chr == '-') {
+	if(chr == '-')
 		neg = true;
-		chr = get();
-	}
-	else if(chr == '+')
-		chr = get();
-	
-	// Read the characters
-	if(chr < '0' || chr > '9')
-		throw IOException("bad formatted integer");
-	while(chr >= '0' && chr <= '9') {
-		val = val * 10 + (chr - '0');
-		chr = get();
-	}
-	back(chr);
-	return neg ? -val : val;
+	else if(chr != '+')
+		back(chr);
+
+	// get the value
+	val = scanULLong();
+	if(val >= (1ULL << 63))
+		throw IOException("bad formatted signed 64-bits value");
+	return neg ? -(long long)val : val;
 }
 
 
@@ -250,7 +311,7 @@ long long Input::scanLong(void) {
 double Input::scanDouble(void) {
 	double value = 0;
 	bool neg = false;
-	
+
 	// Read sign
 	int chr = get();
 	if(chr == '-') {
@@ -259,7 +320,7 @@ double Input::scanDouble(void) {
 	}
 	else if(chr == '+')
 		chr = get();
-	
+
 	// Read integer part
 	if(chr != '.' && (chr < '0' || chr > '9'))
 		throw IOException("bad formatted float value");
@@ -267,7 +328,7 @@ double Input::scanDouble(void) {
 		value = value * 10 + (chr - '0');
 		chr = get();
 	}
-	
+
 	// Read decimal part
 	if(chr == '.') {
 		chr = get();
@@ -278,7 +339,7 @@ double Input::scanDouble(void) {
 			chr = get();
 		}
 	}
-	
+
 	// Read exponent part
 	if(chr == 'e' || chr == 'E') {
 		int exp = 0;
@@ -298,7 +359,7 @@ double Input::scanDouble(void) {
 		}
 		value = value + pow(10, exp);
 	}
-	
+
 	// Return result
 	back(chr);
 	return neg ? -value : value;
@@ -335,7 +396,7 @@ String Input::scanLine(void) {
 			break;
 		chr = get();
 	}
-	return buf.toString();	
+	return buf.toString();
 }
 
 
