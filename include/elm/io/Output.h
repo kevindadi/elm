@@ -33,7 +33,7 @@ public:
 	inline IntFormat(unsigned int value);
 	inline IntFormat(long value);
 	inline IntFormat(unsigned long value);
-	
+
 	long val;
 	unsigned char base;
 	unsigned char width;
@@ -56,7 +56,7 @@ public:
 	inline OutStream& stream(void) const { return *strm; };
 	inline void setStream(OutStream& stream) { strm = &stream; };
 	void flush(void);
-	
+
 	void print(bool value);
 	void print(char chr);
 	void print(long value);
@@ -71,22 +71,31 @@ public:
 	void print(const IntFormat fmt);
 	void format(CString fmt, ...);
 	void format(CString fmt, VarArg& args);
-	
-	inline Output& operator<<(bool value) { print(value); return *this; };
-	inline Output& operator<<(char value) { print(value); return *this; };
-	inline Output& operator<<(int value) { print((long)value); return *this; };
-	inline Output& operator<<(unsigned int value) { print((unsigned long)value); return *this; };
-	inline Output& operator<<(long value) { print(value); return *this; };
-	inline Output& operator<<(unsigned long value) { print(value); return *this; };
-	inline Output& operator<<(long long value) { print(value); return *this; };
-	inline Output& operator<<(unsigned long long value) { print(value); return *this; };
-	inline Output& operator<<(double value) { print(value); return *this; };
-	inline Output& operator<<(void *value) { print(value); return *this; };
-	inline Output& operator<<(const char *value) { print(value); return *this; };
-	inline Output& operator<<(const CString value) { print(value); return *this; };
-	inline Output& operator<<(const String& value) { print(value); return *this; };
-	inline Output& operator<<(IntFormat value) { print(value); return *this; };
 };
+
+
+// operators accesses
+template <class T> inline Output& operator<<(Output& out, const T& v)
+	{ out.print("<not printable>"); return out; }
+template <class T> inline Output& operator<<(Output& out, T *v)
+	{ out.print((void *)v); return out; }
+inline Output& operator<<(Output& out, bool value) { out.print(value); return out; };
+inline Output& operator<<(Output& out, char value) { out.print(value); return out; };
+inline Output& operator<<(Output& out, unsigned char value) { out.print((unsigned long)value); return out; };
+inline Output& operator<<(Output& out, short value) { out.print((long)value); return out; };
+inline Output& operator<<(Output& out, unsigned short value) { out.print((unsigned long)value); return out; };
+inline Output& operator<<(Output& out, int value) { out.print((long)value); return out; };
+inline Output& operator<<(Output& out, unsigned int value) { out.print((unsigned long)value); return out; };
+inline Output& operator<<(Output& out, long value) { out.print(value); return out; };
+inline Output& operator<<(Output& out, unsigned long value) { out.print(value); return out; };
+inline Output& operator<<(Output& out, long long value) { out.print(value); return out; };
+inline Output& operator<<(Output& out, unsigned long long value) { out.print(value); return out; };
+inline Output& operator<<(Output& out, double value) { out.print(value); return out; };
+inline Output& operator<<(Output& out, const char *value) { out.print(value); return out; };
+inline Output& operator<<(Output& out, char *value) { out.print(value); return out; };
+inline Output& operator<<(Output& out, const CString value) { out.print(value); return out; };
+inline Output& operator<<(Output& out, const string& value) { out.print(value); return out; };
+inline Output& operator<<(Output& out, IntFormat value) { out.print(value); return out; };
 
 
 // End-of-line
@@ -127,7 +136,7 @@ inline IntFormat::IntFormat(char value): val(value) {
 inline IntFormat::IntFormat(unsigned char value): val(value) {
 	init(false);
 }
-	
+
 inline IntFormat::IntFormat(signed short value): val(value) {
 	init(true);
 }
