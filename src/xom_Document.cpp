@@ -80,9 +80,34 @@ Node *Document::copy(void) {
 	return 0;
 }
 
+
+/**
+ * Returns the base URI of this node as specified by XML Base, or the empty string if this is not known.
+ * In most cases, this is the URL against which relative URLs in this node should be resolved.
+ *
+ * The base URI of a non-parent node is the base URI of the element containing the node. The base URI
+ * of a document node is the URI from which the document was parsed, or which was set
+ * by calling setBaseURI on on the document.
+ *
+ * The base URI of an element is determined as follows:
+ * 	* If the element has an xml:base attribute, then the value of that attribute is converted
+ * 	  from an IRI to a URI, absolutized if possible, and returned.
+ *	* Otherwise, if any ancestor element of the element loaded from the same entity has an xml:base attribute,
+ *	  then the value of that attribute from the nearest such ancestor is converted from an IRI to a URI,
+ *	  absolutized if possible, and returned. xml:base attributes from other entities are not considered.
+ *  * Otherwise, if setBaseURI() has been invoked on this element, then the URI most recently passed to that method is absolutized if possible and returned.
+ *  * Otherwise, if the element comes from an externally parsed entity or the document entity, and the original base URI has not been changed by invoking setBaseURI(), then the URI of that entity is returned.
+ *  * Otherwise, (the element was created by a constructor rather then being parsed from an existing document), the base URI of the nearest ancestor that does have a base URI is returned. If no ancestors have a base URI, then the empty string is returned.
+ * Absolutization takes place as specified by the XML Base specification. However,
+ * it is not always possible to absolutize a relative URI, in which case the empty string will be returned.
+ * @return	the base URI of this node
+ */
 String Document::getBaseURI(void) {
-	ASSERTP(0, "unsupported");
-	return "";
+	//return xmlNodeGetBase(DOC(node), NODE(node));
+	if(!DOC(node)->URL)
+		return "";
+	else
+		return DOC(node)->URL;
 }
 
 
