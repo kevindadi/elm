@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2006-07, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_SYSTEM_SYSTEM_H
@@ -57,7 +57,7 @@ public:
 	typedef int access_t;
 	static const int READ = 1;
 	static const int WRITE = 2;
-	static const int READ_WRITE = READ | WRITE; 
+	static const int READ_WRITE = READ | WRITE;
 
 	static Pair<PipeInStream *, PipeOutStream *> pipe(void) throw(SystemException);
 	static unsigned int random(unsigned int top);
@@ -68,9 +68,10 @@ public:
 		throw(SystemException);
 	static io::RandomAccessStream *createRandomFile(const Path& path, access_t access = READ)
 		throw(SystemException);
+	static Path getUnitPath(void *address);
 };
 
 } } // elm::system
 
 #endif // ELM_SYSTEM_SYSTEM_H
- 
+
