@@ -7,5 +7,6 @@ includeelmoption_HEADERS = \
 	Manager.h \
 	Option.h \
 	StandardOption.h \
+	StringList.h \
 	StringOption.h
 
