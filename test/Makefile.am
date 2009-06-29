@@ -13,7 +13,8 @@ check_PROGRAMS = \
 	test_sorted_sllist \
 	test_type_info \
 	test_tree \
-	test_alloc
+	test_alloc \
+	test_objpath
 
 all_checks: $(check_PROGRAMS)
 
@@ -133,5 +134,10 @@ test_coll_SOURCES=test_coll.cpp
 test_alloc_LDADD = ../src/libelm.la
 test_alloc_DEPENDENCIES = ../src/libelm.la
 test_alloc_SOURCES=test_alloc.cpp
+
+# test_objpath program
+test_objpath_LDADD = ../src/libelm.la
+test_objpath_DEPENDENCIES = ../src/libelm.la
+test_objpath_SOURCES=test_objpath.cpp
 
 TESTS = ./test
