@@ -17,3 +17,4 @@ test_type_info
 test_assoc_list
 test_io
 test_alloc
+test_objpath
