@@ -71,6 +71,14 @@ public:
 		void next(void);
 		Plugin *plug(void) const;
 	};
+
+	class PathIterator: public genstruct::Vector<string>::Iterator {
+	public:
+		inline PathIterator(const Plugger& plugger)
+			: genstruct::Vector<string>::Iterator(plugger.paths) { }
+		inline PathIterator(const PathIterator& iter)
+			: genstruct::Vector<string>::Iterator(iter) { }
+	};
 };
 
 // Inlines
