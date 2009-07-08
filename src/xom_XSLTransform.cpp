@@ -189,7 +189,7 @@ Document *XSLTransform::transformDocument(Document *in) throw(XSLException) {
 	xsltInit();
 
 	// prepare parameters
-	const char **aparams = new const char *[params.count() + 1];
+	const char **aparams = new const char *[params.count() * 2 + 1];
 	ASSERT(aparams);
 	int i = 0;
 	for(genstruct::AssocList<string, string>::PairIterator iter(params); iter; iter++) {
