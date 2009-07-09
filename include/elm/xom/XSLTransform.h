@@ -39,17 +39,6 @@ public:
 };
 
 
-// ErrorHandler class
-class ErrorHandler {
-public:
-protected:
-	virtual void onWarning(cstring file, int line, const string& msg);
-	virtual void onError(cstring file, int line, const string& msg);
-	virtual void onFatal(cstring file, int line, const string& msg);
-	static ErrorHandler DEFAULT;
-};
-
-
 // XSLTransform class
 class XSLTransform: public ErrorBase {
 public:
