@@ -69,6 +69,8 @@ public:
 	static io::RandomAccessStream *createRandomFile(const Path& path, access_t access = READ)
 		throw(SystemException);
 	static Path getUnitPath(void *address);
+	static cstring getEnv(cstring key);
+	static bool hasEnv(cstring key);
 };
 
 } } // elm::system

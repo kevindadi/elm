@@ -3,7 +3,7 @@
  *	System class implementation
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2006-07, IRIT UPS.
+ *	Copyright (c) 2006-08, IRIT UPS.
  *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -332,6 +332,30 @@ Path System::getUnitPath(void *address) {
 #	else
 		return "";
 #	endif
+}
+
+
+/**
+ * Get an environment variable value.
+ * @param key	Key name of the environment variable.
+ * @return		Value of the environment variable or an empty string.
+ */
+cstring System::getEnv(cstring key) {
+	char *res = getenv(&key);
+	if(!res)
+		return "";
+	else
+		return res;
+}
+
+
+/**
+ * Test if an environment variable is defined.
+ * @param key	Key name of the environment variable.
+ * @return		True if the environment variable is defined, false else.
+ */
+bool System::hasEnv(cstring key) {
+	return getenv(&key);
 }
 
 } } // elm::system
