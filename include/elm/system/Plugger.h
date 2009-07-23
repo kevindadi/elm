@@ -12,11 +12,12 @@
 #include <elm/genstruct/Vector.h>
 #include <elm/system/Directory.h>
 #include <elm/system/Path.h>
+#include <elm/util/ErrorHandler.h>
 
 namespace elm { namespace system {
 
 // Plugger class
-class Plugger {
+class Plugger: public ErrorBase {
 	friend class Plugin;
 public:
 	typedef enum error_t {
@@ -27,18 +28,6 @@ public:
 		NO_MAGIC
 	} error_t;
 
-private:
-
-	static genstruct::Vector<Plugger *> pluggers;
-	CString _hook;
-	Version per_vers;
-	genstruct::Vector<Plugin *> plugins;
-	genstruct::Vector<String> paths;
-	error_t err;
-	static void leave(Plugin *plugin);
-	Plugin *plug(Plugin *plugin, void *handle);
-	inline genstruct::Vector<Plugin *>& statics(void);
-
 public:
 	Plugger(CString hook, const Version& plugger_version, String paths = "*");
 	virtual ~Plugger(void);
@@ -47,13 +36,13 @@ public:
 	void resetPaths(void);
 	Plugin *plug(const string& path);
 	Plugin *plugFile(String path);
-	inline error_t lastError(void);
-	String lastErrorMessage(void);
 	inline String hook(void) const;
 
-	// Error management
+	// deprecated
 	virtual void onError(String message);
 	virtual void onWarning(String message);
+	error_t lastError(void);
+	String lastErrorMessage(void);
 
 	// Iterator class
 	class Iterator: public PreIterator<Iterator, String> {
@@ -79,13 +68,23 @@ public:
 		inline PathIterator(const PathIterator& iter)
 			: genstruct::Vector<string>::Iterator(iter) { }
 	};
+
+private:
+
+	static genstruct::Vector<Plugger *> pluggers;
+	CString _hook;
+	Version per_vers;
+	genstruct::Vector<Plugin *> plugins;
+	genstruct::Vector<String> paths;
+	error_t err;
+	static void leave(Plugin *plugin);
+	Plugin *plug(Plugin *plugin, void *handle);
+	inline genstruct::Vector<Plugin *>& statics(void);
+	string getLastError(void);
+	void onError(error_level_t level, const string& message);
 };
 
 // Inlines
-inline Plugger::error_t Plugger::lastError(void) {
-	return err;
-}
-
 inline String Plugger::hook(void) const {
 	return _hook;
 }

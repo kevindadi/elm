@@ -22,6 +22,7 @@
 
 #define WITH_LIBTOOL
 
+#include <elm/deprecated.h>
 #include <elm/assert.h>
 #include <stdlib.h>
 #ifdef WITH_LIBTOOL
@@ -72,8 +73,6 @@ Plugger::Plugger(CString hook, const Version& plugger_version, String _paths)
 	#ifdef WITH_LIBTOOL
 		static bool preloaded = false;
 		if(!preloaded) {
-			//LTDL_SET_PRELOADED_SYMBOLS();
-			//lt_dlpreload_default(lt_preloaded_symbols);
 			lt_dlinit();
 			preloaded = true;
 		}
@@ -217,7 +216,7 @@ Plugin *Plugger::plugFile(String path) {
 	#endif
 	if(!handle) {
 		err = NO_PLUGIN;
-		onError(_ << "invalid plugin found at \"" << path << "\" (no handle): "
+		onError(level_warning, _ << "invalid plugin found at \"" << path << "\" (no handle): "
 #			ifdef WITH_LIBTOOL
 				<< lt_dlerror());
 #			else
@@ -234,21 +233,21 @@ Plugin *Plugger::plugFile(String path) {
 	#endif
 	if(!plugin) {
 		err = NO_HOOK;
-		onWarning(_ << "invalid plugin found at \"" << path << "\" (no hook)");
+		onError(level_warning, _ << "invalid plugin found at \"" << path << "\" (no hook)");
 		return 0;
 	}
 
 	// Check the magic
 	if(plugin->magic != Plugin::MAGIC) {
 		err = NO_MAGIC;
-		onWarning(_ << "invalid plugin found at \"" << path << "\" (bad magic)");
+		onError(level_warning, _ << "invalid plugin found at \"" << path << "\" (bad magic)");
 		return 0;
 	}
 
 	// Check plugger version
 	if(!plugin->pluggerVersion().accepts(per_vers)) {
 		err = BAD_VERSION;
-		onWarning(_ << "bad version plugin found at \"" << path << "\"");
+		onError(level_warning, _ << "bad version plugin found at \"" << path << "\"");
 		return 0;
 	}
 
@@ -262,13 +261,29 @@ Plugin *Plugger::plugFile(String path) {
  * Get the last error.
  * @return	Last error.
  */
+Plugger::error_t Plugger::lastError(void) {
+	DEPRECATED
+	return err;
+}
 
 
 /**
  * Get the message for the last error.
  * @return	Error message.
+ * @deprecated
  */
 String Plugger::lastErrorMessage(void) {
+	DEPRECATED
+	return getLastError();
+}
+
+
+/**
+ * Return the last produced error.
+ * @return		Last error message.
+ * @deprecated
+ */
+string Plugger::getLastError() {
 	switch(err) {
 	case OK:
 		return "Success.";
@@ -299,6 +314,7 @@ String Plugger::lastErrorMessage(void) {
  * This method is called when an error arises to let the user display or not
  * the message. As default, the message is displayed on standard error.
  * @param message	Message of the error.
+ * @deprecated
  */
 void Plugger::onError(String message) {
 	cerr << "ERROR: " << message << io::endl;
@@ -306,9 +322,24 @@ void Plugger::onError(String message) {
 
 
 /**
+ * Generate an error for the error handler.
+ * @param level		Level of error.
+ * @param message	Error message.
+ */
+void Plugger::onError(error_level_t level, const string& message) {
+	ErrorBase::onError(level, message);
+	if(level == level_error)
+		onError(message);
+	else if(level == level_warning)
+		onWarning(message);
+}
+
+
+/**
  * This method is called when a warning arises to let the user display or not
  * the message. As default, the message is displayed on standard error.
  * @param message	Message of the warning.
+ * @deprecated
  */
 void Plugger::onWarning(String message) {
 	cerr << "WARNING: " << message << io::endl;
