@@ -9,6 +9,8 @@
 
 #include <elm/system/SystemIO.h>
 #include <elm/util/VarArg.h>
+#include <elm/string/String.h>
+#include <elm/string/CString.h>
 
 namespace elm { namespace io {
 
