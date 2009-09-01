@@ -3,7 +3,7 @@
  *	StringOption class interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2004-07, IRIT UPS.
+ *	Copyright (c) 2004-09, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -22,32 +22,22 @@
 #ifndef ELM_OPTION_STRING_OPTION_H
 #define ELM_OPTION_STRING_OPTION_H
 
-#include <elm/option/StandardOption.h>
+#include <elm/option/ValueOption.h>
 
 namespace elm { namespace option {
 
 // StringOption class
-class StringOption: public StandardOption {
-	String val;
-	CString arg_desc;
+class StringOption: public ValueOption<string> {
 public:
-	StringOption(Manager& manager, char short_name, CString description,
-		CString arg_description, String value = "");
-	StringOption(Manager& manager, CString long_name, CString description,
-		CString arg_description, String value = "");
-	StringOption(Manager& manager, char short_name, CString long_name,
-		CString description, CString arg_description, String value = "");
-	inline String value(void) const { return val; };
-	inline void set(String value) { val = value; };
+	StringOption(Manager& manager, char short_name, cstring description,
+		cstring arg_description, string value = "");
+	StringOption(Manager& manager, cstring long_name, cstring description,
+		CString arg_description, string value = "");
+	StringOption(Manager& manager, char short_name, cstring long_name,
+		cstring description, cstring arg_description, string value = "");
 
 	// Option overload
-	virtual usage_t usage(void);
-	virtual CString argDescription(void);
 	virtual void process(String arg);
-	
-	// Operators
-	inline operator bool(void) const { return val; };
-	inline operator String(void) const { return val; };
 };
 
 } } // elm::option

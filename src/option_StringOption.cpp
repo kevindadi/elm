@@ -38,11 +38,14 @@ namespace elm { namespace option {
  * @param arg_description	Argument description.
  * @param value				Option initial value.
  */
-StringOption::StringOption(Manager& manager, char short_name, CString description,
-CString arg_description, String value)
-: StandardOption(manager, short_name, description), val(value),
-arg_desc(arg_description) {
-}
+StringOption::StringOption(
+	Manager& manager,
+	char short_name,
+	CString description,
+	CString arg_description,
+	String value)
+:	ValueOption<string>(manager, short_name, description, arg_description, value)
+	{ }
 
 
 /**
@@ -53,11 +56,14 @@ arg_desc(arg_description) {
  * @param arg_description	Argument description.
  * @param value				Option initial value.
  */
-StringOption::StringOption(Manager& manager, CString long_name,
-CString description, CString arg_description, String value)
-: StandardOption(manager, long_name, description), val(value),
-arg_desc(arg_description) {
-}
+StringOption::StringOption(
+	Manager& manager,
+	CString long_name,
+	CString description,
+	CString arg_description,
+	String value)
+:	ValueOption<string>(manager, long_name, description, arg_description, value)
+	{ }
 
 
 /**
@@ -69,54 +75,20 @@ arg_desc(arg_description) {
  * @param arg_description	Argument description.
  * @param value				Option initial value.
  */
-StringOption::StringOption(Manager& manager, char short_name, CString long_name,
-CString description, CString arg_description, String value)
-: StandardOption(manager, short_name, long_name, description), val(value),
-arg_desc(arg_description) {
-}
-
-
-/**
- * @fn String StringOption::value(void) const;
- * Get the current value of the option.
- * @return	Option value.
- */
-
-
-/**
- * @fn void StringOption::set(String value)
- * Set the value of the option.
- * @param value	New option value.
- */
-
-
-// Option overload
-usage_t StringOption::usage(void) {
-	return arg_required;
-}
-
-
-// Option overload
-CString StringOption::argDescription(void) {
-	return arg_desc;
-}
+StringOption::StringOption(
+	Manager& manager,
+	char short_name,
+	CString long_name,
+	CString description,
+	CString arg_description,
+	String value)
+:	ValueOption<string>(manager, short_name, long_name, description, arg_description, value)
+	{ }
 
 
 // Option overload
 void StringOption::process(String arg) {
-	val = arg;
+	set(arg);
 }
-
-
-/**
- * @fn StringOption::operator bool(void) const;
- * Bool conversion. Useful for testing if the option is set.
- */
-
-
-/**
- * @fn StringOption::operator String(void) const;
- * String conversion for getting the option value.
- */
 
 } } // elm::option

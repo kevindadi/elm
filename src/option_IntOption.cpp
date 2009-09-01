@@ -3,7 +3,7 @@
  *	IntOption class implementation
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2006-07, IRIT UPS.
+ *	Copyright (c) 2006-09, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -47,12 +47,8 @@ IntOption::IntOption(
 	CString description,
 	CString arg_description,
 	int value
-):
-	StandardOption(manager, short_name, description),
-	arg_desc(arg_description),
-	val(value)
-{
-}
+):	ValueOption<int>(manager, short_name, description, arg_description, value)
+	{ }
 
 
 /**
@@ -69,12 +65,8 @@ IntOption::IntOption(
 	CString description,
 	CString arg_description,
 	int value
-):
-	StandardOption(manager, long_name, description),
-	arg_desc(arg_description),
-	val(value)
-{
-}
+):	ValueOption<int>(manager, long_name, description, arg_description, value)
+	{ }
 
 
 /**
@@ -93,50 +85,14 @@ IntOption::IntOption(
 	CString description,
 	CString arg_description,
 	int value
-):
-	StandardOption(manager, short_name, long_name, description),
-	arg_desc(arg_description),
-	val(value)
-{
-}
+):	ValueOption<int>(manager, short_name, long_name, description, value)
+	{ }
 
-
-/**
- * @fn int IntOption::value(void) const;
- * Get the current value of the option.
- * @return	Option value.
- */
-
-
-/**
- * @fn void IntOption::set(bool value);
- * Set the value of the option.
- * @param value	New option value.
- */
-
-
-// Option overload
-usage_t IntOption::usage(void) {
-	return arg_required;
-}
-
-
-// Option overload
-CString IntOption::argDescription(void) {
-	return arg_desc;
-}
 
 
 // Option overload
 void IntOption::process(String arg) {
-	val = strtol(&arg, 0, 10);
+	set(strtol(&arg, 0, 10));
 }
-
-
-/**
- * @fn IntOption::operator bool(void) const;
- * Boolean conversion for getting option value.
- */
-
 
 } } // elm::option
