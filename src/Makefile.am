@@ -68,6 +68,7 @@ libelm_la_SOURCES= \
 	option_EnumOption.cpp \
 	option_IntOption.cpp \
 	option_StringList.cpp \
+	option_ValueOption.cpp \
 	serial_Serializer.cpp \
 	serial_SerialClass.cpp \
 	serial_TextSerializer.cpp \
