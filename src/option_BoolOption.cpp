@@ -83,6 +83,14 @@ CString description, bool value)
  * @fn bool BoolOption::value(void) const;
  * Get the current value of the option.
  * @return	Option value.
+ * @deprecated
+ */
+
+
+/**
+ * @fn bool BoolOption::get(void) const;
+ * Get the current value of the option.
+ * @return	Option value.
  */
 
 
@@ -116,5 +124,11 @@ void BoolOption::process(String arg) {
  * Boolean conversion for getting option value.
  */
 
+
+/**
+ * @fn bool BoolOption::operator*(void) const;
+ * Get the current value of the option.
+ * @return	Option value.
+ */
 
 } } // elm::option
