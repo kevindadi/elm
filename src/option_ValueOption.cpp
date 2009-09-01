@@ -1,0 +1,108 @@
+/*
+ *	$Id$
+ *	ValueOption class implementation
+ *
+ *	This file is part of OTAWA
+ *	Copyright (c) 2009, IRIT UPS.
+ *
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+#include <elm/option/ValueOption.h>
+
+namespace elm { namespace option {
+
+/**
+ * @class ValueOption
+ * A generic option template for option receiving an argument.
+ * It only requires to implement the process() virtual function.
+ * @param T	Type of value of the argument.
+ */
+
+
+/**
+ * @fn ValueOption::ValueOption(Manager& manager, char short_name, cstring description, cstring arg_description, const T& value);
+ * Build a function with only a short name.
+ * @param manager			Owner option manager
+ * @param short_name		Single letter name accessible with simple '-'.
+ * @param description		Description of the option.
+ * @param arg_description	Argument description in option display.
+ * @param value				Default value of the option.
+ */
+
+
+/**
+ * @fn ValueOption::ValueOption(Manager& manager, CString long_name, CString description, CString arg_description, const T& value);
+ * Build a function with only a long name.
+ * @param manager			Owner option manager
+ * @param long_name			Multiple letter name accessible with '--'.
+ * @param description		Description of the option.
+ * @param arg_description	Argument description in option display.
+ * @param value				Default value of the option.
+ */
+
+
+/**
+ * @fn ValueOption::ValueOption(Manager& manager, char short_name, CString long_name, CString description, CString arg_description, const T& value);
+ * Build a function with a short name and a long name.
+ * @param manager			Owner option manager
+ * @param short_name		Single letter name accessible with simple '-'.
+ * @param long_name			Multiple letter name accessible with '--'.
+ * @param description		Description of the option.
+ * @param arg_description	Argument description in option display.
+ * @param value				Default value of the option.
+ */
+
+
+/**
+ * @fn const T& ValueOption::get(void) const;
+ * Get the argument value of the option.
+ * @return	Argument value.
+ */
+
+
+/**
+ * @fn void ValueOption::set(const T& value);
+ * Set the value of the option argument.
+ * @param value	Value to set.
+ */
+
+
+/**
+ * @fn operator ValueOption::const T&(void) const;
+ * Same as get().
+ */
+
+
+/**
+ * @fn ValueOption<T>& ValueOption::operator=(const T& value);
+ * Same as set().
+ */
+
+
+/**
+ * @fn const T& ValueOption::operator*(void) const;
+ * Same as get().
+ */
+
+
+/**
+ * @fn const T& Valueoption::value(void) const;
+ * Get the argument value of the option.
+ * @return	Argument value.
+ * @deprecated	Only kept for compatibility issues.
+ */
+
+} } // elm::option

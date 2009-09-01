@@ -3,7 +3,7 @@
  *	BoolOption class interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2004-07, IRIT UPS.
+ *	Copyright (c) 2004-09, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ public:
 		bool value = false);
 	BoolOption(Manager& manager, char short_name, CString long_name,
 		CString description, bool value = false);
-	inline bool value(void) const { return val; };
+	inline bool get(void) const { return val; }
 	inline void set(bool value) { val = value; };
 
 	// Option overload
@@ -45,7 +45,11 @@ public:
 	virtual void process(String arg);
 	
 	// Operators
-	inline operator bool(void) const { return val; };
+	inline operator bool(void) const { return get(); };
+	inline bool operator*(void) const { return get(); }
+
+	// deprecated
+	inline bool value(void) const { return val; };
 };
 
 } } // elm::option
