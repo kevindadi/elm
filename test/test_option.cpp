@@ -66,6 +66,12 @@ void test_option(void) {
 				CHECK_EXCEPTION(OptionException, man.parse(3, argv));
 			}
 		}
+
+		// check StringOption
+		{
+			StringOption str(man, 's', "string", "", "", "ok");
+			CHECK(str);
+		}
 	}
 	catch(OptionException& e) {
 		__case.failed();

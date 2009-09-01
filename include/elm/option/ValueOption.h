@@ -71,6 +71,7 @@ public:
 	inline operator const T&(void) const { return get(); };
 	inline ValueOption<T>& operator=(const T& value) { set(value); return *this; };
 	inline const T& operator*(void) const { return get(); }
+	inline operator bool(void) const { return get(); }
 
 	// deprecated
 	inline const T& value(void) const { return val; };
