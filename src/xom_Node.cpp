@@ -29,6 +29,7 @@
 #include <elm/xom/Text.h>
 #include <elm/xom/Attribute.h>
 #include <elm/xom/Nodes.h>
+#include <elm/xom/Comment.h>
 
 namespace elm { namespace xom {
 
@@ -151,6 +152,9 @@ Node *Node::make(void *node) {
 		break;
 	case XML_ATTRIBUTE_NODE:
 		result = new Attribute(node);
+		break;
+	case XML_COMMENT_NODE:
+		result = fact->makeComment(node);
 		break;
 	default:
 		result = new UnsupportedNode(node);

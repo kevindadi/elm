@@ -27,6 +27,7 @@
 #include <elm/xom/Element.h>
 #include <elm/xom/Text.h>
 #include <elm/xom/Nodes.h>
+#include <elm/xom/Comment.h>
 
 namespace elm { namespace xom {
 
@@ -75,8 +76,7 @@ Attribute *NodeFactory::makeAttribute(void *node) {
  * @return		Built comment.
  */
 Comment *NodeFactory::makeComment(void *node) {
-	ASSERTP(0, "unsupported");
-	return 0;
+	return new Comment(node);
 }
 
 
