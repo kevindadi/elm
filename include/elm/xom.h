@@ -24,6 +24,7 @@
 
 #include <elm/xom/Attribute.h>
 #include <elm/xom/Builder.h>
+#include <elm/xom/Comment.h>
 #include <elm/xom/Document.h>
 #include <elm/xom/Element.h>
 #include <elm/xom/Elements.h>
@@ -32,5 +33,9 @@
 #include <elm/xom/ParentNode.h>
 #include <elm/xom/String.h>
 #include <elm/xom/Text.h>
+
+namespace elm {
+	typedef xom::String xstring;
+}
 
 #endif // ELM_XOM_H
