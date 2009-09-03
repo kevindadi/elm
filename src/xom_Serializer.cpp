@@ -246,7 +246,9 @@ void Serializer::write(Document *doc) {
  * @param comment	the Comment to serialize
  */
 void Serializer::write(Comment *comment) {
-	UNSUPPORTED
+	writeRaw("<!--");
+	writeRaw(comment->getText());
+	writeRaw("-->");
 }
 
 
@@ -453,7 +455,7 @@ void Serializer::writeStartTag(Element *element) {
 void Serializer::writeXMLDeclaration(void) {
 	writeRaw("<?xml version=\"1.0\" encoding=\"");
 	writeRaw(_encoding.toCString());
-	writeRaw("?>");
+	writeRaw("\"?>");
 	breakLine();
 }
 
