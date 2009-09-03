@@ -79,6 +79,7 @@ libelm_la_SOURCES= \
 	serial2_XOMUnserializer.cpp \
 	serial2_XOMSerializer.cpp \
 	string_AutoString.cpp \
+	string_stream.cpp \
 	string_String.cpp \
 	string_StringBuffer.cpp \
 	system_File.cpp \
@@ -121,6 +122,7 @@ if HAS_LIBXML
 libelm_la_SOURCES += \
 	xom_Attribute.cpp \
 	xom_Builder.cpp \
+	xom_Comment.cpp \
 	xom_Document.cpp \
 	xom_Element.cpp \
 	xom_Elements.cpp \
