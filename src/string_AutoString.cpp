@@ -1,9 +1,9 @@
 /*
  *	$Id$
- *	AutoString class interface
+ *	AutoString and InputString class interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2007, IRIT UPS.
+ *	Copyright (c) 2007-09, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  */
 
 #include <elm/string/AutoString.h>
+#include <elm/io/BlockInStream.h>
 
 namespace elm {
 
@@ -55,5 +56,43 @@ AutoStringStartup autostr;
  * @ingroup string
  */
 AutoStringStartup &_ = autostr;
+
+
+/**
+ * @class InputString
+ * This class allows to quicly read formatted information from string or C string.
+ * The syntax is very easy and looks like the IO syntax for formatted input:
+ * @code
+ * 	int x;
+ * 	string str = "123";
+ * 	str >> x;
+ *
+ *	cstring s2 = "123 456";
+ *	int x, y;
+ *	s2 >> x >> " " >> y;
+ * @endcode
+ * @ingroup string
+ */
+
+
+/**
+ */
+StringInput::StringInput(const string& str) {
+	in.setStream(*(new io::BlockInStream(str)));
+}
+
+
+/**
+ */
+StringInput::StringInput(cstring str) {
+	in.setStream(*(new io::BlockInStream(str)));
+}
+
+
+/**
+ */
+StringInput::~StringInput(void) {
+	if(&in.stream() != &io::stdin) delete &in.stream();
+}
 
 } // elm
