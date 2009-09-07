@@ -6,6 +6,7 @@
  */
 
 #include <elm/util/test.h>
+#include <elm/io/BlockInStream.h>
 
 using namespace elm;
 
@@ -318,5 +319,30 @@ void test_string(void) {
 		CHECK(s.lastIndexOf("bof") < 0);
 	}
 	
+	// simple StringInput
+	{
+		string str("123");
+		int x;
+		str >> x;
+		CHECK(x == 123);
+	}
+
+	// double StringInput
+	{
+		string str("123 456");
+		int x, y;
+		str >> x >> " " >> y;
+		CHECK(x == 123);
+		CHECK(y == 456);
+	}
+
+	// simple hexadecimal
+	{
+		string str("0xff");
+		int x;
+		str >> x;
+		CHECK(x == 0xff);
+	}
+
 	CHECK_END;
 }

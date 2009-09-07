@@ -23,6 +23,7 @@
 #include <elm/assert.h>
 #include <elm/io/io.h>
 #include <elm/io/Input.h>
+#include <elm/string/StringBuffer.h>
 #include <math.h>
 #include <ctype.h>
 
