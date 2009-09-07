@@ -11,6 +11,7 @@
 #include <elm/system/SystemIO.h>
 #include <elm/io/Output.h>
 #include <elm/io/Input.h>
+#include <elm/string.h>
 
 namespace elm { namespace io {
 
