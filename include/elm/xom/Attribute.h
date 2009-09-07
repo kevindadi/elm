@@ -61,7 +61,8 @@ private:
 	friend class Element;
 	friend class Node;
 	Attribute(void *node);
-	mutable String ns, name, val;
+	mutable String ns, name;
+	elm::string val;
 };
 
 } } // elm::xom

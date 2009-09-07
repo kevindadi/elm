@@ -153,7 +153,7 @@ Node *Attribute::copy(void) {
 String Attribute::getValue(void) {
 	if(!val)
 		val = internGetValue(); 
-	return val;
+	return &val;
 }
 
 
