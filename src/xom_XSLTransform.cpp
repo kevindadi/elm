@@ -193,8 +193,12 @@ Document *XSLTransform::transformDocument(Document *in) throw(XSLException) {
 	ASSERT(aparams);
 	int i = 0;
 	for(genstruct::AssocList<string, string>::PairIterator iter(params); iter; iter++) {
-		aparams[i++] = &(*iter).fst;
-		aparams[i++] = &(*iter).snd;
+		aparams[i] = new char[(*iter).fst.length() + 1];
+		strcpy((char *)aparams[i], &(*iter).fst);
+		i++;
+		aparams[i] = new char[(*iter).snd.length() + 1];
+		strcpy((char *)aparams[i], &(*iter).snd);
+		i++;
 	}
 	aparams[params.count() * 2] = 0;
 
@@ -207,6 +211,8 @@ Document *XSLTransform::transformDocument(Document *in) throw(XSLException) {
 	xmlDoc *res = xsltApplyStylesheet(stylesheet, DOC(in->getNode()), aparams);
 
 	// clean up
+	for(int i = 0; aparams[i]; i++)
+		delete [] aparams[i];
 	delete [] aparams;
 	xmlSetStructuredErrorFunc(0, 0);
 	xsltFreeStylesheet(stylesheet);
