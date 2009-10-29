@@ -19,7 +19,7 @@ protected:
 	const char *buf;
 public:
 	inline CString(void): buf("") { };
-	inline CString(const char *str): buf(str) { };
+	inline CString(const char *str): buf(str ? str : "") { };
 	inline CString(const CString& str): buf(str.buf) { };
 	inline CString& operator=(const CString& str) { buf = str.buf; return *this; };
 	
