@@ -77,6 +77,7 @@ typedef struct enum_t {
 	enum { is_type = 1 };
 	enum { is_enum = 1 };
 	enum { is_class = 0 };
+	enum { is_scalar = 1 };
 } enum_t;
 #define ELM_ENUM(type) \
 	namespace elm { \
