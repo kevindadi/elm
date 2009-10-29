@@ -329,9 +329,10 @@ void Serializer::write(Text *text) {
 void Serializer::writeChild(Node *node) {
 	ASSERTP(node, "null node");
 	switch(node->kind()) {
-	case Node::ELEMENT: write(static_cast<Element *>(node)); return;
-	case Node::DOCUMENT: write(static_cast<Document *>(node)); return;
-	case Node::TEXT: write(static_cast<Text *>(node)); return;
+	case Node::ELEMENT: write(static_cast<Element *>(node)); break;
+	case Node::DOCUMENT: write(static_cast<Document *>(node)); break;
+	case Node::TEXT: write(static_cast<Text *>(node)); break;
+	case Node::COMMENT: write(static_cast<Comment *>(node)); break;
 	default: UNSUPPORTED;
 	}
 }
