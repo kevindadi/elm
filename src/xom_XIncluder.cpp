@@ -97,7 +97,10 @@ Document *XIncluder::resolve(Document *in, Builder& builder) {
  * @param in	The document in which include elements should be resolved.
  */
 void XIncluder::resolveInPlace(Document *in) {
-	if(xmlXIncludeProcess(DOC(in->node)) < 0)
+	if(xmlXIncludeProcessFlags(
+		DOC(in->node),
+		XML_PARSE_NOCDATA | XML_PARSE_NOXINCNODE)
+	< 0)
 		throw Exception(in, "xinclude error");
 }
 
