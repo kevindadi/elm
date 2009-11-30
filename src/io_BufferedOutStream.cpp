@@ -52,6 +52,7 @@ BufferedOutStream::~BufferedOutStream(void) {
 /**
  */
 int BufferedOutStream::write(const char *buffer, int size) {
+	int res = size;
 	if(buf_size - top < (size_t)size) {
 		if(top > 0)
 			flush();
@@ -64,7 +65,7 @@ int BufferedOutStream::write(const char *buffer, int size) {
 	}
 	memcpy(buf + top, buffer, (size_t)size);
 	top += size;
-	return 0;
+	return res;
 }
 
 
