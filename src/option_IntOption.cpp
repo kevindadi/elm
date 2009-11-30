@@ -23,6 +23,8 @@
 #include <elm/assert.h>
 #include <stdlib.h>
 #include <elm/option/IntOption.h>
+#include <elm/io/BlockInStream.h>
+#include <elm/io/Input.h>
 
 namespace elm { namespace option {
 
@@ -92,7 +94,9 @@ IntOption::IntOption(
 
 // Option overload
 void IntOption::process(String arg) {
-	set(strtol(&arg, 0, 10));
+	io::BlockInStream ins(arg);
+	io::Input in(ins);
+	set(in.scanLong());
 }
 
 } } // elm::option
