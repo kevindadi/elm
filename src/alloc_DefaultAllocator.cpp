@@ -36,15 +36,7 @@ namespace elm {
  * is usually passed as a template parameter to the collection type and
  * as a parameter to the collection constructor.
  *
- * An allocator class must implement the following concept:
- * @code
- * class Allocator {
- * public:
- * 		static Allocator DEFAULT;
- * 		void *allocate(size_t size) throw(BadAlloc);
- * 		void free(void *block);
- * };
- * @endcode
+ * An allocator class must implement the concept @ref elm::concept::Allocator.
  *
  * A collection supporting allocator matches the concept below:
  * @code
@@ -55,6 +47,31 @@ namespace elm {
  *	};
  * @endcode
  */
+
+
+namespace concept {
+
+/**
+ * Allocator concept
+ * Memory allocation.
+ */
+class Allocator {
+
+	/**
+	 * Allocate a block of the given size.
+	 * @param size		Size in bytes of the allocated block.
+	 * @throw BadAlloc	If the allocation fails.
+	 */
+	void *allocate(size_t size) throw(BadAlloc);
+
+	/**
+	 * Free a block previously allocated.
+	 * @param block	Block to free.
+	 */
+	void free(void *block);
+};
+}
+
 
 /**
  * @class BadAlloc
