@@ -27,6 +27,12 @@
 
 using namespace elm;
 
+typedef enum enm_t {
+	A,
+	B,
+	C
+} enm_t;
+
 int main(void) {
 	CHECK_BEGIN("inhstruct_Tree")
 
@@ -80,6 +86,7 @@ int main(void) {
 	CHECK(type_info<unsigned long long>::min == 0LL);
 	CHECK(type_info<unsigned long long>::max == 0xffffffffffffffffLL);	 
 
+	CHECK(type_info<enm_t>::is_ptr == 0);
 	//cerr << io::hex(type_info<unsigned long long>::max) << io::endl;
 	
 	CHECK_END
