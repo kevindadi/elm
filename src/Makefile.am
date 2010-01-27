@@ -18,12 +18,14 @@ DEFS=@ELM_DEBUG_DEFS@
 libelm_la_SOURCES= \
 	concepts.h \
 	doc.h \
+	alloc_BlockAllocator.cpp \
 	alloc_DefaultAllocator.cpp \
 	alloc_StackAllocator.cpp \
 	block_DynBlock.cpp \
 	debug.cpp \
 	debug_CrashHandler.cpp \
 	checksum_Fletcher.cpp \
+	checksum_MD5.cpp \
 	genstruct.h \
 	genstruct_AssocList.cpp \
 	genstruct_AVLTree.cpp \
