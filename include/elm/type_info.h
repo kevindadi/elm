@@ -33,6 +33,8 @@ template <class T> struct type_info {
 	enum { is_scalar = 0 };
 	enum { is_enum = 0 };
 	enum { is_class = 1 };
+	enum { is_ptr = 0 };
+	enum { is_ref = 0 };
 	static inline CString name(void) { return T::_class.name(); }
 };
 typedef struct type_t {
@@ -40,13 +42,41 @@ typedef struct type_t {
 	enum { is_scalar = 0 };
 	enum { is_enum = 0 };
 	enum { is_class = 0 };
+	enum { is_ptr = 0 };
+	enum { is_ref = 0 };
 } type_t;
 typedef struct scalar_t {
 	enum { is_type = 1 };
 	enum { is_scalar = 1 };
 	enum { is_enum = 0 };
 	enum { is_class = 0 };
+	enum { is_ptr = 0 };
+	enum { is_ref = 0 };
 } scalar_t;
+typedef struct ptr_t {
+	enum { is_type = 1 };
+	enum { is_scalar = 1 };
+	enum { is_enum = 0 };
+	enum { is_class = 0 };
+	enum { is_ptr = 1 };
+	enum { is_ref = 0 };
+} ptr_t;
+typedef struct ref_t {
+	enum { is_type = 1 };
+	enum { is_scalar = 1 };
+	enum { is_enum = 0 };
+	enum { is_class = 0 };
+	enum { is_ptr = 0 };
+	enum { is_ref = 1 };
+} ref_t;
+typedef struct enum_t {
+	enum { is_type = 1 };
+	enum { is_enum = 1 };
+	enum { is_class = 0 };
+	enum { is_scalar = 1 };
+	enum { is_ptr = 0 };
+	enum { is_ref = 0 };
+} enum_t;
 
 
 // bool specialization
@@ -129,6 +159,30 @@ template <> struct type_info<cstring>: public type_t {
 template <> struct type_info<String>: public type_t {
 	static const string null;
 	static inline cstring name(void) { return "<string>"; }
+};
+
+
+// pointer specialization
+template <class T> struct type_info<const T *>: public ptr_t {
+	typedef T of;
+	enum { is_const = 1 };
+};
+
+template <class T> struct type_info<T *>: public ptr_t {
+	typedef T of;
+	enum { is_const = 0 };
+};
+
+
+// reference specialization
+template <class T> struct type_info<const T&>: public ref_t {
+	typedef T of;
+	enum { is_const = 1 };
+};
+
+template <class T> struct type_info<T&>: public ref_t {
+	typedef T of;
+	enum { is_const = 0 };
 };
 
 } // elm
