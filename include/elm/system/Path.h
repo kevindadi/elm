@@ -68,6 +68,8 @@ public:
 	bool isReadable(void) const;
 	bool isWritable(void) const;
 	bool isExecutable(void) const;
+	bool operator==(const Path& path) const { return buf == path.buf; }
+	bool operator!=(const Path& path) const { return !operator==(path); }
 	
 	// Operator
 	inline Path& operator=(const char *str) { buf = str; return *this; }
