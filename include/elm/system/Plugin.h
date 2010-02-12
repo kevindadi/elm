@@ -26,6 +26,7 @@
 #include <elm/genstruct/Vector.h>
 #include <elm/genstruct/Table.h>
 #include <elm/util/Version.h>
+#include <elm/system/Path.h>
 
 namespace elm { namespace system {
 
@@ -45,10 +46,12 @@ private:
 	int state;
 	const aliases_t& _aliases;
 	unsigned long magic;
+	Path _path;
 
 	void plug(void *handle);
 	static void step(void);
 	static Plugin *get(cstring hook, const string& name);
+	void setPath(const Path& path) { _path = path; }
 
 protected:
 	CString _description;
@@ -70,6 +73,7 @@ public:
 	inline const aliases_t& aliases(void) const;
 	bool matches(const string& name) const;
 	void unplug(void);
+	inline const Path& path(void) const { return _path; }
 };
 
 // Inlines

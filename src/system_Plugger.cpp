@@ -252,6 +252,7 @@ Plugin *Plugger::plugFile(String path) {
 	}
 
 	// Plug it
+	plugin->setPath(path);
 	return plug(plugin, handle);
 }
 
@@ -382,10 +383,10 @@ void Plugger::Iterator::go(void) {
 				delete file;
 				file = 0;
 			}
-			path++;
-			if(path >= plugger.paths.count())
+			_path++;
+			if(_path >= plugger.paths.count())
 				break;
-			FileItem *item = FileItem::get(Path(plugger.paths[path]));
+			FileItem *item = FileItem::get(Path(plugger.paths[_path]));
 			if(!item || !item->toDirectory())
 				continue;
 			else {
@@ -410,7 +411,7 @@ Plugger::Iterator::Iterator(Plugger& _plugger)
 :	plugger(_plugger),
 	statics(_plugger.statics()),
 	i(-1),
-	path(-1),
+	_path(-1),
 	file(0)
 {
 	go();
@@ -430,7 +431,7 @@ Plugger::Iterator::~Iterator(void) {
  * @return	True if it is ended.
  */
 bool Plugger::Iterator::ended(void) const {
-	return path >= plugger.paths.count();
+	return _path >= plugger.paths.count();
 }
 
 
@@ -447,6 +448,18 @@ String Plugger::Iterator::item(void) const {
 		name = name.substring(0, name.length() - 3);
 		return name;
 	}
+}
+
+
+/**
+ * Get the path of the current plug-in.
+ * @return	Plug-in path.
+ */
+Path Plugger::Iterator::path(void) const {
+	if(i < statics.count())
+		return "<static>";
+	else
+		return (*file)->path();
 }
 
 
