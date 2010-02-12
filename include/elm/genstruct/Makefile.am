@@ -1,6 +1,7 @@
 includeelmgenstructdir=$(includedir)/elm/genstruct
 includeelmgenstruct_HEADERS = \
 	AssocList.h \
+	AVLTree.h \
 	BoolTable.h \
 	DAGNode.h \
 	DLList.h \
