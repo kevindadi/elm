@@ -39,6 +39,7 @@ typedef unsigned long long uint64;
 // other types
 typedef unsigned long size;
 typedef unsigned long offset;
+typedef uint32 uint;
 
 } } // elm
 
