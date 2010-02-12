@@ -49,7 +49,7 @@ public:
 		Plugger& plugger;
 		genstruct::Vector<Plugin *>& statics;
 		int i;
-		int path;
+		int _path;
 		Directory::Iterator *file;
 		void go(void);
 	public:
@@ -59,6 +59,7 @@ public:
 		String item(void) const;
 		void next(void);
 		Plugin *plug(void) const;
+		Path path(void) const;
 	};
 
 	class PathIterator: public genstruct::Vector<string>::Iterator {
