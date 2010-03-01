@@ -46,7 +46,7 @@ public:
 	
 	// Collection concept
 	inline int count(void) const { return tree.count(); }
-	inline bool contains(const K &item) const { return tree.contains(item); }
+	inline bool contains(const K &item) const { return tree.look(item); }
 	inline bool isEmpty(void) const { return tree.isEmpty(); }
  	inline operator bool(void) const { return !isEmpty(); }
 
@@ -86,13 +86,13 @@ public:
 	};
 	
 	// PairIterator class
-	class PairIterator: public PreIterator<PairIterator, K> {
+	class PairIterator: public PreIterator<PairIterator, value_t> {
 	public:
 		inline PairIterator(const SortedBinMap& map): iter(map.tree) { }
 		inline PairIterator(const PairIterator& _): iter(_) { }
 		inline bool ended(void) const { return iter.ended(); }
 		inline void next(void) { iter.next(); }
-		const value_t &item(void) const { return iter; }
+		const value_t &item(void) const { return iter.item(); }
 	private:
 		typename tree_t::Iterator iter;
 	};
