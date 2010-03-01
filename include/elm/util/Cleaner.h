@@ -3,7 +3,7 @@
  *	cleaner module interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2008, IRIT UPS.
+ *	Copyright (c) 2008-10, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ namespace elm {
 // Cleaner class
 class Cleaner {
 public:
+	virtual void clean(void) { }
 	virtual ~Cleaner(void) { }
 };
 

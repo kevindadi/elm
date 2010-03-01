@@ -3,7 +3,7 @@
  *	cleaner module interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2008, IRIT UPS.
+ *	Copyright (c) 2008-10, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -107,8 +107,10 @@ void CleanList::add(Cleaner *cleaner) {
  * Clean the recorded cleaners.
  */
 void CleanList::clean(void) {
-	for(list_t::Iterator cleaner(list); cleaner; cleaner++)
+	for(list_t::Iterator cleaner(list); cleaner; cleaner++) {
+		cleaner->clean();
 		delete cleaner;
+	}
 	list.clear();
 }
 
