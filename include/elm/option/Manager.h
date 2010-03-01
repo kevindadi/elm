@@ -26,6 +26,8 @@
 #include <elm/option/Option.h>
 #include <elm/util/Version.h>
 #include <elm/util/MessageException.h>
+#include <elm/genstruct/SortedBinMap.h>
+#include <elm/util/VarArg.h>
 
 namespace elm { namespace option {
 
@@ -35,16 +37,42 @@ public:
 	OptionException(const String& message);
 };
 
+// configuration tags
+const int END			= 0,
+		  PROGRAM		= 1,	// const char *
+		  VERSION		= 2,	// Version *
+		  AUTHOR		= 3,	// const char *
+		  COPYRIGHT		= 4,	// const char *
+		  DESCRIPTION	= 5,	// const char *
+		  ARG_FREE		= 6,	// const char *
+		  CMD			= 7,	// const char *
+		  SHORT			= 8,	// char
+		  LONG			= 9,	// const char *
+		  DEFAULT		= 10,	// option dependent
+		  ARG_DESC		= 11,	// const char *
+		  REQUIRED		= 12,	// none
+		  OPTIONAL		= 13;	// none
 
 // Manager
 class Manager {
+	friend class Option;
 public:
 	typedef const char * const *argv_t;
+	inline Manager(void) { }
+	Manager(int tag, ...);
 	virtual ~Manager(void) { }
 	void addOption(Option *option) throw(OptionException);
 	void removeOption(Option *option);
 	void parse(int argc, argv_t argv) throw(OptionException);
 	void displayHelp(void);
+
+	// accessors
+	inline cstring getProgram(void) const { return program; }
+	inline const Version& getVersion(void) const { return version; }
+	inline cstring getAuthor(void) const { return author; }
+	inline cstring getCopyright(void) const { return copyright; }
+	inline cstring getDescription(void) const { return description; }
+	inline cstring getFreeArgumentDescription(void) const { return free_argument_description; }
 
 protected:
 	CString program;
@@ -54,12 +82,16 @@ protected:
 	CString description;
 	CString free_argument_description;
 	virtual void process(String arg);
+	virtual void configure(int tag, VarArg& args);
 
 private:
 	genstruct::Vector<Option *> options;
-	Option *findShortName(char name);
-	Option *findLongName(CString name);
 	void processOption(Option *option, int& i, int argc, argv_t argv, const char *earg);
+	void addShort(char cmd, Option *option) throw(OptionException);
+	void addLong(cstring cmd, Option *option) throw(OptionException);
+	void addCommand(string cmd, Option *option) throw(OptionException);
+	genstruct::SortedBinMap<char, Option *> shorts;
+	genstruct::SortedBinMap<string, Option *> cmds;
 };
 
 } } //elm::option
