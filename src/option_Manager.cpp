@@ -3,7 +3,7 @@
  *	Manager class implementation
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2004-07, IRIT UPS.
+ *	Copyright (c) 2004-10, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -36,7 +36,12 @@ namespace elm { namespace option {
  * @endcode
  * 
  * ELM provides several class to manage efficiently and easily command line
- * options. The main approach is to declare an option manager which options
+ * options. There are currently two ways to use these classes, the old approach
+ * that will become quickly deprecated (please no more use it) and the new one.
+ *
+ * @par The Old Approach
+ *
+ * The main approach is to declare an option manager which options
  * are linked to. These objects are usually declared static (global or actual
  * class static members) and the option processing is called from the
  * main() function of the program as in the example below.
@@ -53,7 +58,7 @@ namespace elm { namespace option {
  * 		copyright = "GPL (c) 2007 IRIT - UPS";
  * 	};
  *	virtual void process(string arg) {
- * 		cout << "add argumenet " << arg << io::endl;
+ * 		cout << "add argument " << arg << io::endl;
  * 	}
  * } manager;
  * 
@@ -61,6 +66,46 @@ namespace elm { namespace option {
  * StringOption arg(manager, 's', "string", "set string", "a simple string", "");
  * @endcode
  * 
+ * @par The New Approach
+ *
+ * The goal of the new approach is to remove as much developer disturbance as possible.
+ * The full option configuration is based on a class Config that records and install
+ * configuration in a more natural way. The Config instances are build from inline
+ * functions (@ref elm::option::add(), etc) passed to the option or manager constructor.
+ *
+ * The previous example will become:
+ * @code
+ * #include <elm/options.h>
+ * using namespace elm::option;
+ *
+ * class MyManager: public Manager {
+ * public:
+ *	MyManager(void): Manager(
+ * 		program("my_program"),
+ * 		version(1, 2),
+ * 		copyright( "GPL (c) 2007 IRIT - UPS"),
+ * 		end())
+ * 	{ };
+ *
+ *	virtual void process(string arg) {
+ * 		cout << "add argument " << arg << io::endl;
+ * 	}
+ * } manager;
+ *
+ * BoolOption ok(manager, cmd('c'), cmd("ok"), description("is ok ?"), end());
+ * StringOption arg(manager, cmd('s'), cmd("string"), description("set string"), arg_description("a simple string"), def(""), end());
+ * @endcode
+ *
+ *  This approach add a lot of flexibility because (1) all arguments do not need to be passed
+ *  to the constructor (only the used ones) and (2) as many commands ('-' short name or '--' long name)
+ *  as needed may be added to an option. As an example, look at the @ref BoolOption below:
+ *  @code
+ *  BoolOption verbose(manager, cmd('c'), cmd("verbose"), cmd('V'), end());
+ *  @endcode
+ *
+ *  The only requirement is that the configuration list passed to the manager or to an option
+ *  is terminated by and end() call.
+ *
  * @par The manager
  * 
  * The manager is the main entry to handle options. It provides the list of
@@ -142,28 +187,53 @@ OptionException::OptionException(const String& message)
 
 
 /**
- * Find an option by its short name.
- * @param name	Short name.
- * @return		Found option or null.
+ * Build a manager with the new method.
+ * @param config	First configuration item.
+ * @param ...		end() ended configuration item list.
  */
-Option *Manager::findShortName(char name) {
-	for(int i = 0; i < options.count(); i++)
-		if(options[i]->shortName() == name)
-			return options[i];
-	return 0;
+Manager::Manager(int tag, ...) {
+	VARARG_BEGIN(args, tag)
+		while(tag != END) {
+			configure(tag, args);
+			tag = args.next<int>();
+		}
+	VARARG_END
 }
 
 
 /**
- * Find an option by its long name.
- * @param name	Long name.
- * @return		Found option or null.
+ * Called for each configuration tag.
+ * May be overload to customize Manager configuration.
+ * @param tag	Current tag.
+ * @param args	Argument list.
  */
-Option *Manager::findLongName(CString name) {
-	for(int i = 0; i < options.count(); i++)
-		if(options[i]->longName() == name)
-			return options[i];
-	return 0;
+void Manager::configure(int tag, VarArg& args) {
+	switch(tag) {
+	case PROGRAM:
+		program = args.next<const char *>();
+		break;
+	case VERSION: {
+			Version *v = args.next<Version *>();
+			ASSERT(v);
+			version = *v;
+			delete v;
+		}
+		break;
+	case AUTHOR:
+		author = args.next<const char *>();
+		break;
+	case COPYRIGHT:
+		copyright = args.next<const char *>();
+		break;
+	case DESCRIPTION:
+		description = args.next<const char *>();
+		break;
+	case ARG_FREE:
+		free_argument_description = args.next<const char *>();
+		break;
+	default:
+		ASSERTP(false, "unknown configuration tag: " << tag);
+	}
 }
 
 
@@ -233,10 +303,6 @@ void Manager::process(String arg) {
  */
 void Manager::addOption(Option *option) throw(OptionException) {
 	ASSERTP(option, "null option");
-	if(option->shortName() && findShortName(option->shortName()))
-		throw OptionException(_ << "short name -" << option->shortName() << " already used");
-	if(option->longName() && findLongName(option->longName()))
-		throw OptionException(_ << "long name --" << option->shortName() << " already used");
 	options.add(option);
 }
 
@@ -249,8 +315,42 @@ void Manager::removeOption(Option *option) {
 	options.remove(option);
 }
 
-class BadArgumentException {
-};
+
+/**
+ * Add a short command.
+ * @param cmd		Short command character.
+ * @param option	Option to add.
+ */
+void Manager::addShort(char cmd, Option *option) throw(OptionException) {
+	string str = _ << '-' << cmd;
+	ASSERTP(!cmds.contains(str), _ << "command '" << cmd << "' already used");
+	cmds.put(str, option);
+	shorts.put(cmd, option);
+}
+
+
+/**
+ * Add a long command (prefixed with '--')
+ * @param cmd		Long command string.
+ * @param option	Option to add.
+ */
+void Manager::addLong(cstring cmd, Option *option) throw(OptionException) {
+	string str = _ << "--" << cmd;
+	ASSERTP(!cmds.contains(str), _ << "long command \"" << str << "\" already used");
+	cmds.put(str, option);
+}
+
+
+/**
+ * Add a generic command (no prefix required).
+ * @param cmd		Command to add.
+ * @param option	Option to add.
+ */
+void Manager::addCommand(string cmd, Option *option) throw(OptionException) {
+	ASSERTP(!cmds.contains(cmd), "command \"" << cmd << "\" already used");
+	cmds.put(cmd, option);
+}
+
 
 /**
  * Parse the given options.
@@ -262,44 +362,38 @@ void Manager::parse(int argc, Manager::argv_t argv) throw(OptionException) {
 	ASSERTP(argv, "null argv");
 	ASSERTP(argc > 0, "negative argc");
 	for(int i = 1; i < argc; i++) {
-	
-		/* Free argument */
-		if(argv[i][0] != '-') {
-			process(argv[i]);
-			continue;
+		string arg = argv[i];
+		const char *earg = 0;
+
+		// look for a command
+		Option *option = cmds.get(arg, 0);
+		if(!option) {
+			int p = arg.indexOf('=');
+			if(p >= 0) {
+				option = cmds.get(arg.substring(0, p), 0);
+				earg = argv[i] + p + 1;
+			}
+		}
+		if(option)
+			processOption(option, i, argc, argv, earg);
+
+		// Free argument
+		else if(arg.length() > 0 && arg[0] != '-')
+			process(arg);
+		
+		// aggregated short name command
+		else if(arg.length() > 1 && arg[1] != '-') {
+			for(int j = 1; j < arg.length(); j++) {
+				Option *option = shorts.get(arg[j], 0);
+				if(!option)
+					throw OptionException(_ << "option '" << arg[j] << "' in " << arg << " unknown !");
+				processOption(option, i, argc, argv, 0);
+			}
 		}
 		
-		/* Single-letter argument */
-		else if(argv[i][1] != '-') {
-			CString opts = argv[i];
-			for(int j = 1; opts[j]; j++) {
-				try {
-					processOption(findShortName(opts[j]), i, argc, argv, 0);
-				}
-				catch(UnknownException _) {
-					throw OptionException(elm::_ <<
-						"option \"-" << opts[j] << "\" is unknown.");
-				}
-			}
-		}
-		
-		/* Multiple-letter argument */
-		else {
-			try {
-				cstring arg = argv[i];
-				int eq = arg.indexOf('=');
-				if(eq == -1)
-					processOption(findLongName(&argv[i][2]), i, argc, argv, 0);
-				else {
-					string name = arg.substring(2, eq);
-					processOption(findLongName(&name), i, argc, argv, &arg + eq + 1);
-				}
-			}
-			catch(UnknownException _) {
-				throw OptionException(elm::_ <<
-					"option \"" << argv[i] << "\" is unknown.");
-			}
-		}
+		// none found: error
+		else
+			throw OptionException(elm::_ << "option \"" << arg << "\" is unknown.");
 	}
 }
 
@@ -308,9 +402,8 @@ void Manager::parse(int argc, Manager::argv_t argv) throw(OptionException) {
  * Display the help text to standard error.
  */
 void Manager::displayHelp(void) {
-	int i;
 
-	/* Display header */
+	// Display header
 	cerr << program;
 	if(version)
 		 cerr << " V" << version;
@@ -320,45 +413,55 @@ void Manager::displayHelp(void) {
 	if(copyright)
 		cerr << copyright << '\n';
 	
-	/* Display syntax */
+	// Display syntax
 	cerr << '\n'
 		 << "USAGE: " << program;
-	for(i = 0; i < options.count(); i++) {
-		cerr << " [" << *options[i];
-		switch(options[i]->usage()) {
-		case arg_none:
-			break;
-		case arg_optional:
-			cerr << " [" << options[i]->argDescription() << ']';
-			break;
-		case arg_required:
-			cerr << ' ' << options[i]->argDescription();
-			break;
-		}
-		cerr << ']';
-	}
+	if(options)
+		cerr<< " [OPTIONS]";
 	if(free_argument_description)
 		cerr << ' ' << free_argument_description;
 	cerr << '\n';
 	if(description)
 		cerr << description << '\n';
+	cerr << "OPTIONS may be:\n";
 	
-	/* Display option description */
-	if(options)
-		for(i = 0; i < options.count(); i++) {
-			cerr << *options[i];
-			switch(options[i]->usage()) {
-			case arg_none:
-				break;
-			case arg_optional:
-				cerr << "=[" << options[i]->argDescription() << ']';
-				break;
-			case arg_required:
-				cerr << '=' << options[i]->argDescription();
-				break;
+	// Display option description
+	for(genstruct::Vector<Option *>::Iterator option(options); option; option++) {
+
+		// display commands
+		bool fst = true;
+		for(genstruct::SortedBinMap<char, Option *>::PairIterator pair(shorts); pair; pair++)
+			if((*pair).snd == option) {
+				if(fst)
+					fst = false;
+				else
+					cerr << ", ";
+				cerr << '-' << (*pair).fst;
 			}
-			cerr << '\t' << options[i]->description() << '\n';
+		for(genstruct::SortedBinMap<string, Option *>::PairIterator pair(cmds); pair; pair++)
+			if((*pair).snd == option) {
+				if(fst)
+					fst = false;
+				else
+					cerr << ", ";
+				cerr << (*pair).fst;
+			}
+
+		// display argument
+		switch(option->usage()) {
+		case arg_none:
+			break;
+		case arg_optional:
+			cerr << " [" << option->argDescription() << ']';
+			break;
+		case arg_required:
+			cerr << ' ' << option->argDescription();
+			break;
 		}
+
+		// display description
+		cerr << "\t\n" << option << option->description() << io::endl;
+	}
 }
 
 } } // elm::option

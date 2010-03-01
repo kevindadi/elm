@@ -3,7 +3,7 @@
  *	StandardOption class implementation
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2004-07, IRIT UPS.
+ *	Copyright (c) 2004-10, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
 
 namespace elm { namespace option {
 
-
 /**
  * @class StandardOption
  * This abstract class factorize the handling of options (short and long) and option description.
@@ -38,11 +37,10 @@ namespace elm { namespace option {
  * @param manager		Parent option manager.
  * @param short_name	Single letter name.
  * @param description	Option description.
+ * @deprecated
  */
-StandardOption::StandardOption(Manager& manager, char short_name, CString description)
-: sname(short_name), lname(""), desc(description) {
-	ASSERTP(sname && sname != '-', "bad short option name");
-	manager.addOption(this);
+StandardOption::StandardOption(Manager& manager, char short_name, CString description) {
+	init(manager, SHORT, short_name, DESCRIPTION, &description, END);
 }
 
 
@@ -51,11 +49,10 @@ StandardOption::StandardOption(Manager& manager, char short_name, CString descri
  * @param manager		Parent option manager.
  * @param long_name		Multiple letter name.
  * @param description	Option description.
+ * @deprecated
  */
-StandardOption::StandardOption(Manager& manager, CString long_name, CString description)
-: sname(0), lname(long_name), desc(description) {
-	ASSERTP(long_name && long_name[0] != '-', "bad long option name");
-	manager.addOption(this);
+StandardOption::StandardOption(Manager& manager, CString long_name, CString description) {
+	init(manager, LONG, &long_name, DESCRIPTION, &description, END);
 }
 
 
@@ -65,24 +62,22 @@ StandardOption::StandardOption(Manager& manager, CString long_name, CString desc
  * @param short_name	Single letter name.
  * @param long_name		Multiple letter name.
  * @param description	Option description.
+ * @deprecated
  */
-StandardOption::StandardOption(Manager& manager, char short_name, CString long_name, CString description)
-: sname(short_name), lname(long_name), desc(description) {
-	ASSERTP(sname && sname != '-', "bad short option name");
-	ASSERTP(long_name && long_name[0] != '-', "bad long option name");
-	manager.addOption(this);
+StandardOption::StandardOption(Manager& manager, char short_name, CString long_name, CString description) {
+	init(manager, SHORT, short_name, LONG, &long_name, DESCRIPTION, &description, END);
 }
 
 
 // Option overload
 char StandardOption::shortName(void) {
-	return sname;
+	return 0;
 }
 
 
 // Option overload
 CString StandardOption::longName(void) {
-	return lname;
+	return "";
 }
 
 
@@ -91,5 +86,18 @@ CString StandardOption::description(void) {
 	return desc;
 }
 
-} } // elm::option
+/**
+ */
+void StandardOption::configure(Manager& manager, int tag, VarArg& args) {
+	switch(tag) {
+	case DESCRIPTION:
+		desc = args.next<const char *>();
+		break;
+	default:
+		Option::configure(manager, tag, args);
+		break;
+	}
+}
 
+
+} } // elm::option

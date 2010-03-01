@@ -3,7 +3,7 @@
  *	Option class implementation
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2004-07, IRIT UPS.
+ *	Copyright (c) 2004-10, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,15 +20,65 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <elm/util/VarArg.h>
 #include <elm/option/Option.h>
+#include <elm/option/Manager.h>
 
 namespace elm { namespace option {
 
 /**
  * @class Option
  * Base class of classes used for representing options with the OptionManager class.
- * @ingrouo options
+ * @ingroup options
  */
+
+
+/**
+ * Common initialization.
+ */
+void Option::init(Manager& manager, int tag, VarArg& args) {
+	manager.addOption(this);
+	while(tag != END) {
+		configure(manager, tag, args);
+		tag = args.next<int>();
+	}
+}
+
+
+/**
+ * Common initialization.
+ */
+void Option::init(Manager& manager, int tag, ...) {
+	VARARG_BEGIN(args, tag)
+		init(manager, tag, args);
+	VARARG_END
+}
+
+
+/**
+ * Handle a configuration tag and its value.
+ * May be override for extending the @ref Option class
+ * but do no forget to call back the original configure() method.
+ * @param manager	Owner manager.
+ * @param tag		Current tag.
+ * @param args		List of arguments.
+ */
+void Option::configure(Manager& manager, int tag, VarArg& args) {
+	switch(tag) {
+	case CMD:
+		manager.addCommand(args.next<const char *>(), this);
+		break;
+	case SHORT:
+		manager.addShort(args.next<char>(), this);
+		break;
+	case LONG:
+		manager.addLong(args.next<const char *>(), this);
+		break;
+	default:
+		ASSERTP(false, "unknown configuration tag: " << tag);
+	}
+}
+
 
 /**
  * @typedef usage_t
@@ -71,17 +121,23 @@ void Option::output(io::Output& out) {
 
 	
 /**
- * @fn char Option::shortName(void);
  * Get the single-character short name of the option.
  * @return	Single character or '\\0' if there is no short name.
+ * @deprecated
  */
+char Option::shortName(void) {
+	return 0;
+}
 
 	
 /**
- * @fn CString Option::longName(void);
  * Get the multi-character long name of the option.
  * @return	Multi-character or an empty string if there is no long name.
+ * @deprecated
  */
+cstring Option::longName(void) {
+	return "";
+}
 
 	
 /**
