@@ -5,7 +5,7 @@
  * AutoStr tester
  */
 
-#define ELM_TEST_AUTOSTR
+//#define ELM_TEST_AUTOSTR
 #include <elm/util/test.h>
 #include <elm/io.h>
 #include <elm/string.h>
