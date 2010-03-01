@@ -3,7 +3,7 @@
  *	StandardOption class interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2004-07, IRIT UPS.
+ *	Copyright (c) 2004-10, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -29,20 +29,25 @@ namespace elm { namespace option {
 
 // StandardOption class
 class StandardOption: public Option {
-	char sname;
-	CString lname;
-	CString desc;
 public:
 	
 	// Constructors
-	StandardOption(Manager& manager, char short_name, CString description);
-	StandardOption(Manager& manager, CString long_name, CString description);
-	StandardOption(Manager& manager, char short_name, CString long_name, CString description);
+	StandardOption(Manager& manager, int tag, ...);
+	StandardOption(Manager& manager, int tag, VarArg& args);
+	StandardOption(Manager& manager, char short_name, cstring description);
+	StandardOption(Manager& manager, cstring long_name, cstring description);
+	StandardOption(Manager& manager, char short_name, cstring long_name, cstring description);
 
 	// CommandOption overload
 	virtual char shortName(void);
-	virtual CString longName(void);
-	virtual CString description(void);
+	virtual cstring longName(void);
+	virtual cstring description(void);
+
+protected:
+	virtual void configure(Manager& manager, int tag, VarArg& args);
+
+private:
+	cstring desc;
 };
 
 } } // elm::option

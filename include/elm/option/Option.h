@@ -22,11 +22,13 @@
 #ifndef ELM_OPTION_OPTION_H
 #define ELM_OPTION_OPTION_H
 
+#include <elm/util/VarArg.h>
 #include <elm/string.h>
 #include <elm/io.h>
 
 namespace elm { namespace option {
 
+class Manager;
 
 // Argument usage
 typedef enum usage_t {
@@ -39,14 +41,24 @@ typedef enum usage_t {
 // Option class
 class Option {
 public:
+	inline Option(void) { }
 	virtual ~Option(void) { }
 	void output(io::Output& out);
-	virtual char shortName(void) = 0;
-	virtual CString longName(void) = 0;
 	virtual CString description(void) = 0;
 	virtual usage_t usage(void) = 0;
 	virtual CString argDescription(void) = 0;
 	virtual void process(String arg) = 0;
+
+	// deprecated
+	virtual char shortName(void);
+	virtual CString longName(void);
+
+protected:
+	virtual void configure(Manager& manager, int tag, VarArg& args);
+	void init(Manager& manager, int tag, ...);
+	void init(Manager& manager, int tag, VarArg& args);
+
+private:
 };
 
 // Inlines
