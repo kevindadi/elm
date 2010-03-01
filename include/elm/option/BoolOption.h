@@ -47,6 +47,7 @@ public:
 	// Operators
 	inline operator bool(void) const { return get(); };
 	inline bool operator*(void) const { return get(); }
+	inline BoolOption& operator=(bool value) { val = value; return *this; }
 
 	// deprecated
 	inline bool value(void) const { return val; };

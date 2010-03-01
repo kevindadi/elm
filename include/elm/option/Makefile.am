@@ -9,5 +9,6 @@ includeelmoption_HEADERS = \
 	StandardOption.h \
 	StringList.h \
 	StringOption.h \
+	SwitchOption.h \
 	ValueOption.h
 
