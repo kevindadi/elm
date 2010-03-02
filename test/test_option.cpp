@@ -40,13 +40,13 @@ public:
 
 	MyCommand(void)
 	: Manager(
-		PROGRAM, &::program,
-		VERSION, new Version(::version),
-		COPYRIGHT, &::copyright,
-		DESCRIPTION, &::description,
-		AUTHOR, &::author,
-		ARG_FREE, &::arg_free,
-		END
+		option::program, &::program,
+		option::version, new Version(::version),
+		option::copyright, &::copyright,
+		option::description, &::description,
+		option::author, &::author,
+		option::free_arg, &::arg_free,
+		end
 	) {
 	}
 };
@@ -57,7 +57,7 @@ MyCommand man;
 BoolOption b(man, 'b', "boolean", "boolean test", false);
 EnumOption<int> enum_opt(man, 'e', "enum", "", vals);
 StringOption s(man, 's', "string", "string test", "", "");
-SwitchOption c(man, CMD, "command", END);
+SwitchOption c(man, cmd, "command", end);
 SwitchOption sw(man, 'S', "switch option");
 
 
@@ -69,12 +69,12 @@ void test_option(void) {
 
 		// manager test
 		{
-			CHECK_EQUAL(man.getProgram(), program);
-			CHECK_EQUAL(man.getAuthor(), author);
-			CHECK_EQUAL(man.getDescription(), description);
-			CHECK_EQUAL(man.getCopyright(), copyright);
-			CHECK_EQUAL(man.getVersion(), version);
-			CHECK_EQUAL(man.getFreeArgumentDescription(), arg_free);
+			CHECK_EQUAL(man.getProgram(), ::program);
+			CHECK_EQUAL(man.getAuthor(), ::author);
+			CHECK_EQUAL(man.getDescription(), ::description);
+			CHECK_EQUAL(man.getCopyright(), ::copyright);
+			CHECK_EQUAL(man.getVersion(), ::version);
+			CHECK_EQUAL(man.getFreeArgumentDescription(), ::arg_free);
 		}
 
 		// boolean option
