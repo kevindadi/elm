@@ -50,7 +50,8 @@ const int end			= 0,
 		  long_cmd		= 9,	// const char *
 		  def			= 10,	// option dependent
 		  require		= 12,	// none
-		  optional		= 13;	// none
+		  optional		= 13,	// none
+		  arg_desc		= 14;	// const char *
 
 // Manager
 class Manager {

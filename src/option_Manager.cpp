@@ -307,7 +307,7 @@ void Manager::addOption(Option *option) throw(OptionException) {
 }
 
 
-/**	void displayHelp(void);
+/**
  * Remove the option from the manager.
  * @param option	Option to remove.
  */

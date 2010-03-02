@@ -105,4 +105,76 @@ namespace elm { namespace option {
  * @deprecated	Only kept for compatibility issues.
  */
 
+
+/**
+ * @class AbstractValueOption
+ * Value type independent parts of a value option.
+ */
+
+
+/**
+ * Constructor.
+ * @param man	Owner manager.
+ * @param tag	First tag.
+ * @param ...	Tag and arguments.
+ */
+AbstractValueOption::AbstractValueOption(Manager& man, int tag, ...): use(arg_required) {
+	VARARG_BEGIN(args, tag)
+		init(man, tag, args);
+	VARARG_END
+}
+
+/**
+ * Constructor.
+ * @param man	Owner manager.
+ * @param tag	First tag.
+ * @param args	Tag and arguments.
+ */
+AbstractValueOption::AbstractValueOption(Manager& man, int tag, VarArg& args): use(arg_required) {
+	init(man, tag, args);
+}
+
+
+/**
+ */
+cstring AbstractValueOption::description(void) {
+	return desc;
+}
+
+
+/**
+ */
+usage_t AbstractValueOption::usage(void) {
+	return use;
+}
+
+
+/**
+ */
+cstring AbstractValueOption::argDescription(void) {
+	return arg_desc;
+}
+
+
+/**
+ */
+void AbstractValueOption::configure(Manager& manager, int tag, VarArg& args) {
+	switch(tag) {
+	case option::description:
+		desc = args.next<const char *>();
+		break;
+	case option::arg_desc:
+		arg_desc = args.next<const char *>();
+		break;
+	case require:
+		use = arg_required;
+		break;
+	case optional:
+		use = arg_optional;
+		break;
+	default:
+		Option::configure(manager, tag, args);
+	}
+}
+
 } } // elm::option
