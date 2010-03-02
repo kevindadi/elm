@@ -193,7 +193,7 @@ OptionException::OptionException(const String& message)
  */
 Manager::Manager(int tag, ...) {
 	VARARG_BEGIN(args, tag)
-		while(tag != END) {
+		while(tag != end) {
 			configure(tag, args);
 			tag = args.next<int>();
 		}
@@ -209,26 +209,26 @@ Manager::Manager(int tag, ...) {
  */
 void Manager::configure(int tag, VarArg& args) {
 	switch(tag) {
-	case PROGRAM:
+	case option::program:
 		program = args.next<const char *>();
 		break;
-	case VERSION: {
+	case option::version: {
 			Version *v = args.next<Version *>();
 			ASSERT(v);
 			version = *v;
 			delete v;
 		}
 		break;
-	case AUTHOR:
+	case option::author:
 		author = args.next<const char *>();
 		break;
-	case COPYRIGHT:
+	case option::copyright:
 		copyright = args.next<const char *>();
 		break;
-	case DESCRIPTION:
+	case option::description:
 		description = args.next<const char *>();
 		break;
-	case ARG_FREE:
+	case option::free_arg:
 		free_argument_description = args.next<const char *>();
 		break;
 	default:
