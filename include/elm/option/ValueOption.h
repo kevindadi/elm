@@ -27,45 +27,50 @@
 
 namespace elm { namespace option {
 
+// AbstractValueOption class
+class AbstractValueOption: public Option {
+public:
+	inline AbstractValueOption(void): use(arg_required) { }
+	AbstractValueOption(Manager& man, int tag, ...);
+	AbstractValueOption(Manager& man, int tag, VarArg& args);
+
+	// Option overload
+	virtual cstring description(void);
+	virtual usage_t usage(void);
+	virtual cstring argDescription(void);
+
+protected:
+	virtual void configure(Manager& manager, int tag, VarArg& args);
+
+private:
+	cstring desc, arg_desc;
+	usage_t use;
+};
+
+
 // ValueOption<T> class
 template <class T>
-class ValueOption: public StandardOption {
+class ValueOption: public AbstractValueOption {
 public:
-	ValueOption(
-		Manager& manager,
-		char short_name,
-		CString description,
-		CString arg_description,
-		const T& value = type_info<T>::null)
-	:	StandardOption(manager, short_name, description),
-		arg_desc(arg_description),
-		val(value) { }
-	ValueOption(
-		Manager& manager,
-		CString long_name,
-		CString description,
-		CString arg_description,
-		const T& value = type_info<T>::null)
-	:	StandardOption(manager, long_name, description),
-		arg_desc(arg_description),
-		val(value) { }
-	ValueOption(
-		Manager& manager,
-		char short_name,
-		CString long_name,
-		CString description,
-		CString arg_description,
-		const T& value = type_info<T>::null)
-	:	StandardOption(manager, short_name, long_name, description),
-		arg_desc(arg_description),
-		val(value) { }
+	inline ValueOption(void) { }
+
+	inline ValueOption(Manager& man, int tag ...)
+		{ VARARG_BEGIN(args, tag) AbstractValueOption::init(man, tag, args); VARARG_END }
+
+	inline ValueOption(Manager& man, int tag, VarArg& args)
+		{ AbstractValueOption::init(man, tag, args); }
+
+	inline ValueOption(Manager& man, char s, cstring desc, cstring adesc, const T& val = type_info<T>::null)
+		{ init(man, short_cmd, s, option::description, &desc, option::arg_desc, &adesc, def, val, end); }
+
+	inline ValueOption(Manager& man, cstring l, cstring desc, cstring adesc, const T& val = type_info<T>::null)
+		{ init(man, long_cmd, &l, option::description, &desc, option::arg_desc, &adesc, def, val, end); }
+
+	inline ValueOption(Manager& man, char s, cstring l, cstring desc, cstring adesc, const T& val = type_info<T>::null)
+		{ init(man, short_cmd, s, long_cmd, &l, option::description, &desc, option::arg_desc, &adesc, def, val, end); }
 
 	inline const T& get(void) const { return val; };
 	inline void set(const T& value) { val = value; };
-
-	// Option overload
-	virtual usage_t usage(void) { return arg_required; }
-	virtual cstring argDescription(void) { return arg_desc; }
 
 	// Operators
 	inline operator const T&(void) const { return get(); };
@@ -73,13 +78,41 @@ public:
 	inline const T& operator*(void) const { return get(); }
 	inline operator bool(void) const { return get(); }
 
+	// Option overload
+	virtual void process(String arg) { read(arg); }
+
 	// deprecated
 	inline const T& value(void) const { return val; };
 
+protected:
+	virtual void configure(Manager& manager, int tag, VarArg& args) {
+		switch(tag) {
+		case def: val = get(args); break;
+		default: AbstractValueOption::configure(manager, tag, args);
+		}
+	}
+
 private:
-	cstring arg_desc;
 	T val;
+	inline T get(VarArg& args) { return args.next<T>(); }
+	inline void read(string arg) { val = arg; arg >> val; }
 };
+
+// string specialization
+template <>
+inline ValueOption<string>::ValueOption(Manager& man, char s, cstring desc, cstring adesc, const string& value)
+	{ AbstractValueOption::init(man, short_cmd, s, option::description, &desc, option::arg_desc, &adesc, def, value.chars(), end); }
+
+template <>
+inline ValueOption<string>::ValueOption(Manager& man, cstring l, cstring desc, cstring adesc, const string& val)
+	{ init(man, long_cmd, &l, option::description, &desc, option::arg_desc, &adesc, def, &val, end); }
+
+template <>
+inline ValueOption<string>::ValueOption(Manager& man, char s, cstring l, cstring desc, cstring adesc, const string& val)
+	{ init(man, short_cmd, s, long_cmd, &l, option::description, &desc, option::arg_desc, &adesc, def, &val, end); }
+
+template <> inline string ValueOption<string>::get(VarArg& args) { return args.next<const char *>(); }
+template <> inline void ValueOption<string>::read(string arg) { val = arg; }
 
 } }	// elm::option
 
