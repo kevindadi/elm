@@ -38,7 +38,7 @@ namespace elm { namespace option {
  */
 void Option::init(Manager& manager, int tag, VarArg& args) {
 	manager.addOption(this);
-	while(tag != END) {
+	while(tag != end) {
 		configure(manager, tag, args);
 		tag = args.next<int>();
 	}
@@ -65,13 +65,13 @@ void Option::init(Manager& manager, int tag, ...) {
  */
 void Option::configure(Manager& manager, int tag, VarArg& args) {
 	switch(tag) {
-	case CMD:
+	case cmd:
 		manager.addCommand(args.next<const char *>(), this);
 		break;
-	case SHORT:
+	case short_cmd:
 		manager.addShort(args.next<char>(), this);
 		break;
-	case LONG:
+	case long_cmd:
 		manager.addLong(args.next<const char *>(), this);
 		break;
 	default:

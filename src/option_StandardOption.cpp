@@ -40,7 +40,7 @@ namespace elm { namespace option {
  * @deprecated
  */
 StandardOption::StandardOption(Manager& manager, char short_name, CString description) {
-	init(manager, SHORT, short_name, DESCRIPTION, &description, END);
+	init(manager, short_cmd, short_name, option::description, &description, end);
 }
 
 
@@ -52,7 +52,7 @@ StandardOption::StandardOption(Manager& manager, char short_name, CString descri
  * @deprecated
  */
 StandardOption::StandardOption(Manager& manager, CString long_name, CString description) {
-	init(manager, LONG, &long_name, DESCRIPTION, &description, END);
+	init(manager, long_cmd, &long_name, option::description, &description, end);
 }
 
 
@@ -65,7 +65,7 @@ StandardOption::StandardOption(Manager& manager, CString long_name, CString desc
  * @deprecated
  */
 StandardOption::StandardOption(Manager& manager, char short_name, CString long_name, CString description) {
-	init(manager, SHORT, short_name, LONG, &long_name, DESCRIPTION, &description, END);
+	init(manager, short_cmd, short_name, long_cmd, &long_name, option::description, &description, end);
 }
 
 
@@ -90,7 +90,7 @@ CString StandardOption::description(void) {
  */
 void StandardOption::configure(Manager& manager, int tag, VarArg& args) {
 	switch(tag) {
-	case DESCRIPTION:
+	case option::description:
 		desc = args.next<const char *>();
 		break;
 	default:
