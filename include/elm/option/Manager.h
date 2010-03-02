@@ -38,20 +38,19 @@ public:
 };
 
 // configuration tags
-const int END			= 0,
-		  PROGRAM		= 1,	// const char *
-		  VERSION		= 2,	// Version *
-		  AUTHOR		= 3,	// const char *
-		  COPYRIGHT		= 4,	// const char *
-		  DESCRIPTION	= 5,	// const char *
-		  ARG_FREE		= 6,	// const char *
-		  CMD			= 7,	// const char *
-		  SHORT			= 8,	// char
-		  LONG			= 9,	// const char *
-		  DEFAULT		= 10,	// option dependent
-		  ARG_DESC		= 11,	// const char *
-		  REQUIRED		= 12,	// none
-		  OPTIONAL		= 13;	// none
+const int end			= 0,
+		  program		= 1,	// const char *
+		  version		= 2,	// Version *
+		  author		= 3,	// const char *
+		  copyright		= 4,	// const char *
+		  description	= 5,	// const char *
+		  free_arg		= 6,	// const char *
+		  cmd			= 7,	// const char *
+		  short_cmd		= 8,	// char
+		  long_cmd		= 9,	// const char *
+		  def			= 10,	// option dependent
+		  require		= 12,	// none
+		  optional		= 13;	// none
 
 // Manager
 class Manager {

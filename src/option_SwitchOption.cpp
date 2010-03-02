@@ -38,7 +38,7 @@ namespace elm { namespace option {
  */
 SwitchOption::SwitchOption(Manager& man, char cmd, cstring description)
 : val(false), desc(description) {
-	init(man, SHORT, cmd, END);
+	init(man, short_cmd, cmd, end);
 }
 
 
@@ -50,7 +50,7 @@ SwitchOption::SwitchOption(Manager& man, char cmd, cstring description)
  */
 SwitchOption::SwitchOption(Manager& man, cstring cmd, cstring description)
 : val(false), desc(description) {
-	init(man, LONG, &cmd, END);
+	init(man, long_cmd, &cmd, end);
 }
 
 
@@ -98,10 +98,10 @@ void SwitchOption::process(string arg) {
  */
 void SwitchOption::configure(Manager& manager, int tag, VarArg& args) {
 	switch(tag) {
-	case DESCRIPTION:
+	case option::description:
 		desc = args.next<const char *>();
 		break;
-	case DEFAULT:
+	case def:
 		val = args.next<bool>();
 		break;
 	default:
