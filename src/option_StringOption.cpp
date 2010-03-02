@@ -87,8 +87,9 @@ StringOption::StringOption(
 
 
 // Option overload
-void StringOption::process(String arg) {
+/*oid StringOption::process(String arg) {
+	cerr << "DEBUG: StringOption::process(" << arg << ")\n";
 	set(arg);
-}
+}*/
 
 } } // elm::option
