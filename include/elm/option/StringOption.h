@@ -37,7 +37,7 @@ public:
 		cstring description, cstring arg_description, string value = "");
 
 	// Option overload
-	virtual void process(String arg);
+	//virtual void process(String arg);
 };
 
 } } // elm::option
