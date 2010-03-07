@@ -430,14 +430,6 @@ void Manager::displayHelp(void) {
 
 		// display commands
 		bool fst = true;
-		for(genstruct::SortedBinMap<char, Option *>::PairIterator pair(shorts); pair; pair++)
-			if((*pair).snd == option) {
-				if(fst)
-					fst = false;
-				else
-					cerr << ", ";
-				cerr << '-' << (*pair).fst;
-			}
 		for(genstruct::SortedBinMap<string, Option *>::PairIterator pair(cmds); pair; pair++)
 			if((*pair).snd == option) {
 				if(fst)
@@ -460,7 +452,7 @@ void Manager::displayHelp(void) {
 		}
 
 		// display description
-		cerr << "\t\n" << option << option->description() << io::endl;
+		cerr << "\n\t" << option->description() << io::endl;
 	}
 }
 
