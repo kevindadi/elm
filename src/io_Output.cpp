@@ -254,11 +254,11 @@ void Output::print(void *value) {
 	if(!value)
 		print("<null>");
 	else {
-		char buffer[8];
+		char buffer[sizeof(unsigned long) * 2];
 		char *p = horner(buffer + sizeof(buffer), (unsigned long)value, 16);
 		while(p != buffer)
 			*--p = '0';
-		if(strm->write(buffer, 8) < 0)
+		if(strm->write(buffer, sizeof(buffer)) < 0)
 			throw IOException(strm->lastErrorMessage());
 	}
 }
