@@ -22,6 +22,7 @@
 #ifndef ELM_CHECKSUM_MD5_H
 #define ELM_CHECKSUM_MD5_H
 
+#include <elm/types.h>
 #include <elm/string.h>
 #include <elm/io.h>
 #include <elm/io/InStream.h>
@@ -37,7 +38,7 @@ public:
 	void digest(digest_t tab);
 	void print(io::Output& out);
 
-	void put(const void *buffer, unsigned long length);
+	void put(const void *buffer, t::uint32 length);
 	void put(const cstring& str);
 	void put(const string& str);
 	void put(io::InStream& in);
@@ -49,7 +50,7 @@ public:
 	template <class T> inline MD5& operator<<(const T& value) { put(&value, sizeof(T)); return *this; }
 
 private:
-	typedef unsigned long int md5_size;
+	typedef t::uint32 md5_size;
 
 	void finalize(void);
 	void update(void);
@@ -58,7 +59,7 @@ private:
 
 	bool finalized;
 	struct {
-		unsigned long int A, B, C, D;
+		t::uint32 A, B, C, D;
 	} regs;
 	unsigned char *buf;
 	md5_size size;

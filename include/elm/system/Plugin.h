@@ -22,6 +22,7 @@
 #ifndef ELM_SYSTEM_PLUGIN_H
 #define ELM_SYSTEM_PLUGIN_H
 
+#include <elm/types.h>
 #include <elm/string.h>
 #include <elm/genstruct/Vector.h>
 #include <elm/genstruct/Table.h>
@@ -33,7 +34,7 @@ namespace elm { namespace system {
 // Plugin class
 class Plugin {
 public:
-	static const unsigned long MAGIC = 0xCAFEBABE;
+	static const t::uint32 MAGIC = 0xCAFEBABE;
 	typedef genstruct::Table<string> aliases_t;
 private:
 	friend class Plugger;
@@ -45,7 +46,7 @@ private:
 	void *_handle;
 	int state;
 	const aliases_t& _aliases;
-	unsigned long magic;
+	t::uint32 magic;
 	Path _path;
 
 	void plug(void *handle);

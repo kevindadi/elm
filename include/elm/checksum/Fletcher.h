@@ -22,21 +22,22 @@
 #ifndef ELM_CHECKSUM_FLETCHER_H
 #define ELM_CHECKSUM_FLETCHER_H
 
+#include <elm/types.h>
 #include <elm/io/InStream.h>
 
 namespace elm { namespace checksum {
 
 // Fletcher class
 class Fletcher {
-	unsigned long sum1, sum2;
-	unsigned long len;
+	t::uint32 sum1, sum2;
+	t::uint32 len;
 	char half[2];
 	unsigned short size;
 	inline void shuffle(void);
 	inline void add(void);
 public:
 	Fletcher(void);
-	unsigned long sum(void);
+	t::uint32 sum(void);
 	void put(io::InStream& in);
 	void put(const void *buffer, int length);
 	void put(const CString& str);
