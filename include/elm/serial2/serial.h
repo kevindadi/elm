@@ -9,6 +9,7 @@
 
 #include <elm/rtti.h>
 #include <elm/meta.h>
+#include <elm/type_info.h>
 #include <elm/serial2/Serializer.h>
 #include <elm/serial2/Unserializer.h>
 
