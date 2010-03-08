@@ -95,7 +95,7 @@ void Fletcher::put(io::InStream& in) {
  * Return the checksum.
  * @param checksum	Current checksum.
  */
-unsigned long Fletcher::sum(void) {
+t::uint32 Fletcher::sum(void) {
 	if(size == 1) {
 		half[1] = 0;
 		add();

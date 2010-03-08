@@ -169,8 +169,8 @@ static inline int test_base(char chr, int base) {
  * Supported base prefixes are '0', '0[xX]' or '0[bB]'.
  * @return	Integer value.
  */
-unsigned long Input::scanULong(void) {
-	unsigned long val = 0;
+t::uint32 Input::scanULong(void) {
+	t::uint32 val = 0;
 	int base = 10;
 
 	// Read the base
@@ -199,7 +199,7 @@ unsigned long Input::scanULong(void) {
 	while(digit >= 0) {
 		if(digit < 0)
 			throw IOException("bad formatted integer");
-		unsigned long old = val;
+		t::uint32 old = val;
 		val = val * base + digit;
 		if(val < old)
 			throw IOException("32-bits value too big");
@@ -217,8 +217,8 @@ unsigned long Input::scanULong(void) {
  * Supported base prefixes are '0', '0[xX]' or '0[bB]'.
  * @return	Integer value.
  */
-long Input::scanLong(void) {
-	unsigned long val = 0;
+t::int32 Input::scanLong(void) {
+	t::uint32 val = 0;
 	bool neg = false;
 
 	// Read sign
@@ -232,7 +232,7 @@ long Input::scanLong(void) {
 	val = scanULong();
 	if(val >= (1UL << 31))
 		throw IOException("32-bits value too big");
-	return neg ? -long(val) : val;
+	return neg ? -t::int32(val) : val;
 }
 
 
@@ -241,8 +241,8 @@ long Input::scanLong(void) {
  * Supported base prefixes are '0', '0[xX]' or '0[bB]'.
  * @return	Integer value.
  */
-unsigned long long Input::scanULLong(void) {
-	unsigned long long val = 0;
+t::uint64 Input::scanULLong(void) {
+	t::uint64 val = 0;
 	int base = 10;
 
 	// Read the base
@@ -286,8 +286,8 @@ unsigned long long Input::scanULLong(void) {
  * Supported base prefixes are '0', '0[xX]' or '0[bB]'.
  * @return	Integer value.
  */
-long long Input::scanLLong(void) {
-	unsigned long long val = 0;
+t::int64 Input::scanLLong(void) {
+	t::uint64 val = 0;
 	bool neg = false;
 
 	// Read sign
@@ -301,7 +301,7 @@ long long Input::scanLLong(void) {
 	val = scanULLong();
 	if(val >= (1ULL << 63))
 		throw IOException("bad formatted signed 64-bits value");
-	return neg ? -(long long)val : val;
+	return neg ? -t::int64(val) : val;
 }
 
 
