@@ -7,20 +7,23 @@
 #ifndef ELM_UTIL_HASH_KEY_H
 #define ELM_UTIL_HASH_KEY_H
 
+#include <elm/types.h>
 #include <elm/string.h>
 #include <elm/util/Option.h>
 
 namespace elm {
 
+namespace t { typedef t::uint32 hash; }
+
 // Useful hash functions
-unsigned long hash_string(const char *chars, int length);
-unsigned long hash_cstring(const char *chars);
-unsigned long hash_jenkins(const void *block, int size);
+t::hash hash_string(const char *chars, int length);
+t::hash hash_cstring(const char *chars);
+t::hash hash_jenkins(const void *block, int size);
 
 // HashKey class
 template <class T> class HashKey {
 public:
-	static unsigned long hash(const T& key)
+	static t::hash hash(const T& key)
 		{ return hash_jenkins(&key, sizeof(T)); };
 	static inline bool equals(const T& key1, const T& key2)
 		{ return key1 == key2; }
@@ -29,27 +32,27 @@ public:
 // Predefined hash keys
 template <> class HashKey<int> {
 public:
-	static inline unsigned long hash(int key) { return (unsigned long)key; }
+	static inline t::hash hash(int key) { return (unsigned long)key; }
 	static inline bool equals(int key1, int key2) { return key1 == key2; }
 };
 
 template <> class HashKey<void *> {
 public:
-	static inline unsigned long hash(void *key) { return (unsigned long)key; }
+	static inline t::hash hash(void *key) { return (unsigned long)key; }
 	static inline bool equals(void *key1, void *key2) { return key1 == key2; } 
 };
 
 template <> class HashKey<const void *> {
 public:
-	static inline unsigned long hash(const void *key)
-		{ return (unsigned long)key; }
+	static inline t::hash hash(const void *key)
+		{ return t::hash(key); }
 	static inline bool equals(const void *key1, const void *key2)
 		{ return key1 == key2; }
 };
 
 template <> class HashKey<CString> {
 public:
-	static unsigned long hash(CString key)
+	static t::hash hash(CString key)
 		{ return hash_cstring(&key); }
 	static inline bool equals(CString key1, CString key2)
 		{ return key1 == key2; }
@@ -57,7 +60,7 @@ public:
 
 template <> class HashKey<String> {
 public:
-	static unsigned long hash(const String& key)
+	static t::hash hash(const String& key)
 		{ return hash_string(key.chars(), key.length()); };
 	static inline bool equals(const String& key1, const String& key2)
 		{ return key1 == key2; };

@@ -50,7 +50,7 @@ namespace elm { namespace io {
  * @param enc		Base character for encoding digits upper than 10.
  * @return				First character.
  */
-char *Output::horner(char *p, unsigned long val, int base, char enc) {
+char *Output::horner(char *p, t::uint32 val, int base, char enc) {
 	
 	// Special case of 0
 	if(!val)
@@ -83,7 +83,7 @@ char *Output::horner(char *p, unsigned long val, int base, char enc) {
  * @param base	Base of the conversion.
  * @return				First character.
  */
-char *Output::horner(char *p, unsigned long long val, int base) {
+char *Output::horner(char *p, t::uint64 val, int base) {
 	
 	// Special case of 0
 	if(!val)
@@ -146,10 +146,10 @@ void Output::print(char chr) {
  * Print an integer.
  * @param value	Integer to print.
  */
-void Output::print(long value) {
+void Output::print(t::int32 value) {
 	char buffer[16];
 	bool neg = false;
-	unsigned long uval;
+	t::uint32 uval;
 	
 	// Process sign
 	if(value < 0) {
@@ -176,10 +176,10 @@ void Output::print(long value) {
  * Print a long long integer.
  * @param value	Long long integer to print.
  */
-void Output::print(long long value) {
+void Output::print(t::int64 value) {
 	char buffer[64];
 	bool neg = false;
-	unsigned long long uval;
+	t::uint64 uval;
 	
 	// Process sign
 	if(value < 0) {
@@ -206,7 +206,7 @@ void Output::print(long long value) {
  * Print an unsigned integer.
  * @param value	Integer to print.
  */
-void Output::print(unsigned long value) {
+void Output::print(t::uint32 value) {
 	char buffer[16];
 	
 	// Write the digits
@@ -222,7 +222,7 @@ void Output::print(unsigned long value) {
  * Print an unsigned long long integer.
  * @param value	Integer to print.
  */
-void Output::print(unsigned long long value) {
+void Output::print(t::uint64 value) {
 	char buffer[32];
 	
 	// Write the digits
@@ -254,8 +254,12 @@ void Output::print(void *value) {
 	if(!value)
 		print("<null>");
 	else {
-		char buffer[sizeof(unsigned long) * 2];
-		char *p = horner(buffer + sizeof(buffer), (unsigned long)value, 16);
+		char buffer[sizeof(void *) * 2];
+#		ifndef __LP64__
+			char *p = horner(buffer + sizeof(buffer), t::uint32(value), 16);
+#		else
+			char *p = horner(buffer + sizeof(buffer), t::uint64(value), 16);
+#		endif
 		while(p != buffer)
 			*--p = '0';
 		if(strm->write(buffer, sizeof(buffer)) < 0)
@@ -335,7 +339,7 @@ void Output::format(CString fmt, VarArg& args) {
 void Output::print(const IntFormat fmt) {
 	
 	// To horner
-	unsigned long uval;
+	t::uint32 uval;
 	if(fmt.sign && fmt.val < 0)
 		uval = -fmt.val;
 	else

@@ -40,8 +40,8 @@ namespace elm {
  * Perform hashing according Jenkins approach
  * (http://www.burtleburtle.net/bob/hash/doobs.html).
  */
-unsigned long hash_jenkins(const void *block, int size) {
-	unsigned long hash = 0;
+t::hash hash_jenkins(const void *block, int size) {
+	t::hash hash = 0;
 	const unsigned char *p = (const unsigned char *)block;
 	for(int i = 0; i < size; i++) {
 		hash += p[i];
@@ -59,8 +59,8 @@ unsigned long hash_jenkins(const void *block, int size) {
  * Use a classical compiler string hashing algorithm (see "The Compilers"
  * by Aho, Sethi, Ullman).
  */
-unsigned long hash_string(const char *chars, int length) {
-	unsigned long h = 0, g;
+t::hash hash_string(const char *chars, int length) {
+	t::hash h = 0, g;
 	for(int i = 0; i < length; i++) {
 		h = (h << 4) + chars[i];
 		if((g = h & 0xf0000000)) {
@@ -76,8 +76,8 @@ unsigned long hash_string(const char *chars, int length) {
  * Use a classical compiler string hashing algorithm (see "The Compilers"
  * by Aho, Sethi, Ullman).
  */
-unsigned long hash_cstring(const char *chars) {
-	unsigned long h = 0, g;
+t::hash hash_cstring(const char *chars) {
+	t::hash h = 0, g;
 	for(; *chars; chars++) {
 		h = (h << 4) + *chars;
 		if((g = h & 0xf0000000)) {

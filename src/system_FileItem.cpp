@@ -40,8 +40,8 @@ STRONG_TYPE(inode_t, ino_t);
 template <>
 class HashKey<inode_t> {
 public:
-	static unsigned long hash(inode_t v)
-		{ return (unsigned long)v; }
+	static t::hash hash(inode_t v)
+		{ return t::hash(v); }
 	static bool equals(inode_t key1, inode_t key2)
 		{ return key1 == key2; }
 };
