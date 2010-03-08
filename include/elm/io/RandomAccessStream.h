@@ -22,6 +22,7 @@
 #ifndef ELM_IO_RANDOMACCESSSTREAM_H_
 #define ELM_IO_RANDOMACCESSSTREAM_H_
 
+#include <elm/types.h>
 #include <elm/io/InStream.h>
 #include <elm/io/OutStream.h>
 #include <elm/system/Path.h>
@@ -32,8 +33,8 @@ namespace elm { namespace io {
 // RandomAccessStream class
 class RandomAccessStream: public InStream, public OutStream  {
 public:
-	typedef unsigned long long pos_t;
-	typedef unsigned long long size_t;
+	typedef t::uint64 pos_t;
+	typedef t::uint64 size_t;
 	typedef int access_t;
 	static const int READ = 1;
 	static const int WRITE = 2;
