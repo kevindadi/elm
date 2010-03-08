@@ -7,10 +7,12 @@
 #ifndef ELM_SYSTEM_STOP_WATCH_H
 #define ELM_SYSTEM_STOP_WATCH_H
 
+#include <elm/types.h>
+
 namespace elm { namespace system {
 
 // Time type
-typedef unsigned long long time_t;
+typedef t::uint64 time_t;
 
 // StopWatch class
 class StopWatch {

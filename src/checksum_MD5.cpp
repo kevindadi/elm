@@ -64,10 +64,10 @@
 
 #define GET_UINT32(a,b,i)				\
 {							\
-	(a) = ( (unsigned long int) (b)[(i)	]      )	\
-	    | ( (unsigned long int) (b)[(i)+1] << 8 )	\
-	    | ( (unsigned long int) (b)[(i)+2] << 16)	\
-	    | ( (unsigned long int) (b)[(i)+3] << 24);	\
+	(a) = ( (t::uint32) (b)[(i)	]      )	\
+	    | ( (t::uint32) (b)[(i)+1] << 8 )	\
+	    | ( (t::uint32) (b)[(i)+2] << 16)	\
+	    | ( (t::uint32) (b)[(i)+3] << 24);	\
 }
 
 static unsigned char MD5_PADDING [64] = { /* 512 Bits */
@@ -112,7 +112,7 @@ MD5::MD5(void): finalized(false) {
  * @param block		Block address.
  * @param length	Block length.
  */
-void MD5::put(const void *block, unsigned long length) {
+void MD5::put(const void *block, t::uint32 length) {
 	while(length + size > MD5_BUFFER) {
 		memcpy(buf + size, block, min(length, MD5_BUFFER - size));
 		update();
@@ -144,11 +144,11 @@ void MD5::update(void) {
 /**
  */
 void MD5::encode(unsigned char *buffer) {
-	unsigned long int	a = regs.A,
-						b = regs.B,
-						c = regs.C,
-						d = regs.D;
-	unsigned long int x[16];
+	t::uint32	a = regs.A,
+				b = regs.B,
+				c = regs.C,
+				d = regs.D;
+	t::uint32	x[16];
 
 	GET_UINT32 (x[ 0],buffer, 0);
 	GET_UINT32 (x[ 1],buffer, 4);
