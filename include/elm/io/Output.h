@@ -7,6 +7,7 @@
 #ifndef ELM_IO_OUTPUT_H
 #define ELM_IO_OUTPUT_H
 
+#include <elm/types.h>
 #include <elm/system/SystemIO.h>
 #include <elm/util/VarArg.h>
 #include <elm/string/String.h>
@@ -33,10 +34,12 @@ public:
 	inline IntFormat(unsigned short value);
 	inline IntFormat(int value);
 	inline IntFormat(unsigned int value);
-	inline IntFormat(long value);
-	inline IntFormat(unsigned long value);
+#	ifndef __LP64__
+		inline IntFormat(long value);
+		inline IntFormat(unsigned long value);
+#	endif
 
-	long val;
+	t::int32 val;
 	unsigned char base;
 	unsigned char width;
 	unsigned align : 5;
@@ -50,8 +53,8 @@ public:
 // Output class
 class Output {
 	OutStream *strm;
-	char *horner(char *p, unsigned long val, int base, char enc = 'a');
-	char *horner(char *p, unsigned long long val, int base);
+	char *horner(char *p, t::uint32 val, int base, char enc = 'a');
+	char *horner(char *p, t::uint64 val, int base);
 public:
 	inline Output(void): strm(&stdout) { };
 	inline Output(OutStream& stream): strm(&stream) { };
@@ -61,10 +64,10 @@ public:
 
 	void print(bool value);
 	void print(char chr);
-	void print(long value);
-	void print(unsigned long value);
-	void print(long long value);
-	void print(unsigned long long value);
+	void print(t::int32 value);
+	void print(t::uint32 value);
+	void print(t::int64 value);
+	void print(t::uint64 value);
 	void print(double value);
 	void print(void *value);
 	inline void print(const char *str) { print(CString(str)); };
@@ -83,15 +86,20 @@ template <class T> inline Output& operator<<(Output& out, T *v)
 	{ out.print((void *)v); return out; }
 inline Output& operator<<(Output& out, bool value) { out.print(value); return out; };
 inline Output& operator<<(Output& out, char value) { out.print(value); return out; };
-inline Output& operator<<(Output& out, unsigned char value) { out.print((unsigned long)value); return out; };
-inline Output& operator<<(Output& out, short value) { out.print((long)value); return out; };
-inline Output& operator<<(Output& out, unsigned short value) { out.print((unsigned long)value); return out; };
-inline Output& operator<<(Output& out, int value) { out.print((long)value); return out; };
-inline Output& operator<<(Output& out, unsigned int value) { out.print((unsigned long)value); return out; };
-inline Output& operator<<(Output& out, long value) { out.print(value); return out; };
-inline Output& operator<<(Output& out, unsigned long value) { out.print(value); return out; };
-inline Output& operator<<(Output& out, long long value) { out.print(value); return out; };
-inline Output& operator<<(Output& out, unsigned long long value) { out.print(value); return out; };
+inline Output& operator<<(Output& out, unsigned char value) { out.print(t::uint32(value)); return out; };
+inline Output& operator<<(Output& out, short value) { out.print(t::int32(value)); return out; };
+inline Output& operator<<(Output& out, unsigned short value) { out.print(t::uint32(value)); return out; };
+inline Output& operator<<(Output& out, int value) { out.print(t::int32(value)); return out; };
+inline Output& operator<<(Output& out, unsigned int value) { out.print(t::uint32(value)); return out; };
+#ifndef __LP64__
+	inline Output& operator<<(Output& out, long value) { out.print(t::int32(value)); return out; };
+	inline Output& operator<<(Output& out, unsigned long value) { out.print(t::uint32(value)); return out; };
+#else
+	inline Output& operator<<(Output& out, long value) { out.print(t::int64(value)); return out; };
+	inline Output& operator<<(Output& out, unsigned long value) { out.print(t::uint64(value)); return out; };
+#endif
+inline Output& operator<<(Output& out, long long value) { out.print(t::int64(value)); return out; };
+inline Output& operator<<(Output& out, unsigned long long value) { out.print(t::uint64(value)); return out; };
 inline Output& operator<<(Output& out, double value) { out.print(value); return out; };
 inline Output& operator<<(Output& out, const char *value) { out.print(value); return out; };
 inline Output& operator<<(Output& out, char *value) { out.print(value); return out; };
@@ -114,14 +122,15 @@ inline void IntFormat::init(bool _sign) {
 	displaySign = false;
 };
 
+#ifndef __LP64__
+	inline IntFormat::IntFormat(long value): val(value) {
+		init(true);
+	}
 
-inline IntFormat::IntFormat(long value): val(value) {
-	init(true);
-}
-
-inline IntFormat::IntFormat(unsigned long value): val(value) {
-	init(false);
-}
+	inline IntFormat::IntFormat(unsigned long value): val(value) {
+		init(false);
+	}
+#endif
 
 inline IntFormat::IntFormat(int value): val(value) {
 	init(true);
@@ -216,7 +225,7 @@ inline IntFormat lowercase(IntFormat fmt) {
 }
 
 inline IntFormat pointer(const void *p) {
-	return width(8, pad('0', hex((unsigned long)p)));
+	return width(8, pad('0', hex(t::uint32(p))));
 }
 
 } } // elm::io

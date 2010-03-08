@@ -22,6 +22,7 @@
 #ifndef ELM_IO_INPUT_H
 #define ELM_IO_INPUT_H
 
+#include <elm/types.h>
 #include <elm/string/String.h>
 #include <elm/string/CString.h>
 #include <elm/io/InStream.h>
@@ -38,10 +39,10 @@ public:
 
 	bool scanBool(void);
 	char scanChar(void);
-	long scanLong(void);
-	unsigned long scanULong(void);
-	long long scanLLong(void);
-	unsigned long long scanULLong(void);
+	t::int32 scanLong(void);
+	t::uint32 scanULong(void);
+	t::int64 scanLLong(void);
+	t::uint64 scanULLong(void);
 	double scanDouble(void);
 	String scanWord(void);
 	String scanLine(void);
@@ -57,9 +58,14 @@ public:
 	inline Input& operator>>(unsigned short& value) { value = scanULong(); return *this; };
 	inline Input& operator>>(int& value) { value = scanLong(); return *this; };
 	inline Input& operator>>(unsigned int& value) { value = scanULong(); return *this; };
-	inline Input& operator>>(long& value) { value = scanLong(); return *this; };
-	inline Input& operator>>(unsigned long& value) { value = scanULong(); return *this; };
-	inline Input& operator>>(long long& value) { value = scanLLong(); return *this; };
+#	ifndef __LP64__
+		inline Input& operator>>(signed long& value) { value = scanLong(); return *this; };
+		inline Input& operator>>(unsigned long& value) { value = scanULong(); return *this; };
+#	else
+		inline Input& operator>>(signed long& value) { value = scanLLong(); return *this; };
+		inline Input& operator>>(unsigned long& value) { value = scanULLong(); return *this; };
+#	endif
+	inline Input& operator>>(signed long long& value) { value = scanLLong(); return *this; };
 	inline Input& operator>>(unsigned long long& value) { value= scanULLong(); return *this; };
 	inline Input& operator>>(float& value) { value = scanDouble(); return *this; };
 	inline Input& operator>>(double& value) { value = scanDouble(); return *this; };
