@@ -20,6 +20,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <string.h>
 #include <elm/util/HashKey.h>
 
 namespace elm {
@@ -86,6 +87,18 @@ t::hash hash_cstring(const char *chars) {
 		}
 	}
 	return h;
+}
+
+
+/**
+ * Test equality of two memory blocks.
+ * @param p1	First memory block.
+ * @param p2	Second memory block.
+ * @param size	Block size.
+ * @return		True if they equals, byte to byte, false else.
+ */
+bool hash_equals(const void *p1, const void *p2, int size) {
+	return !memcmp(p1, p2, size);
 }
 
 };	// elm
