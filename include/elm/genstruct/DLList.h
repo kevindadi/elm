@@ -99,7 +99,7 @@ public:
 		return iter;
 	}
 	
-	// MutabeList concept
+	// MutableList concept
 	inline void addFirst(const T& value);
 	inline void addLast(const T& value);
 	inline void removeFirst(void);
@@ -128,6 +128,12 @@ public:
 		inline const T& item(void) const { return this->cur->value(); }
 		inline void next(void) { this->cur = (DLNode *)this->cur->previous(); }
 	};
+
+	// Queue concept
+	inline const T &head(void) const { return first(); }
+	inline T get(void) { T res = first(); removeFirst(); return res; }
+	inline void put(const T &item) { addLast(item); }
+	inline void reset(void) { clear(); }
 };
 
 
