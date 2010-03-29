@@ -53,6 +53,7 @@ const int end			= 0,
 		  optional		= 13,	// none
 		  arg_desc		= 14;	// const char *
 
+
 // Manager
 class Manager {
 	friend class Option;
