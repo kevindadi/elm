@@ -48,6 +48,11 @@ private:
 };
 
 
+// useful inline
+template <class T>
+inline T read(string arg) { T val; arg >> val; return val; }
+
+
 // ValueOption<T> class
 template <class T>
 class ValueOption: public AbstractValueOption {
@@ -79,7 +84,7 @@ public:
 	inline operator bool(void) const { return get(); }
 
 	// Option overload
-	virtual void process(String arg) { read(arg); }
+	virtual void process(String arg) { val = read<T>(arg); }
 
 	// deprecated
 	inline const T& value(void) const { return val; };
@@ -95,7 +100,6 @@ protected:
 private:
 	T val;
 	inline T get(VarArg& args) { return args.next<T>(); }
-	inline void read(string arg) { val = arg; arg >> val; }
 };
 
 // string specialization
@@ -111,8 +115,13 @@ template <>
 inline ValueOption<string>::ValueOption(Manager& man, char s, cstring l, cstring desc, cstring adesc, const string& val)
 	{ init(man, short_cmd, s, long_cmd, &l, option::description, &desc, option::arg_desc, &adesc, def, &val, end); }
 
+
+// get specialization
 template <> inline string ValueOption<string>::get(VarArg& args) { return args.next<const char *>(); }
-template <> inline void ValueOption<string>::read(string arg) { val = arg; }
+
+
+// read specializations
+template <> inline string read<string>(string arg) { return arg; }
 
 } }	// elm::option
 
