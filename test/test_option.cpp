@@ -8,6 +8,7 @@
 #include <elm/util/test.h>
 #include <elm/options.h>
 #include <elm/option/BoolOption.h>
+#include <elm/option/ListOption.h>
 
 using namespace elm;
 using namespace elm::option;
@@ -59,6 +60,7 @@ EnumOption<int> enum_opt(man, 'e', "enum", "", vals);
 StringOption s(man, 's', "string", "string test", "", "");
 SwitchOption c(man, cmd, "command", end);
 SwitchOption sw(man, 'S', "switch option");
+ListOption<int> l(man, cmd, "-l", end);
 
 
 // test_option()
@@ -167,6 +169,17 @@ void test_option(void) {
 				CHECK_EXCEPTION(OptionException, man.parse(3, argv));
 			}
 		}
+
+		// multi test
+		{
+			const char *argv[] = { "command", "-l", "0", "-l", "1", "-l", "2", 0 };
+			FAIL_ON_EXCEPTION(OptionException, man.parse(7, argv));
+			CHECK_EQUAL(l.count(), 3);
+			CHECK_EQUAL(l[0], 0);
+			CHECK_EQUAL(l[1], 1);
+			CHECK_EQUAL(l[2], 2);
+		}
+
 	}
 	catch(OptionException& e) {
 		__case.failed();
