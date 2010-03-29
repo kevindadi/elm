@@ -62,20 +62,21 @@ libelm_la_SOURCES= \
 	io_UnixOutStream.cpp \
 	Iterator.cpp \
 	option_Option.cpp \
-	option_StandardOption.cpp \
 	option_BoolOption.cpp \
-	option_Manager.cpp \
-	option_StringOption.cpp \
 	option_ActionOption.cpp \
 	option_EnumOption.cpp \
 	option_IntOption.cpp \
-	option_StringList.cpp \
-	option_SwitchOption.cpp \
-	option_ValueOption.cpp \
+	option_ListOption.cpp \
+	option_Manager.cpp \
 	serial_Serializer.cpp \
 	serial_SerialClass.cpp \
+	option_StandardOption.cpp \
+	option_StringList.cpp \
+	option_StringOption.cpp \
+	option_SwitchOption.cpp \
 	serial_TextSerializer.cpp \
 	serial_Unserializer.cpp \
+	option_ValueOption.cpp \
 	serial_XOMUnserializer.cpp \
 	serial2_serial.cpp \
 	serial2_TextSerializer.cpp \
