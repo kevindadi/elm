@@ -84,6 +84,7 @@ public:
 	public:
 		inline Iterator(const HashTable<K, T, H>& htab): InternIterator(htab) { };
 		inline T item(void) const { return this->node->value; }
+		inline T& useItem(void) const { return this->node->value; }
 		inline const K& key(void) const { return this->node->key; };
 	};
 
