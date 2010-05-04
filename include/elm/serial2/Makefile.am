@@ -7,6 +7,7 @@ includeelmserial2_HEADERS = \
 	TextSerializer.h \
 	Unserializer.h \
 	XOMSerializer.h \
+	ArrayField.h \
 	XOMUnserializer.h
 
 
