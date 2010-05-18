@@ -152,6 +152,10 @@ void Plugger::resetPaths(void) {
 Plugin *Plugger::plug(const string& name) {
 	err = OK;
 
+	// is it a path ?
+	if(name.startsWith("/"))
+		return plugFile(name);
+
 	// Look in opened plugins
 	for(int i = 0; i < plugins.count(); i++)
 		if(plugins[i]->matches(name)) {
@@ -201,7 +205,12 @@ Plugin *Plugger::plugFile(String path) {
 	err = OK;
 
 	// Check existence of the file
-	system::FileItem *file = system::FileItem::get(path);
+	system::FileItem *file = 0;
+	try {
+		file = system::FileItem::get(path);
+	}
+	catch(SystemException& exn) {
+	}
 	if(!file) {
 		err = NO_PLUGIN;
 		return 0;
