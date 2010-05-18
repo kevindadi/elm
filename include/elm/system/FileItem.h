@@ -9,6 +9,7 @@
 
 #include <sys/stat.h>
 #include <elm/system/Path.h>
+#include <elm/system/SystemException.h>
 
 namespace elm { namespace system {
 
@@ -26,7 +27,7 @@ protected:
 	FileItem(Path path, ino_t inode);
 	virtual ~FileItem(void);
 public:
-	static FileItem *get(Path path);
+	static FileItem *get(Path path) throw(SystemException);
 	void use(void);
 	void release(void);
 	
