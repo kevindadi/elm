@@ -44,6 +44,7 @@ const int end			= 0,
 		  author		= 3,	// const char *
 		  copyright		= 4,	// const char *
 		  description	= 5,	// const char *
+		  help			= 5,	// alias for description
 		  free_arg		= 6,	// const char *
 		  cmd			= 7,	// const char *
 		  short_cmd		= 8,	// char
