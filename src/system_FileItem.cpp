@@ -77,10 +77,11 @@ FileItem::~FileItem(void) {
 
 /**
  * Find a file by its name.
- * @param path	Path of the looked file.
- * @return		File matching the given path or null if file does not exists.
+ * @param path				Path of the looked file.
+ * @return					File matching the given path or null if file does not exists.
+ * @throw SystemException	If the file does not exist or can not be accessed.
  */
-FileItem *FileItem::get(Path path) {
+FileItem *FileItem::get(Path path) throw(SystemException) {
 	
 	// Need to initialize ?
 	if(!files)
