@@ -100,6 +100,7 @@ inline Output& operator<<(Output& out, unsigned int value) { out.print(t::uint32
 #endif
 inline Output& operator<<(Output& out, long long value) { out.print(t::int64(value)); return out; };
 inline Output& operator<<(Output& out, unsigned long long value) { out.print(t::uint64(value)); return out; };
+inline Output& operator<<(Output& out, float value) { out.print(value); return out; };
 inline Output& operator<<(Output& out, double value) { out.print(value); return out; };
 inline Output& operator<<(Output& out, const char *value) { out.print(value); return out; };
 inline Output& operator<<(Output& out, char *value) { out.print(value); return out; };
