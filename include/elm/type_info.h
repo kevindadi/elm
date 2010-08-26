@@ -166,12 +166,17 @@ template <> struct type_info<String>: public type_t {
 template <class T> struct type_info<const T *>: public ptr_t {
 	typedef T of;
 	enum { is_const = 1 };
+	static const T * const null;
 };
+template <class T> const T * const type_info<const T *>::null = 0;
+
 
 template <class T> struct type_info<T *>: public ptr_t {
 	typedef T of;
 	enum { is_const = 0 };
+	static T * const null;
 };
+template <class T> T * const type_info<T *>::null = 0;
 
 
 // reference specialization
