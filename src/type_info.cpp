@@ -25,6 +25,52 @@
 namespace elm {
 
 /**
+ * @defgroup types Type Support
+ *
+ * ELM provides several facilities to handle type and parametric types.
+ *
+ * @par Basic Types
+ *
+ * @code
+ * #include <elm/types.h>
+ * using namespace elm;
+ * @encode
+ *
+ * This include provides alternative non-ambiguous names for integer types:
+ * @li t::int8
+ * @li t::uint8
+ * @li t::int16
+ * @li t::uint16
+ * @li t::int32
+ * @li t::uint32
+ * @li t::int64
+ * @li t::uint64
+ *
+ * In addition, some useful types are provided:
+ * @li t::size -- size in memory
+ * @li t::offset -- offset in memory
+ * @li t::uint -- short notation for unsigned int.
+ *
+ *
+ * @par Type Information
+ *
+ * @code
+ * #include <elm/type_info.h>
+ * using namespace elm;
+ * @endcode
+ *
+ * Class @ref elm::type_info<T> allows to get from type passed as the parametric argument.
+ * This may be useful for templates using static evaluation. The common fields includes:
+ * @li is_type -- true if T is not a class
+ * @li is_scalar -- true if T is a simple type (neither a structure, nor union, nor class)
+ * @li is_enum -- true if T is an enumerated type
+ * @li is_class -- true if T is a class
+ * @li is_ptr -- true if T is a pointer
+ * @li is_ref -- true if T is a reference
+ *
+ */
+
+/**
  * @class type_info
  * This class can not be instantiated. It provides only static information
  * about the types used in a program. Although a partial type_info instantiation
@@ -37,7 +83,9 @@ namespace elm {
  * @li const T min: minimum value for the types supporting a total order.
  * @li const T max: maximum value for the types supporting a total order.
  *
- * @param T		Type to get information for. 
+ * @param T		Type to get information for.
+ *
+ * @ingroup types
  */
 
 
