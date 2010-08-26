@@ -39,17 +39,107 @@ namespace elm { namespace option {
  * options. There are currently two ways to use these classes, the old approach
  * that will become quickly deprecated (please no more use it) and the new one.
  *
+ * @par The New Approach
+ *
+ * The goal of the new approach is to remove as much developer disturbance as possible.
+ * The full option configuration is based on variable arguments formed as list of tags
+ * possibly followed by an argument. This let configure the option and the option manager
+ * in a more natural way.
+ *
+ * Let's go with a little example:
+ * @code
+ * #include <elm/options.h>
+ * using namespace elm::option;
+ *
+ * class MyManager: public Manager {
+ * public:
+ *	MyManager(void): Manager(
+ * 		option::program, "my_program",
+ * 		option::version, new Version(1, 2),
+ * 		option::copyright, "GPL (c) 2007 IRIT - UPS",
+ * 		option::end)
+ * 	{ };
+ *
+ *	virtual void process(string arg) {
+ * 		cout << "add argument " << arg << io::endl;
+ * 	}
+ * } manager;
+ *
+ * BoolOption ok(manager,
+ * 		option::cmd, "-c",
+ * 		option::cmd, "--ok",
+ * 		option::help, "is ok ?",
+ * 		option::end);
+ * StringOption arg(manager,
+ * 		option::cmd, "-s",
+ * 		option::cmd, "--string",
+ * 		option::help, "set string",
+ * 		option::arg_desc, "a simple string",
+ * 		option::def, "",
+ * 		option::end);
+ * @endcode
+ *
+ *  This approach add a lot of flexibility because (1) all arguments do not need to be passed
+ *  to the constructor (only the used ones) and (2) as many commands ('-' short name or '--' long name)
+ *  as needed may be added to an option. As an example, look at the @ref BoolOption below:
+ *  @code
+ *  BoolOption verbose(manager,
+ *  	option::short_cmd, 'c',
+ *  	option::long_cmd, "verbose",
+ *  	option::short_cmd, 'V',
+ *  	option::end);
+ *  @endcode
+ *
+ *  The only requirement is that the configuration list passed to the manager or to an option
+ *  is terminated by and @ref option::end. This system of tags and arguments may also be used
+ *  with the @ref Manager class that centralizes the list of options of an application.
+ *
+ *  The supported tags includes:
+ *  @li @ref elm::option::end (all; no argument) -- mark end of tags
+ *	@li @ref elm::option::program (manager; const char *) -- name of the program
+ *	@li @ref elm::option::version (manager; @ref elm::Version *) -- version of the program
+ *	@li @ref elm::option::author (manager; const char *) -- name of the authors
+ *	@li @ref elm::option::copyright (manager, const char *) -- copyright of the program
+ *	@li @ref elm::option::description (manager, option; const char *) -- description
+ *	@li @ref elm::option::help -- same as @ref elm::option::description
+ *	@li @ref elm::option::free_arg (manager; const char *) -- description of free arguments
+ *	@li @ref elm::option::cmd (option; const char *) -- command (possibly including the minus prefix)
+ *	@li @ref elm::option::short_cmd (option; char) -- one-letter short command (prefixed by "-")
+ *	@li @ref elm::option::long_cmd (option; const char *) -- multiple lette command (prefixed by "--")
+ *	@li @ref elm::option::def (option; option dependent) -- default value for valued options
+ *	@li @ref elm::option::require (option; none) -- argument value is required
+ *	@li @ref elm::option::optional (option; none) -- argument value is optional
+ *	@li @ref elm::option::arg_desc (option; const char *) -- description of the argument value
+ *
+ *	In parenthesis, the first part design the application of the tag: to the manager or to the
+ *	options. The second value give the type of the argument value of the option (if any).
+ *
+ *  In this new approach, you will need a small set of options classes:
+ *  @li @ref elm::option::SwitchOption -- for boolean activable option
+ *  @li @ref elm::option::ValueOption<T> -- for options with an argument value
+ *  @li @ref elm::option::ListOption<T> -- for options with multiple arguments values
+ *  @li @ref elm::option::ActionOption  -- for options causing an action
+ *
+ *  @ref elm::option::ValueOption<T> and @ref elm::option::ListOption<T> are provided for
+ *  usual types (as support from the @ref elm::io::Input class) but may be customized for other
+ *  types by overring some templates functions as below:
+ *  @code
+ *	template <> inline T ValueOption<T>::get(VarArg& args) { return args.next<T>(); }
+ *	template <> inline T read<string>(string arg) { process arg to set the value }
+ *	@endcode
+ *
+ *
  * @par The Old Approach
  *
  * The main approach is to declare an option manager which options
  * are linked to. These objects are usually declared static (global or actual
  * class static members) and the option processing is called from the
  * main() function of the program as in the example below.
- * 
+ *
  * @code
  * #include <elm/options.h>
  * using namespace elm::option;
- * 
+ *
  * class MyManager: public Manager {
  * public:
  *	MyManager(void) {
@@ -61,50 +151,10 @@ namespace elm { namespace option {
  * 		cout << "add argument " << arg << io::endl;
  * 	}
  * } manager;
- * 
+ *
  * BoolOption ok(manager, 'c', "ok", "is ok ?");
  * StringOption arg(manager, 's', "string", "set string", "a simple string", "");
  * @endcode
- * 
- * @par The New Approach
- *
- * The goal of the new approach is to remove as much developer disturbance as possible.
- * The full option configuration is based on a class Config that records and install
- * configuration in a more natural way. The Config instances are build from inline
- * functions (@ref elm::option::add(), etc) passed to the option or manager constructor.
- *
- * The previous example will become:
- * @code
- * #include <elm/options.h>
- * using namespace elm::option;
- *
- * class MyManager: public Manager {
- * public:
- *	MyManager(void): Manager(
- * 		program("my_program"),
- * 		version(1, 2),
- * 		copyright( "GPL (c) 2007 IRIT - UPS"),
- * 		end())
- * 	{ };
- *
- *	virtual void process(string arg) {
- * 		cout << "add argument " << arg << io::endl;
- * 	}
- * } manager;
- *
- * BoolOption ok(manager, cmd('c'), cmd("ok"), description("is ok ?"), end());
- * StringOption arg(manager, cmd('s'), cmd("string"), description("set string"), arg_description("a simple string"), def(""), end());
- * @endcode
- *
- *  This approach add a lot of flexibility because (1) all arguments do not need to be passed
- *  to the constructor (only the used ones) and (2) as many commands ('-' short name or '--' long name)
- *  as needed may be added to an option. As an example, look at the @ref BoolOption below:
- *  @code
- *  BoolOption verbose(manager, cmd('c'), cmd("verbose"), cmd('V'), end());
- *  @endcode
- *
- *  The only requirement is that the configuration list passed to the manager or to an option
- *  is terminated by and end() call.
  *
  * @par The manager
  * 

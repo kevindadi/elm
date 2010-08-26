@@ -29,6 +29,7 @@ namespace elm { namespace option {
  * A generic option template for option receiving an argument.
  * It only requires to implement the process() virtual function.
  * @param T	Type of value of the argument.
+ * @ingroup options
  */
 
 

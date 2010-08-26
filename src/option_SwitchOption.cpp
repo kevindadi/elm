@@ -27,6 +27,7 @@ namespace elm { namespace option {
 /**
  * @class SwitchOption
  * An option to handle simple switch option (boolean).
+ * @ingroup options
  */
 
 
