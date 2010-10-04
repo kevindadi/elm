@@ -25,7 +25,12 @@ namespace elm { namespace serial2 {
  * @param object	Current object.
  */
 void TextSerializer::prefix(AbstractType& type, const void *object) {
-	cout << '*' << io::pointer(object);
+#	ifndef __LP64__
+		cout << '*' << io::pointer(object);
+#	else
+		cout << '*' << t::uint64(object);
+#	endif
+
 	objects.put(object, true);
 	if(!level)
 		cout << ':' << type.name();
@@ -86,7 +91,11 @@ void TextSerializer::endField(void) {
 /**
  */
 void TextSerializer::onPointer(AbstractType& type, const void *object) {
-	cout << "&" << io::pointer(object) << ';';
+#	ifndef __LP64__
+		cout << "&" << io::pointer(object) << ';';
+#	else
+		cout << "&" << t::uint64(object) << ';';
+#	endif
 	if(!objects.exists(object)) {
 		to_process.put(pair(object, &type));
 		objects.put(object, false);

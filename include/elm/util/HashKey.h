@@ -46,7 +46,11 @@ public:
 template <> class HashKey<const void *> {
 public:
 	static inline t::hash hash(const void *key)
-		{ return t::hash(key); }
+#		ifndef __LP64__
+			{ return t::hash(key); }
+#		else
+			{ return t::hash(t::uint64(key)); }
+#		endif
 	static inline bool equals(const void *key1, const void *key2)
 		{ return key1 == key2; }
 };
