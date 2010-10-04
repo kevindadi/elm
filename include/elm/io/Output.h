@@ -225,9 +225,11 @@ inline IntFormat lowercase(IntFormat fmt) {
 	return fmt;
 }
 
-inline IntFormat pointer(const void *p) {
-	return width(8, pad('0', hex(t::uint32(p))));
-}
+#ifndef __LP64__
+	inline IntFormat pointer(const void *p) {
+		return width(8, pad('0', hex(t::uint32(p))));
+	}
+#endif
 
 } } // elm::io
 
