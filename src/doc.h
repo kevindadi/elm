@@ -214,4 +214,28 @@
  * @par Writing a serialiazer
  * 
  */
+
+
+/**
+ * @defgroup deprecated Deprecation Management
+ *
+ * ELM provides a small macro found in <elm/deprecated.h>, called DEPRECATED.
+ *
+ * When put at the start of a function body, it displays a warning deprecation
+ * message the first time it is called.
+ *
+ * @code
+ * #include <elm/deprecated.h>
+ *
+ * class MyClass {
+ * public:
+ *
+ * 	void myDeprecatedFunction(void) {
+ * 		DEPRECATED
+ * 		// body of the function
+ * 	}
+ * @endcode
+ *
+ */
+
 #endif /*ELM_DOC_H_*/
