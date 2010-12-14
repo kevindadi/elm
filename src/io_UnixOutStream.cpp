@@ -23,13 +23,25 @@
 #include <unistd.h>
 #include <errno.h>
 #include <elm/io/UnixOutStream.h>
+#include <elm/io.h>
 
 namespace elm { namespace io {
 
 /**
  * @class UnixOutStream <elm/io.h>
- * Output stream implementation using the Unix low-level IO system.
+ * Output stream implementation using the Unix low-level IO system
+ * (only on OSes supporting POSIX).
  */
+
+
+/**
+ * Build an Unix output stream.
+ * @param fd	File descriptor.
+ */
+UnixOutStream::UnixOutStream(int fd): _fd(fd) {
+	if(fd < 0)
+		throw io::IOException(strerror(errno));
+}
 
 /**
  * @fn UnixOutStream::UnixOutStream(int _fd);
