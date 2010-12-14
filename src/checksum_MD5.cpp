@@ -85,9 +85,10 @@ namespace elm { namespace checksum {
  * Apply the MD5 algorithm (http://fr.wikipedia.org/wiki/MD5)
  * to compute a checksum.
  *
- * Data are checksummed calling any one of the @ref put() methods.
+ * Data are checksummed calling any one of the @ref put() methods
+ * (or using the overloaded operator <<).
  * When all data has been checksummed, the checksum value is returned by
- * sum().
+ * digest().
  */
 
 
@@ -125,10 +126,10 @@ void MD5::put(const void *block, t::uint32 length) {
 /**
  */
 void MD5::update(void) {
-	unsigned char buffer [64]; // 512 bits
+	unsigned char buffer[64]; // 512 bits
 	int i;
 
-	ASSERTP(finalized, "already finalized MD5");
+	ASSERTP(!finalized, "already finalized MD5");
 
 	for(i = 0; size - i > 63; i += 64) {
 		memcpy (buffer, buf + i, 64);
@@ -252,12 +253,15 @@ void MD5::finalize(void) {
 	int i;
 
 	// finish the block
-	if(size + 1 > 56) { /* We have to create another block */
+	if(size + 1 > 56) { // We have to create another block
+
+		// finalizing current block
 		memcpy(buffer, buf, size);
 		memcpy(buffer + size, MD5_PADDING, 64 - size);
 		encode(buffer);
 		bits += size;
 		size = 0;
+
 		// Proceed final block
 		memset(buffer, '\0', 56);
 		addsize(buffer, 56, bits);
@@ -316,7 +320,7 @@ void MD5::print(io::Output& out) {
 	if(!finalized)
 		finalize();
 	for(size_t i = 0; i < sizeof(digest_t); i++)
-		out << io::hex(_digest[i]);
+		out << io::right(io::pad('0', io::width(2, io::hex(_digest[i]))));
 }
 
 
@@ -338,28 +342,40 @@ void MD5::put(const String& str) {
 }
 
 
-#if 0
 /**
- * Checksum the given stream.
- * @param in		Stream to checksum.
+ * Put an input stream in the buffer.
+ * Read to the end of the stream.
+ * @param in	Input stream to read.
+ * @throw io::IOException	If there is an error during stream read.
  */
-void Fletcher::put(io::InStream& in) {
-	while(true) {
-		while(size < 2) {
-			int result = in.read(half + size, 2 - size);
-			if(result < 0)
-				throw MessageException("elm::checksum::MD5: error during stream read");
-			if(!result)
-				break;
-			size += result;
-		}
-		if(!size)
-			break;
-		size = 0;
-		add();
-	}
+void MD5::put(io::InStream& in) {
+	do {
+		int r = in.read(buf + size, MD5_BUFFER - size);
+		if(r < 0)
+			throw io::IOException("MD5Sum: error during stream read");
+		size += r;
+		update();
+	} while(size == 0);
 }
 
-#endif
+
+/**
+ * Put at most length bytes from the given stream
+ * to compute the MD5 checksum.
+ * @param in		Input stream to read.
+ * @param length	Maximum number of bytes to read.
+ * @throw io::IOException	If there is an error during stream read.
+ */
+void MD5::put(io::InStream& in, int length) {
+	t::uint32 l = length;
+	do {
+		int r = in.read(buf + size, min(l, MD5_BUFFER - size));
+		if(r < 0)
+			throw io::IOException("MD5Sum: error during stream read");
+		size += r;
+		l -= r;
+		update();
+	} while(size == 0 && l != 0);
+}
 
 } } // elm::checksum
