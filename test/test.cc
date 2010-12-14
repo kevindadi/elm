@@ -21,6 +21,7 @@ void test_hashtable(void);
 void test_io_format(void);
 void test_io_output(void);
 void test_lock(void);
+void test_md5(void);
 void test_option(void);
 void test_plugin(void);
 void test_process(void);
@@ -55,6 +56,7 @@ struct test_t {
 	{ "io_output", test_io_output },
 	{ "lock", test_lock },
 	{ "option", test_option },
+	{ "md5", test_md5 },
 	{ "process", test_process },
 #	ifdef IS_SHARED
 		{ "plugin", test_plugin },
