@@ -23,41 +23,82 @@
 namespace elm { namespace genstruct {
  
 /**
- * @defgroup gen_datastruct Generic Data Structures
+ * @defgroup gen_datastruct Data Structures
  * 
  * ELM provides a collection of genericity/template based data structures.
+ * All data structure implements the @ref elm::concept::Collection concept.
+ * The sections below list the different data structures according to the
+ * way they are used. A specific data structure may be listed in different sections.
  * 
- * @section tables Tables
+ * @section array Array
+ *
+ * An array (concept @elm::concept::Array and/or elm::concept::MutableArray)
+ * whose items are accessible by their index.
+ *
+ * @li @ref AllocatedTable -- ELM wrapper around C++ table managing its memory
+ * @li @ref FragTable -- extensible array accepting big number of items
+ * @li @ref Table -- ELM wrapper around C++ table
+ * @li @ref Vector -- extensible array
+ * @li @ref VectorQueue -- extensible array manageable as a queue
  * 
- * ELM provides a wrapper around the C++ rough implementation of table. This
- * may be read-only table (@ref Table) or allocated mutable tables
- * (@ref AllocatedTable).
+ * @section map Map
  * 
- * Beside, there are also table with specific management:
- * @li @ref Vector -- a simple and fast extensible table,
- * @li @ref FragTable -- a fast extensible table for big number of items
- * with a fast access,
- * @li @ref VectorQueue -- a @ref Vector based queue.
+ * Map provides associative array whose items are retrievable thanks to a specific key
+ * (concept @ref Map and/or @ref MutableMap).
+ *
+ * @li @ref AssocList -- associative single link list
+ * @li @ref HashTable -- map implemented as a hashing table
+ * @li @ref SortedBinMap -- map implemented by a binary tree
  * 
- * A very convenient table in the @ref HashTable that implements the
- * @ref concept::Map concept.
+ * @section stack Stack
+ *
+ * A stack implements the usual Last-In-First-Out usage (@ref Stack).
+ *
+ * @li @ref DLList -- double link list (bidirectionnal traversal)
+ * @li @ref SLList -- single link list (unidirectionnal traversal)
+ * @li @ref Vector -- extensible table
+ *
+ * @section queue Queue
+ *
+ * A queue implements the usual First-In-First-Out usage (@ref Queue).
+ *
+ * @li @ref DLList -- double link list (bidirectionnal traversal)
+ * @li @ref VectorQueue -- extensible array manageable as a queue
+ *
+ * @section list List
  * 
- * @section llists Linked Lists
+ * A list is a specific collection that allows to list the contained arguments
+ * (@ref List) using an iterator.
  * 
- * There are two kinds of list:
- * @li @ref SLList -- single link list (unidirectionnal traversal),
- * @li @ref DLList -- double link list (bidirectionnal traversal).
- * 
- * @section trees Trees
- * 
- * Tree data structures with different implementation flavors may be found.
- * 
- * The simplest one is the @ref BinTree binary tree with a specialized sorted
- * version, @ref SortedBinTree.
- * 
- * A generic n-ary tree implementation is provided by the @ref Tree class while
- * the @ref DAGNode provides an iffecient implementation of tree-like Directed
- * Acyclic Graphs. 
+ * @li @ref AllocatedTable -- ELM wrapper around C++ table managing its memory
+ * @li @ref AVLTree -- AVL balanced binary tree
+ * @li @ref DLList -- double link list (bidirectionnal traversal)
+ * @li @ref FragTable -- extensible array accepting big number of items
+ * @li @ref HashTable -- map implemented as a hashing table
+ * @li @ref SortedBinMap -- map implemented by a binary tree
+ * @li @ref SLList -- single link list (unidirectionnal traversal)
+ * @li @ref Table -- ELM wrapper around C++ table
+ * @li @ref Vector -- extensible array
+ * @li @ref VectorQueue -- extensible array manageable as a queue
+ *
+ * @section tree Tree
+ *
+ * Tree are may be implemented according different data structures.
+ *
+ * @li @ref SortedBinTree -- sorted binary tree
+ * @li @ref Tree -- children-sibling list tree implementation
+ *
+ * @section set Set
+ *
+ * Set stores items without any order and provides fast access to contained
+ * items (@ref Set).
+ *
+ * @li @ref AVLTree -- AVL balanced tree set
+ * @li @ref Vector -- extensible table
+ *
+ * @section graph Graph Structure
+ *
+ * @li @ref DAGNode -- Directed Acyclic Graph implementation
  */
 
 } } // elm::genstruct
