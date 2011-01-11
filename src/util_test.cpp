@@ -27,6 +27,8 @@ namespace elm {
  * @param name	Name of the test case (string).
  * @note	These macros definition may be discarded defining the ELM_NO_SHORTCUT
  * identifier, for avoiding name clashes for example.
+ *
+ * @ingroup utilities
  */
 
 
@@ -34,30 +36,35 @@ namespace elm {
  * @def CHECK(test)
  * See @ref CHECK_BEGIN.
  * @param test	Test to check.
+ * @ingroup utilities
  */
 
 
 /**
  * @def CHECK_END
  * See @ref CHECK_END.
+ * @ingroup utilities
  */
 
 
 /**
  * @def ELM_CHECK_BEGIN(name)
  * Same as @ref CHECK_BEGIN.
+ * @ingroup utilities
  */
 
 
 /**
  * @def ELM_CHECK(test)
  * Same as @ref CHECK.
+ * @ingroup utilities
  */
 
 
 /**
  * @def ELM_CHECK_END
  * Same as @ref CHECK_END
+ * @ingroup utilities
  */
 
 /**
@@ -65,18 +72,21 @@ namespace elm {
  * Test if the result of a test is equal to a reference value.
  * @param res	Result of the test.
  * @param ref	Reference value.
+ * @ingroup utilities
  */
 
 
 /**
  * @def CHECK_EQUAL(res, ref)
  * See ELM_CHECK_EQUAL.
+ * @ingroup utilities
  */
 
 
 /**
  * @class TestCase
  * This class is used for implementing macro for unit tests.
+ * @ingroup utilities
  */
 
 
