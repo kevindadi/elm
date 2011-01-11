@@ -215,9 +215,13 @@
  * 
  */
 
-
 /**
- * @defgroup deprecated Deprecation Management
+ * @defgroup utilities Development Utilities
+ *
+ * The entities defined in this section are targeted to help development and testing instead
+ * of representing usual classes embedded in your application.
+ *
+ * @section deprecated Deprecation Management
  *
  * ELM provides a small macro found in <elm/deprecated.h>, called DEPRECATED.
  *
@@ -235,6 +239,51 @@
  * 		// body of the function
  * 	}
  * @endcode
+ *
+ * @section helper	Helper Methods
+ *
+ * ELM provides several helper method for using the different classes. They are prefixed by a double underscore and
+ * all only compiled if a matching define is not provided.
+ *
+ * @li @c __size(): gives the full size of the data structure (removed if @c NSIZE is defined)
+ * @li @c __print(): display an internal representation of the class (removed if @c NDEBUG is defined)
+ *
+ * @section test	Testing
+ *
+ * This module provides a poor, but existing, solution to unit testing in C++.
+ * It provides macros and classes to perform statistics on unit testing
+ * and makes automatic some test procedures.
+ *
+ * The example show how the module works:
+ * @code
+ * #include <elm/util/test.h>
+ *
+ * void my_test(void) {
+ * 		CHECK_BEGIN("my test")
+ *
+ * 			// test 1
+ * 			CHECK(result1 == expected1);
+ *
+ * 			// test 2
+ * 			CHECK(result2 == expected2);
+ *
+ * 			...
+ *
+ * 		CHECK_END
+ * }
+ * @endcode
+ *
+ * The test must be enclosed in @c CHECK_BEGIN / @c CHECK_END pair and the test case name must be given.
+ * Then the test are performed ending with a call to a macro allowing to test and record result of the test.
+ *
+ * The existing macro are:
+ * @li @c CHECK(x) -- check if x is true
+ * @li @c CHECK_EQUAL(result, expected) -- test equality and, if it fails, display the failed result value
+ * @li @c CHECK_EXCEPTION(exception, action) -- perform the action and the test fails if the exception is not thrown
+ * @li @c FAIL_ON_EXCEPTION(exception, action) -- perform the action and the test fails if the exception is thrown
+ *
+ * There are also some useful macros as:
+ * @li @c REQUIRE(cnd, action) -- perform the action only if the given condition is true, else stop the test.
  *
  */
 
