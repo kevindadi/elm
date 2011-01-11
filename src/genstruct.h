@@ -36,6 +36,7 @@ namespace elm { namespace genstruct {
  * whose items are accessible by their index.
  *
  * @li @ref AllocatedTable -- ELM wrapper around C++ table managing its memory
+ * @li @ref FixArray -- Embeds a fixed size C++ table
  * @li @ref FragTable -- extensible array accepting big number of items
  * @li @ref Table -- ELM wrapper around C++ table
  * @li @ref Vector -- extensible array
@@ -99,6 +100,22 @@ namespace elm { namespace genstruct {
  * @section graph Graph Structure
  *
  * @li @ref DAGNode -- Directed Acyclic Graph implementation
+ */
+
+
+/**
+ * @class FixArray
+ *
+ * This class provides a safe wrapper around fixed-size array of C embedding it
+ * inside the class (no allocation for the array).
+ * It provides the following concepts:
+ * @li @ref elm::concept::Collection
+ * @li @ref elm::concept::Array
+ * @li @ref elm::concept::MutableArray
+ *
+ * @param T		Type of array items.
+ * @param S		Size of the array.
+ * @param E		(optional) Equivalence implementation.
  */
 
 } } // elm::genstruct

@@ -67,7 +67,32 @@ namespace elm {
  * @li is_class -- true if T is a class
  * @li is_ptr -- true if T is a pointer
  * @li is_ref -- true if T is a reference
+ * @li is_deep -- true if T requires deep copy (that is, requires copy using operator = instead of
+ * system fast byte-per-byte copy mechanism)
+ * @li is_virtual -- true if T contains virtual functions
  *
+ * @par Array Copying
+ *
+ * The include file <otawa/util/array.h> provides functions to handling arrays:
+ * @li @ref array::copy() -- copy without overlapping
+ * @li @ref array::move() -- copy with overlapping
+ * @li @ref array::clear() -- set to initial value
+ * @li @ref array::set() -- set all items to a specific values
+ *
+ * According to the type of the type of the items, these functions may invokes
+ * specific system functions to make faster this operation. Usually, only types
+ * without pointers can only be processed in this way (scalar data) but you can
+ * informs that your own class can be shallowly copied by specializing the @ref type_info
+ * class:
+ * @code
+ * class MyClass {
+ * 	...
+ * };
+ *
+ * template <>
+ * class type_info<MyClass>: public class_t<T> { enum { is_deep = 1 }; };
+ *
+ * @endcode
  */
 
 /**
@@ -110,6 +135,23 @@ namespace elm {
 /**
  * @var type_info<T>::is_enum
  * True if T is an enumerated type.
+ */
+
+
+/**
+ * @var type_info<T>::is_deep
+ * Does not support byte-to-byte copy.
+ */
+
+
+/**
+ * @var type_info<T>::is_virtual
+ * Contains virtual functions.
+ */
+
+/**
+ * @var type_info<T>::null
+ * Null value for the current type.
  */
 
 

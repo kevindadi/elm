@@ -46,6 +46,7 @@ libelm_la_SOURCES= \
 	inhstruct_DLList.cpp \
 	inhstruct_SLList.cpp \
 	inhstruct_Tree.cpp \
+	int.cpp \
 	io_BlockInStream.cpp \
 	io_BlockOutStream.cpp \
 	io_BufferedInStream.cpp \
