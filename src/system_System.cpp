@@ -28,6 +28,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <time.h>
 
 #include <elm/assert.h>
 #include <elm/deprecated.h>
@@ -173,6 +174,11 @@ Pair<PipeInStream *, PipeOutStream *> System::pipe(void) throw(SystemException) 
  * @return		Random number.
  */
 unsigned int System::random(unsigned int top) {
+	static bool init = false;
+	if(!init) {
+		srand(time(NULL));
+		init = true;
+	}
 	int op = rand();
 	return int(double(op) * top / RAND_MAX);
 }
