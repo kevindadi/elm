@@ -85,7 +85,7 @@ public:
 	void setLength(int new_length);
 	inline Table<T> detach(void);
 	inline void copy(const Vector& vec);
-	inline Vector<T>& operator=(const Vector& vec) { copy(vec); };
+	inline Vector<T>& operator=(const Vector& vec) { copy(vec); return *this; };
 
 	// Stack processing
 	inline void push(const T& value);
