@@ -24,6 +24,7 @@
 
 #include <elm/utility.h>
 #include <elm/PreIterator.h>
+#include <elm/genstruct/adapter.h>
 
 namespace elm { namespace genstruct {
 
@@ -46,9 +47,8 @@ protected:
 	int cnt;
 };
 
-
 // AVLTree class
-template <class T, class C = elm::Comparator<T> >
+template <class T, class K = Id<T>, class C = elm::Comparator<typename K::t> >
 class AVLTree: public AbstractAVLTree {
 	static const int MAX_HEIGHT = 32;
 protected:
@@ -61,9 +61,9 @@ protected:
 		inline Node *succ(int dir) const { return (Node *)links[dir]; }
 	};
 
-	const Node *find(const T& item) const {
-		for(const Node *p = (Node *)root; p;) {
-			int cmp = C::compare(item, p->data);
+	Node *find(const typename K::t& key) const {
+		for(Node *p = (Node *)root; p;) {
+			int cmp = C::compare(key, K::key(p->data));
 			if(cmp < 0)
 				p = p->left();
 			else if(cmp > 0)
@@ -75,10 +75,14 @@ protected:
     }
 
 public:
+	inline T *get(const typename K::t& key)
+		{ Node *node = find(key); if(!node) return 0; else return &node->data; }
+	inline const T *get(const typename K::t& key) const
+		{ const Node *node = find(key); if(!node) return 0; else return &node->data; }
 
 	// Collection concept
 	inline int count(void) const { return cnt; }
-	inline bool contains(const T& item) const { return find(item) != NULL; }
+	inline bool contains(const typename K::t& item) const { return find(item) != NULL; }
 	inline bool isEmpty(void) const { return cnt == 0; }
 	inline operator bool(void) const { return !isEmpty(); }
 
@@ -90,7 +94,7 @@ public:
 	// Iterator class	
 	class Iterator: public PreIterator<T, Iterator> {
 	public:
-		inline Iterator(const AVLTree<T, C>& tree): sp(stack)
+		inline Iterator(const AVLTree<T, K, C>& tree): sp(stack)
 			{ *sp = (Node *)root; if(*sp) sp++; }
 		inline Iterator(const Iterator& iter): sp(stack + iter.sp - iter.stack)
 			{ for(Node **p = stack, **q = iter.stack; q < sp; p++, q++) *p = *q; }
@@ -127,7 +131,7 @@ public:
 		// finding the insertion position
 		unsigned char dir = 0;
 		for(q = z, p = y; p != NULL; q = p, p = p->succ(dir)) {
-			int cmp = C::compare(item, p->data);
+			int cmp = C::compare(K::key(item), K::key(p->data));
 			if(p->balance != 0) {
      			z = q;
      			y = p;
@@ -146,7 +150,7 @@ public:
 	inline void addAll(const Co<T>& coll)
 		{ for(typename Co<T>::Iterator iter(coll); iter; iter++) add(iter); }
 	
-	void remove(const T& item) {
+	void remove(const typename K::t& item) {
 		AbstractAVLTree::Node *pa[MAX_HEIGHT];
 		unsigned char da[MAX_HEIGHT];
 		int k;
@@ -154,7 +158,7 @@ public:
 		// find the item
 		k = 0;
 		Node *p = (Node *)&root;
-		for(int cmp = - 1; cmp != 0; cmp = C::compare(item, p->data)) {
+		for(int cmp = - 1; cmp != 0; cmp = C::compare(item, K::key(p->data))) {
 			int dir = cmp > 0;
 			pa[k] = p;
 			da[k++] = dir ;
