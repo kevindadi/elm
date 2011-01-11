@@ -28,15 +28,20 @@
 namespace elm {
 
 // type_info trait
-template <class T> struct type_info {
+template <class T>
+class class_t {
+public:
 	enum { is_type = 0 };
 	enum { is_scalar = 0 };
 	enum { is_enum = 0 };
 	enum { is_class = 1 };
 	enum { is_ptr = 0 };
 	enum { is_ref = 0 };
+	enum { is_deep = 1 };
+	enum { is_virtual = 1 };
 	static inline CString name(void) { return T::_class.name(); }
 };
+template <class T> class type_info: public class_t<T> { };
 typedef struct type_t {
 	enum { is_type = 1 };
 	enum { is_scalar = 0 };
@@ -44,6 +49,8 @@ typedef struct type_t {
 	enum { is_class = 0 };
 	enum { is_ptr = 0 };
 	enum { is_ref = 0 };
+	enum { is_deep = 1 };
+	enum { is_virtual = 0 };
 } type_t;
 typedef struct scalar_t {
 	enum { is_type = 1 };
@@ -52,6 +59,8 @@ typedef struct scalar_t {
 	enum { is_class = 0 };
 	enum { is_ptr = 0 };
 	enum { is_ref = 0 };
+	enum { is_deep = 0 };
+	enum { is_virtual = 0 };
 } scalar_t;
 typedef struct ptr_t {
 	enum { is_type = 1 };
@@ -60,6 +69,8 @@ typedef struct ptr_t {
 	enum { is_class = 0 };
 	enum { is_ptr = 1 };
 	enum { is_ref = 0 };
+	enum { is_deep = 1 };
+	enum { is_virtual = 0 };
 } ptr_t;
 typedef struct ref_t {
 	enum { is_type = 1 };
@@ -68,6 +79,8 @@ typedef struct ref_t {
 	enum { is_class = 0 };
 	enum { is_ptr = 0 };
 	enum { is_ref = 1 };
+	enum { is_deep = 1 };
+	enum { is_virtual = 0 };
 } ref_t;
 typedef struct enum_t {
 	enum { is_type = 1 };
@@ -76,6 +89,8 @@ typedef struct enum_t {
 	enum { is_scalar = 1 };
 	enum { is_ptr = 0 };
 	enum { is_ref = 0 };
+	enum { is_deep = 0 };
+	enum { is_virtual = 0 };
 } enum_t;
 
 
