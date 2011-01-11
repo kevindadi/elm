@@ -161,7 +161,6 @@ void XSLTransform::handle_error(void *ctx, const char *msg, ...) {
 	va_start(args, msg);
 	vsnprintf(buf, buf_size, msg, args);
 	va_end(args);
-	buf[strlen(buf) - 1] = '\0';
 	xslt->onError(level_error, buf);
 }
 
