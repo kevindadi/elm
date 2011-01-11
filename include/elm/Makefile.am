@@ -23,6 +23,7 @@ includeelm_HEADERS = \
 	assert.h \
 	debug.h \
 	deprecated.h \
+	int.h \
 	io.h \
 	PreIterator.h \
 	meta.h \
