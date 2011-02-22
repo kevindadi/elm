@@ -1,115 +1,251 @@
 /*
  * $Id$
- * Copyright (c) 2004, Alfheim Corporation.
+ * Copyright (c) 2003, Alfheim Corporation.
  *
- * collection.cc -- collection classes implementation.
+ * src/Collection.cpp -- Collection class implementation.
  */
 
-#include <elm/collection.h>
-
-namespace elm {
-
-// int_hkey
-class IntHashKey: public HashKey<int> {
-	virtual unsigned long hash(int v) {
-		return (unsigned long)v;
-	};
-	virtual bool equals(int key1, int key2) {
-		return key1 == key2;
-	};
-};
-static IntHashKey int_hkey_obj;
-HashKey<int>& HashKey<int>::def = int_hkey_obj;
-
-// pointer_hkey
-class PointerHashKey: public HashKey<void *> {
-	virtual unsigned long hash(void *v) {
-		return (unsigned long)v;
-	};
-	virtual bool equals(void *key1, void * key2) {
-		return key1 == key2;
-	};
-};
-static PointerHashKey pointer_hkey_obj;
-HashKey<void *>& HashKey<void *>::def = pointer_hkey_obj;
-
-// cstring_hkey
-class CStringHashKey: public HashKey<CString> {
-	virtual unsigned long hash(CString str) {
-		unsigned long h = 0, g;
-		const char *id = str.chars();
-		while(*id) {
-			h = (h << 4) + *id;
-			if(g = h & 0xf0000000) {
-				h = h ^ (g >> 24);
-				h = h ^ g;
-			}
-			id++;
-		}
-		return h;
-	};
-	virtual bool equals(CString key1, CString key2) {
-		return key1 == key2;
-	};
-};
-static CStringHashKey cstring_hkey_obj;
-HashKey<CString>& HashKey<CString>::def = cstring_hkey_obj;
-
-// string_hkey
-class StringHashKey: public HashKey<String> {
-	virtual unsigned long hash(String str) {
-		unsigned long h = 0, g;
-		for(int i = 0; i < str.length(); i++) {
-			h = (h << 4) + str.charAt(i);
-			if(g = h & 0xf0000000) {
-				h = h ^ (g >> 24);
-				h = h ^ g;
-			}
-		}
-		return h;
-	};
-	virtual bool equals(String key1, String key2) {
-		return key1 == key2;
-	};
-};
-static StringHashKey string_hkey_obj;
-HashKey<String>& HashKey<String>::def = string_hkey_obj;
-
-// int_comp
-class IntComparator: public Comparator<int> {
-	virtual int compare(int v1, int v2) {
-		return v1 > v2 ? 1 : (v1 == v2 ? 0 : -1);
-	};
-};
-static IntComparator int_comp_obj;
-Comparator<int>& int_comp = int_comp_obj;
-
-// pointer_comp
-class PointerComparator: public Comparator<void *> {
-	virtual int compare(void *v1, void *v2) {
-		return v1 > v2 ? 1 : (v1 == v2 ? 0 : -1);
-	};
-};
-static PointerComparator pointer_comp_obj;
-Comparator<void *>& pointer_comp = pointer_comp_obj;
-
-// cstring_comp
-class CStringComparator: public Comparator<CString> {
-	virtual int compare(CString v1, CString v2) {
-		return v1.compare(v2);
-	};
-};
-static CStringComparator cstring_comp_obj;
-Comparator<CString>& cstring_comp = cstring_comp_obj;
-
-// string_comp
-class StringComparator: public Comparator<String> {
-	virtual int compare(String v1, String v2) {
-		return v1.compare(v2);
-	};
-};
-static StringComparator string_comp_obj;
-Comparator<String>& string_comp = string_comp_obj;
+ #include <elm/Collection.h>
+ 
+ namespace elm {
 
 
-};
+/**
+ * @class Collection
+ * A collection is an interface to any composite object containing a set of
+ * other data. It provides standard methods for processing this set of object.
+ * Remark that collection are immutable. If you require mutable collection,
+ * use the MutableCollection class.
+ */
+
+
+/**
+ * @fn int Collection::count(void) const;
+ * Count the number of items in the collection.
+ * @return	Item count.
+ */
+
+
+/**
+ * @fn bool Collection::isEmpty(void) const;
+ * Test if the collection is empty.
+ * @return	True if collection is empty, false else.
+ */
+
+
+/**
+ * @fn bool Collection::contains(const T value) const;
+ * Test if the collection contains the given item.
+ * @param value	Item to look for.
+ * @return		True if value is in the collection, false else.
+ */
+
+
+/**
+ * @fn bool Collection::containsAll(const Collection<T> *values) const;
+ * Test if a collection is contained in the current collection.
+ * @param values	Collection to test.
+ * @return			True if the current collection contains all values of the
+ * 					given collection, false else.
+ */
+
+
+/**
+ * @fn bool Collection::equals(const Collection<T> *values) const;	
+ * Test if the current collection is equal to the given one.
+ * @param values	Collection to test.
+ * @return			True if both collections are equal, false else.
+ */
+
+
+/**
+ * @fn IteratorInst<T> *Collection::visit(void) const;
+ * Get an iterator on the collection.
+ * @return	Collection iterator.
+ */
+
+
+/**
+ * @fn Collection::operator IteratorInst<T> *(void) const;
+ * Same as visit().
+ */
+
+
+/**
+ * @fn MutableCollection<T> *Collection::empty(void) const;
+ * Get an empty mutable collection (used for implementing set operations).
+ * @return	Empty mutable collection.
+ */
+
+
+/**
+ * @fn MutableCollection<T> *Collection::copy(void) const;
+ * Copy the current collection to a mutable one.
+ * @return	Copy of the current collection.
+ */
+
+
+/**
+ * @fn Collection<T> *Collection::merge(const Collection<T> *values) const;
+ * Make the union of current collection with argument collection.
+ * @param values	Collection to merge with current one.
+ * @return			Result of merge.
+ */
+
+
+/**
+ * @fn Collection<T> *Collection::retain(const Collection<T> *values) const;
+ * Return current collection without items in the argument collection
+ * (set difference).
+ * @param values	Collection retain.
+ * @return			Result of difference.
+ */
+
+
+/**
+ * @fn Collection<T> *Collection::meet(const Collection<T> *values) const;
+ * Perform the intersection of current collection with argument collection.
+ * @param values	Collection to intersect with.
+ * @return			Intersection result.
+ */
+
+
+/**
+ * @fn Collection::operator bool(void)
+ * Same as not isEmpty().
+ */
+
+
+/**
+ * @fn Collection<T>& Collection::operator+(const Collection<T>& values);
+ * Same as @ref merge().
+ */
+
+
+/**
+ * @fn Collection<T>& Collection::operator-(const Collection<T>& values);
+ * Same as @ref retain().
+ */
+ 
+
+/**
+ * @fn Collection<T>& Collection::operator*(const Collection<T>& values);
+ * Same as @ref meet().
+ */
+
+
+/**
+ * @fn bool Collection::operator==(const Collection<T>& values);
+ * Same as @ref equals().
+ */
+
+
+/**
+ * @fn bool Collection::operator!=(const Collection<T>& values);
+ * Perform not @ref equals().
+ */
+
+
+/**
+ * @fn bool Collection::operator<(const Collection<T>& values);
+ * Test of inclusion with equality of current collection in the argument collection.
+ */
+
+
+/**
+ * @fn bool Collection::operator<=(const Collection<T>& values);
+ * Test of inclusion of current collection in the argument collection.
+ */
+
+
+/**
+ * @fn bool Collection::operator>(const Collection<T>& values);
+ * Test if the current includes the given one but is not equal.
+ */
+
+
+/**
+ * @fn bool Collection::operator>=(const Collection<T>& values);
+ * Test if the current collection includes the given one.
+ */
+
+
+/**
+ * @fn bool Collection::operator()(const T value);
+ * Same as @ref contains().
+ */
+
+
+/**
+ * @class MutableCollection
+ * This classe inherits from Collection class but provides facilities for
+ * modifying the items contained inside.
+ */
+
+
+/**
+ * @fn MutableIteratorInst<T> *MutableCollection::edit(void);
+ * Get a mutable iterator.
+ * @return	Mutable iterator.
+ */
+
+
+/**
+ * @fn void MutableCollection::add(const T value);
+ * Add an item to the collection.
+ * @param value	Value to add.
+ */
+
+
+/**
+ * @fn void MutableCollection::addAll(const Collection<T> *values);
+ * Add a collection to the current collection.
+ * @param values	Collection to add.
+ */
+
+
+/**
+ * @fn void MutableCollection::remove(const T value);
+ * Remove an item from the collection.
+ * @param value	Value to remove.
+ */
+
+
+/**
+ * @fn void MutableCollection::removeAll(const Collection<T> *values);
+ * Remove a collection from the current collection.
+ * @param values	Collection to remove.
+ */
+
+
+/**
+ * @fn void MutableCollection::clear(void);
+ * Clear the collection.
+ */
+
+
+/**
+ * @fn MutableCollection<T>& MutableCollection::operator+=(const T value);
+ * Same as @ref add().
+ */
+
+
+/**
+ * @fn MutableCollection<T>& MutableCollection::operator+=(const Collection<T>& values);
+ * Same as @ref addAll().
+ */
+
+
+/**
+ * @fn MutableCollection<T>& MutableCollection::operator-=(const T value);
+ * Same as @ref remove().
+ */
+ 
+
+/**
+ * @fn MutableCollection<T>& MutableCollection::operator-=(const Collection<T>& values);
+ * Same as @ref removeAll().
+ */
+
+}	// elm
+ 

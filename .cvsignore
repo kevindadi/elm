@@ -19,3 +19,6 @@ config.guess
 depcomp
 config.h
 ltmain.sh
+CMakeFiles
+cmake_install.cmake
+CMakeCache.txt

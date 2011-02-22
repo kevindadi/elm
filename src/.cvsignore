@@ -7,3 +7,4 @@ AAPDIR
 *.la
 *.lo
 *.libs
+cmake_install.cmake
