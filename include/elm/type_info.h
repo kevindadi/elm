@@ -152,8 +152,8 @@ template <> struct type_info<float>: public scalar_t {
 	static inline cstring name(void) { return "<float>"; }
 };
 template <> struct type_info<double>: public scalar_t {
-	static const float min = DBL_MIN;
-	static const float max = DBL_MAX;
+	static const float min = FLT_MIN;
+	static const float max = FLT_MAX;
 	static const double null = 0;
 	static inline cstring name(void) { return "<double>"; }
 };
