@@ -32,7 +32,7 @@ namespace elm { namespace io {
 // Input class
 class Input {
 public:
-	inline Input(void): strm(&stdin), buf(-1) { };
+	inline Input(void): strm(&in), buf(-1) { };
 	inline Input(InStream& stream): strm(&stream), buf(-1) { };
 	inline InStream& stream(void) const { return *strm; };
 	inline void setStream(InStream& stream) { strm = &stream; buf = -1; };

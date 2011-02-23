@@ -74,8 +74,8 @@ public:
 	StringInput(const string& str);
 	StringInput(cstring str);
 	~StringInput(void);
-	inline StringInput(StringInput& _in) { in.setStream(_in.in.stream()); _in.in.setStream(io::stdin); }
-	inline StringInput& operator=(StringInput& _in) { in.setStream(_in.in.stream()); _in.in.setStream(io::stdin); return *this; }
+	inline StringInput(StringInput& _in) { in.setStream(_in.in.stream()); _in.in.setStream(io::in); }
+	inline StringInput& operator=(StringInput& _in) { in.setStream(_in.in.stream()); _in.in.setStream(io::in); return *this; }
 	template <class T> StringInput& operator>>(T& val) { in.operator>>(val); return *this; }
 private:
 	io::Input in;

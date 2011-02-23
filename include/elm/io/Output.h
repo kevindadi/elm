@@ -56,7 +56,7 @@ class Output {
 	char *horner(char *p, t::uint32 val, int base, char enc = 'a');
 	char *horner(char *p, t::uint64 val, int base);
 public:
-	inline Output(void): strm(&stdout) { };
+	inline Output(void): strm(&out) { };
 	inline Output(OutStream& stream): strm(&stream) { };
 	inline OutStream& stream(void) const { return *strm; };
 	inline void setStream(OutStream& stream) { strm = &stream; };
