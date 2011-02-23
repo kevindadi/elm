@@ -514,12 +514,12 @@ void Output::print(const IntFormat fmt) {
  * Standard output.
  * @ingroup ios
  */
-io::Output cout(io::stdout);
+io::Output cout(io::out);
 
 /**
  * Standard error output.
  * @ingroup ios
  */
-io::Output cerr(io::stderr);
+io::Output cerr(io::err);
 
 } // elm

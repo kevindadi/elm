@@ -92,7 +92,7 @@ StringInput::StringInput(cstring str) {
 /**
  */
 StringInput::~StringInput(void) {
-	if(&in.stream() != &io::stdin) delete &in.stream();
+	if(&in.stream() != &io::in) delete &in.stream();
 }
 
 } // elm
