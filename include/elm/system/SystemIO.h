@@ -33,9 +33,9 @@ protected:
 // Standard Streams
 namespace io {
 
-extern system::SystemInStream& stdin; 
-extern system::SystemOutStream& stdout; 
-extern system::SystemOutStream& stderr; 
+extern system::SystemInStream& in; 
+extern system::SystemOutStream& out; 
+extern system::SystemOutStream& err; 
 
 } } // elm::io
 
