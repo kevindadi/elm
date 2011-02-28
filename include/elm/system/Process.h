@@ -12,8 +12,16 @@ namespace elm { namespace system {
 // Process class
 class Process {
 	friend class ProcessBuilder;
+#if defined(__LINUX)
 	int pid, rcode;
 	Process(int _pid);
+#elif defined(__WIN32) || defined(__WIN64)
+	PROCESS_INFORMATION pi;
+	DWORD rcode;
+	Process(PROCESS_INFORMATION _pi);
+#else
+#error "System not supported"
+#endif
 public:
 	bool isAlive(void);
 	int returnCode(void);
