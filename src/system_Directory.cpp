@@ -47,8 +47,13 @@ namespace elm { namespace system {
 Directory *Directory::make(Path path) {
 	errno = 0;
 	// Build the directory
+#if defined(__MINGW__) || defined(__MINGW32__)
+	if(mkdir(&path.toString()) < 0)
+		throw SystemException(errno, "file");
+#else
 	if(mkdir(&path.toString(), 0777) < 0)
 		throw SystemException(errno, "file");
+#endif
 
 	// Get the file
 	FileItem *item = FileItem::get(path);

@@ -49,7 +49,11 @@ namespace elm { namespace system {
 // Standard Input
 class StandardInStream: public SystemInStream {
 public:
+#if defined(__LINUX)
 	inline StandardInStream(int fd): SystemInStream(fd) { };
+#elif defined(__WIN32) || defined(WIN64)
+	inline StandardInStream(HANDLE fd): SystemInStream(fd) { };
+#endif
 };
 static StandardInStream stdin_object(0);
 
@@ -57,7 +61,11 @@ static StandardInStream stdin_object(0);
 // Standard Output
 class StandardOutStream: public SystemOutStream {
 public:
+#if defined(__LINUX)
 	inline StandardOutStream(int fd): SystemOutStream(fd) { };
+#elif defined(__WIN32) || defined(__WIN64)
+	inline StandardOutStream(HANDLE fd): SystemOutStream(fd) { };
+#endif
 };
 static StandardOutStream stdout_object(1);
 static StandardOutStream stderr_object(2);

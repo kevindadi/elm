@@ -26,9 +26,12 @@
 #include <errno.h>
 #include <elm/system/ProcessBuilder.h>
 #include <elm/system/SystemException.h>
+#if defined(__WIN32) || defined(WIN64)
+#include <windows.h>
+#endif
 
 extern char **environ;
- 
+
 namespace elm { namespace system {
 
 /**
@@ -43,9 +46,9 @@ namespace elm { namespace system {
  * @param command	Command to use.
  */
 ProcessBuilder::ProcessBuilder(CString command)
-:	in(&io::stdin),
-	out(&io::stdout),
-	err(&io::stderr)
+:	in(&io::in),
+ 	out(&io::out),
+ 	err(&io::err)
 {
 	args.add(command);
 }
@@ -93,55 +96,59 @@ void ProcessBuilder::setError(SystemOutStream *_err) {
  * @throws SystemException	Thrown if there is an error during the build.
  */
 Process *ProcessBuilder::run(void) {
-	int old_in = -1, old_out = -1, old_err = -1;
+#if defined(__LINUX)
 	int error = 0;
+	int old_in = -1, old_out = -1, old_err = -1;
+
 	Process *process = 0;
-	
+
 	// Prepare the streams
-	if(in->fd() != io::stdin.fd()) {
+	if(in->fd() != io::in.fd()) {
 		old_in = dup(0);
 		if(old_in < 0)
 			error = errno;
 		else
 			dup2(in->fd(), 0);
 	}
-	if(!errno && out->fd() != io::stdout.fd()) {
+	if(!errno && out->fd() != io::out.fd()) {
 		old_out = dup(1);
 		if(old_out < 0)
 			error = errno;
 		else
 			dup2(out->fd(), 1);
 	}
-	if(!errno && err->fd() != io::stderr.fd()) {
+	if(!errno && err->fd() != io::err.fd()) {
 		old_err = dup(2);
 		if(old_err < 0)
 			error = errno;
 		else
 			dup2(err->fd(), 2);
 	}
-	
+
 	// Create the process
 	if(!error) {
 		int pid = fork();
+		// error
 		if(pid < 0)
 			error = errno;
+		// father
 		else if(pid != 0)
 			process = new Process(pid);
+		// son
 		else {
-			
+
 			// Build arguments
 			char *tab[args.count() + 1];
 			for(int i = 0; i < args.count(); i++)
 				tab[i] = (char *)&args[i];
 			tab[args.count()] = 0;
-			
+
 			// Launch the command
 			execvp(tab[0], tab);
 			exit(1);
 		}
 	}
-	
-	
+
 	// Reset the streams
 	if(old_in >= 0) {
 		close(0);
@@ -158,7 +165,35 @@ Process *ProcessBuilder::run(void) {
 		dup2(old_err, 2);
 		close(old_err);
 	}
-	
+
+#elif defined(__WIN32) || defined(__WIN64)
+	// no  need to redirect output, if bInheritHandles is set to false when creating process
+	// it uses standard input, output and error output
+
+	int error = 0;
+	Process *process;
+	PROCESS_INFORMATION *pi = new PROCESS_INFORMATION;
+	STARTUPINFO si = {sizeof(si)};
+
+
+	if (!error) {
+		// Build arguments
+		StringBuffer tab;
+		for(int i = 0; i < args.count(); i++)
+			tab << " " << args[i];
+		char tabtemp[tab.length() +1];
+		strcpy(tabtemp,tab.toString().chars());
+		// Launch process
+		if(CreateProcess(NULL,tabtemp,0,0,FALSE,0,0,0,&si,pi) == 0)
+			error = errno;
+		process = new Process(pi);
+
+	}
+#else
+#error SystemException "System Unsupported"
+#endif
+
+
 	// Return the result
 	if(error)
 		throw new SystemException(error, "process building");

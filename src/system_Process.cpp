@@ -22,11 +22,19 @@
 
 #include <elm/assert.h>
 #include <sys/types.h>
+#if defined(__LINUX)
 #include <sys/errno.h>
-#include <sys/wait.h> 
+#include <sys/wait.h>
+#elif defined(__MINGW__) || defined(__MINGW32__)
+#include <errno.h>
+#endif
+#if defined(__WIN32) || defined(__WIN64)
+#include <windows.h>
+#endif
 #include <signal.h>
 #include <elm/system/Process.h>
 #include <elm/system/SystemException.h>
+
 
 namespace elm { namespace system {
 
@@ -41,9 +49,16 @@ namespace elm { namespace system {
  * Build a new process.
  * @param _pid	Process identifier.
  */
+#if defined(__LINUX)
 Process::Process(int _pid): pid(_pid) {
 	ASSERTP(pid >= 0, "negative PID");
 }
+#elif defined(__WIN32) || defined(__WIN64)
+Process::Process(void* _pi): pi(_pi){
+}
+#else
+#error "Unsupported platform"
+#endif
 
 
 /**
@@ -52,6 +67,7 @@ Process::Process(int _pid): pid(_pid) {
  * @throws SystemException	On process system error.
  */
 bool Process::isAlive(void) {
+#if defined(__LINUX)
 	if(pid < 0)
 		return false;
 	int result = waitpid(pid, &rcode, WNOHANG);
@@ -64,6 +80,19 @@ bool Process::isAlive(void) {
 	}
 	else
 		throw SystemException(errno, "process information");
+#elif defined(__WIN32) || defined(__WIN64)
+	if(GetExitCodeProcess( reinterpret_cast<PROCESS_INFORMATION&>(pi).hProcess, &rcode ) != 0){
+		if(rcode != STILL_ACTIVE)
+			return false;
+		else
+			return true;
+	}
+	else
+		throw SystemException(errno, "process information");
+#else
+#error "Unsupported platform"
+#endif
+
 }
 
 
@@ -73,9 +102,20 @@ bool Process::isAlive(void) {
  * @throws SystemException	On process system error.
  */
 int Process::returnCode(void) {
+#if defined(__LINUX)
 	if(pid >= 0)
 		wait();
 	return rcode;
+#elif defined(__WIN32) || defined(__WIN64)
+	if(GetExitCodeProcess( reinterpret_cast<PROCESS_INFORMATION&>(pi).hProcess, &rcode) != 0){
+		wait();
+		return rcode;
+	}
+	else
+		throw SystemException(errno, "process get code");
+#else
+#error "Unsupported platform"
+#endif
 }
 
 
@@ -84,9 +124,16 @@ int Process::returnCode(void) {
  * @throws SystemException	On process system error.
  */
 void Process::kill(void) {
+#if defined(__LINUX)
 	ASSERT(pid >= 0);
 	if(::kill(pid, SIGKILL) < 0)
 		throw SystemException(errno, "process kill");
+#elif defined(__WIN32) || defined(__WIN64)
+	if(::TerminateProcess(reinterpret_cast<PROCESS_INFORMATION&>(pi).hProcess, 0) == 0)
+		throw SystemException(errno, "process kill");
+#else
+#error "Unsupported System"
+#endif
 }
 
 
@@ -94,6 +141,7 @@ void Process::kill(void) {
  * Wait the termination of the process.
  */
 void Process::wait(void) {
+#if defined(__LINUX)
 	if(pid < 0)
 		return;
 	if(waitpid(pid, &rcode, 0) >= 0) {
@@ -103,6 +151,18 @@ void Process::wait(void) {
 	}
 	else
 		throw new SystemException(errno, "process wait");	
+#elif defined(__WIN32) || defined(__WIN64)
+	if(GetExitCodeProcess(reinterpret_cast<PROCESS_INFORMATION&>(pi).hProcess, &rcode) != STILL_ACTIVE)
+		return;
+	if(WaitForSingleObject(reinterpret_cast<PROCESS_INFORMATION&>(pi).hProcess, INFINITE) != WAIT_FAILED ){
+		GetExitCodeProcess(reinterpret_cast<PROCESS_INFORMATION&>(pi).hProcess, &rcode);
+		return;
+	}
+	else
+		throw new SystemException(errno, "process wait");
+#else
+#error "Unsupported System"
+#endif
 }
 
 } } // elm::system

@@ -20,13 +20,19 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#if defined(__LINUX)
 #include <dlfcn.h>
+#elif defined(__WIN32) || defined(__WIN64)
+#include <windows.h>
+#endif
 #include <fcntl.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#if defined(__LINUX)
 #include <sys/stat.h>
 #include <sys/types.h>
+#endif
 #include <unistd.h>
 #include <time.h>
 
@@ -36,7 +42,8 @@
 #include <elm/system/System.h>
 #include <elm/system/SystemException.h>
 
-namespace elm { namespace system {
+namespace elm {
+namespace system {
 
 /**
  * @defgroup system_inter System Interface
@@ -95,44 +102,60 @@ namespace elm { namespace system {
  * A system stream implementing the input end of a pipe.
  */
 
-
 /**
  * Create a pipe stream.
  * @param fd	Unix file descriptor.
  */
+#if defined(__LINUX)
 PipeInStream::PipeInStream(int fd): SystemInStream(fd) {
 }
-
+#elif defined(__WIN32) || defined(__WIN64)
+PipeInStream::PipeInStream(HANDLE fd): SystemInStream(fd) {
+}
+#endif
 
 /**
  * Delete the pipe stream.
  */
 PipeInStream::~PipeInStream(void) {
+#if defined(__LINUX)
 	close(fd());
+#elif defined(__WIN32) || defined(__WIN64)
+	TerminateProcess(fd(),1);
+#else
+#error "System Unsupported";
+#endif
 }
-
 
 /**
  * @class  PipeOutStream
  * A system stream implementing the output end of a pipe.
  */
 
-
 /**
  * Build a pipe output stream.
  * @param fd	Unix file descriptor.
  */
+#if defined(__LINUX)
 PipeOutStream::PipeOutStream(int fd): SystemOutStream(fd) {
 }
-
+#elif defined(__WIN32) || defined(__WIN64)
+PipeOutStream::PipeOutStream(HANDLE fd): SystemOutStream(fd) {
+}
+#endif
 
 /**
  * Delete the pipe stream.
  */
 PipeOutStream::~PipeOutStream(void) {
+#if defined(__LINUX)
 	close(fd());
+#elif defined(__WIN32) || defined(__WIN64)
+	TerminateProcess(fd(),1);
+#else
+#error "System Unsupported";
+#endif
 }
-
 
 /**
  * @class System
@@ -140,15 +163,15 @@ PipeOutStream::~PipeOutStream(void) {
  * @ingroup system_inter
  */
 
-
 /**
  * Create a  pipe with input / output end streams.
  * @return	Linked streams.
  * @throws	System exception.
  */
-Pair<PipeInStream *, PipeOutStream *> System::pipe(void) throw(SystemException) {
+Pair<PipeInStream *, PipeOutStream *> System::pipe(void)
+throw (SystemException) {
+#if defined(__LINUX)
 	int fds[2];
-
 	// Create the pair
 	if(::pipe(fds) < 0) {
 		ASSERT(errno != EFAULT);
@@ -163,10 +186,24 @@ Pair<PipeInStream *, PipeOutStream *> System::pipe(void) throw(SystemException) 
 
 	// Return result
 	return pair(
-		new PipeInStream(fds[0]),
-		new PipeOutStream(fds[1]));
-}
+			new PipeInStream(fds[0]),
+			new PipeOutStream(fds[1]));
+#elif defined(__WIN32) || defined(__WIN64)
+	HANDLE fdsread = NULL;
+	HANDLE fdswrite = NULL;
 
+	if(CreatePipe(&fdsread,&fdswrite,NULL,0) == 0)
+		throw SystemException(errno, "pipe creation");
+
+	/* Apparently under windows the FD_CLOXEXC is useless */
+
+	return pair(
+			new PipeInStream(fdsread),
+			new PipeOutStream(fdswrite));
+#else
+#error throw SystemException "Unsupported System"
+#endif
+}
 
 /**
  * Generate an integer random number in interval [0, top[.
@@ -175,14 +212,13 @@ Pair<PipeInStream *, PipeOutStream *> System::pipe(void) throw(SystemException) 
  */
 unsigned int System::random(unsigned int top) {
 	static bool init = false;
-	if(!init) {
-		srand(time(NULL));
+	if (!init) {
+		srand( time(NULL));
 		init = true;
 	}
 	int op = rand();
 	return int(double(op) * top / RAND_MAX);
 }
-
 
 /**
  * Create a new file and open it to write.
@@ -191,13 +227,28 @@ unsigned int System::random(unsigned int top) {
  * @return		Opened file.
  * @throws		SystemException	Thrown if there is an error.
  */
-io::OutStream *System::createFile(const Path& path) throw(SystemException) {
+io::OutStream *System::createFile(const Path& path) throw (SystemException) {
+#if defined(__LINUX)
 	int fd = ::open(&path.toString(), O_CREAT | O_TRUNC | O_WRONLY, 0777);
 	if(fd == -1)
 		throw SystemException(errno, "file creation");
 	return new SystemOutStream(fd);
+#elif defined(__WIN32) || defined(__WIN64)
+	HANDLE fd;
+	fd=CreateFile(&path.toString(),
+			GENERIC_READ,
+			FILE_SHARE_DELETE|FILE_SHARE_READ|FILE_SHARE_WRITE,
+			NULL,
+			CREATE_ALWAYS,
+			FILE_ATTRIBUTE_NORMAL,
+			NULL);
+	if(fd == INVALID_HANDLE_VALUE)
+		throw SystemException(errno, "file creation");
+	return new SystemOutStream(fd);
+#else
+#error SystemException "System Unsupported"
+#endif
 }
-
 
 /**
  * Open a file for reading.
@@ -207,10 +258,26 @@ io::OutStream *System::createFile(const Path& path) throw(SystemException) {
  * @throws		SystemException	Thrown if there is an error.
  */
 io::InStream *System::readFile(const Path& path) throw(SystemException) {
+#if defined(__LINUX)
 	int fd = ::open(&path.toString(), O_RDONLY);
 	if(fd == -1)
 		throw SystemException(errno, "file reading");
 	return new SystemInStream(fd);
+#elif defined(__WIN32) || defined(__WIN64)
+	HANDLE fd;
+	fd=CreateFile(&path.toString(),
+			GENERIC_READ,
+			FILE_SHARE_DELETE|FILE_SHARE_READ|FILE_SHARE_WRITE,
+			NULL,
+			OPEN_EXISTING,
+			FILE_ATTRIBUTE_NORMAL,
+			NULL);
+	if(fd == INVALID_HANDLE_VALUE)
+		throw SystemException(errno, "file creation");
+	return new SystemInStream(fd);
+#else
+#error SystemException "System Unsupported"
+#endif
 }
 
 /**
@@ -221,44 +288,59 @@ io::InStream *System::readFile(const Path& path) throw(SystemException) {
  * @throws		SystemException	Thrown if there is an error.
  */
 io::OutStream *System::appendFile(const Path& path) throw(SystemException) {
+#if defined(__LINUX)
 	int fd = ::open(&path.toString(), O_APPEND | O_CREAT | O_WRONLY, 0777);
 	if(fd == -1)
 		throw SystemException(errno, "file appending");
 	return new SystemOutStream(fd);
+#elif defined(__WIN32) || defined(__WIN64)
+	HANDLE fd;
+	fd=CreateFile(&path.toString(),
+			GENERIC_READ,
+			FILE_APPEND_DATA,
+			NULL,
+			OPEN_EXISTING,
+			FILE_ATTRIBUTE_NORMAL,
+			NULL);
+	if(fd == INVALID_HANDLE_VALUE)
+		throw SystemException(errno, "file creation");
+	return new SystemOutStream(fd);
+#else
+#error SystemException "System Unsupported"
+#endif
 }
 
-
+#if defined(__LINUX)
 // UnixRandomAccessStream class
 class UnixRandomAccessStream: public io::RandomAccessStream {
 public:
-	inline UnixRandomAccessStream(int _fd): fd(_fd) { }
+	inline UnixRandomAccessStream(int _fd): fd(_fd) {}
 	virtual ~UnixRandomAccessStream(void)
-		{ close(fd); }
+	{	close(fd);}
 
 	virtual int read(void *buffer, int size)
-		{ return ::read(fd, buffer, size); }
+	{	return ::read(fd, buffer, size);}
 	virtual int write(const char *buffer, int size)
-		{ return ::write(fd, buffer, size); }
+	{	return ::write(fd, buffer, size);}
 	cstring lastErrorMessage(void)
-		{ DEPRECATED; return strerror(errno); }
+	{	DEPRECATED; return strerror(errno);}
 	int flush(void)
-		{ return 0; }
+	{	return 0;}
 
 	virtual pos_t pos(void) const
-		{ return lseek(fd, 0, SEEK_CUR); }
+	{	return lseek(fd, 0, SEEK_CUR);}
 	virtual size_t size(void) const
-		{ struct stat s; fstat(fd, &s); return s.st_size; }
+	{	struct stat s; fstat(fd, &s); return s.st_size;}
 	virtual bool moveTo(pos_t pos)
-		{ return (pos_t)lseek(fd, pos, SEEK_SET) == pos; }
+	{	return (pos_t)lseek(fd, pos, SEEK_SET) == pos;}
 	virtual bool moveForward(pos_t pos)
-		{ return (pos_t)lseek(fd, pos, SEEK_CUR) == pos; }
+	{	return (pos_t)lseek(fd, pos, SEEK_CUR) == pos;}
 	virtual bool moveBackward(pos_t _pos)
-		{ return (pos_t)lseek(fd, pos() - _pos, SEEK_SET) == _pos; }
+	{	return (pos_t)lseek(fd, pos() - _pos, SEEK_SET) == _pos;}
 
 private:
 	int fd;
 };
-
 
 // Build the flags
 static inline int makeFlags(System::access_t access) {
@@ -269,7 +351,49 @@ static inline int makeFlags(System::access_t access) {
 	default: ASSERT(false); return 0;
 	}
 }
+#elif defined(__WIN32) || defined(__WIN64)
+class WinRandomAccessStream: public io::RandomAccessStream {
+public:
+	inline WinRandomAccessStream(void* _fd): fd(_fd) {}
+	virtual ~WinRandomAccessStream(void)
+	{	TerminateProcess(fd,2);}
 
+	virtual int read(void *buffer, int size)
+	{	return ::read(GetProcessId(fd), buffer, size);}
+	virtual int write(const char *buffer, int size)
+	{	return ::write(GetProcessId(fd), buffer, size);}
+	cstring lastErrorMessage(void)
+	{	DEPRECATED; return strerror(errno);}
+	int flush(void)
+	{	return 0;}
+
+	virtual pos_t pos(void) const
+	{	return lseek(fd, 0, SEEK_CUR);}
+	virtual size_t size(void) const
+	{	struct stat s; _fstat(GetProcessId(fd), &s); return s.st_size;}
+	virtual bool moveTo(pos_t pos)
+	{	return (pos_t)lseek(fd, pos, SEEK_SET) == pos;}
+	virtual bool moveForward(pos_t pos)
+	{	return (pos_t)lseek(fd, pos, SEEK_CUR) == pos;}
+	virtual bool moveBackward(pos_t _pos)
+	{	return (pos_t)lseek(fd, pos() - _pos, SEEK_SET) == _pos;}
+
+private:
+	void* fd;
+};
+
+// Build the flags
+static inline int makeFlags(System::access_t access) {
+	switch(access) {
+	case System::READ: return O_RDONLY;
+	case System::WRITE: return O_WRONLY;
+	case System::READ_WRITE: return O_RDWR;
+	default: ASSERT(false); return 0;
+	}
+}
+#else
+#error SystemException "System Unsupported"
+#endif
 
 /**
  * Open a random access stream from a file.
@@ -279,9 +403,9 @@ static inline int makeFlags(System::access_t access) {
  * @throws IOException	Thrown if there is an error.
  */
 io::RandomAccessStream *System::openRandomFile(
-	const system::Path& path,
-	access_t access )
-	throw(SystemException)
+		const system::Path& path,
+		access_t access )
+throw(SystemException)
 {
 	int fd = ::open(&path.toString(), makeFlags(access));
 	if(fd < 0)
@@ -289,7 +413,6 @@ io::RandomAccessStream *System::openRandomFile(
 	else
 		return new UnixRandomAccessStream(fd);
 };
-
 
 /**
  * Create a random access stream from a file, removing it if it already exists.
@@ -299,9 +422,9 @@ io::RandomAccessStream *System::openRandomFile(
  * @throws IOException	Thrown if there is an error.
  */
 io::RandomAccessStream *System::createRandomFile(
-	const system::Path& path,
-	access_t access)
-	throw(SystemException)
+		const system::Path& path,
+		access_t access)
+throw(SystemException)
 {
 	ASSERTP(access != READ, "file creation requires at least a write mode");
 	int fd = ::open(&path.toString(), makeFlags(access) | O_CREAT | O_TRUNC, 0666);
@@ -311,7 +434,6 @@ io::RandomAccessStream *System::createRandomFile(
 		return new UnixRandomAccessStream(fd);
 	return 0;
 }
-
 
 /**
  * Get the path of the object item (library, program) containing the symbol
@@ -325,21 +447,20 @@ io::RandomAccessStream *System::createRandomFile(
  */
 Path System::getUnitPath(void *address) {
 #	ifdef __USE_GNU
-		Dl_info info;
-		if(!dladdr(address, &info))
-			return "";
-		else {
-			/*cerr << "dli_fname = " << info.dli_fname << io::endl;
-			cerr << "dli_fbase = " << info.dli_fbase << io::endl;
-			cerr << "dli_sname = " << info.dli_sname << io::endl;
-			cerr << "dli_saddr = " << info.dli_saddr << io::endl;*/
-			return info.dli_fname;
-		}
-#	else
+	Dl_info info;
+	if(!dladdr(address, &info))
 		return "";
+	else {
+		/*cerr << "dli_fname = " << info.dli_fname << io::endl;
+	 cerr << "dli_fbase = " << info.dli_fbase << io::endl;
+	 cerr << "dli_sname = " << info.dli_sname << io::endl;
+	 cerr << "dli_saddr = " << info.dli_saddr << io::endl;*/
+		return info.dli_fname;
+	}
+#	else
+	return "";
 #	endif
 }
-
 
 /**
  * Get an environment variable value.
@@ -354,7 +475,6 @@ cstring System::getEnv(cstring key) {
 		return res;
 }
 
-
 /**
  * Test if an environment variable is defined.
  * @param key	Key name of the environment variable.
@@ -364,4 +484,4 @@ bool System::hasEnv(cstring key) {
 	return getenv(&key);
 }
 
-} } // elm::system
+}} // elm::system
