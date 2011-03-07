@@ -76,7 +76,7 @@ static VoidType void_type;
 /**
  * Void type representation.
  */
-AbstractType& AbstractType::VOID = void_type;
+AbstractType& AbstractType::T_VOID = void_type;
 
 	
 } } // elm::serial2
