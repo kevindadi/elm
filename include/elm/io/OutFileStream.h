@@ -34,7 +34,8 @@ public:
 	OutFileStream(const char *path);
 	OutFileStream(const Path& path);
 	virtual ~OutFileStream(void);
-	inline bool isReady(void) const { return fd() >= 0; };
+	bool isReady(void);
+
 	void close();
 };
 

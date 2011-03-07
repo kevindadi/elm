@@ -17,7 +17,7 @@ class InFileStream: public system::SystemInStream {
 public:
 	InFileStream(CString path);
 	virtual ~InFileStream(void);
-	inline bool isReady(void) const { return fd() >= 0; };
+	bool isReady(void);
 	void close();
 };
 

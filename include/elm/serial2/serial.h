@@ -146,8 +146,8 @@ inline Unserializer& operator>>(Unserializer &s, const DefaultField<T>& field) {
 // AbstractType class
 class AbstractType: public elm::AbstractClass {
 public:
-	static AbstractType& VOID;
-	AbstractType(CString name, AbstractType *base = &VOID);
+	static AbstractType& T_VOID;
+	AbstractType(CString name, AbstractType *base = &T_VOID);
 	void initialize(void);
 	static AbstractType *getType(CString name);
 
