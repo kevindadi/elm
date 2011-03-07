@@ -1,3 +1,4 @@
+<<<<<<< .cvsignore
 .settings
 libltdl
 autom4te.cache
@@ -22,3 +23,29 @@ ltmain.sh
 CMakeFiles
 cmake_install.cmake
 CMakeCache.txt
+=======
+.settings
+libltdl
+autom4te.cache
+autodoc
+.project
+aclocal.m4
+stamp-h1
+config.status
+config.sub
+configure
+Makefile
+config.h.in
+Makefile.in
+COPYING
+missing
+libtool
+install-sh
+config.guess
+depcomp
+config.h
+ltmain.sh
+CMakeFiles
+cmake_install.cmake
+CMakeCache.txt
+>>>>>>> 1.14
