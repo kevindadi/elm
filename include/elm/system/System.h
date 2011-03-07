@@ -35,10 +35,18 @@ namespace elm { namespace io {
 
 namespace elm { namespace system {
 
+/* weirdly, while a HANDLE is just a typedef for void*
+ * PipeInStream(HANDLE fd) doesn't meet compiler expectations
+ */
+
 // PipeInStream class
 class PipeInStream: public SystemInStream {
 	friend class System;
+#if defined(__LINUX)
 	PipeInStream(int fd);
+#elif defined(__WIN32) || defined(__WIN64)
+	PipeInStream(void* fd);
+#endif
 public:
 	~PipeInStream(void);
 };
@@ -46,7 +54,11 @@ public:
 // PipeOutStream class
 class PipeOutStream: public SystemOutStream {
 	friend class System;
+#if defined(__LINUX)
 	PipeOutStream(int fd);
+#elif defined(__WIN32) || defined(__WIN64)
+	PipeOutStream(void* fd);
+#endif
 public:
 	~PipeOutStream(void);
 };

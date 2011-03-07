@@ -20,8 +20,12 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#if defined(__LINUX)
 #include <sys/types.h>
 #include <sys/stat.h>
+#elif defined(__WIN32) || defined(__WIN64)
+#include <windows.h>
+#endif
 #include <fcntl.h>
 #include <unistd.h>
 #include <elm/io/InFileStream.h>
@@ -35,16 +39,36 @@ namespace elm { namespace io {
  * @ingroup ios
  */
 
+#if defined(__LINUX)
+bool isReady(void)  { return fd() >= 0; }
+#elif defined(__WIN32) || defined(__WIN64)
+bool isReady(void)  {
+	return (GetHandleInformation((HANDLE)&WinInStream::fd,NULL) != 0); }
+#endif
+
 /**
  * Build an output file stream by creating a new file or deleting an old one.
- * @param path Path of the file to wriet to.
+ * @param path Path of the file to write to.
  */
+#if defined(__LINUX)
 InFileStream::InFileStream(CString path)
 : SystemInStream(open(path.chars(), O_RDONLY, 0777)) {
 	if(fd() < 0)
 		throw IOException(_ << "cannot open file \"" << path
 			<< "\" : " << lastErrorMessage());
 }
+#elif defined(__WIN32) || defined(__WIN64)
+InFileStream::InFileStream(CString path)
+: SystemInStream(CreateFile(path.chars(),
+		GENERIC_READ,
+		FILE_SHARE_DELETE|FILE_SHARE_READ|FILE_SHARE_WRITE,
+		NULL,
+		OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL,
+		NULL)) {
+
+}
+#endif
 
 /**
  * Destructor (close the file if it is opened).
@@ -57,10 +81,14 @@ InFileStream::~InFileStream(void) {
  * Close the file. Subsequent writes will fail.
  */
 void InFileStream::close() {
+#if defined(__LINUX)
 	if(_fd >= 0) {
 		::close(_fd);
 		_fd = -1;
 	}
+#elif defined(__WIN32) || defined(__WIN64)
+	CloseHandle(_fd);
+#endif
 }
 
 } } // elm::io

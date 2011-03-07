@@ -25,6 +25,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <elm/io/OutFileStream.h>
+#if defined(__WIN32) || defined(__WIN64)
+#include <windows.h>
+#endif
 
 namespace elm { namespace io {
 
@@ -34,23 +37,53 @@ namespace elm { namespace io {
  * @ingroup ios
  */
 
+#if defined(__WIN32) || defined(__WIN64)
+bool OutFileStream::isReady(void) { return GetHandleInformation(fd(),NULL) != 0;
+}
+#elif defined(__LINUX)
+bool OutFileStream::isReady(void) { return fd() >= 0; };
+#endif
+
 
 /**
  * Build an output file stream by creating a new file or deleting an old one.
- * @param path Path of the file to wriet to.
+ * @param path Path of the file to write to.
  */
+#if defined(__LINUX)
 OutFileStream::OutFileStream(const char *path)
 : SystemOutStream(open(path, O_CREAT | O_TRUNC | O_WRONLY, 0777)) {
 }
+#elif defined(__WIN32) || defined(__WIN64)
+OutFileStream::OutFileStream(const char *path)
+: SystemOutStream(CreateFile(path,
+		GENERIC_WRITE,
+		FILE_SHARE_DELETE|FILE_SHARE_READ|FILE_SHARE_WRITE,
+		NULL,
+		CREATE_ALWAYS,
+		FILE_ATTRIBUTE_NORMAL,
+		NULL)) { }
+#endif
 
 
 /**
  * Build an output file stream by creating a new file or deleting an old one.
  * @param path Path of the file to wriet to.
  */
+#if defined(__LINUX)
 OutFileStream::OutFileStream(const Path& path)
 : SystemOutStream(open(&path.toString(), O_CREAT | O_TRUNC | O_WRONLY, 0777)) {
 }
+#elif defined(__WIN32) || defined(__WIN64)
+OutFileStream::OutFileStream(const Path & path)
+: SystemOutStream(CreateFile(path.toString().chars(),
+		GENERIC_WRITE,
+		FILE_SHARE_DELETE|FILE_SHARE_READ|FILE_SHARE_WRITE,
+		NULL,
+		CREATE_ALWAYS,
+		FILE_ATTRIBUTE_NORMAL,
+		NULL)) { }
+
+#endif
 
 
 /**
@@ -64,10 +97,14 @@ OutFileStream::~OutFileStream(void) {
  * Close the file. Subsequent writes will fail.
  */
 void OutFileStream::close() {
+#if defined(__LINUX)
 	if(_fd >= 0) {
 		::close(_fd);
 		_fd = -1;
 	}
+#elif defined(__WIN32) || defined(__WIN64)
+	CloseHandle(_fd);
+#endif
 }
 
 } } // elm::io
