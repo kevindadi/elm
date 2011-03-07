@@ -39,12 +39,12 @@ namespace elm { namespace io {
  * @ingroup ios
  */
 
-#if defined(__LINUX)
+/*#if defined(__LINUX)
 bool isReady(void)  { return fd() >= 0; }
 #elif defined(__WIN32) || defined(__WIN64)
 bool isReady(void)  {
-	return (GetHandleInformation((HANDLE)&WinInStream::fd,NULL) != 0); }
-#endif
+	return (GetHandleInformation((HANDLE)WinInStream::fd(),NULL) != 0); }
+#endif*/
 
 /**
  * Build an output file stream by creating a new file or deleting an old one.

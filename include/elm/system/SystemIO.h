@@ -60,15 +60,9 @@ public:
 // Standard Streams
 namespace io {
 
-<<<<<<< SystemIO.h
 extern system::SystemInStream& in;
 extern system::SystemOutStream& out;
 extern system::SystemOutStream& err;
-=======
-extern system::SystemInStream& in; 
-extern system::SystemOutStream& out; 
-extern system::SystemOutStream& err; 
->>>>>>> 1.3
 
 } } // elm::io
 
