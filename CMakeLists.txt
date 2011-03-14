@@ -1,17 +1,35 @@
 cmake_minimum_required(VERSION 2.8)
 
-#source files
-file(
-	GLOB_RECURSE
-	source_files
-	src/*.cpp
-	)
+project("elm")
+
+
+set(LIBRARY_OUTPUT_PATH lib/${CMAKE_BUILD_TYPE})
+
+
+# gcc based compiler lack of support by cmake (opposed to VS)
+# so need to make some manual adjustment in this case
+if (CMAKE_COMPILER_IS_GNUCXX AND (CMAKE_BUILD_TYPE MATCHES Release))
+  set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
+endif (CMAKE_COMPILER_IS_GNUCXX AND (CMAKE_BUILD_TYPE MATCHES Release))
+
+
+#message(STATUS ${source_files})
 
 #check endianness
 #not in makefile.am, why here ?
 include(TestBigEndian)
 TEST_BIG_ENDIAN(BIG_ENDIAN)
 
+if(UNIX)
+include(LibXml2)
+find_package(LibXml2 0)
+elseif(WIN32 OR MINGW)
+message(WARNING "LIBXML_INCLUDE_DIR is to be set to the include directory, 
+not the libxml directory for OS compatibility issues")
+find_path(LIBXML_INCLUDE_DIR "get_include_dir")
+include_directories(BEFORE ${LIBXML_INCLUDE_DIR})
+
+endif(UNIX)
 
 #process subdirectories
 #add_subdirectory(libltdl)
@@ -21,7 +39,7 @@ add_subdirectory(include)
 
 
 #adding a library for elm
-#add_library(elm SHARED ${source_files} ${header_files})
+#add_library(elm STATIC ${source_files} ${header_files})
 
 # build configuration file
 configure_file (
@@ -34,14 +52,14 @@ configure_file (
 if(UNIX AND NOT APPLE)
 	#if using a unix system
 	message(STATUS "Using Unix system, not MacOS")
-	find_path(DOXYGEN_DIR Doxygen
+	find_program(DOXYGEN doxygen
 		/usr/local/bin
 		/usr/bin
 		)
-elseif(WIN32)
+elseif(WIN32 OR MINGW)
 	#not tested
 	message(STATUS "Using Win32 system")
-	find_path(DOXYGEN_DIR Doxygen
+	find_program(DOXYGEN doxygen
 		PATH
 		)
 elseif(APPLE)
@@ -55,18 +73,15 @@ endif(UNIX AND NOT APPLE)
 #once Doxygen path has been searched for
 #generation of documentation IF Doxygen has been found
 #tried testing for DEFINED DOXYGEN_DIR, doesn't work
-if(DOXYGEN_DIR)
+if(DOXYGEN)
 	message(STATUS "Doxygen found, generation of documentation")
 	execute_process(COMMAND mkdir doc
 					COMMAND cd doc
-					COMMAND ${DOXYGEN_DIR}/doxygen Doxyfile
+					COMMAND DOXYGEN Doxyfile
 					)
-else(DOXYGEN_DIR)
+else(DOXYGEN)
 	message(WARNING "Doxygen not found, cannot generate documentation")
-endif(DOXYGEN_DIR)
+endif(DOXYGEN)
 
 ###########################
 
-# install include
-install(DIRECTORY include/elm DESTINATION include
-	FILES_MATCHING PATTERN "*.h" PATTERN "CVS" EXCLUDE)

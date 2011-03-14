@@ -7,7 +7,7 @@
 #ifndef ELM_SYSTEM_SYSTEM_IO_H
 #define ELM_SYSTEM_SYSTEM_IO_H
 
-#if defined(__LINUX)
+#if defined(__UNIX)
 #include <elm/io/UnixInStream.h>
 #include <elm/io/UnixOutStream.h>
 #elif defined(__WIN32) || defined(__WIN64)
@@ -18,7 +18,7 @@
 namespace elm { namespace system {
 
 // SystemInStream class
-#if defined(__LINUX)
+#if defined(__UNIX)
 class SystemInStream: public io::UnixInStream {
 protected:
 	friend class System;
@@ -37,7 +37,7 @@ public:
 
 
 // SystemOutStream class
-#if defined(__LINUX)
+#if defined(__UNIX)
 class SystemOutStream: public io::UnixOutStream {
 protected:
 	friend class System;

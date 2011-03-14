@@ -16,7 +16,6 @@ class Process {
 #if defined(__LINUX)
 	int pid, rcode;
 	Process(int _pid);
-<<<<<<< Process.h
 #elif defined(__WIN32) || defined(__WIN64)
 	void* pi;
 	unsigned long  rcode;
@@ -24,15 +23,7 @@ class Process {
 #else
 #error "System not supported"
 #endif
-=======
-#elif defined(__WIN32) || defined(__WIN64)
-	PROCESS_INFORMATION pi;
-	DWORD rcode;
-	Process(PROCESS_INFORMATION _pi);
-#else
-#error "System not supported"
-#endif
->>>>>>> 1.2
+
 public:
 	bool isAlive(void);
 	int returnCode(void);

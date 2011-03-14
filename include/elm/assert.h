@@ -22,6 +22,7 @@
 #ifndef ELM_ASSERT_H
 #define ELM_ASSERT_H
 
+
 // Useful functions
 namespace elm {
 
@@ -41,6 +42,8 @@ void crash(void);
 #else
 #	define ELM_ASSERT(cond)	;
 #	define ELM_CHECK(cond, msg) ;
+// I added that, seems like it was missing
+#   define ELM_ASSERTP(cond, msg);
 #endif
 
 // Macros without prefix

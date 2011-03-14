@@ -9,9 +9,11 @@ file(
 #message(STATUS ${header_dummy})
 
 #including libxml
-#including libxslt
 find_library(LIBXML libxml2)
+#including libxslt
 find_library(LIBXSLT libxslt)
+#including libtool
+find_library(LIBTOOL ltdl)
 
 #check if gnu debugger is installed
 #find_program(GDB_CRASH_HANDLER gdb)
@@ -38,8 +40,22 @@ file(
 	)
 
 list(APPEND header_files ${header_dummy})
-list(APPEND header_files ${LIBXML} ${LIBXSLT})
+list(APPEND header_files)
 
+
+#removing OS-special files
+#it's hardcoded, havn't found (yet) a better way to do
+if(UNIX AND NOT APPLE AND NOT MINGW)
+find_file(WIN1 WinInStream.h PATHS elm/io/)
+find_file(WIN2 WinOutStream.h PATHS elm/io/)
+list(REMOVE_ITEM header_files ${WIN1})
+list(REMOVE_ITEM header_files ${WIN2})
+elseif(MINGW OR WIN32)
+find_file(UNIX1 UnixInStream.h PATHS elm/io/)
+find_file(UNIX2 UnixOutStream.h PATHS elm/io/)
+list(REMOVE_ITEM header_files ${UNIX1})
+list(REMOVE_ITEM header_files ${UNIX2})
+endif(UNIX AND NOT APPLE AND NOT MINGW)
 
 #checks if all header files are added recursively
 #message(STATUS ${header_files})
