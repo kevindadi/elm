@@ -22,7 +22,7 @@ protected:
 public:
 	Formatter(char esc = '%');
 	virtual ~Formatter(void) { }
-	int format(io::InStream& in, io::OutStream& out = io::stdout);
+	int format(io::InStream& in, io::OutStream& out = io::out);
 	inline char escape(void) const;
 };
 
