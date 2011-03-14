@@ -24,6 +24,8 @@
 #include <errno.h>
 #include <elm/system/SystemException.h>
 
+
+
 namespace elm { namespace system {
 
 /**
@@ -61,7 +63,9 @@ SystemException::SystemException(int code, String header) {
 	case EIO:
 		err = IO_ERROR;
 		break;
+#ifndef __WIN32
 	case ELOOP:
+#endif
 	case ENAMETOOLONG:
 	case ENOMEM:
 	case EMFILE:
