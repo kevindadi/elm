@@ -21,6 +21,9 @@
  */
 
 #include <elm/system/SystemIO.h>
+#if defined(__WIN32)
+#include <windows.h>
+#endif
 
 namespace elm { namespace system {
 
@@ -51,24 +54,30 @@ class StandardInStream: public SystemInStream {
 public:
 #if defined(__LINUX)
 	inline StandardInStream(int fd): SystemInStream(fd) { };
+	static StandardInStream stdin_object(0);
 #elif defined(__WIN32) || defined(WIN64)
-	inline StandardInStream(HANDLE fd): SystemInStream(fd) { };
+	inline StandardInStream(void* fd): SystemInStream(fd) { };
 #endif
 };
-static StandardInStream stdin_object(0);
-
+#if defined(__WIN32)
+static StandardInStream stdin_object(GetStdHandle(STD_INPUT_HANDLE));
+#endif
 
 // Standard Output
 class StandardOutStream: public SystemOutStream {
 public:
 #if defined(__LINUX)
 	inline StandardOutStream(int fd): SystemOutStream(fd) { };
+	static StandardOutStream stdout_object(1);
+	static StandardOutStream stderr_object(2);
 #elif defined(__WIN32) || defined(__WIN64)
-	inline StandardOutStream(HANDLE fd): SystemOutStream(fd) { };
+	inline StandardOutStream(void* fd): SystemOutStream(fd) { };
 #endif
 };
-static StandardOutStream stdout_object(1);
-static StandardOutStream stderr_object(2);
+#if defined(__WIN32)
+static StandardOutStream stdout_object(GetStdHandle(STD_OUTPUT_HANDLE));
+static StandardOutStream stderr_object(GetStdHandle(STD_ERROR_HANDLE));
+#endif
 
 } // system
 
@@ -78,18 +87,18 @@ namespace io {
  * Standard input stream.
  * @ingroup ios
  */
-system::SystemInStream& stdin = system::stdin_object; 
+system::SystemInStream& stdin = system::stdin_object;
 
 /**
  * Standard output stream.
  * @ingroup ios
  */
-system::SystemOutStream& stdout = system::stdout_object; 
+system::SystemOutStream& stdout = system::stdout_object;
 
 /**
  * Standard error stream.
  * @ingroup ios
  */
-system::SystemOutStream& stderr = system::stderr_object; 
+system::SystemOutStream& stderr = system::stderr_object;
 
 } } // elm::io
