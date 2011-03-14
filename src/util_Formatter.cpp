@@ -6,7 +6,6 @@
  */
 
 #include <elm/util/Formatter.h>
-
 using namespace elm;
 using namespace elm::io;
 
