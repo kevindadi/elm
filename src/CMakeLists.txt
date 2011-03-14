@@ -46,6 +46,8 @@ set(LIBELM_LA_SOURCES
 	"io_RandomAccessStream.cpp"
 	"io_UnixInStream.cpp"
 	"io_UnixOutStream.cpp"
+	"io_WinInStream.cpp"
+	"io_WinOutStream.cpp"
 	"Iterator.cpp"
 	"option_Option.cpp"
 	"option_BoolOption.cpp"
@@ -105,7 +107,41 @@ set(LIBELM_LA_SOURCES
 	"utility.cpp"
 	)
 
+
 include_directories("../include")
 include_directories(".")
 
+
+if(LIBXML)
+list(APPEND LIBELM_LA_SOURCES
+	"xom_Attribute.cpp"
+	"xom_Builder.cpp"
+	"xom_Comment.cpp"
+	"xom_Document.cpp"
+	"xom_Element.cpp"
+	"xom_Elements.cpp"
+	"xom_Exception.cpp"
+	"xom_Node.cpp"
+	"xom_NodeFactory.cpp"
+	"xom_ParentNode.cpp"
+	"xom_Serializer.cpp"
+	"xom_String.cpp"
+	"xom_Text.cpp"
+	"xom_XIncluder.cpp"
+	"xom_macros.h")
+endif(LIBXML)
+	
+#removing OS-special files
+#it's hardcoded, havn't found (yet) a better way to do
+if(UNIX AND NOT APPLE AND NOT MINGW)
+	list(REMOVE_ITEM LIBELM_LA_SOURCES io_WinInStream.cpp)
+	list(REMOVE_ITEM LIBELM_LA_SOURCES io_WinOutStream.cpp)
+elseif(MINGW OR WIN32)
+	list(REMOVE_ITEM LIBELM_LA_SOURCES io_UnixInStream.cpp)
+	list(REMOVE_ITEM LIBELM_LA_SOURCES io_UnixOutStream.cpp)
+endif(UNIX AND NOT APPLE AND NOT MINGW)
+
+#message(STATUS ${LIBELM_LA_SOURCES})
 add_library(elm SHARED ${LIBELM_LA_SOURCES})
+
+target_link_libraries(elm ${LIBXML} ${LIBXSLT} ${LIBTOOL})

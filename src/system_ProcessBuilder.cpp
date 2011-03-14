@@ -190,7 +190,7 @@ Process *ProcessBuilder::run(void) {
 
 	}
 #else
-#error SystemException "System Unsupported"
+#error "System Unsupported"
 #endif
 
 

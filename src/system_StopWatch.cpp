@@ -63,7 +63,7 @@ void StopWatch::start(PROCESS_INFORMATION *pi){
 }
 #else
 void StopWatch::start(){
-	throw SystemException "Unsupported System";
+	throw "Unsupported System";
 }
 #endif
 
@@ -92,7 +92,7 @@ void StopWatch::stop(PROCESS_INFORMATION *pi){
 }
 #else
 void StopWatch::stop(){
-	throw SystemException "Unsupported System";
+	throw "Unsupported System";
 }
 #endif
 

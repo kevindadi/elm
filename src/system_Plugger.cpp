@@ -21,12 +21,16 @@
  */
 
 #define WITH_LIBTOOL
+// no need to use WINAPI, as LibTool is ported on windows systems
+
 
 #include <elm/deprecated.h>
 #include <elm/assert.h>
 #include <stdlib.h>
 #ifdef WITH_LIBTOOL
 #	include <ltdl.h>
+#elif defined(__WIN32) || defined(__WIN64)
+#include <windows.h>
 #else
 #	include <dlfcn.h>
 #endif
@@ -173,6 +177,8 @@ Plugin *Plugger::plug(const string& name) {
 		StringBuffer buf;
 		#ifdef WITH_LIBTOOL
 			buf << paths[i] << "/" << name << ".la";
+		#elif defined(__WIN32) || defined(__WIN64)
+			buf << paths[i] << "/" << name << ".dll";
 		#else
 			buf << paths[i] << "/" << name << ".so";
 		#endif
@@ -220,6 +226,8 @@ Plugin *Plugger::plugFile(String path) {
 	// Open shared library
 	#ifdef WITH_LIBTOOL
 		void *handle = lt_dlopen(&path);
+	#elif defined(__WIN32) || defined(__WIN64)
+		void *handle = LoadLibrary(&path);
 	#else
 		void *handle = dlopen(&path, RTLD_LAZY);
 	#endif
@@ -228,6 +236,8 @@ Plugin *Plugger::plugFile(String path) {
 		onError(level_warning, _ << "invalid plugin found at \"" << path << "\" (no handle): "
 #			ifdef WITH_LIBTOOL
 				<< lt_dlerror());
+#			elif defined(__WIN32) || defined(__WIN64)
+				<< GetLastError());
 #			else
 				<< dlerror());
 #			endif
@@ -237,6 +247,8 @@ Plugin *Plugger::plugFile(String path) {
 	// Look for the plugin symbol
 	#ifdef WITH_LIBTOOL
 		Plugin *plugin = (Plugin *)lt_dlsym((lt_dlhandle)handle, &_hook);
+	#elif defined(__WIN32) || defined(__WIN64)
+		Plugin *plugin = (Plugin *)GetModuleHandle(&_hook);
 	#else
 		Plugin *plugin = (Plugin *)dlsym(handle, &_hook);
 	#endif
@@ -302,6 +314,8 @@ string Plugger::getLastError() {
 			#ifdef WITH_LIBTOOL
 				const char *msg = lt_dlerror();
 				buf << "cannot open the plugin(" << (msg ? msg : "") << ").";
+			#elif defined(__WIN32) || defined(__WIN64)
+				buf << "cannot open the plugin(" << GetLastError() << ").";
 			#else
 				buf << "cannot open the plugin(" << dlerror() << ").";
 			#endif

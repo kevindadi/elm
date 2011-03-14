@@ -20,11 +20,15 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#if defined(__LINUX)
 #define WITH_LIBTOOL
+#endif
 
 #include <elm/assert.h>
 #ifdef WITH_LIBTOOL
 #	include <ltdl.h>
+#elif defined(__WIN32) || defined(__WIN64)
+#include <windows.h>
 #else
 #	include <dlfcn.h>
 #endif
@@ -205,7 +209,6 @@ Plugin::~Plugin(void) {
  * For internal use only.
  */
 void Plugin::plug(void *handle) {
-
 	// Usage incrementation
 	if(state > 0)
 		state++;
@@ -215,7 +218,12 @@ void Plugin::plug(void *handle) {
 		startup();
 		state = 1;
 		if(handle) {
+#if defined(__LINUX)
 			_handle = handle;
+#elif defined(__WIN32) || defined(__WIN64)
+			_handle = reinterpret_cast<HMODULE&>(handle);
+#endif
+
 			static_plugins.remove(this);
 		}
 	}
@@ -254,6 +262,8 @@ void Plugin::unplug(void) {
 		if(_handle)
 			#ifdef WITH_LIBTOOL
 				lt_dlclose((lt_dlhandle)_handle);
+			#elif defined(__WIN32) || defined(__WIN64)
+				FreeLibrary(reinterpret_cast<HMODULE&>(_handle));
 			#else
 				dlclose(_handle);
 			#endif

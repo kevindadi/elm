@@ -22,17 +22,15 @@
 
 #if defined(__LINUX)
 #include <dlfcn.h>
-#elif defined(__WIN32) || defined(__WIN64)
+#elif defined(__WIN32)
 #include <windows.h>
 #endif
 #include <fcntl.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#if defined(__LINUX)
 #include <sys/stat.h>
 #include <sys/types.h>
-#endif
 #include <unistd.h>
 #include <time.h>
 
@@ -109,7 +107,7 @@ namespace system {
 #if defined(__LINUX)
 PipeInStream::PipeInStream(int fd): SystemInStream(fd) {
 }
-#elif defined(__WIN32) || defined(__WIN64)
+#elif defined(_WIN32_WINNT)
 PipeInStream::PipeInStream(HANDLE fd): SystemInStream(fd) {
 }
 #endif
@@ -120,10 +118,10 @@ PipeInStream::PipeInStream(HANDLE fd): SystemInStream(fd) {
 PipeInStream::~PipeInStream(void) {
 #if defined(__LINUX)
 	close(fd());
-#elif defined(__WIN32) || defined(__WIN64)
+#elif defined(_WIN32_WINNT)
 	TerminateProcess(fd(),1);
 #else
-#error "System Unsupported";
+#error "System Unsupported"
 #endif
 }
 
@@ -150,10 +148,10 @@ PipeOutStream::PipeOutStream(HANDLE fd): SystemOutStream(fd) {
 PipeOutStream::~PipeOutStream(void) {
 #if defined(__LINUX)
 	close(fd());
-#elif defined(__WIN32) || defined(__WIN64)
+#elif defined(__WIN32)
 	TerminateProcess(fd(),1);
 #else
-#error "System Unsupported";
+#error "System Unsupported"
 #endif
 }
 
@@ -201,7 +199,7 @@ throw (SystemException) {
 			new PipeInStream(fdsread),
 			new PipeOutStream(fdswrite));
 #else
-#error throw SystemException "Unsupported System"
+#error "Unsupported System"
 #endif
 }
 
@@ -246,7 +244,7 @@ io::OutStream *System::createFile(const Path& path) throw (SystemException) {
 		throw SystemException(errno, "file creation");
 	return new SystemOutStream(fd);
 #else
-#error SystemException "System Unsupported"
+#error "System Unsupported"
 #endif
 }
 
@@ -258,7 +256,7 @@ io::OutStream *System::createFile(const Path& path) throw (SystemException) {
  * @throws		SystemException	Thrown if there is an error.
  */
 io::InStream *System::readFile(const Path& path) throw(SystemException) {
-#if defined(__LINUX)
+#if defined(__UNIX)
 	int fd = ::open(&path.toString(), O_RDONLY);
 	if(fd == -1)
 		throw SystemException(errno, "file reading");
@@ -276,7 +274,7 @@ io::InStream *System::readFile(const Path& path) throw(SystemException) {
 		throw SystemException(errno, "file creation");
 	return new SystemInStream(fd);
 #else
-#error SystemException "System Unsupported"
+#error "System Unsupported"
 #endif
 }
 
@@ -288,7 +286,7 @@ io::InStream *System::readFile(const Path& path) throw(SystemException) {
  * @throws		SystemException	Thrown if there is an error.
  */
 io::OutStream *System::appendFile(const Path& path) throw(SystemException) {
-#if defined(__LINUX)
+#if defined(__UNIX)
 	int fd = ::open(&path.toString(), O_APPEND | O_CREAT | O_WRONLY, 0777);
 	if(fd == -1)
 		throw SystemException(errno, "file appending");
@@ -306,11 +304,11 @@ io::OutStream *System::appendFile(const Path& path) throw(SystemException) {
 		throw SystemException(errno, "file creation");
 	return new SystemOutStream(fd);
 #else
-#error SystemException "System Unsupported"
+#error "System Unsupported"
 #endif
 }
 
-#if defined(__LINUX)
+#if defined(__UNIX)
 // UnixRandomAccessStream class
 class UnixRandomAccessStream: public io::RandomAccessStream {
 public:
@@ -351,17 +349,19 @@ static inline int makeFlags(System::access_t access) {
 	default: ASSERT(false); return 0;
 	}
 }
-#elif defined(__WIN32) || defined(__WIN64)
+#elif defined(__WIN32)
 class WinRandomAccessStream: public io::RandomAccessStream {
 public:
-	inline WinRandomAccessStream(void* _fd): fd(_fd) {}
+	inline WinRandomAccessStream(int _fd) : fd(_fd){
+		//this->fd=_open_osfhandle((long)_fd,O_RDWR);
+	}
 	virtual ~WinRandomAccessStream(void)
-	{	TerminateProcess(fd,2);}
+	{	close(fd);}
 
 	virtual int read(void *buffer, int size)
-	{	return ::read(GetProcessId(fd), buffer, size);}
+	{	return ::read(fd, buffer, size);}
 	virtual int write(const char *buffer, int size)
-	{	return ::write(GetProcessId(fd), buffer, size);}
+	{	return ::write(fd, buffer, size);}
 	cstring lastErrorMessage(void)
 	{	DEPRECATED; return strerror(errno);}
 	int flush(void)
@@ -370,7 +370,8 @@ public:
 	virtual pos_t pos(void) const
 	{	return lseek(fd, 0, SEEK_CUR);}
 	virtual size_t size(void) const
-	{	struct stat s; _fstat(GetProcessId(fd), &s); return s.st_size;}
+	{	struct stat s;
+	fstat(fd, &s); return s.st_size;}
 	virtual bool moveTo(pos_t pos)
 	{	return (pos_t)lseek(fd, pos, SEEK_SET) == pos;}
 	virtual bool moveForward(pos_t pos)
@@ -379,7 +380,7 @@ public:
 	{	return (pos_t)lseek(fd, pos() - _pos, SEEK_SET) == _pos;}
 
 private:
-	void* fd;
+	int fd;
 };
 
 // Build the flags
@@ -392,7 +393,7 @@ static inline int makeFlags(System::access_t access) {
 	}
 }
 #else
-#error SystemException "System Unsupported"
+#error "System Unsupported"
 #endif
 
 /**
@@ -411,7 +412,7 @@ throw(SystemException)
 	if(fd < 0)
 		throw SystemException(errno, _ << "cannot open \"" << path << "\"");
 	else
-		return new UnixRandomAccessStream(fd);
+		return new WinRandomAccessStream(fd);
 };
 
 /**
@@ -431,7 +432,7 @@ throw(SystemException)
 	if(fd < 0)
 		throw SystemException(errno, _ << "cannot create \"" << path << "\"");
 	else
-		return new UnixRandomAccessStream(fd);
+		return new WinRandomAccessStream(fd);
 	return 0;
 }
 
