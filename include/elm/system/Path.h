@@ -31,8 +31,15 @@ namespace elm { namespace system {
 class Path {
 	String buf;
 public:
-	static const char SEPARATOR = '/';
-	static const char PATH_SEPARATOR = ':';
+#	if defined(__WIN32) || defined(__WIN64)
+		static const char SEPARATOR = '\\';
+		static const char PATH_SEPARATOR = ';';
+		static inline bool isSeparator(char c) { return c == SEPARATOR || c == '/'; }
+#	else
+		static const char SEPARATOR = '/';
+		static const char PATH_SEPARATOR = ':';
+		static inline bool isSeparator(charc ) { return c == SEPARATOR; }
+#	endif
 	
 	// Constructors
 	inline Path(void) { }
@@ -83,6 +90,9 @@ public:
 	inline operator const String& (void) const;
 	inline operator bool (void) const;
 	inline const char *operator&(void) const { return &buf; };
+
+private:
+	int nextSeparator(int start = 0);
 };
 
 
