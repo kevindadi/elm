@@ -29,6 +29,13 @@
 #include <elm/system/Path.h>
 #include <elm/system/SystemException.h>
 
+//#define DEBUG
+#if defined(DEBUG) && !defined(NDEBUG)
+#	define TRACE		cerr << __FILE__ << ":" << __LINE__ << io::endl;
+#else
+#	define TRACE
+#endif
+
 namespace elm { namespace system {
 
 /**
@@ -36,6 +43,19 @@ namespace elm { namespace system {
  * This class represents a file path in the current file system.
  * @ingroup system_inter
  */
+
+
+/**
+ * Find the next separator in the path buffer.
+ * @param start		Start position to look for.
+ * @return			Position of next separator or -1.
+ */
+int Path::nextSeparator(int start) {
+	for(int i = start; i < buf.length(); i++)
+		if(isSeparator(buf[i]))
+			return i;
+	return -1;
+}
 
 
 /**
@@ -57,6 +77,7 @@ namespace elm { namespace system {
  * are removed if it is possible.
  */
 Path Path::canonical(void) {
+	TRACE
 	
 	// Make it absolute
 	String path = buf;
@@ -64,10 +85,11 @@ Path Path::canonical(void) {
 		Path abs = absolute();
 		path = abs.buf;
 	}
+	TRACE
 	
 	// Select kept components
 	genstruct::Vector<String> comps;
-	int stop = path.indexOf(SEPARATOR), start = 0;
+	int stop = nextSeparator(), start = 0;
 	while(stop >= 0) {
 		
 		// Select the component
@@ -83,14 +105,25 @@ Path Path::canonical(void) {
 		
 		// Go to next component
 		start = stop + 1;
-		stop = path.indexOf(SEPARATOR, start);
+		stop = nextSeparator(start);
 	}
+	comps.add(path.substring(start));
+	TRACE
 	
 	// Rebuild path
 	StringBuffer buffer;
-	for(int i = 0; i < comps.length(); i++)
-		buffer << SEPARATOR << comps[i];
-	return Path(buffer.toString());
+	for(int i = 0; i < comps.length(); i++) {
+#		if defined(__WIN32) || defined(__WIN64)
+			if(i != 0)
+				buffer << SEPARATOR;
+#		else
+			buffer << SEPARATOR;
+#		endif
+		buffer << comps[i];
+	}
+	TRACE
+	string r = buffer.toString();
+	return r;
 }
 
 
@@ -187,7 +220,11 @@ String Path::dirPart(void) const {
  * @return	True if it is absolute, false else.
  */
 bool Path::isAbsolute(void) const {
-	return buf.length() > 0 && buf[0] == SEPARATOR;
+#	if defined(__WIN32) || defined(__WIN64)
+		return buf.length() >= 2 && buf[1] == ':';
+#	else
+		return buf.length() > 0 && buf[0] == SEPARATOR;
+#	endif
 }
 
 
@@ -205,7 +242,11 @@ bool Path::isRelative(void) const {
  * @return	True if it is home-relative, false else.
  */
 bool Path::isHomeRelative(void) const {
-	return buf.length() > 0 && buf[0] == '~';	
+#	if defined(__WIN32) || defined(__WIN64)
+		return false;
+#	else
+		return buf.length() > 0 && buf[0] == '~';	
+#	endif
 }
 
 

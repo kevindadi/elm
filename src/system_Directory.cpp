@@ -89,8 +89,9 @@ Directory *Directory::toDirectory(void) {
 void Directory::Iterator::go(void) {
 	errno = 0;
 	struct dirent *dirent = readdir((DIR *)dir);
-	if(dirent)
-		file = FileItem::get(path / Path(dirent->d_name));
+	if(dirent) {
+		file = FileItem::get(path / dirent->d_name);
+	}
 	else if(errno)
 		throw SystemException(errno, "file");
 	else
@@ -104,8 +105,7 @@ Directory::Iterator::Iterator(Directory *directory)
 : path(directory->path()), dir(0), file(0)  {
 	errno = 0;
 	dir = opendir(&directory->path().toString());
-	if(!dir)
-		throw SystemException(errno, "file");
+	ASSERT(dir);
 	go();
 }
 

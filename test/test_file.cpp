@@ -12,17 +12,53 @@
 using namespace elm;
 using namespace elm::system;
 
+cstring files[] = {
+	"a.txt",
+	"b.txt",
+	"c.txt",
+	"CVS",
+	".",
+	".."
+};
+int found = 0;
+
+static bool lookup(FileItem *item) {
+	string name = item->path().namePart();
+	for(int i = 0; i < 6; i++)
+		if(name == files[i]) {
+			if(found & (1 << i)) {
+				cerr << name << " found several times\n";
+				return false;
+			}
+			found |= 1 << i;
+			return true;
+		}
+	cerr << name << " not in the list\n";
+	return false;
+}
+
+static bool look_all(void) {
+	for(int i = 0; i < 6; i++)
+	if(!(found & (1 << i))) {
+		cerr << files[i] << " has not been found !\n";
+		return false;
+	}
+	return true;
+}
+
 // Entry point
 void test_file(void) {
 	CHECK_BEGIN("file");
 
 	// Read directory
-	FileItem *file = FileItem::get(system::Path::current());
+	FileItem *file = FileItem::get(system::Path::current() / "test-file");
+	CHECK(file->path().namePart() == "test-file");
 	CHECK(file);
 	Directory *dir = file->toDirectory();
 	CHECK(dir);
+	CHECK(dir->path().namePart() == "test-file");
 	for(Directory::Iterator item(dir); item; item++)
-		cout << item->path() << "\n";
-	
+		CHECK(lookup(item));
+	CHECK(look_all());	
 	CHECK_END;
 }

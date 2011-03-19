@@ -32,22 +32,33 @@
 #include <elm/system/SystemException.h>
 #include <elm/util/strong_type.h>
 
+//#define DEBUG
+#if defined(DEBUG) && !defined(NDEBUG)
+#	define TRACE		cerr << __FILE__ << ":" << __LINE__ << io::endl;
+#else
+#	define TRACE
+#endif
+
 namespace elm {
 
 STRONG_TYPE(inode_t, ino_t);
 
+#if defined(__WIN32) || defined(__WIN64)
+	static genstruct::HashTable<String, system::FileItem *> *files = 0;
+#else
 // inode_t hash key
-template <>
-class HashKey<inode_t> {
-public:
-	static t::hash hash(inode_t v)
-		{ return t::hash(v); }
-	static bool equals(inode_t key1, inode_t key2)
-		{ return key1 == key2; }
-};
+	template <>
+	class HashKey<inode_t> {
+	public:
+		static t::hash hash(inode_t v)
+			{ return t::hash(v); }
+		static bool equals(inode_t key1, inode_t key2)
+			{ return key1 == key2; }
+	};
 
-// Used for retrieving files by name.
-static genstruct::HashTable<inode_t, system::FileItem *> *files = 0;
+	// Used for retrieving files by name.
+	static genstruct::HashTable<inode_t, system::FileItem *> *files = 0;
+#endif
 
 
 namespace system {
@@ -82,10 +93,17 @@ FileItem::~FileItem(void) {
  * @throw SystemException	If the file does not exist or can not be accessed.
  */
 FileItem *FileItem::get(Path path) throw(SystemException) {
+	path = path.canonical();
+	TRACE
 	
 	// Need to initialize ?
 	if(!files)
-		files = new genstruct::HashTable<inode_t, FileItem *>;;
+#		if defined(__WIN32) || defined(__WIN64)
+			files = new genstruct::HashTable<string, FileItem *>;
+#		else
+			files = new genstruct::HashTable<inode_t, FileItem *>;
+#		endif
+	TRACE
 	
 	 // Look at stat
 	 struct stat st;
@@ -95,9 +113,13 @@ FileItem *FileItem::get(Path path) throw(SystemException) {
 	 	else
 	 		throw SystemException(errno, "filesystem");
 	 }
-	 
+
 	// Look in the created files
-	FileItem *result = files->get(st.st_ino, 0);
+#	if defined(__WIN32) || defined(__WIN64)
+		FileItem *result = files->get(path, 0);
+#	else
+		FileItem *result = files->get(st.st_ino, 0);
+#	endif
 	
 	// Create the file
 	if(!result) {
@@ -107,7 +129,11 @@ FileItem *FileItem::get(Path path) throw(SystemException) {
 			result = new File(path, st.st_ino);
 		else
 			result = new FileItem(path, st.st_ino);
-		files->put(st.st_ino, result);
+#		if defined(__WIN32) || defined(__WIN64)
+			files->put(path, result);
+#		else
+			files->put(st.st_ino, result);
+#		endif
 	}
 	
 	// Return found file
@@ -130,7 +156,11 @@ void FileItem::use(void) {
 void FileItem::release(void) {
 	usage--;
 	if(!usage) {
-		files->remove(ino);
+#		if defined(__WIN32) || defined(__WIN64)
+			files->remove(path());
+#		else
+			files->remove(ino);
+#		endif
 		delete this;
 	}
 }
