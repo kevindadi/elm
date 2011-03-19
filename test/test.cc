@@ -5,6 +5,7 @@
  * Unit tests
  */
 
+#include <stdio.h>
 #include <elm/io.h>
 
 using namespace elm;

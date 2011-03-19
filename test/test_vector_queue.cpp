@@ -79,7 +79,7 @@ void test_vector_queue(void) {
 		VectorQueue<int> queue(4);
 		int start = 0, stop = 0;
 		for(int i = 0; i < 2048; i++) {
-			int action = random();
+			int action = rand();
 			if(action & 0x1) {
 				cout << "\tputting " << stop << io::endl;
 				queue.put(stop++);
