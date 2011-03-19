@@ -5,7 +5,11 @@
  * Debugging classes and functions
  */
 
-#include <elm/debug/CrashHandler.h>
+#if defined(__WIN32) || defined(__WIN64)
+#	include <stdlib.h>
+#else
+#	include <elm/debug/CrashHandler.h>
+#endif
 
 namespace elm {
 
@@ -14,7 +18,11 @@ namespace elm {
  * cause a core dump, GDB invocation or any other debugging solution.
  */
 void crash(void) {
-	CrashHandler::crash();
+#	if defined(__WIN32) || defined(__WIN64)
+		abort();
+#	else
+		CrashHandler::crash();
+#	endif
 }
 
 } // elm
