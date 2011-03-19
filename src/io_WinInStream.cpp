@@ -25,6 +25,7 @@
 #include <errno.h>
 #include <elm/io/WinInStream.h>
 #include <windows.h>
+#include <elm/system/SystemIO.h>
 
 namespace elm { namespace io {
 
@@ -63,9 +64,9 @@ CString WinInStream::lastErrorMessage(void) {
 
 
 /**
- * Stream pointing to the standard error input.
+ * Stream pointing to the standard input.
  */
-/*static WinInStream Win_stdin(0);
-InStream& stdin = Win_stdin;*/
+static system::SystemInStream Win_stdin(GetStdHandle(STD_INPUT_HANDLE));
+system::SystemInStream& in = Win_stdin;
 
 } } // elm::io

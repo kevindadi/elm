@@ -27,10 +27,10 @@
 #include <elm/deprecated.h>
 #include <elm/assert.h>
 #include <stdlib.h>
-#ifdef WITH_LIBTOOL
-#	include <ltdl.h>
-#elif defined(__WIN32) || defined(__WIN64)
+#if defined(__WIN32) || defined(__WIN64)
 #include <windows.h>
+#elif defined(WITH_LIBTOOL)
+#	include <ltdl.h>
 #else
 #	include <dlfcn.h>
 #endif
@@ -74,7 +74,7 @@ Plugger::Plugger(CString hook, const Version& plugger_version, String _paths)
 : _hook(hook), per_vers(plugger_version), err(OK) {
 
 	// Initialize DL library
-	#ifdef WITH_LIBTOOL
+	#if !defined(__WIN32) && !defined(__WIN64) && defined(WITH_LIBTOOL)
 		static bool preloaded = false;
 		if(!preloaded) {
 			lt_dlinit();
@@ -106,7 +106,7 @@ Plugger::Plugger(CString hook, const Version& plugger_version, String _paths)
  */
 Plugger::~Plugger(void) {
 	pluggers.remove(this);
-	#ifdef WITH_LIBTOOL
+	#if !defined(__WIN32) && !defined(__WIN64) && defined(WITH_LIBTOOL)
 		lt_dlexit();
 	#endif
 }
@@ -224,20 +224,20 @@ Plugin *Plugger::plugFile(String path) {
 	file->release();
 
 	// Open shared library
-	#ifdef WITH_LIBTOOL
-		void *handle = lt_dlopen(&path);
-	#elif defined(__WIN32) || defined(__WIN64)
+	#if defined(__WIN32) || defined(__WIN64)
 		void *handle = LoadLibrary(&path);
+	#elif WITH_LIBTOOL
+		void *handle = lt_dlopen(&path);
 	#else
 		void *handle = dlopen(&path, RTLD_LAZY);
 	#endif
 	if(!handle) {
 		err = NO_PLUGIN;
 		onError(level_warning, _ << "invalid plugin found at \"" << path << "\" (no handle): "
-#			ifdef WITH_LIBTOOL
-				<< lt_dlerror());
-#			elif defined(__WIN32) || defined(__WIN64)
+#			if defined(__WIN32) || defined(__WIN64)
 				<< GetLastError());
+#			elif defined(WITH_LIBTOOL)
+				<< lt_dlerror());
 #			else
 				<< dlerror());
 #			endif
@@ -245,10 +245,10 @@ Plugin *Plugger::plugFile(String path) {
 	}
 
 	// Look for the plugin symbol
-	#ifdef WITH_LIBTOOL
-		Plugin *plugin = (Plugin *)lt_dlsym((lt_dlhandle)handle, &_hook);
-	#elif defined(__WIN32) || defined(__WIN64)
+	#if defined(__WIN32) || defined(__WIN64)
 		Plugin *plugin = (Plugin *)GetModuleHandle(&_hook);
+	#elif defined(WITH_LIBTOOL)
+		Plugin *plugin = (Plugin *)lt_dlsym((lt_dlhandle)handle, &_hook);
 	#else
 		Plugin *plugin = (Plugin *)dlsym(handle, &_hook);
 	#endif
@@ -311,11 +311,11 @@ string Plugger::getLastError() {
 		return "Success.";
 	case NO_PLUGIN: {
 			StringBuffer buf;
-			#ifdef WITH_LIBTOOL
+			#if defined(__WIN32) || defined(__WIN64)
+				buf << "cannot open the plugin(" << GetLastError() << ").";
+			#elif WITH_LIBTOOL
 				const char *msg = lt_dlerror();
 				buf << "cannot open the plugin(" << (msg ? msg : "") << ").";
-			#elif defined(__WIN32) || defined(__WIN64)
-				buf << "cannot open the plugin(" << GetLastError() << ").";
 			#else
 				buf << "cannot open the plugin(" << dlerror() << ").";
 			#endif

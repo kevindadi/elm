@@ -87,18 +87,18 @@ namespace io {
  * Standard input stream.
  * @ingroup ios
  */
-system::SystemInStream& stdin = system::stdin_object;
+//system::SystemInStream& stdin = system::stdin_object;
 
 /**
  * Standard output stream.
  * @ingroup ios
  */
-system::SystemOutStream& stdout = system::stdout_object;
+//system::SystemOutStream& stdout = system::stdout_object;
 
 /**
  * Standard error stream.
  * @ingroup ios
  */
-system::SystemOutStream& stderr = system::stderr_object;
+//system::SystemOutStream& stderr = system::stderr_object;
 
 } } // elm::io

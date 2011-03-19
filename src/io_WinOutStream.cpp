@@ -25,6 +25,9 @@
 #include <elm/io/WinOutStream.h>
 #include <elm/io.h>
 #include <windows.h>
+#include <elm/system/SystemIO.h>
+#include <stdio.h>
+
 
 namespace elm { namespace io {
 
@@ -39,7 +42,8 @@ namespace elm { namespace io {
  * Build an Win output stream.
  * @param fd	File descriptor.
  */
-WinOutStream::WinOutStream(void* fd): _fd(fd) { }
+WinOutStream::WinOutStream(void* fd): _fd(fd) {
+}
 
 /**
  * @fn WinOutStream::WinOutStream(int _fd);
@@ -59,6 +63,14 @@ CString WinOutStream::lastErrorMessage(void) {
 
 // Overloaded
 int WinOutStream::write(const char *buffer, int size) {
+	
+	// late binding of stdout, stderr: very ugly but don't know any better solution
+	if(_fd == NULL) {
+		if(this == &err)
+			_fd = GetStdHandle(STD_ERROR_HANDLE);
+		else if(this == &out)
+			_fd = GetStdHandle(STD_OUTPUT_HANDLE);
+	}
 	return ::WriteFile(_fd, buffer, size, NULL, NULL);
 }
 
@@ -71,13 +83,13 @@ int WinOutStream::flush(void) {
 /**
  * Stream pointing to the standard output.
  */
-/*static WinOutStream Win_stdout(1);
-OutStream& stdout = Win_stdout;*/
+static system::SystemOutStream Win_stdout(GetStdHandle(STD_OUTPUT_HANDLE)/*(HANDLE)_get_osfhandle(0)*/);
+system::SystemOutStream& out = Win_stdout;
 
 /**
  * Stream pointing to the standard error output.
  */
-/*static WinOutStream Win_stderr(2);
-OutStream& stderr = Win_stderr;*/
+static system::SystemOutStream Win_stderr(GetStdHandle(STD_ERROR_HANDLE));
+system::SystemOutStream& err = Win_stderr;
 
 } } // elm::io
