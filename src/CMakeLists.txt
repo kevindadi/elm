@@ -7,7 +7,7 @@ set(LIBELM_LA_SOURCES
 	"alloc_DefaultAllocator.cpp"
 	"alloc_StackAllocator.cpp"
 	"block_DynBlock.cpp"
-	#"debug.cpp"
+	"debug.cpp"
 	#"debug_CrashHandler.cpp"
 	"checksum_Fletcher.cpp"
 	"checksum_MD5.cpp"
@@ -110,9 +110,11 @@ set(LIBELM_LA_SOURCES
 
 include_directories("../include")
 include_directories(".")
+include_directories(${LIBXML2_INCLUDE_DIR})
+include_directories(${LIBXSLT_INCLUDE_DIR})
 
 
-if(LIBXML)
+if(LIBXML2_FOUND)
 list(APPEND LIBELM_LA_SOURCES
 	"xom_Attribute.cpp"
 	"xom_Builder.cpp"
@@ -144,4 +146,6 @@ endif(UNIX AND NOT APPLE AND NOT MINGW)
 #message(STATUS ${LIBELM_LA_SOURCES})
 add_library(elm SHARED ${LIBELM_LA_SOURCES})
 
-target_link_libraries(elm ${LIBXML} ${LIBXSLT} ${LIBTOOL})
+#target_link_libraries(elm ${LIBXML2} ${LIBXSLT})
+target_link_libraries(elm ${LIBXML2_LIBRARIES})
+target_link_libraries(elm ${LIBXSLT_LIBRARIES})

@@ -24,22 +24,24 @@ if(UNIX)
 include(LibXml2)
 find_package(LibXml2 0)
 elseif(WIN32 OR MINGW)
-message(WARNING "LIBXML_INCLUDE_DIR is to be set to the include directory, 
-not the libxml directory for OS compatibility issues")
-find_path(LIBXML_INCLUDE_DIR "get_include_dir")
-include_directories(BEFORE ${LIBXML_INCLUDE_DIR})
+#message(WARNING "LIBXML_INCLUDE_DIR is to be set to the include directory, not the libxml directory for OS compatibility issues")
+#find_path(LIBXML_INCLUDE_DIR "get_include_dir")
+#include_directories(BEFORE ${LIBXML_INCLUDE_DIR})
+set(LIBXML2_LIBRARIES ${CMAKE_BINARY_DIR}/../libxml2-2.7.7.win32/lib/libxml2.lib)
+set(LIBXML2_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../libxml2-2.7.7.win32/include/)
+find_package(LibXml2 0)
 
+set(LIBXSLT_LIBRARIES ${CMAKE_BINARY_DIR}/../libxslt-1.1.26.win32/lib/libxslt.lib)
+set(LIBXSLT_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../libxslt-1.1.26.win32/include/)
+find_package(LibXslt 0)
 endif(UNIX)
 
+
 #process subdirectories
-#add_subdirectory(libltdl)
 add_subdirectory(src)
-#add_subdirectory(test)
 add_subdirectory(include)
+add_subdirectory(test)
 
-
-#adding a library for elm
-#add_library(elm STATIC ${source_files} ${header_files})
 
 # build configuration file
 configure_file (
