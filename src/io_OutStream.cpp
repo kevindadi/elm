@@ -21,7 +21,11 @@
  */
 
 #include <unistd.h>
+#if defined(__WIN32) || defined(__WIN64)
+#include <windows.h>
+#endif
 #include <elm/io/OutStream.h>
+#include <elm/io/io.h>
 
 namespace elm { namespace io {
 
