@@ -41,7 +41,7 @@ void crash(void);
 		{ if(!(cond)) { ELM_ASSERT_MSG(msg); elm::crash(); } }
 #else
 #	define ELM_ASSERT(cond)	;
-#	define ELM_CHECK(cond, msg) ;
+#	define ELM_CHECK(cond) ;
 // I added that, seems like it was missing
 #   define ELM_ASSERTP(cond, msg);
 #endif
