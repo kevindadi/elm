@@ -8,9 +8,9 @@ set(LIBRARY_OUTPUT_PATH lib/${CMAKE_BUILD_TYPE})
 
 # gcc based compiler lack of support by cmake (opposed to VS)
 # so need to make some manual adjustment in this case
-if (CMAKE_COMPILER_IS_GNUCXX AND (CMAKE_BUILD_TYPE MATCHES Release))
-  set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
-endif (CMAKE_COMPILER_IS_GNUCXX AND (CMAKE_BUILD_TYPE MATCHES Release))
+#if (CMAKE_COMPILER_IS_GNUCXX AND (CMAKE_BUILD_TYPE MATCHES Release))
+#  set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
+#endif (CMAKE_COMPILER_IS_GNUCXX AND (CMAKE_BUILD_TYPE MATCHES Release))
 
 
 #message(STATUS ${source_files})
@@ -28,6 +28,7 @@ elseif(WIN32 OR MINGW)
 #find_path(LIBXML_INCLUDE_DIR "get_include_dir")
 #include_directories(BEFORE ${LIBXML_INCLUDE_DIR})
 set(LIBXML2_LIBRARIES ${CMAKE_BINARY_DIR}/../libxml2-2.7.7.win32/lib/libxml2.lib)
+#message(STATUS ${LIBXML2_LIBRARIES})
 set(LIBXML2_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../libxml2-2.7.7.win32/include/)
 find_package(LibXml2 0)
 
@@ -77,10 +78,7 @@ endif(UNIX AND NOT APPLE)
 #tried testing for DEFINED DOXYGEN_DIR, doesn't work
 if(DOXYGEN)
 	message(STATUS "Doxygen found, generation of documentation")
-	execute_process(COMMAND mkdir doc
-					COMMAND cd doc
-					COMMAND DOXYGEN Doxyfile
-					)
+	execute_process(COMMAND "doxygen Doxyfile")
 else(DOXYGEN)
 	message(WARNING "Doxygen not found, cannot generate documentation")
 endif(DOXYGEN)
