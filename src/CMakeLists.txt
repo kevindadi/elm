@@ -111,6 +111,7 @@ set(LIBELM_LA_SOURCES
 include_directories("../include")
 include_directories(".")
 include_directories(${LIBXML2_INCLUDE_DIR})
+#message(STATUS ${LIBXML2_INCLUDE_DIR})
 include_directories(${LIBXSLT_INCLUDE_DIR})
 
 
@@ -131,7 +132,7 @@ list(APPEND LIBELM_LA_SOURCES
 	"xom_Text.cpp"
 	"xom_XIncluder.cpp"
 	"xom_macros.h")
-endif(LIBXML)
+endif(LIBXML2_FOUND)
 	
 #removing OS-special files
 #it's hardcoded, havn't found (yet) a better way to do
