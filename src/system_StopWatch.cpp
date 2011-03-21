@@ -84,7 +84,7 @@ void StopWatch::stop(PROCESS_INFORMATION *pi){
 	LPFILETIME lpUserTime;
 	GetProcessTimes(pi,lpCreationTime,lpExitTime,lpKernelTime,lpUserTime);
 	//
-	// start_time et stop_time a revoir
+	// start_time et stop_time a revoir ?
 	//
 	start_time=to_int64(*lpCreationTime);
 	stop_time=to_int64(*lpExitTime);

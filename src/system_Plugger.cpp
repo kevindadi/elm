@@ -226,7 +226,7 @@ Plugin *Plugger::plugFile(String path) {
 	// Open shared library
 	#if defined(__WIN32) || defined(__WIN64)
 		void *handle = LoadLibrary(&path);
-	#elif WITH_LIBTOOL
+	#elif defined(WITH_LIBTOOL)
 		void *handle = lt_dlopen(&path);
 	#else
 		void *handle = dlopen(&path, RTLD_LAZY);
@@ -313,7 +313,7 @@ string Plugger::getLastError() {
 			StringBuffer buf;
 			#if defined(__WIN32) || defined(__WIN64)
 				buf << "cannot open the plugin(" << GetLastError() << ").";
-			#elif WITH_LIBTOOL
+			#elif defined(WITH_LIBTOOL)
 				const char *msg = lt_dlerror();
 				buf << "cannot open the plugin(" << (msg ? msg : "") << ").";
 			#else

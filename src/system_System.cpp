@@ -458,6 +458,20 @@ Path System::getUnitPath(void *address) {
 	 cerr << "dli_saddr = " << info.dli_saddr << io::endl;*/
 		return info.dli_fname;
 	}
+#elif defined(__WIN32) || defined(__WIN64)
+	MEMORY_BASIC_INFORMATION mbi;
+	if(VirtualQuery(address,&mbi,sizeof(mbi)) == 0)
+		return "";
+	HMODULE mod = reinterpret_cast<HMODULE>(mbi.AllocationBase);
+
+	LPTSTR buf = new TCHAR[255];
+	GetModuleFileName(mod,buf,255);
+
+	CString arr(buf);
+
+	String fullpath = arr;
+
+	return fullpath;
 #	else
 	return "";
 #	endif
