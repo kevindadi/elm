@@ -28,7 +28,7 @@ void test_io_output(void) {
 	{
 		elm::io::OutFileStream stream("log.txt");
 		elm::io::Output out(stream);	
-		out << "---------------------------------------------\n";
+		out << "+++++++++++++++++++++++++++++++++++++++++++++\n";
 	}
 	
 	CHECK_END

@@ -21,7 +21,7 @@ void test_string(void) {
 		CHECK(s1 != s2);
 		CHECK(s1 == c1);
 		CHECK(s1 == "ok");
-		
+//		cout << "inside test_string" << io::endl;
 		CHECK(c1 == s1);
 		CHECK(c1 != s2);
 		CHECK(c1 != c2);
