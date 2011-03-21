@@ -9,11 +9,11 @@ file(
 #message(STATUS ${header_dummy})
 
 #including libxml
-find_library(LIBXML libxml2)
+#find_library(LIBXML libxml2)
 #including libxslt
-find_library(LIBXSLT libxslt)
+#find_library(LIBXSLT libxslt)
 #including libtool
-find_library(LIBTOOL ltdl)
+#find_library(LIBTOOL ltdl)
 
 #check if gnu debugger is installed
 #find_program(GDB_CRASH_HANDLER gdb)
