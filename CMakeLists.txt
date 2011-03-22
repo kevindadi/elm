@@ -20,9 +20,12 @@ endif (CMAKE_COMPILER_IS_GNUCXX AND (CMAKE_BUILD_TYPE MATCHES Release))
 include(TestBigEndian)
 TEST_BIG_ENDIAN(BIG_ENDIAN)
 
+# Unix
 if(UNIX)
-include(LibXml2)
+#include(LibXml2)
 find_package(LibXml2 0)
+
+# Windows
 elseif(WIN32 OR MINGW)
 #message(WARNING "LIBXML_INCLUDE_DIR is to be set to the include directory, not the libxml directory for OS compatibility issues")
 #find_path(LIBXML_INCLUDE_DIR "get_include_dir")
@@ -40,14 +43,40 @@ endif(UNIX)
 
 #process subdirectories
 add_subdirectory(src)
-add_subdirectory(include)
 add_subdirectory(test)
 
+# look for GDB
+find_program(GDB_PATH gdb)
+message(STATUS "GDB_PATH = " ${GDB_PATH})
+if(GDB_PATH)
+set(CRASH_HANDLER "GDBCrashHandler::DEFAULT")
+message(STATUS "crash handler is " ${CRASH_HANDLER})
+endif(GDB_PATH)
 
 # build configuration file
 configure_file (
   "${PROJECT_SOURCE_DIR}/config.in"
   "${PROJECT_SOURCE_DIR}/config.h"
+)
+
+
+# header installation
+set(EXCLUDES PATTERN "CVS" EXCLUDE)
+if(UNIX)
+set(EXCLUDES ${EXCLUDES} PATTERN "Win*Stream.h" EXCLUDE)
+endif(UNIX)
+if(WIN32 OR MINGW)
+set(EXCLUDES ${EXCLUDES} PATTERN "GDBCrashHandler.h" EXCLUDE)
+endif(WIN32 OR MINGW)
+if(not LIBXML2_FOUND)
+set(EXCLUDES ${EXCLUDES} PATTERN "elm/xom.h" "elm/xom/*.h" EXCLUDE)
+endif(not LIBXML2_FOUND)
+
+install(
+	DIRECTORY include/
+	DESTINATION include
+	FILES_MATCHING PATTERN "*.h"
+	${EXCLUDES}
 )
 
 ###########################
@@ -84,3 +113,12 @@ else(DOXYGEN)
 endif(DOXYGEN)
 
 ###########################
+
+# Documentation install
+if(DOXYGEN)
+	install(
+		DIRECTORY autodoc
+		DESTINATION share/Elm/
+	)
+endif(DOXYGEN)
+
