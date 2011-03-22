@@ -8,7 +8,6 @@ set(LIBELM_LA_SOURCES
 	"alloc_StackAllocator.cpp"
 	"block_DynBlock.cpp"
 	"debug.cpp"
-	#"debug_CrashHandler.cpp"
 	"checksum_Fletcher.cpp"
 	"checksum_MD5.cpp"
 	"genstruct.h"
@@ -107,6 +106,9 @@ set(LIBELM_LA_SOURCES
 	"utility.cpp"
 	)
 
+if(UNIX)
+	list(APPEND LIBELM_LA_SOURCES "debug_CrashHandler.cpp" "debug_GDBCrashHandler.cpp")
+endif(UNIX)
 
 include_directories("../include")
 include_directories(".")
@@ -144,9 +146,8 @@ elseif(MINGW OR WIN32)
 	list(REMOVE_ITEM LIBELM_LA_SOURCES io_UnixOutStream.cpp)
 endif(UNIX AND NOT APPLE AND NOT MINGW)
 
-#message(STATUS ${LIBELM_LA_SOURCES})
 add_library(elm SHARED ${LIBELM_LA_SOURCES})
+install(TARGETS elm DESTINATION lib)
 
-#target_link_libraries(elm ${LIBXML2} ${LIBXSLT})
 target_link_libraries(elm ${LIBXML2_LIBRARIES})
 target_link_libraries(elm ${LIBXSLT_LIBRARIES})
