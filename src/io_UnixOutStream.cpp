@@ -69,17 +69,4 @@ int UnixOutStream::flush(void) {
 	return 0;
 }
 
-
-/**
- * Stream pointing to the standard output.
- */
-/*static UnixOutStream unix_stdout(1);
-OutStream& stdout = unix_stdout;*/
-
-/**
- * Stream pointing to the standard error output.
- */
-/*static UnixOutStream unix_stderr(2);
-OutStream& stderr = unix_stderr;*/	
-
 } } // elm::io
