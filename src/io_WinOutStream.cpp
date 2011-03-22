@@ -71,9 +71,7 @@ int WinOutStream::write(const char *buffer, int size) {
 		else if(this == &out)
 			_fd = GetStdHandle(STD_OUTPUT_HANDLE);
 	}
-	int output = _open_osfhandle((long) _fd, 0);
-	FILE* file = _fdopen(output, "w");
-	return ::WriteFile(file, buffer, size, NULL, NULL);
+	return ::WriteFile(_fd, buffer, size, NULL, NULL);
 }
 
 // Overloaded

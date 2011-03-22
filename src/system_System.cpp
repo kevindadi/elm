@@ -24,6 +24,7 @@
 #include <dlfcn.h>
 #elif defined(__WIN32)
 #include <windows.h>
+#include <elm/io/io.h>
 #endif
 #include <fcntl.h>
 #include <errno.h>
@@ -263,7 +264,7 @@ io::InStream *System::readFile(const Path& path) throw(SystemException) {
 	return new SystemInStream(fd);
 #elif defined(__WIN32) || defined(__WIN64)
 	HANDLE fd;
-	cout << "come in" << io::endl;
+	cout << &path.toString() << io::endl;
 	fd=CreateFile(&path.toString(),
 			GENERIC_READ,
 			FILE_SHARE_DELETE|FILE_SHARE_READ|FILE_SHARE_WRITE,
@@ -274,6 +275,7 @@ io::InStream *System::readFile(const Path& path) throw(SystemException) {
 	cout << "come in" << io::endl;
 	if(fd == INVALID_HANDLE_VALUE)
 		throw SystemException(errno, "file creation");
+	cout << "getting out" << io::endl;
 	return new SystemInStream(fd);
 #else
 #error "System Unsupported"
