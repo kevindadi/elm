@@ -30,8 +30,11 @@ using namespace elm::checksum;
 void test_md5(void) {
 	CHECK_BEGIN("MD5");
 	MD5 md5;
+	cout << "entering md5" << io::endl;
 	io::InStream *in = system::System::readFile("test");
+	cout << "step 1" << io::endl;
 	md5.put(*in);
+	cout << "step 2" << io::endl;
 	delete in;
 	md5.print(cout);
 	cout << io::endl;
