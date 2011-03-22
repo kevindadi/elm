@@ -20,7 +20,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#if defined(__LINUX)
+#if defined(__unix)
 #include <sys/time.h>
 #include <sys/resource.h>
 #elif defined(__WIN32) || defined(__WIN64)
@@ -51,7 +51,7 @@ time_t to_int64(FILETIME ft) {
 /**
  * Must be called at the start of the time to measure.
  */
-#if defined(__LINUX)
+#if defined(__unix)
 void StopWatch::start(void) {
 	struct rusage buf;
 	getrusage(RUSAGE_SELF, &buf);
@@ -70,7 +70,7 @@ void StopWatch::start(){
 /**
  * Must be called at the end of the time to measure.
  */
-#if defined(__LINUX)
+#if defined(__unix)
 void StopWatch::stop(void) {
 	struct rusage buf;
 	getrusage(RUSAGE_SELF, &buf);
