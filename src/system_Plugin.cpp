@@ -20,7 +20,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#if defined(__LINUX)
+#if defined(__unix)
 #define WITH_LIBTOOL
 #endif
 
@@ -218,7 +218,7 @@ void Plugin::plug(void *handle) {
 		startup();
 		state = 1;
 		if(handle) {
-#if defined(__LINUX)
+#if defined(__unix)
 			_handle = handle;
 #elif defined(__WIN32) || defined(__WIN64)
 			_handle = reinterpret_cast<HMODULE&>(handle);

@@ -96,7 +96,7 @@ void ProcessBuilder::setError(SystemOutStream *_err) {
  * @throws SystemException	Thrown if there is an error during the build.
  */
 Process *ProcessBuilder::run(void) {
-#if defined(__LINUX)
+#if defined(__unix)
 	int error = 0;
 	int old_in = -1, old_out = -1, old_err = -1;
 

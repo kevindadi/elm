@@ -22,7 +22,7 @@
 
 #include <elm/assert.h>
 #include <sys/types.h>
-#if defined(__LINUX)
+#if defined(__unix)
 #include <sys/errno.h>
 #include <sys/wait.h>
 #elif defined(__MINGW__) || defined(__MINGW32__)
@@ -49,7 +49,7 @@ namespace elm { namespace system {
  * Build a new process.
  * @param _pid	Process identifier.
  */
-#if defined(__LINUX)
+#if defined(__unix)
 Process::Process(int _pid): pid(_pid) {
 	ASSERTP(pid >= 0, "negative PID");
 }
@@ -67,7 +67,7 @@ Process::Process(void* _pi): pi(_pi){
  * @throws SystemException	On process system error.
  */
 bool Process::isAlive(void) {
-#if defined(__LINUX)
+#if defined(__unix)
 	if(pid < 0)
 		return false;
 	int result = waitpid(pid, &rcode, WNOHANG);
@@ -102,7 +102,7 @@ bool Process::isAlive(void) {
  * @throws SystemException	On process system error.
  */
 int Process::returnCode(void) {
-#if defined(__LINUX)
+#if defined(__unix)
 	if(pid >= 0)
 		wait();
 	return rcode;
@@ -124,7 +124,7 @@ int Process::returnCode(void) {
  * @throws SystemException	On process system error.
  */
 void Process::kill(void) {
-#if defined(__LINUX)
+#if defined(__unix)
 	ASSERT(pid >= 0);
 	if(::kill(pid, SIGKILL) < 0)
 		throw SystemException(errno, "process kill");
@@ -141,7 +141,7 @@ void Process::kill(void) {
  * Wait the termination of the process.
  */
 void Process::wait(void) {
-#if defined(__LINUX)
+#if defined(__unix)
 	if(pid < 0)
 		return;
 	if(waitpid(pid, &rcode, 0) >= 0) {

@@ -21,9 +21,9 @@
  */
 
 #include <elm/system/SystemIO.h>
-#if defined(__WIN32)
+/*#if defined(__WIN32)
 #include <windows.h>
-#endif
+#endif*/
 
 namespace elm { namespace system {
 
@@ -49,34 +49,17 @@ namespace elm { namespace system {
  */
 
 
-// Standard Input
-class StandardInStream: public SystemInStream {
-public:
-#if defined(__LINUX)
-	inline StandardInStream(int fd): SystemInStream(fd) { };
-	static StandardInStream stdin_object(0);
+// Actual stdio objects
+#if defined(__unix)
+	static system::SystemInStream stdin_object(0);
+	static system::SystemOutStream stdout_object(1);
+	static system::SystemOutStream stderr_object(1);
 #elif defined(__WIN32) || defined(WIN64)
-	inline StandardInStream(void* fd): SystemInStream(fd) { };
-#endif
-};
-#if defined(__WIN32)
-static StandardInStream stdin_object(GetStdHandle(STD_INPUT_HANDLE));
-#endif
-
-// Standard Output
-class StandardOutStream: public SystemOutStream {
-public:
-#if defined(__LINUX)
-	inline StandardOutStream(int fd): SystemOutStream(fd) { };
-	static StandardOutStream stdout_object(1);
-	static StandardOutStream stderr_object(2);
-#elif defined(__WIN32) || defined(__WIN64)
-	inline StandardOutStream(void* fd): SystemOutStream(fd) { };
-#endif
-};
-#if defined(__WIN32)
-static StandardOutStream stdout_object(GetStdHandle(STD_OUTPUT_HANDLE));
-static StandardOutStream stderr_object(GetStdHandle(STD_ERROR_HANDLE));
+	static system::SystemInStream stdin_object(GetStdHandle(STD_INPUT_HANDLE));
+	static system::SystemOutStream stdout_object(GetStdHandle(STD_OUTPUT_HANDLE));
+	static system::SystemOutStream stderr_object(GetStdHandle(STD_ERROR_HANDLE));
+#else
+#	error "Unsupported OS !"
 #endif
 
 } // system
@@ -87,18 +70,18 @@ namespace io {
  * Standard input stream.
  * @ingroup ios
  */
-//system::SystemInStream& stdin = system::stdin_object;
+system::SystemInStream& in = system::stdin_object;
 
 /**
  * Standard output stream.
  * @ingroup ios
  */
-//system::SystemOutStream& stdout = system::stdout_object;
+system::SystemOutStream& out = system::stdout_object;
 
 /**
  * Standard error stream.
  * @ingroup ios
  */
-//system::SystemOutStream& stderr = system::stderr_object;
+system::SystemOutStream& err = system::stderr_object;
 
 } } // elm::io
