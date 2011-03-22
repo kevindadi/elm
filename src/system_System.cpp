@@ -263,6 +263,7 @@ io::InStream *System::readFile(const Path& path) throw(SystemException) {
 	return new SystemInStream(fd);
 #elif defined(__WIN32) || defined(__WIN64)
 	HANDLE fd;
+	cout << "come in" << io::endl;
 	fd=CreateFile(&path.toString(),
 			GENERIC_READ,
 			FILE_SHARE_DELETE|FILE_SHARE_READ|FILE_SHARE_WRITE,
@@ -270,6 +271,7 @@ io::InStream *System::readFile(const Path& path) throw(SystemException) {
 			OPEN_EXISTING,
 			FILE_ATTRIBUTE_NORMAL,
 			NULL);
+	cout << "come in" << io::endl;
 	if(fd == INVALID_HANDLE_VALUE)
 		throw SystemException(errno, "file creation");
 	return new SystemInStream(fd);
