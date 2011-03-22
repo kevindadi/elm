@@ -20,7 +20,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#if defined(__LINUX)
+#if defined(__unix)
 #include <sys/types.h>
 #include <sys/stat.h>
 #elif defined(__WIN32) || defined(__WIN64)
@@ -39,7 +39,7 @@ namespace elm { namespace io {
  * @ingroup ios
  */
 
-/*#if defined(__LINUX)
+/*#if defined(__unix)
 bool isReady(void)  { return fd() >= 0; }
 #elif defined(__WIN32) || defined(__WIN64)
 bool isReady(void)  {
@@ -50,7 +50,7 @@ bool isReady(void)  {
  * Build an output file stream by creating a new file or deleting an old one.
  * @param path Path of the file to write to.
  */
-#if defined(__LINUX)
+#if defined(__unix)
 InFileStream::InFileStream(CString path)
 : SystemInStream(open(path.chars(), O_RDONLY, 0777)) {
 	if(fd() < 0)
@@ -81,7 +81,7 @@ InFileStream::~InFileStream(void) {
  * Close the file. Subsequent writes will fail.
  */
 void InFileStream::close() {
-#if defined(__LINUX)
+#if defined(__unix)
 	if(_fd >= 0) {
 		::close(_fd);
 		_fd = -1;
