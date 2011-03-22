@@ -95,7 +95,7 @@ namespace elm {
  * @param name	Name of the test case.
  */
 TestCase::TestCase(CString name): _name(name), tests(0), errors(0) {
-#if defined(__LINUX)
+#if defined(__unix)
 	cout << "\x1b[1;4mTEST CASE: " << name << "\x1b[0m\n";
 #elif defined(__WIN32) || defined(__WIN64)
 	cout << "TEST CASE: " << name << "\n";
@@ -119,7 +119,7 @@ void TestCase::test(CString file, int line, CString text) {
  * Inform that the current test has failed.
  */
 void TestCase::failed(void) {
-#if defined(__LINUX)
+#if defined(__unix)
 	cout << "\x1b[31m[FAILED]\x1b[0m\n";
 #elif defined(__WIN32) || defined(__WIN64)
 	cout << "FAILED\n";
@@ -132,7 +132,7 @@ void TestCase::failed(void) {
  * Inform that the current test has succeeded.
  */
 void TestCase::succeeded(void) {
-#if defined(__LINUX)
+#if defined(__unix)
 	cout << "\x1b[32m[OK]\x1b[0m\n";
 #elif defined(__WIN32) || defined(__WIN64)
 	cout << "[OK] \n";
@@ -161,13 +161,13 @@ void TestCase::check(CString file, int line, CString text, bool result) {
  */
 void TestCase::complete(void) {
 	if(errors)
-#if defined(__LINUX)
+#if defined(__unix)
 		cout << "\x1b[1;31mFAILURE: \x1b[0m";
 #elif defined(__WIN32)
 		cout << "FAILURE :";
 #endif
 	else
-#if defined(__LINUX)
+#if defined(__unix)
 		cout << "\x1b[1;32mSUCCESS: \x1b[0m";
 #elif defined(__WIN32) || defined(__WIN64)
 		cout << "SUCCESS: ";
@@ -188,7 +188,7 @@ void TestCase::complete(void) {
 bool TestCase::require(CString file, int line, CString text, bool result) {
 	check(file, line, text, result);
 	if(!result)
-#if defined(__LINUX)
+#if defined(__unix)
 		cout << "\x1b[1;31mMain failure: test must be interrupted.\x1b[0m\n";
 #elif defined(__WIN32) || defined(__WIN64)
 		cout << "Main failure: test must be interrupted\n";
