@@ -13,7 +13,7 @@ namespace elm { namespace system {
 // Process class
 class Process {
 	friend class ProcessBuilder;
-#if defined(__LINUX)
+#if defined(__unix)
 	int pid, rcode;
 	Process(int _pid);
 #elif defined(__WIN32) || defined(__WIN64)

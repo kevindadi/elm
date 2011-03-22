@@ -38,7 +38,7 @@ public:
 #	else
 		static const char SEPARATOR = '/';
 		static const char PATH_SEPARATOR = ':';
-		static inline bool isSeparator(charc ) { return c == SEPARATOR; }
+		static inline bool isSeparator(char c) { return c == SEPARATOR; }
 #	endif
 	
 	// Constructors

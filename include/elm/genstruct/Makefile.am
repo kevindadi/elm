@@ -1,5 +1,6 @@
 includeelmgenstructdir=$(includedir)/elm/genstruct
 includeelmgenstruct_HEADERS = \
+	adapter.h \
 	AssocList.h \
 	AVLMap.h \
 	AVLTree.h \

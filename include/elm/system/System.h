@@ -42,7 +42,7 @@ namespace elm { namespace system {
 // PipeInStream class
 class PipeInStream: public SystemInStream {
 	friend class System;
-#if defined(__LINUX)
+#if defined(__unix)
 	PipeInStream(int fd);
 #elif defined(__WIN32) || defined(__WIN64)
 	PipeInStream(void* fd);
@@ -54,7 +54,7 @@ public:
 // PipeOutStream class
 class PipeOutStream: public SystemOutStream {
 	friend class System;
-#if defined(__LINUX)
+#if defined(__unix)
 	PipeOutStream(int fd);
 #elif defined(__WIN32) || defined(__WIN64)
 	PipeOutStream(void* fd);
