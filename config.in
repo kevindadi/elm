@@ -1,1 +1,2 @@
 
+#define CRASH_HANDLER @CRASH_HANDLER@
