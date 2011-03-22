@@ -20,10 +20,6 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#if defined(__unix)
-#define WITH_LIBTOOL
-#endif
-
 #include <elm/assert.h>
 #ifdef WITH_LIBTOOL
 #	include <ltdl.h>

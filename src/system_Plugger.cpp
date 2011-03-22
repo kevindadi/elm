@@ -20,15 +20,11 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#define WITH_LIBTOOL
-// no need to use WINAPI, as LibTool is ported on windows systems
-
-
 #include <elm/deprecated.h>
 #include <elm/assert.h>
 #include <stdlib.h>
 #if defined(__WIN32) || defined(__WIN64)
-#include <windows.h>
+#	include <windows.h>
 #elif defined(WITH_LIBTOOL)
 #	include <ltdl.h>
 #else
