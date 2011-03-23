@@ -67,6 +67,6 @@ CString WinInStream::lastErrorMessage(void) {
  * Stream pointing to the standard input.
  */
 static system::SystemInStream Win_stdin(GetStdHandle(STD_INPUT_HANDLE));
-system::SystemInStream& in = Win_stdin;
+//system::SystemInStream& in = Win_stdin;
 
 } } // elm::io
