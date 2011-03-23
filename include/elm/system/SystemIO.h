@@ -7,8 +7,6 @@
 #ifndef ELM_SYSTEM_SYSTEM_IO_H
 #define ELM_SYSTEM_SYSTEM_IO_H
 
-#include <elm/system/SystemIO.h>
-
 // Unix system streams
 #if defined(__unix)
 #	include <elm/io/UnixInStream.h>
@@ -58,7 +56,7 @@
 	} }		// elm::system
 
 // unsupported OS
-#
+#else
 #	error "Unsupported OS !"
 #endif
 
