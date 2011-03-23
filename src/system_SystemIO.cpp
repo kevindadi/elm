@@ -21,9 +21,9 @@
  */
 
 #include <elm/system/SystemIO.h>
-/*#if defined(__WIN32)
+#if defined(__WIN32)
 #include <windows.h>
-#endif*/
+#endif
 
 namespace elm { namespace system {
 

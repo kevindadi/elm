@@ -58,7 +58,7 @@ void StopWatch::start(void) {
 	start_time = (time_t)(buf.ru_utime.tv_sec*1000000 + buf.ru_utime.tv_usec);
 }
 #elif defined(__WIN32) || defined(__WIN64)
-void StopWatch::start(PROCESS_INFORMATION *pi){
+void StopWatch::start(void){
 
 }
 #else
@@ -77,12 +77,12 @@ void StopWatch::stop(void) {
 	stop_time = (time_t)(buf.ru_utime.tv_sec*1000000 + buf.ru_utime.tv_usec);
 }
 #elif defined(__WIN32) || defined(__WIN64)
-void StopWatch::stop(PROCESS_INFORMATION *pi){
+void StopWatch::stop(void){
 	LPFILETIME lpCreationTime;
 	LPFILETIME lpExitTime;
 	LPFILETIME lpKernelTime;
 	LPFILETIME lpUserTime;
-	GetProcessTimes(pi,lpCreationTime,lpExitTime,lpKernelTime,lpUserTime);
+	GetProcessTimes(GetCurrentProcess(),lpCreationTime,lpExitTime,lpKernelTime,lpUserTime);
 	//
 	// start_time et stop_time a revoir ?
 	//
