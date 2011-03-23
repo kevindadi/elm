@@ -68,9 +68,9 @@ endif(UNIX)
 if(WIN32 OR MINGW)
 set(EXCLUDES ${EXCLUDES} PATTERN "GDBCrashHandler.h" EXCLUDE)
 endif(WIN32 OR MINGW)
-if(not LIBXML2_FOUND)
+if(LIBXML2-NOTFOUND)
 set(EXCLUDES ${EXCLUDES} PATTERN "elm/xom.h" "elm/xom/*.h" EXCLUDE)
-endif(not LIBXML2_FOUND)
+endif(LIBXML2-NOTFOUND)
 
 install(
 	DIRECTORY include/
