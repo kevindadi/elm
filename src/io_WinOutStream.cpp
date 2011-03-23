@@ -63,7 +63,7 @@ CString WinOutStream::lastErrorMessage(void) {
 
 // Overloaded
 int WinOutStream::write(const char *buffer, int size) {
-
+	DWORD* r;
 	// late binding of stdout, stderr: very ugly but don't know any better solution
 	if(_fd == NULL) {
 		if(this == &err)
@@ -71,7 +71,7 @@ int WinOutStream::write(const char *buffer, int size) {
 		else if(this == &out)
 			_fd = GetStdHandle(STD_OUTPUT_HANDLE);
 	}
-	return ::WriteFile(_fd, buffer, size, NULL, NULL);
+	return ::WriteFile(_fd, buffer, size, r, NULL);
 }
 
 // Overloaded
@@ -84,12 +84,12 @@ int WinOutStream::flush(void) {
  * Stream pointing to the standard output.
  */
 static system::SystemOutStream Win_stdout(GetStdHandle(STD_OUTPUT_HANDLE)/*(HANDLE)_get_osfhandle(0)*/);
-system::SystemOutStream& out = Win_stdout;
+//system::SystemOutStream& out = Win_stdout;
 
 /**
  * Stream pointing to the standard error output.
  */
 static system::SystemOutStream Win_stderr(GetStdHandle(STD_ERROR_HANDLE));
-system::SystemOutStream& err = Win_stderr;
+//system::SystemOutStream& err = Win_stderr;
 
 } } // elm::io

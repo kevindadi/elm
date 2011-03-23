@@ -267,14 +267,15 @@ io::InStream *System::readFile(const Path& path) throw(SystemException) {
 	cout << &path.toString() << io::endl;
 	fd=CreateFile(&path.toString(),
 			GENERIC_READ,
-			FILE_SHARE_DELETE|FILE_SHARE_READ|FILE_SHARE_WRITE,
+			FILE_SHARE_READ,
 			NULL,
 			OPEN_EXISTING,
 			FILE_ATTRIBUTE_NORMAL,
 			NULL);
 	cout << "come in" << io::endl;
-	if(fd == INVALID_HANDLE_VALUE)
-		throw SystemException(errno, "file creation");
+	if(fd == INVALID_HANDLE_VALUE){
+		cout << "error at file creation" << io::endl;
+		throw SystemException(errno, "file creation");}
 	return new SystemInStream(fd);
 #else
 #error "System Unsupported"
