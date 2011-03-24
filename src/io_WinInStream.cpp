@@ -52,7 +52,8 @@ namespace elm { namespace io {
 /**
  */
 int WinInStream::read(void *buffer, int size) {
-	return ::ReadFile(_fd, buffer, size, NULL, NULL);
+	DWORD* r;
+	return ::ReadFile(_fd, buffer, size, r, NULL);
 }
 
 
