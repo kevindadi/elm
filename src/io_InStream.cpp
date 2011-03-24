@@ -21,7 +21,11 @@
  */
 
 #include <elm/io/InStream.h>
+#if defined(__LINUX)
 #include <elm/io/UnixInStream.h>
+#elif defined(__WIN32) || defined(__WIN64)
+#include <elm/io/WinInStream.h>
+#endif
 
 namespace elm { namespace io {
 
