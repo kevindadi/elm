@@ -35,6 +35,7 @@
 #include <elm/system/Process.h>
 #include <elm/system/SystemException.h>
 
+#include <stdio.h>
 
 namespace elm { namespace system {
 
@@ -54,7 +55,10 @@ Process::Process(int _pid): pid(_pid) {
 	ASSERTP(pid >= 0, "negative PID");
 }
 #elif defined(__WIN32) || defined(__WIN64)
-Process::Process(void* _pi): pi(_pi){
+Process::Process(void* _pi){
+	printf("init process %d\n",GetLastError());
+	this->pi=_pi;
+	printf("saving process %d\n",GetLastError());
 }
 #else
 #error "Unsupported platform"

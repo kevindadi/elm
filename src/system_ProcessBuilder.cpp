@@ -175,30 +175,43 @@ Process *ProcessBuilder::run(void) {
 	PROCESS_INFORMATION *pi = new PROCESS_INFORMATION;
 	STARTUPINFO si = {sizeof(si)};
 
-
 	if (!error) {
 		// Build arguments
 		StringBuffer tab;
-		for(int i = 0; i < args.count(); i++)
-			tab << " " << args[i];
+		for(int i = 0; i < args.count() ; i++)
+		{
+					tab << args[i];
+					tab << " ";
+		}
 		char tabtemp[tab.length() +1];
 		strcpy(tabtemp,tab.toString().chars());
+		cout << tabtemp << " error = "<< GetLastError() << io::endl;
 		// Launch process
-		if(CreateProcess(NULL,tabtemp,0,0,FALSE,0,0,0,&si,pi) == 0)
-			error = errno;
+		if(CreateProcess(tabtemp,NULL,0,0,TRUE,0,0,0,&si,pi) == 0)
+			error = GetLastError();
+		cout << "error = " << GetLastError() << io::endl;
 		process = new Process(pi);
+		cout << "error = " << GetLastError() << io::endl;
 
 	}
-#else
-#error "System Unsupported"
-#endif
-
 
 	// Return the result
 	if(error)
 		throw new SystemException(error, "process building");
 	else
 		return process;
+
+
+#else
+#error "System Unsupported"
+#endif
+
+
+// Return the result
+if(error)
+	throw new SystemException(error, "process building");
+else
+	return process;
 }
 
 } } // elm::system
