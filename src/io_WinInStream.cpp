@@ -27,6 +27,8 @@
 #include <windows.h>
 #include <elm/system/SystemIO.h>
 
+#include <stdio.h>
+
 namespace elm { namespace io {
 
 /**
@@ -53,7 +55,9 @@ namespace elm { namespace io {
  */
 int WinInStream::read(void *buffer, int size) {
 	DWORD* r;
-	return ::ReadFile(_fd, buffer, size, r, NULL);
+	ReadFile(_fd, buffer, size, r, NULL);
+	printf("r = %d",r);
+	return (int)r;
 }
 
 

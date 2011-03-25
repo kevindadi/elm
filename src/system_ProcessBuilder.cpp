@@ -185,19 +185,21 @@ Process *ProcessBuilder::run(void) {
 		}
 		char tabtemp[tab.length() +1];
 		strcpy(tabtemp,tab.toString().chars());
-		cout << tabtemp << " error = "<< GetLastError() << io::endl;
+		cout << tabtemp << " error1 = "<< GetLastError() << io::endl;
 		// Launch process
 		if(CreateProcess(tabtemp,NULL,0,0,TRUE,0,0,0,&si,pi) == 0)
 			error = GetLastError();
-		cout << "error = " << GetLastError() << io::endl;
+		cout << "error2 = " << GetLastError() << "error value = " << error << io::endl;
 		process = new Process(pi);
-		cout << "error = " << GetLastError() << io::endl;
+		cout << "erro3r = " << GetLastError() << io::endl;
 
 	}
 
 	// Return the result
-	if(error)
+	if(error){
+		cout << "error detected " << GetLastError() << io::endl;
 		throw new SystemException(error, "process building");
+	}
 	else
 		return process;
 

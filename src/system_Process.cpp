@@ -57,7 +57,10 @@ Process::Process(int _pid): pid(_pid) {
 #elif defined(__WIN32) || defined(__WIN64)
 Process::Process(void* _pi){
 	printf("init process %d\n",GetLastError());
-	this->pi=_pi;
+	reinterpret_cast<PROCESS_INFORMATION&>(pi).hProcess=reinterpret_cast<PROCESS_INFORMATION&>(_pi).hProcess;
+	reinterpret_cast<PROCESS_INFORMATION&>(pi).hThread=reinterpret_cast<PROCESS_INFORMATION&>(_pi).hThread;
+	reinterpret_cast<PROCESS_INFORMATION&>(pi).dwProcessId=reinterpret_cast<PROCESS_INFORMATION&>(_pi).dwProcessId;
+	reinterpret_cast<PROCESS_INFORMATION&>(pi).dwThreadId=reinterpret_cast<PROCESS_INFORMATION&>(_pi).dwThreadId;
 	printf("saving process %d\n",GetLastError());
 }
 #else
