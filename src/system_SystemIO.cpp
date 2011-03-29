@@ -53,7 +53,7 @@ namespace elm { namespace system {
 #if defined(__unix)
 	static system::SystemInStream stdin_object(0);
 	static system::SystemOutStream stdout_object(1);
-	static system::SystemOutStream stderr_object(1);
+	static system::SystemOutStream stderr_object(2);
 #elif defined(__WIN32) || defined(WIN64)
 	static system::SystemInStream stdin_object(GetStdHandle(STD_INPUT_HANDLE));
 	static system::SystemOutStream stdout_object(GetStdHandle(STD_OUTPUT_HANDLE));
