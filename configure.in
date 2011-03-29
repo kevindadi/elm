@@ -34,6 +34,8 @@ final)
 	;;
 esac
 
+# ensure libtool
+AC_DEFINE(WITH_LIBTOOL, [1], [use lbitool for linking])
 
 dnl XML Support
 ELM_CHECK_PKG_CONFIG(LIBXML, libxml, 2.0, ,
