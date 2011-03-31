@@ -86,7 +86,12 @@ Path Path::canonical(void) {
 		path = abs.buf;
 	}
 	TRACE
-	
+	cout << "system_Path.cpp: " << path << io::endl;
+
+#if defined(__WIN32) || defined(__WIN64)
+	return path;
+
+#elif defined(__unix)
 	// Select kept components
 	genstruct::Vector<String> comps;
 	int stop = nextSeparator(), start = 0;
@@ -113,17 +118,18 @@ Path Path::canonical(void) {
 	// Rebuild path
 	StringBuffer buffer;
 	for(int i = 0; i < comps.length(); i++) {
-#		if defined(__WIN32) || defined(__WIN64)
-			if(i != 0)
-				buffer << SEPARATOR;
-#		else
+//#		if defined(__WIN32) || defined(__WIN64)
+//			if(i != 0)
+//				buffer << SEPARATOR;
+//#		else
 			buffer << SEPARATOR;
-#		endif
+//#		endif
 		buffer << comps[i];
 	}
 	TRACE
 	string r = buffer.toString();
 	return r;
+#endif
 }
 
 
