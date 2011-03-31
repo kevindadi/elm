@@ -11,8 +11,7 @@ includeelmsystem_HEADERS = \
 	StopWatch.h \
 	System.h \
 	SystemException.h \
-	SystemIO.h \
-	Thread.h
+	SystemIO.h
 
 
 
