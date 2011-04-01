@@ -126,8 +126,9 @@ Path Path::canonical(void) {
 	}
 	TRACE
 	string r = buffer.toString();
-	cout << "system_Path.cpp canonical(), reconstructed string : " <<io::endl;
-	cout << r << io::endl;
+	// used in manual debugging
+	//cout << "system_Path.cpp canonical(), reconstructed string : " <<io::endl;
+	//cout << r << io::endl;
 	return r;
 }
 
