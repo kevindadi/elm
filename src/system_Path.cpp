@@ -126,7 +126,8 @@ Path Path::canonical(void) {
 	}
 	TRACE
 	string r = buffer.toString();
-	cout << "final reconstructed string: " << r << io::endl;
+	cout << "system_Path.cpp canonical(), reconstructed string : " <<io::endl;
+	cout << r << io::endl;
 	return r;
 }
 
