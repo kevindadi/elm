@@ -41,6 +41,8 @@ find_package(LibXslt 0)
 endif(UNIX)
 
 
+include_directories(".")
+
 #process subdirectories
 add_subdirectory(src)
 add_subdirectory(test)
