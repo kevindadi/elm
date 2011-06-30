@@ -71,7 +71,7 @@ protected:
 			else
 				return p;
 		}
-		return NULL;
+		return 0;
     }
 
 public:
@@ -92,20 +92,32 @@ public:
 			if(!contains(iter)) return false; return true; }
 
 	// Iterator class	
-	class Iterator: public PreIterator<T, Iterator> {
+	class Iterator: public PreIterator<Iterator, T> {
 	public:
 		inline Iterator(const AVLTree<T, K, C>& tree): sp(stack)
-			{ *sp = (Node *)root; if(*sp) sp++; }
+			{ if(tree.root) visit((Node *)tree.root); }
 		inline Iterator(const Iterator& iter): sp(stack + iter.sp - iter.stack)
 			{ for(Node **p = stack, **q = iter.stack; q < sp; p++, q++) *p = *q; }
 		inline bool ended(void) const { return sp == stack; }
 		void next(void) {
-			Node *node = *--sp;
-			if(node->left()) *sp++ = node->left();
-			if(node->right()) *sp++ = node->right();
+			while(true) {
+				Node *last = pop();
+				if(ended()) return;
+				if(last == top()->left()) { push(top()); break; }
+				else if(last == top() && top()->right()) { visit(top()->right()); break; }
+			}
 		}
-		inline const T& item(void) const { return sp->data; }
+		inline const T& item(void) const { return top()->data; }
 	private:
+		inline void push(Node *node) { *sp++ = node; }
+		inline Node *pop(void) { return *--sp; }
+		inline Node *top(void) const { return sp[-1]; }
+		void visit(Node *node) {
+			if(!node) return;
+			push(node);
+			while(top()->left()) push(top()->left());
+			push(top());
+		}
 		Node *stack[MAX_HEIGHT + 1], **sp;
 	};	
 	
