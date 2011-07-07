@@ -30,7 +30,7 @@ namespace elm { namespace option {
 // AbstractValueOption class
 class AbstractValueOption: public Option {
 public:
-	inline AbstractValueOption(void): use(arg_required) { }
+	AbstractValueOption(Manager& man);
 	AbstractValueOption(Manager& man, int tag, ...);
 	AbstractValueOption(Manager& man, int tag, VarArg& args);
 
@@ -60,15 +60,19 @@ public:
 	inline ValueOption(void) { }
 
 	inline ValueOption(Manager& man, int tag ...)
+		: AbstractValueOption(man)
 		{ VARARG_BEGIN(args, tag) AbstractValueOption::init(man, tag, args); VARARG_END }
 
 	inline ValueOption(Manager& man, int tag, VarArg& args)
+		: AbstractValueOption(man)
 		{ AbstractValueOption::init(man, tag, args); }
 
 	inline ValueOption(Manager& man, char s, cstring desc, cstring adesc, const T& val = type_info<T>::null)
+		: AbstractValueOption(man)
 		{ init(man, short_cmd, s, option::description, &desc, option::arg_desc, &adesc, def, val, end); }
 
 	inline ValueOption(Manager& man, cstring l, cstring desc, cstring adesc, const T& val = type_info<T>::null)
+		: AbstractValueOption(man)
 		{ init(man, long_cmd, &l, option::description, &desc, option::arg_desc, &adesc, def, val, end); }
 
 	inline ValueOption(Manager& man, char s, cstring l, cstring desc, cstring adesc, const T& val = type_info<T>::null)
@@ -105,14 +109,17 @@ private:
 // string specialization
 template <>
 inline ValueOption<string>::ValueOption(Manager& man, char s, cstring desc, cstring adesc, const string& value)
+	: AbstractValueOption(man)
 	{ AbstractValueOption::init(man, short_cmd, s, option::description, &desc, option::arg_desc, &adesc, def, value.chars(), end); }
 
 template <>
 inline ValueOption<string>::ValueOption(Manager& man, cstring l, cstring desc, cstring adesc, const string& val)
+	: AbstractValueOption(man)
 	{ init(man, long_cmd, &l, option::description, &desc, option::arg_desc, &adesc, def, &val, end); }
 
 template <>
 inline ValueOption<string>::ValueOption(Manager& man, char s, cstring l, cstring desc, cstring adesc, const string& val)
+	: AbstractValueOption(man)
 	{ init(man, short_cmd, s, long_cmd, &l, option::description, &desc, option::arg_desc, &adesc, def, &val, end); }
 
 

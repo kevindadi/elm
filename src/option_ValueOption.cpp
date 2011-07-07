@@ -114,6 +114,15 @@ namespace elm { namespace option {
 
 
 /**
+ * Build an abstract value option.
+ * @param man	Owner option manager.
+ */
+AbstractValueOption::AbstractValueOption(Manager& man): use(arg_required) {
+	//man.addOption(this);
+}
+
+
+/**
  * Constructor.
  * @param man	Owner manager.
  * @param tag	First tag.

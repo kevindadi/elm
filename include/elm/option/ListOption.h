@@ -32,9 +32,8 @@ template <class T>
 class ListOption: public AbstractValueOption {
 public:
 
-	inline ListOption(void) { }
-	ListOption(Manager& man, int tag, ...)
-		{ VARARG_BEGIN(args, tag) configure(man, tag, args); VARARG_END }
+	ListOption(Manager& man, int tag, ...): AbstractValueOption(man)
+		{ VARARG_BEGIN(args, tag) init(man, tag, args); VARARG_END }
 	ListOption(Manager& man, int tag, VarArg& args)
 		: AbstractValueOption(man, tag, args) { }
 
