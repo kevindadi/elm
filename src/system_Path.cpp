@@ -50,7 +50,7 @@ namespace elm { namespace system {
  * @param start		Start position to look for.
  * @return			Position of next separator or -1.
  */
-int Path::nextSeparator(int start) {
+int Path::nextSeparator(int start) const {
 	for(int i = start; i < buf.length(); i++)
 		if(isSeparator(buf[i]))
 			return i;
@@ -76,7 +76,7 @@ int Path::nextSeparator(int start) {
  * Usually, a relative path becomes an absolute one. Relative operators (.., .)
  * are removed if it is possible.
  */
-Path Path::canonical(void) {
+Path Path::canonical(void) const {
 	TRACE
 	
 	// Make it absolute
@@ -86,7 +86,7 @@ Path Path::canonical(void) {
 		path = abs.buf;
 	}
 	TRACE
-
+	
 	// Select kept components
 	genstruct::Vector<String> comps;
 	int stop = nextSeparator(), start = 0;
@@ -100,12 +100,9 @@ Path Path::canonical(void) {
 			if(comps.count() > 0)
 				comps.setLength(comps.count() - 1);
 		}
-		else{
-			if(comp.length()==1)
-				comp = comp + ":";
+		else
 			comps.add(comp);
-		}
-
+		
 		// Go to next component
 		start = stop + 1;
 		stop = nextSeparator(start);
@@ -126,9 +123,6 @@ Path Path::canonical(void) {
 	}
 	TRACE
 	string r = buffer.toString();
-	// used in manual debugging
-	//cout << "system_Path.cpp canonical(), reconstructed string : " <<io::endl;
-	//cout << r << io::endl;
 	return r;
 }
 
@@ -137,7 +131,7 @@ Path Path::canonical(void) {
  * Get the absolute path matching the current path.
  * @return	Matching absolute path.
  */
-Path Path::absolute(void) {
+Path Path::absolute(void) const {
 	if(isAbsolute())
 		return *this;
 	else if(isHomeRelative()) 
@@ -162,7 +156,7 @@ void Path::setCurrent(Path& path) {
  * @param path	Path to append.
  * @return		New path.
  */
-Path Path::append(Path path) {
+Path Path::append(Path path) const {
 	if(!buf)
 		return path;
 	else if(!path)
@@ -179,7 +173,7 @@ Path Path::append(Path path) {
  * Find the parent path of the current or an empty path if there is no parent.
  * @return	Parent path.
  */
-Path Path::parent(void) {
+Path Path::parent(void) const {
 	int pos = buf.lastIndexOf(SEPARATOR);
 	if(pos < 0)
 		return Path("");
@@ -372,7 +366,7 @@ String Path::extension(void) const {
  * @param new_extension	New extension to put in.
  * @return				New path with extension set.
  */
-Path Path::setExtension(CString new_extension) {
+Path Path::setExtension(CString new_extension) const {
 	int pos = buf.lastIndexOf(SEPARATOR);
 	if(pos < 0)
 		pos = 0;

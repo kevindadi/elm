@@ -43,19 +43,19 @@ public:
 	
 	// Constructors
 	inline Path(void) { }
-	inline Path(const char *path);
-	inline Path(CString path);
-	inline Path(const String& path);
-	inline Path(const Path& path);
-	Path canonical(void);
-	Path absolute(void);
+	inline Path(const char *path): buf(path) { }
+	inline Path(CString path): buf(path) { }
+	inline Path(const String& path): buf(path) { }
+	inline Path(const Path& path): buf(path.buf) { }
+	Path canonical(void) const;
+	Path absolute(void) const;
 	static void setCurrent(Path& path);
-	Path append(Path path);
-	Path parent(void);
-	Path setExtension(CString new_extension);
+	Path append(Path path) const;
+	Path parent(void) const;
+	Path setExtension(CString new_extension) const;
 	
 	// Accessors
-	inline const String& toString(void) const;
+	inline const String& toString(void) const { return buf; }
 	String namePart(void) const;
 	String dirPart(void) const;
 	Path basePart(void) const;
@@ -63,8 +63,8 @@ public:
 	bool isAbsolute(void) const;
 	bool isRelative(void) const;
 	bool isHomeRelative(void) const;
-	inline bool equals(Path& path) const;
-	inline bool contains(Path& path) const;
+	inline bool equals(Path& path) const { return buf == path.buf; }
+	inline bool contains(Path& path) const { return path.buf.startsWith(path.buf); }
 	static Path current(void);
 	static Path home(void);
 
@@ -75,82 +75,28 @@ public:
 	bool isReadable(void) const;
 	bool isWritable(void) const;
 	bool isExecutable(void) const;
-	bool operator==(const Path& path) const { return buf == path.buf; }
-	bool operator!=(const Path& path) const { return !operator==(path); }
+	/*bool operator==(const Path& path) { return buf == path.buf; }
+	bool operator!=(const Path& path) { return !operator==(path); }*/
 	
 	// Operator
 	inline Path& operator=(const char *str) { buf = str; return *this; }
 	inline Path& operator=(CString str) { buf = str; return *this; }
 	inline Path& operator=(const String& str) { buf = str; return *this; }
-	inline Path& operator=(Path& path);
+	inline Path& operator=(Path& path) { buf = path.buf; return *this; }
 
-	inline bool operator==(Path& path);
-	inline bool operator!=(Path& path);
-	inline Path operator/(Path path);
-	inline operator const String& (void) const;
-	inline operator bool (void) const;
+	inline bool operator==(Path path) const { return equals(path); }
+	inline bool operator!=(Path path) const { return !equals(path); }
+	inline Path operator/(const Path& path) const { return append(path); }
+	inline operator const String& (void) const { return toString(); }
+	inline operator bool (void) const  { return buf; }
 	inline const char *operator&(void) const { return &buf; };
 
 private:
-	int nextSeparator(int start = 0);
+	int nextSeparator(int start = 0) const;
 };
 
-
-// Inlines
-inline Path::Path(const char *path): buf(path) {
-}
-
-inline Path::Path(CString path): buf(path) {
-}
-
-inline Path::Path(const String& path): buf(path) {
-}
-
-inline Path::Path(const Path& path): buf(path.buf) {
-}
-
-
-inline const String& Path::toString(void) const {
-	return buf;
-}
-
-inline bool Path::equals(Path& path) const {
-	return buf == path.buf;
-}
-
-inline bool Path::contains(Path& path) const {
-	return path.buf.startsWith(path.buf);
-}
-
-inline Path& Path::operator=(Path& path) {
-	buf = path.buf;
-	return *this;
-}
-
-inline bool Path::operator==(Path& path) {
-	return equals(path);
-}
-
-inline bool Path::operator!=(Path& path) {
-	return !equals(path);
-}
-
-inline Path Path::operator/(Path path) {
-	return append(path);
-}
-
-inline Path::operator const String& (void) const {
-	return toString();
-}
-
-inline Path::operator bool (void) const {
-	return buf;
-}
-
-inline io::Output& operator<<(io::Output& out, const Path& path) {
-	out << path.toString();
-	return out;
-}
+inline io::Output& operator<<(io::Output& out, const Path& path)
+	{ out << path.toString(); return out; }
 
 }	// system
 
