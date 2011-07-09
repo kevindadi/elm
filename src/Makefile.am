@@ -55,6 +55,7 @@ libelm_la_SOURCES= \
 	io_Input.cpp \
 	io_InStream.cpp \
 	io_IOException.cpp \
+	io_Monitor.cpp \
 	io_OutFileStream.cpp \
 	io_Output.cpp \
 	io_OutStream.cpp \

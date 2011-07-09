@@ -8,6 +8,7 @@ includeelmio_HEADERS = \
 	InStream.h \
 	Input.h \
 	io.h \
+	Monitor.h \
 	OutStream.h \
 	OutFileStream.h \
 	Output.h \
