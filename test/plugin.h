@@ -11,6 +11,8 @@
 #include <elm/io.h>
 #include <elm/system/Plugin.h>
 
+
+
 // MyPlugin class
 class MyPlugin: public elm::system::Plugin {
 protected:

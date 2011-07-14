@@ -55,13 +55,14 @@ Process::Process(int _pid): pid(_pid) {
 	ASSERTP(pid >= 0, "negative PID");
 }
 #elif defined(__WIN32) || defined(__WIN64)
-Process::Process(void* _pi){
-	printf("init process %d\n",GetLastError());
-	reinterpret_cast<PROCESS_INFORMATION&>(pi).hProcess=reinterpret_cast<PROCESS_INFORMATION&>(_pi).hProcess;
-	reinterpret_cast<PROCESS_INFORMATION&>(pi).hThread=reinterpret_cast<PROCESS_INFORMATION&>(_pi).hThread;
-	reinterpret_cast<PROCESS_INFORMATION&>(pi).dwProcessId=reinterpret_cast<PROCESS_INFORMATION&>(_pi).dwProcessId;
-	reinterpret_cast<PROCESS_INFORMATION&>(pi).dwThreadId=reinterpret_cast<PROCESS_INFORMATION&>(_pi).dwThreadId;
-	printf("saving process %d\n",GetLastError());
+Process::Process(void const* _pi){
+	//Cr�ation de la structure membre
+	PROCESS_INFORMATION * ppi = new PROCESS_INFORMATION;
+	pi = ppi;
+
+	//Copie du contenu
+	PROCESS_INFORMATION const *pcpi = static_cast< PROCESS_INFORMATION const * >(_pi);
+	*ppi = *pcpi;
 }
 #else
 #error "Unsupported platform"

@@ -5,12 +5,12 @@
  * Unit tests
  */
 
-#include <stdio.h>
 #include <elm/io.h>
 
 using namespace elm;
 
 // Prototypes
+void test_array(void);
 void test_autostr(void);
 void test_avl(void);
 void test_bitvector(void);
@@ -19,6 +19,7 @@ void test_file(void);
 void test_formatter(void);
 void test_frag_table(void);
 void test_hashtable(void);
+void test_int(void);
 void test_io_format(void);
 void test_io_output(void);
 void test_lock(void);
@@ -32,10 +33,12 @@ void test_sorted_bintree(void);
 void test_string(void);
 void test_string_buffer(void);
 void test_table(void);
+void test_thread(void);
 void test_utility(void);
 void test_vararg(void);
 void test_vector(void);
 void test_vector_queue(void);
+void test_wah(void);
 void test_hashkey(void);
 #ifdef HAS_LIBXML
 	void test_serial(void);
@@ -47,12 +50,15 @@ struct test_t {
 	CString name;
 	void (*fun)(void);
 } tests[] = {
+	//{ "array", test_array },
+	//{ "avl", test_avl },
 	{ "autostr", test_autostr },
 	{ "bitvector", test_bitvector },
 	{ "dllist", test_dllist },
 	{ "file", test_file },
 	{ "formatter", test_formatter },
 	{ "hashtable", test_hashtable },
+	//{ "int", test_int },
 	{ "io_format", test_io_format },
 	{ "io_output", test_io_output },
 	{ "lock", test_lock },
@@ -69,11 +75,13 @@ struct test_t {
 	{ "string_buffer", test_string_buffer },
 	{ "table", test_table },
 	{ "frag_table", test_frag_table },
+	{ "thread", test_thread },
 	{ "utility", test_utility },
 	{ "vector", test_vector },	
 	{ "vararg", test_vararg },
 	{ "vector_queue", test_vector_queue },
 	{ "hash_key", test_hashkey },
+	//{ "wah", test_wah },
 	#ifdef HAS_LIBXML
 		{ "serial", test_serial },
 		{ "xom", test_xom },

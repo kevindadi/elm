@@ -19,7 +19,7 @@ class Process {
 #elif defined(__WIN32) || defined(__WIN64)
 	void* pi;
 	unsigned long  rcode;
-	Process(void* _pi);
+	Process(void const* _pi);
 #else
 #error "System not supported"
 #endif

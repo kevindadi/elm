@@ -20,7 +20,11 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#if defined(__unix)
 #include "config.h"
+#elif defined(__WIN32) || defined(__WIN64)
+#include "../config.h"
+#endif
 
 #include <elm/assert.h>
 #ifdef WITH_LIBTOOL
@@ -109,7 +113,7 @@ namespace elm { namespace system {
  * @section creating_plugins Creating Plugins
  *
  * To create a plugin, we have to define a class implementing the service
- * interface of the plugger to plug to. Let's conteinue the example started
+ * interface of the plugger to plug to. Let's continue the example started
  * in the example from the previous section. Notice that we must implemented
  * the pure virtual functions of the interface in order to be able to create
  * an instance of the plugin class.
@@ -261,7 +265,8 @@ void Plugin::unplug(void) {
 			#ifdef WITH_LIBTOOL
 				lt_dlclose((lt_dlhandle)_handle);
 			#elif defined(__WIN32) || defined(__WIN64)
-				FreeLibrary(reinterpret_cast<HMODULE&>(_handle));
+				if(FreeLibrary(reinterpret_cast<HINSTANCE&>(_handle)) == 0 )
+					throw SystemException(errno,"error freeing library");
 			#else
 				dlclose(_handle);
 			#endif

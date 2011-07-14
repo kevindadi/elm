@@ -5,7 +5,7 @@
  *      Author: casse
  */
 
-//#include <elm/util/test.h>
+#include <elm/util/test.h>
 #include <elm/int.h>
 
 using namespace elm;

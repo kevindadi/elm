@@ -26,6 +26,7 @@
 #include <elm/io/WinInStream.h>
 #include <windows.h>
 #include <elm/system/SystemIO.h>
+#include <elm/io.h>
 
 #include <stdio.h>
 
@@ -54,10 +55,13 @@ namespace elm { namespace io {
 /**
  */
 int WinInStream::read(void *buffer, int size) {
-	DWORD* r;
-	ReadFile(_fd, buffer, size, r, NULL);
-	printf("r = %d",r);
-	return (int)r;
+	DWORD r;
+	if(ReadFile(_fd, buffer, size, &r, NULL))
+		return r;
+	else if(GetLastError() == ERROR_HANDLE_EOF)
+		return 0;
+	else
+		return -1;
 }
 
 
@@ -66,12 +70,5 @@ int WinInStream::read(void *buffer, int size) {
 CString WinInStream::lastErrorMessage(void) {
 	return strerror(errno);
 }
-
-
-/**
- * Stream pointing to the standard input.
- */
-static system::SystemInStream Win_stdin(GetStdHandle(STD_INPUT_HANDLE));
-//system::SystemInStream& in = Win_stdin;
 
 } } // elm::io

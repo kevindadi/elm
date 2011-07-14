@@ -20,7 +20,12 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
+#if defined(__unix)
 #include "config.h"
+#elif defined(__WIN32) || defined(__WIN64)
+#include "../config.h"
+#endif
 #include <elm/deprecated.h>
 #include <elm/assert.h>
 #include <stdlib.h>
@@ -32,6 +37,7 @@
 #	include <dlfcn.h>
 #endif
 #include <elm/system/Plugger.h>
+#include <elm/system/System.h>
 #include <elm/io.h>
 
 
@@ -84,12 +90,12 @@ Plugger::Plugger(CString hook, const Version& plugger_version, String _paths)
 		_paths = getenv("LD_LIBRARY_PATH");
 
 	// Scan the paths
-	int index = _paths.indexOf(':');
+	int index = _paths.indexOf(elm::system::Path::PATH_SEPARATOR);
 	while(index >= 0) {
 		if(index)
 			paths.add(_paths.substring(0, index));
 		_paths = _paths.substring(index + 1);
-		index = _paths.indexOf(':');
+		index = _paths.indexOf(elm::system::Path::PATH_SEPARATOR);
 	}
 	if(_paths)
 		paths.add(_paths);
@@ -214,6 +220,32 @@ Plugin *Plugger::plugFile(String path) {
 	}
 	catch(SystemException& exn) {
 	}
+#	if defined(__WIN32) || defined(__WIN64)
+		if(!file) {
+			Path rpath = path;
+			rpath = rpath.setExtension("link");
+			file = system::FileItem::get(rpath);
+			if(file) {
+				file->release();
+				file = 0;
+				io::InStream *in = 0;
+				try {
+					in = System::readFile(rpath);
+					io::Input input(*in);
+					String npath;
+					input >> npath;
+					path = rpath.parent() / npath;
+					file = system::FileItem::get(path);
+				}
+				catch(io::IOException& e) {
+					onError(level_error, e.message());
+					if(in)
+						delete in;
+				}
+				
+			}
+		}
+#	endif
 	if(!file) {
 		err = NO_PLUGIN;
 		return 0;
@@ -243,7 +275,7 @@ Plugin *Plugger::plugFile(String path) {
 
 	// Look for the plugin symbol
 	#if defined(__WIN32) || defined(__WIN64)
-		Plugin *plugin = (Plugin *)GetModuleHandle(&_hook);
+		Plugin *plugin = (Plugin *)GetProcAddress(reinterpret_cast<HINSTANCE&>(handle),&_hook);
 	#elif defined(WITH_LIBTOOL)
 		Plugin *plugin = (Plugin *)lt_dlsym((lt_dlhandle)handle, &_hook);
 	#else
@@ -417,7 +449,11 @@ void Plugger::Iterator::go(void) {
 		}
 
 		// Look current file
+#if defined(__unix)
 		if(file->item()->path().toString().endsWith(".la"))
+#elif defined(__WIN32) || defined(__WIN64)
+		if(file->item()->path().toString().endsWith(".dll"))
+#endif
 			break;
 	}
 }

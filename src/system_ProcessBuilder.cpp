@@ -187,7 +187,7 @@ Process *ProcessBuilder::run(void) {
 		strcpy(tabtemp,tab.toString().chars());
 		cout << tabtemp << " error1 = "<< GetLastError() << io::endl;
 		// Launch process
-		if(CreateProcess(tabtemp,NULL,0,0,TRUE,0,0,0,&si,pi) == 0)
+		if(CreateProcess(NULL,tabtemp,0,0,TRUE,0,0,0,&si,pi) == 0)
 			error = GetLastError();
 		cout << "error2 = " << GetLastError() << "error value = " << error << io::endl;
 		process = new Process(pi);

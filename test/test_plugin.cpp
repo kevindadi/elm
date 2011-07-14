@@ -7,6 +7,9 @@
 
 #include <elm/util/test.h>
 #include <elm/system/Plugger.h>
+#if defined(__WIN32) || defined(__WIN64)
+#include <windows.h>
+#endif
 
 using namespace elm;
 using namespace elm::system;
@@ -44,12 +47,16 @@ PluginTwo plugin_two;
 void test_plugin(void) {
 	cout << "!!! " << &plugin_two << io::endl;
 	CHECK_BEGIN("Plugin");
-	
+
 	// Simple open
 	Plugger plugger("my_plugin", Version(0, 0, 0), ".");
+#if defined(__unix)
 	Plugin *plugin = plugger.plug("myplugin");
+#elif defined(__WIN32) || defined(__WIN64)
+	Plugin *plugin = plugger.plug("libmyplugin");
+#endif
 	REQUIRE(plugin, {
-		cout << "ERROR: " << plugger.lastErrorMessage() << io::endl;
+		cout << "ERROR: " << plugger.getLastError() << io::endl;
 		return;
 	});
 	CHECK(startup_flag);
@@ -75,7 +82,12 @@ void test_plugin(void) {
 	
 	// Check release
 	int cnt = 0;
-	while(!cleanup_flag) {
+#if defined(__unix)
+	while(!cleanup_flag)
+#elif defined(__WIN32) || defined(__WIN64)
+	while(!cleanup_flag && (cnt != 16))
+#endif
+	{
 		plugin->unplug();
 		cnt++;
 	}
@@ -100,7 +112,12 @@ void test_plugin(void) {
 		CHECK(startup_flag);
 		CHECK(!cleanup_flag);
 		cnt = 0;
-		while(!cleanup_flag) {
+#if defined(__unix)
+		while(!cleanup_flag)
+#elif defined(__WIN32) || defined(__WIN64)
+		while(!cleanup_flag && (cnt != 16))
+#endif
+		{
 			plugin->unplug();
 			cnt++;
 		}
@@ -116,7 +133,11 @@ void test_plugin(void) {
 		CHECK(plugin == "plugin_two");
 		plugin++;
 		REQUIRE(plugin, return);
+#if defined(__unix)
 		CHECK(plugin == "myplugin");
+#elif defined(__WIN32) || defined(__WIN64)
+		CHECK(plugin == "libmyplugin");
+#endif
 		plugin++;
 		CHECK(!plugin);
 	}

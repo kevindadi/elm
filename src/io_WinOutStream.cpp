@@ -63,7 +63,7 @@ CString WinOutStream::lastErrorMessage(void) {
 
 // Overloaded
 int WinOutStream::write(const char *buffer, int size) {
-	DWORD* r;
+	DWORD r;
 	// late binding of stdout, stderr: very ugly but don't know any better solution
 	if(_fd == NULL) {
 		if(this == &err)
@@ -71,7 +71,10 @@ int WinOutStream::write(const char *buffer, int size) {
 		else if(this == &out)
 			_fd = GetStdHandle(STD_OUTPUT_HANDLE);
 	}
-	return ::WriteFile(_fd, buffer, size, r, NULL);
+	if(::WriteFile(_fd, buffer, size, &r, NULL))
+		return r;
+	else
+		return -1;
 }
 
 // Overloaded

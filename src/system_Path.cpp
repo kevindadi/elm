@@ -59,6 +59,18 @@ int Path::nextSeparator(int start) const {
 
 
 /**
+ * Get the last separator.
+ * @return		Position of last separator or null if there are none.
+ */
+int Path::lastSeparator(void) const {
+	for(int i = buf.length() - 1; i >= 0; i--)
+		if(isSeparator(buf[i]))
+			return i;
+	return -1;
+}
+
+
+/**
  * @fn Path::Path(String path);
  * Build a new path from the given string.
  * @param path	Path to store.
@@ -80,41 +92,44 @@ Path Path::canonical(void) const {
 	TRACE
 	
 	// Make it absolute
-	String path = buf;
-	if(isRelative()) {
-		Path abs = absolute();
-		path = abs.buf;
-	}
+	Path path = *this;
+	if(isRelative())
+		path = absolute();
 	TRACE
 	
 	// Select kept components
 	genstruct::Vector<String> comps;
-	int stop = nextSeparator(), start = 0;
+	int stop = path.nextSeparator(), start = 0;
 	while(stop >= 0) {
-		
+
 		// Select the component
-		String comp = path.substring(start, stop - start);
+		String comp = path.buf.substring(start, stop - start);
 		if(!comp || comp == ".")
 			;
+		
+		// Select the com	Path path = *this;
+		if(isRelative())
+			path = absolute();
 		else if(comp == "..") {
 			if(comps.count() > 0)
 				comps.setLength(comps.count() - 1);
 		}
 		else
 			comps.add(comp);
-		
+
 		// Go to next component
 		start = stop + 1;
-		stop = nextSeparator(start);
+		stop = path.nextSeparator(start);
 	}
-	comps.add(path.substring(start));
+	comps.add(path.buf.substring(start));
 	TRACE
+
 	
 	// Rebuild path
 	StringBuffer buffer;
 	for(int i = 0; i < comps.length(); i++) {
 #		if defined(__WIN32) || defined(__WIN64)
-			if(i != 0)
+			if(i != 0 || !(comps[i].length() >= 1 && comps[i].endsWith(":")))
 				buffer << SEPARATOR;
 #		else
 			buffer << SEPARATOR;
@@ -174,7 +189,7 @@ Path Path::append(Path path) const {
  * @return	Parent path.
  */
 Path Path::parent(void) const {
-	int pos = buf.lastIndexOf(SEPARATOR);
+	int pos = lastSeparator();
 	if(pos < 0)
 		return Path("");
 	else
@@ -194,7 +209,7 @@ Path Path::parent(void) const {
  * @return	Name part.
  */
 String Path::namePart(void) const {
-	int pos = buf.lastIndexOf(SEPARATOR);
+	int pos = lastSeparator();
 	if(pos < 0)
 		return buf;
 	else
@@ -207,7 +222,7 @@ String Path::namePart(void) const {
  * @return	Directory part.
  */
 String Path::dirPart(void) const {
-	int pos = buf.lastIndexOf(SEPARATOR);
+	int pos = lastSeparator();
 	if(pos < 0)
 		return "";
 	else
@@ -221,7 +236,7 @@ String Path::dirPart(void) const {
  */
 bool Path::isAbsolute(void) const {
 #	if defined(__WIN32) || defined(__WIN64)
-		return buf.length() >= 2 && buf[1] == ':';
+		return (buf.length() >= 2 && buf[1] == ':') || (buf.length() >= 1 && (buf[0] == SEPARATOR || buf[0] == '/'));
 #	else
 		return buf.length() > 0 && buf[0] == SEPARATOR;
 #	endif
@@ -334,7 +349,7 @@ Path Path::home(void) {
  * @return	Base part of the path.
  */
 Path Path::basePart(void) const {
-	int pos = buf.lastIndexOf(SEPARATOR);
+	int pos = lastSeparator();
 	if(pos < 0)
 		pos = 0;
 	pos = buf.indexOf('.', pos);
@@ -350,7 +365,7 @@ Path Path::basePart(void) const {
  * @return	Extension.
  */
 String Path::extension(void) const {
-	int pos = buf.lastIndexOf(SEPARATOR);
+	int pos = lastSeparator();
 	if(pos < 0)
 		pos = 0;
 	pos = buf.indexOf('.', pos);
@@ -367,7 +382,7 @@ String Path::extension(void) const {
  * @return				New path with extension set.
  */
 Path Path::setExtension(CString new_extension) const {
-	int pos = buf.lastIndexOf(SEPARATOR);
+	int pos = lastSeparator();
 	if(pos < 0)
 		pos = 0;
 	pos = buf.indexOf('.', pos);

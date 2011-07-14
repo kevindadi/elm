@@ -27,14 +27,19 @@
 using namespace elm;
 using namespace elm::checksum;
 
+#ifdef __unix
+#	define	INPUT	"test"
+#elif defined(__WIN32) || defined(__WIN64)
+#	define	INPUT	"test.exe"
+#else
+#	error "Unsupported architecture !"
+#endif
+
 void test_md5(void) {
 	CHECK_BEGIN("MD5");
 	MD5 md5;
-	cout << "entering md5" << io::endl;
-	io::InStream *in = system::System::readFile("test.exe");
-	cout << "step 1" << io::endl;
+	io::InStream *in = system::System::readFile(INPUT);
 	md5.put(*in);
-	cout << "step 2" << io::endl;
 	delete in;
 	md5.print(cout);
 	cout << io::endl;

@@ -5,6 +5,11 @@ project("elm")
 
 set(LIBRARY_OUTPUT_PATH lib/${CMAKE_BUILD_TYPE})
 
+if(MINGW OR WIN32)
+set(LIBDIR "bin")
+else()
+set(LIBDIR "lib")
+endif()
 
 # gcc based compiler lack of support by cmake (opposed to VS)
 # so need to make some manual adjustment in this case
@@ -12,6 +17,11 @@ if (CMAKE_COMPILER_IS_GNUCXX AND (CMAKE_BUILD_TYPE MATCHES Release))
   set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
 endif (CMAKE_COMPILER_IS_GNUCXX AND (CMAKE_BUILD_TYPE MATCHES Release))
 
+#IF(MINGW)
+#	SET(WIN32 on)
+#	SET(CMAKE_FIND_LIBRARY_PREFIXES "lib" "")
+#	SET(CMAKE_FIND_LIBRARY_SUFFIXES ".dll" ".dll.a" ".a" ".lib")
+#ENDIF(MINGW)
 
 #message(STATUS ${source_files})
 
@@ -25,23 +35,29 @@ if(UNIX)
 #include(LibXml2)
 find_package(LibXml2 0)
 
-# Windows
-elseif(WIN32 OR MINGW)
-#message(WARNING "LIBXML_INCLUDE_DIR is to be set to the include directory, not the libxml directory for OS compatibility issues")
-#find_path(LIBXML_INCLUDE_DIR "get_include_dir")
-#include_directories(BEFORE ${LIBXML_INCLUDE_DIR})
-set(LIBXML2_LIBRARIES ${CMAKE_BINARY_DIR}/../libxml2-2.7.7.win32/lib/libxml2.lib)
-#message(STATUS ${LIBXML2_LIBRARIES})
-set(LIBXML2_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../libxml2-2.7.7.win32/include/)
-find_package(LibXml2 0)
+# MINGW
+elseif(MINGW AND NOT WIN32)
 
-set(LIBXSLT_LIBRARIES ${CMAKE_BINARY_DIR}/../libxslt-1.1.26.win32/lib/libxslt.lib)
-set(LIBXSLT_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../libxslt-1.1.26.win32/include/)
-find_package(LibXslt 0)
+set(LIBXML2 ${CMAKE_BINARY_DIR}/../site/bin/libxml2.dll)
+set(LIBXML2_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../site/include)
+set(LIBXSLT ${CMAKE_BINARY_DIR}/../site/bin/libxslt.dll)
+set(LIBXSLT_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../site/include)
+
+# Windows
+elseif(WIN32)
+
+find_library(LIBXML2 libxml2 PATHS "${CMAKE_BINARY_DIR}/../libxml2-2.7.7.win32/bin")
+get_filename_component(LIBXML2_DIR ${LIBXML2} PATH)
+set(LIBXML2_INCLUDE_DIR "${LIBXML2_DIR}/../include" CACHE PATH "path to libxml2 include directory")
+include_directories(${LIBXML2_INCLUDE_DIR})
+
+find_library(LIBXSLT libxslt PATHS "${CMAKE_BINARY_DIR}/../libxslt-1.1.26.win32/bin")
+get_filename_component(LIBXSLT_DIR ${LIBXSLT} PATH)
+set(LIBXSLT_INCLUDE_DIR "${LIBXSLT_DIR}/../include"  CACHE PATH "path to libxslt include directory")
+include_directories(${LIBXSLT_INCLUDE_DIR})
+
 endif(UNIX)
 
-
-include_directories(".")
 
 #process subdirectories
 add_subdirectory(src)
@@ -107,20 +123,24 @@ endif(UNIX AND NOT APPLE)
 #once Doxygen path has been searched for
 #generation of documentation IF Doxygen has been found
 #tried testing for DEFINED DOXYGEN_DIR, doesn't work
-if(DOXYGEN)
+if(DOXYGEN AND WIN32)
 	message(STATUS "Doxygen found, generation of documentation")
-	execute_process(COMMAND "doxygen Doxyfile")
-else(DOXYGEN)
+	execute_process(COMMAND "cmd" "/C doxygen Doxyfile")
+elseif(DOXYGEN AND UNIX) #not tested
+	message(STATUS "Doxygen found, generation of documentation")
+	execute_process(COMMAND "bash" "doxygen Doxyfile")
+else(DOXYGEN AND WIN32)
 	message(WARNING "Doxygen not found, cannot generate documentation")
-endif(DOXYGEN)
+endif(DOXYGEN AND WIN32)
+
 
 ###########################
 
 # Documentation install
-if(DOXYGEN)
-	install(
-		DIRECTORY autodoc
-		DESTINATION share/Elm/
-	)
-endif(DOXYGEN)
+#if(DOXYGEN)
+#	install(
+#		DIRECTORY autodoc
+#		DESTINATION share/Elm/
+#	)
+#endif(DOXYGEN)
 

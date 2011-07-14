@@ -354,7 +354,7 @@ void MD5::put(io::InStream& in) {
 		if(r < 0)
 			throw io::IOException("MD5Sum: error during stream read");
 		size += r;
-		cout << size << " " << r << io::endl;
+		//cout << size << " " << r << io::endl;
 		update();
 	} while(size == 0);
 }

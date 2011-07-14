@@ -93,6 +93,7 @@ public:
 
 private:
 	int nextSeparator(int start = 0) const;
+	int lastSeparator(void) const;
 };
 
 inline io::Output& operator<<(io::Output& out, const Path& path)

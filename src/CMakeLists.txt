@@ -113,11 +113,10 @@ endif(UNIX)
 include_directories("../include")
 include_directories(".")
 include_directories(${LIBXML2_INCLUDE_DIR})
-#message(STATUS ${LIBXML2_INCLUDE_DIR})
 include_directories(${LIBXSLT_INCLUDE_DIR})
 
 
-if(LIBXML2_FOUND)
+if(LIBXML2)
 list(APPEND LIBELM_LA_SOURCES
 	"xom_Attribute.cpp"
 	"xom_Builder.cpp"
@@ -134,7 +133,7 @@ list(APPEND LIBELM_LA_SOURCES
 	"xom_Text.cpp"
 	"xom_XIncluder.cpp"
 	"xom_macros.h")
-endif(LIBXML2_FOUND)
+endif(LIBXML2)
 	
 #removing OS-special files
 #it's hardcoded, havn't found (yet) a better way to do
@@ -146,8 +145,24 @@ elseif(MINGW OR WIN32)
 	list(REMOVE_ITEM LIBELM_LA_SOURCES io_UnixOutStream.cpp)
 endif(UNIX AND NOT APPLE AND NOT MINGW)
 
-add_library(elm SHARED ${LIBELM_LA_SOURCES})
-install(TARGETS elm DESTINATION lib)
+if(LIBXSLT)
+list(APPEND LIBELM_LA_SOURCES
+	"xom_XSLTransform.cpp"
+	)
+endif(LIBXSLT)
 
+add_library(elm SHARED ${LIBELM_LA_SOURCES})
+
+if(UNIX)
 target_link_libraries(elm ${LIBXML2_LIBRARIES})
 target_link_libraries(elm ${LIBXSLT_LIBRARIES})
+elseif(WIN32)
+message(STATUS ${LIBXML2})
+target_link_libraries(elm ${LIBXML2})
+target_link_libraries(elm ${LIBXSLT})
+endif(UNIX)
+if(UNIX)
+install(TARGETS elm DESTINATION ${LIBDIR})
+elseif(WIN32)
+install(TARGETS elm DESTINATION ${CMAKE_BINARY_DIR})
+endif(UNIX)

@@ -9,6 +9,10 @@
 #include <elm/utility.h>
 #include <elm/util/Option.h>
 #include <stdlib.h>
+
+#if defined(__WIN32) || defined(__WIN64)
+#include <elm/io.h>
+#endif
  
 using namespace elm;
 

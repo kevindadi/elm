@@ -37,6 +37,7 @@ public:
 	Plugin *plug(const string& path);
 	Plugin *plugFile(String path);
 	inline String hook(void) const;
+	string getLastError(void);
 
 	// deprecated
 	virtual void onError(String message);
@@ -81,7 +82,7 @@ private:
 	static void leave(Plugin *plugin);
 	Plugin *plug(Plugin *plugin, void *handle);
 	inline genstruct::Vector<Plugin *>& statics(void);
-	string getLastError(void);
+	//	string getLastError(void);
 	void onError(error_level_t level, const string& message);
 };
 
