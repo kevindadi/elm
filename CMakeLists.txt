@@ -35,9 +35,10 @@ if(UNIX)
 #include(LibXml2)
 find_package(LibXml2 0)
 
-# MINGW
-elseif(MINGW AND NOT WIN32)
+# MINGW_LINUX
+elseif(MINGW_LINUX)
 
+message(STATUS "DEBUG: libxml2 mingw")
 set(LIBXML2 ${CMAKE_BINARY_DIR}/../site/bin/libxml2.dll)
 set(LIBXML2_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../site/include)
 set(LIBXSLT ${CMAKE_BINARY_DIR}/../site/bin/libxslt.dll)
@@ -61,7 +62,9 @@ endif(UNIX)
 
 #process subdirectories
 add_subdirectory(src)
-add_subdirectory(test)
+if(ELM_TEST)
+	add_subdirectory(test)
+endif()
 
 # look for GDB
 find_program(GDB_PATH gdb)
