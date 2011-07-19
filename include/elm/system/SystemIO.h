@@ -8,7 +8,7 @@
 #define ELM_SYSTEM_SYSTEM_IO_H
 
 // Unix system streams
-#if defined(__unix)
+#if defined(__unix) || __APPLE__
 #	include <elm/io/UnixInStream.h>
 #	include <elm/io/UnixOutStream.h>
 

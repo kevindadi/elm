@@ -137,13 +137,13 @@ endif(LIBXML2)
 	
 #removing OS-special files
 #it's hardcoded, havn't found (yet) a better way to do
-if(UNIX AND NOT APPLE AND NOT MINGW)
-	list(REMOVE_ITEM LIBELM_LA_SOURCES io_WinInStream.cpp)
-	list(REMOVE_ITEM LIBELM_LA_SOURCES io_WinOutStream.cpp)
-elseif(MINGW OR WIN32)
+if(MINGW_LINUX OR WIN32)
 	list(REMOVE_ITEM LIBELM_LA_SOURCES io_UnixInStream.cpp)
 	list(REMOVE_ITEM LIBELM_LA_SOURCES io_UnixOutStream.cpp)
-endif(UNIX AND NOT APPLE AND NOT MINGW)
+elseif(UNIX OR APPLE)
+	list(REMOVE_ITEM LIBELM_LA_SOURCES io_WinInStream.cpp)
+	list(REMOVE_ITEM LIBELM_LA_SOURCES io_WinOutStream.cpp)
+endif()
 
 if(LIBXSLT)
 list(APPEND LIBELM_LA_SOURCES

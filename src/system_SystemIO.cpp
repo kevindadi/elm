@@ -50,7 +50,7 @@ namespace elm { namespace system {
 
 
 // Actual stdio objects
-#if defined(__unix)
+#if defined(__unix) || defined(__APPLE__)
 	static system::SystemInStream stdin_object(0);
 	static system::SystemOutStream stdout_object(1);
 	static system::SystemOutStream stderr_object(2);

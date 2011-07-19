@@ -20,7 +20,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#if defined(__unix)
+#if defined(__unix) || defined(__APPLE__)
 #include <dlfcn.h>
 #elif defined(__WIN32)
 #include <windows.h>
@@ -106,7 +106,7 @@ namespace system {
  * Create a pipe stream.
  * @param fd	Unix file descriptor.
  */
-#if defined(__unix)
+#if defined(__unix) || defined(__APPLE__)
 PipeInStream::PipeInStream(int fd): SystemInStream(fd) {
 }
 #elif defined(_WIN32_WINNT)
@@ -118,7 +118,7 @@ PipeInStream::PipeInStream(HANDLE fd): SystemInStream(fd) {
  * Delete the pipe stream.
  */
 PipeInStream::~PipeInStream(void) {
-#if defined(__unix)
+#if defined(__unix) || defined(__APPLE__)
 	close(fd());
 #elif defined(_WIN32_WINNT)
 	TerminateProcess(fd(),1);
@@ -136,7 +136,7 @@ PipeInStream::~PipeInStream(void) {
  * Build a pipe output stream.
  * @param fd	Unix file descriptor.
  */
-#if defined(__unix)
+#if defined(__unix) || defined(__APPLE__)
 PipeOutStream::PipeOutStream(int fd): SystemOutStream(fd) {
 }
 #elif defined(__WIN32) || defined(__WIN64)
@@ -148,7 +148,7 @@ PipeOutStream::PipeOutStream(HANDLE fd): SystemOutStream(fd) {
  * Delete the pipe stream.
  */
 PipeOutStream::~PipeOutStream(void) {
-#if defined(__unix)
+#if defined(__unix) || defined(__APPLE__)
 	close(fd());
 #elif defined(__WIN32)
 	TerminateProcess(fd(),1);
@@ -170,7 +170,7 @@ PipeOutStream::~PipeOutStream(void) {
  */
 Pair<PipeInStream *, PipeOutStream *> System::pipe(void)
 throw (SystemException) {
-#if defined(__unix)
+#if defined(__unix) || defined(__APPLE__)
 	int fds[2];
 	// Create the pair
 	if(::pipe(fds) < 0) {
@@ -228,7 +228,7 @@ unsigned int System::random(unsigned int top) {
  * @throws		SystemException	Thrown if there is an error.
  */
 io::OutStream *System::createFile(const Path& path) throw (SystemException) {
-#if defined(__unix)
+#if defined(__unix) || defined(__APPLE__)
 	int fd = ::open(&path.toString(), O_CREAT | O_TRUNC | O_WRONLY, 0777);
 	if(fd == -1)
 		throw SystemException(errno, "file creation");
@@ -258,7 +258,7 @@ io::OutStream *System::createFile(const Path& path) throw (SystemException) {
  * @throws		SystemException	Thrown if there is an error.
  */
 io::InStream *System::readFile(const Path& path) throw(SystemException) {
-#if defined(__unix)
+#if defined(__unix) || defined(__APPLE__)
 	int fd = ::open(&path.toString(), O_RDONLY);
 	if(fd == -1)
 		throw SystemException(errno, "file reading");
@@ -289,7 +289,7 @@ io::InStream *System::readFile(const Path& path) throw(SystemException) {
  * @throws		SystemException	Thrown if there is an error.
  */
 io::OutStream *System::appendFile(const Path& path) throw(SystemException) {
-#if defined(__unix)
+#if defined(__unix) || defined(__APPLE__)
 	int fd = ::open(&path.toString(), O_APPEND | O_CREAT | O_WRONLY, 0777);
 	if(fd == -1)
 		throw SystemException(errno, "file appending");
@@ -311,7 +311,7 @@ io::OutStream *System::appendFile(const Path& path) throw(SystemException) {
 #endif
 }
 
-#if defined(__unix)
+#if defined(__unix) || defined(__APPLE__)
 // UnixRandomAccessStream class
 class UnixRandomAccessStream: public io::RandomAccessStream {
 public:
@@ -415,7 +415,7 @@ throw(SystemException)
 	if(fd < 0)
 		throw SystemException(errno, _ << "cannot open \"" << path << "\"");
 	else
-#		ifdef __unix
+#		if defined(__unix)  || defined(__APPLE__)
 			return new UnixRandomAccessStream(fd);
 #		elif defined(__WIN32) || defined(__WIN64)
 			return new WinRandomAccessStream(fd);
@@ -441,7 +441,7 @@ throw(SystemException)
 	if(fd < 0)
 		throw SystemException(errno, _ << "cannot create \"" << path << "\"");
 	else
-#		ifdef __unix
+#		if defined(__unix)  || defined(__APPLE__)
 			return new UnixRandomAccessStream(fd);
 #		elif defined(__WIN32) || defined(__WIN64)
 			return new WinRandomAccessStream(fd);

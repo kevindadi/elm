@@ -40,7 +40,7 @@ namespace elm { namespace io {
 #if defined(__WIN32) || defined(__WIN64)
 bool OutFileStream::isReady(void) { return GetHandleInformation(fd(),NULL) != 0;
 }
-#elif defined(__unix)
+#elif defined(__unix) || defined(__APPLE__)
 bool OutFileStream::isReady(void) { return fd() >= 0; };
 #endif
 
@@ -49,7 +49,7 @@ bool OutFileStream::isReady(void) { return fd() >= 0; };
  * Build an output file stream by creating a new file or deleting an old one.
  * @param path Path of the file to write to.
  */
-#if defined(__unix)
+#if defined(__unix) || defined(__APPLE__)
 OutFileStream::OutFileStream(const char *path)
 : SystemOutStream(open(path, O_CREAT | O_TRUNC | O_WRONLY, 0777)) {
 }
@@ -69,7 +69,7 @@ OutFileStream::OutFileStream(const char *path)
  * Build an output file stream by creating a new file or deleting an old one.
  * @param path Path of the file to wriet to.
  */
-#if defined(__unix)
+#if defined(__unix) || defined(__APPLE__)
 OutFileStream::OutFileStream(const Path& path)
 : SystemOutStream(open(&path.toString(), O_CREAT | O_TRUNC | O_WRONLY, 0777)) {
 }
@@ -97,7 +97,7 @@ OutFileStream::~OutFileStream(void) {
  * Close the file. Subsequent writes will fail.
  */
 void OutFileStream::close() {
-#if defined(__unix)
+#if defined(__unix) || defined(__APPLE__)
 	if(_fd >= 0) {
 		::close(_fd);
 		_fd = -1;

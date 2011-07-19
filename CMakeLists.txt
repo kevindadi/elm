@@ -31,7 +31,7 @@ include(TestBigEndian)
 TEST_BIG_ENDIAN(BIG_ENDIAN)
 
 # Unix
-if(UNIX)
+if(UNIX OR APPLE)
 #include(LibXml2)
 find_package(LibXml2 0)
 
@@ -57,7 +57,7 @@ get_filename_component(LIBXSLT_DIR ${LIBXSLT} PATH)
 set(LIBXSLT_INCLUDE_DIR "${LIBXSLT_DIR}/../include"  CACHE PATH "path to libxslt include directory")
 include_directories(${LIBXSLT_INCLUDE_DIR})
 
-endif(UNIX)
+endif()
 
 
 #process subdirectories
@@ -83,9 +83,9 @@ configure_file (
 
 # header installation
 set(EXCLUDES PATTERN "CVS" EXCLUDE)
-if(UNIX)
+if(UNIX OR APPLE)
 set(EXCLUDES ${EXCLUDES} PATTERN "Win*Stream.h" EXCLUDE)
-endif(UNIX)
+endif()
 if(WIN32 OR MINGW)
 set(EXCLUDES ${EXCLUDES} PATTERN "GDBCrashHandler.h" EXCLUDE)
 endif(WIN32 OR MINGW)
@@ -102,7 +102,7 @@ install(
 
 ###########################
 #adding Doxygen support
-if(UNIX AND NOT APPLE)
+if(UNIX OR APPLE)
 	#if using a unix system
 	message(STATUS "Using Unix system, not MacOS")
 	find_program(DOXYGEN doxygen
@@ -121,7 +121,7 @@ elseif(APPLE)
 else(UNIX AND NOT APPLE)
 	#in case of some more exotic OS
 	message(WARNING "OS not supported")
-endif(UNIX AND NOT APPLE)
+endif()
 	
 #once Doxygen path has been searched for
 #generation of documentation IF Doxygen has been found

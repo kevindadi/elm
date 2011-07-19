@@ -21,8 +21,8 @@
  */
 
 
-#if defined(__unix)
-#include "config.h"
+#if defined(__unix) || defined(__APPLE__)
+#include "../config.h"
 #elif defined(__WIN32) || defined(__WIN64)
 #include "../config.h"
 #endif
