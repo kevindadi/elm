@@ -55,6 +55,7 @@ set(TEST_SOURCES
 	"test_vector.cpp"
 	"test_vector_queue.cpp"
 	"test_sorted_bintree.cpp"
+#	"test_thread.cpp"
 )
 
 

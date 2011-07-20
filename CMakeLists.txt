@@ -54,6 +54,10 @@ get_filename_component(LIBXML2_DIR ${LIBXML2} PATH)
 set(LIBXML2_INCLUDE_DIR "${LIBXML2_DIR}/../include" CACHE PATH "path to libxml2 include directory")
 include_directories(${LIBXML2_INCLUDE_DIR})
 
+if(LIBXML2)
+add_definitions("-DHAS_LIBXML")
+endif()
+
 find_library(LIBXSLT libxslt PATHS "${CMAKE_BINARY_DIR}/../libxslt-1.1.26.win32/bin")
 get_filename_component(LIBXSLT_DIR ${LIBXSLT} PATH)
 set(LIBXSLT_INCLUDE_DIR "${LIBXSLT_DIR}/../include"  CACHE PATH "path to libxslt include directory")

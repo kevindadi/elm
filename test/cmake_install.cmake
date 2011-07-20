@@ -1,8 +1,8 @@
-# Install script for directory: /home/casse/otawa/windows/elm/test
+# Install script for directory: C:/Users/Naze-max/workspace/elm/test
 
 # Set the install prefix
 IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  SET(CMAKE_INSTALL_PREFIX "/home/casse/otawa/windows/site")
+  SET(CMAKE_INSTALL_PREFIX "C:/Users/Naze-max/workspace/elm")
 ENDIF(NOT DEFINED CMAKE_INSTALL_PREFIX)
 STRING(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 

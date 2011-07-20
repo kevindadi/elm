@@ -33,7 +33,7 @@ void test_sorted_bintree(void);
 void test_string(void);
 void test_string_buffer(void);
 void test_table(void);
-void test_thread(void);
+//void test_thread(void);
 void test_utility(void);
 void test_vararg(void);
 void test_vector(void);
@@ -75,7 +75,7 @@ struct test_t {
 	{ "string_buffer", test_string_buffer },
 	{ "table", test_table },
 	{ "frag_table", test_frag_table },
-	{ "thread", test_thread },
+//	{ "thread", test_thread },
 	{ "utility", test_utility },
 	{ "vector", test_vector },	
 	{ "vararg", test_vararg },
