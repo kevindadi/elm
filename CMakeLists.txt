@@ -32,8 +32,10 @@ TEST_BIG_ENDIAN(BIG_ENDIAN)
 
 # Unix
 if(UNIX OR APPLE)
-#include(LibXml2)
 find_package(LibXml2 0)
+set(LIBXML2 ${LIBXML2_FOUND})
+find_package(LibXslt 0)
+set(LIBXSLT ${LIBXSLT_FOUND})
 
 # MINGW_LINUX
 elseif(MINGW_LINUX)

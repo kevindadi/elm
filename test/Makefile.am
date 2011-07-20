@@ -37,7 +37,9 @@ test_DEPENDENCIES = ../src/libelm.la myplugin.la
 
 test_SOURCES		=\
 						test.cc \
+						test_array.cpp \
 						test_autostr.cpp \
+						test_avl.cpp \
 						test_bitvector.cpp \
 						test_dllist.cpp \
 						test_file.cpp \
@@ -45,6 +47,7 @@ test_SOURCES		=\
 						test_frag_table.cpp \
 						test_hashkey.cpp \
 						test_hashtable.cpp \
+						test_int.cpp \
 						test_io_format.cpp \
 						test_io_output.cpp \
 						test_lock.cpp \
@@ -57,11 +60,13 @@ test_SOURCES		=\
 						test_string.cpp \
 						test_string_buffer.cpp \
 						test_table.cpp \
+						test_thread.cpp \
 						test_utility.cpp \
 						test_vararg.cpp \
 						test_vector.cpp \
 						test_vector_queue.cpp \
-						test_sorted_bintree.cpp
+						test_sorted_bintree.cpp \
+						#test_wah.cpp
 
 if HAS_LIBXML
 test_SOURCES += \

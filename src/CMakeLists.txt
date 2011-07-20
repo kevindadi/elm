@@ -111,7 +111,7 @@ include_directories("../include")
 include_directories(".")
 include_directories(${LIBXML2_INCLUDE_DIR})
 include_directories(${LIBXSLT_INCLUDE_DIR})
-
+list(APPEND CMAKE_CXX_FLAGS -Wall)
 
 if(LIBXML2)
 list(APPEND LIBELM_LA_SOURCES
