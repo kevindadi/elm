@@ -64,11 +64,8 @@ set(LIBELM_LA_SOURCES
 	"serial_TextSerializer.cpp"
 	"serial_Unserializer.cpp"
 	"option_ValueOption.cpp"
-	"serial_XOMUnserializer.cpp"
 	"serial2_serial.cpp"
 	"serial2_TextSerializer.cpp"
-	"serial2_XOMUnserializer.cpp"
-	"serial2_XOMSerializer.cpp"
 	"string_AutoString.cpp"
 	"string_String.cpp"
 	"string_StringBuffer.cpp"
@@ -118,6 +115,9 @@ include_directories(${LIBXSLT_INCLUDE_DIR})
 
 if(LIBXML2)
 list(APPEND LIBELM_LA_SOURCES
+	"serial_XOMUnserializer.cpp"
+	"serial2_XOMUnserializer.cpp"
+	"serial2_XOMSerializer.cpp"
 	"xom_Attribute.cpp"
 	"xom_Builder.cpp"
 	"xom_Comment.cpp"
