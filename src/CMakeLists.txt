@@ -7,9 +7,9 @@ set(LIBELM_LA_SOURCES
 	"alloc_DefaultAllocator.cpp"
 	"alloc_StackAllocator.cpp"
 	"block_DynBlock.cpp"
-	"debug.cpp"
 	"checksum_Fletcher.cpp"
 	"checksum_MD5.cpp"
+	"debug.cpp"
 	"genstruct.h"
 	"genstruct_AssocList.cpp"
 	"genstruct_AVLTree.cpp"
@@ -106,9 +106,9 @@ set(LIBELM_LA_SOURCES
 	"utility.cpp"
 	)
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
 	list(APPEND LIBELM_LA_SOURCES "debug_CrashHandler.cpp" "debug_GDBCrashHandler.cpp")
-endif(UNIX)
+endif()
 
 include_directories("../include")
 include_directories(".")

@@ -101,8 +101,12 @@ void CrashHandler::setup(void) {
 	struct sigaction sa;
 	sa.sa_handler = 0;
 	sigemptyset(&sa.sa_mask);
+#if defined(__APPLE__)
+	sa.sa_flags = SA_SIGINFO | SA_RESETHAND;
+#else
 	sa.sa_flags = SA_SIGINFO | SA_ONESHOT;
 	sa.sa_restorer = 0;
+#endif()
 	
 	// Set handlers
 	sa.sa_sigaction = handle_SIGSEGV;
@@ -137,7 +141,9 @@ void CrashHandler::cleanup(void) {
 	
 	// Set handlers	
 	sa.sa_flags = SA_SIGINFO;
+#if defined(__unix)
 	sa.sa_restorer = 0;
+#endif()
 	sigaction(SIGSEGV, &sa, 0);
 	sa.sa_handler = SIG_DFL;
 	sigaction(SIGILL, &sa, 0);

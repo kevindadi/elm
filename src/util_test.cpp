@@ -161,7 +161,7 @@ void TestCase::check(CString file, int line, CString text, bool result) {
  */
 void TestCase::complete(void) {
 	if(errors)
-#if defined(__unix)
+#if defined(__unix) || defined(__APPLE__)
 		cout << "\x1b[1;31mFAILURE: \x1b[0m";
 #elif defined(__WIN32)
 		cout << "FAILURE :";
