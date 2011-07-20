@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project("elm")
 
 
-set(LIBRARY_OUTPUT_PATH lib/${CMAKE_BUILD_TYPE})
+#set(LIBRARY_OUTPUT_PATH lib/${CMAKE_BUILD_TYPE})
 
 if(MINGW OR WIN32)
 set(LIBDIR "bin")
