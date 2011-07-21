@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 2.8)
 
 project("elm")
 
+if(WIN32 OR WIN64 OR MINGW_LINUX)
+	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -shared-libgcc")
+endif()
+
+# debugging activated
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -g3")
 
 #set(LIBRARY_OUTPUT_PATH lib/${CMAKE_BUILD_TYPE})
 

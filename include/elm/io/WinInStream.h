@@ -16,7 +16,7 @@ class WinInStream: public InStream {
 protected:
 	void* _fd;
 public:
-	inline WinInStream(void* fd): _fd(fd) { };
+	WinInStream(void* fd);
 	inline void* fd(void) const { return _fd; };
 	virtual int read(void *buffer, int size);
 	virtual int read(void) { return InStream::read(); };

@@ -39,10 +39,11 @@ namespace elm { namespace io {
 
 
 /**
- * @fn WinInStream::WinInStream(int fd);
  * Build a new Win input stream with the given file descriptor.
  * @param fd	File descriptor to use.
  */
+WinInStream::WinInStream(void* fd): _fd(fd) {
+}
 
 
 /**
@@ -60,15 +61,19 @@ int WinInStream::read(void *buffer, int size) {
 		return r;
 	else if(GetLastError() == ERROR_HANDLE_EOF)
 		return 0;
-	else
+	else {
+		cerr << "DEBUG: => " << GetLastError() << ":" << (void *)_fd  << ":" << r << io::endl;
 		return -1;
+	}
 }
 
 
 /**
  */
 CString WinInStream::lastErrorMessage(void) {
-	return strerror(errno);
+	static string buf;
+	buf = _ << "error " << GetLastError();
+	return buf.toCString();
 }
 
 } } // elm::io

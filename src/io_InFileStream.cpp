@@ -57,15 +57,18 @@ InFileStream::InFileStream(CString path)
 		throw IOException(_ << "cannot open file \"" << path
 			<< "\" : " << lastErrorMessage());
 }
-#elif defined(__WIN32) || defined(__WIN64)
+#elif defined(__WIN32) || defined(__WIN64) 
 InFileStream::InFileStream(CString path)
-: SystemInStream(CreateFile(path.chars(),
+: SystemInStream(CreateFile(&path,
 		GENERIC_READ,
-		FILE_SHARE_DELETE|FILE_SHARE_READ|FILE_SHARE_WRITE,
+		FILE_SHARE_READ|FILE_SHARE_WRITE,		// FILE_SHARE_DELETE|
 		NULL,
 		OPEN_EXISTING,
 		FILE_ATTRIBUTE_NORMAL,
 		NULL)) {
+
+	cerr << "DEBUG: fd = " << fd() << ", INVALID_HANDLE_VALUE=" << INVALID_HANDLE_VALUE << io::endl;
+
 
 }
 #endif
@@ -87,6 +90,7 @@ void InFileStream::close() {
 		_fd = -1;
 	}
 #elif defined(__WIN32) || defined(__WIN64)
+	cerr << "DEBUG: close(" << _fd << ")\n";
 	CloseHandle(_fd);
 #endif
 }

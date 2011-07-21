@@ -113,7 +113,7 @@ include_directories("../include")
 include_directories(".")
 include_directories(${LIBXML2_INCLUDE_DIR})
 include_directories(${LIBXSLT_INCLUDE_DIR})
-list(APPEND CMAKE_CXX_FLAGS -Wall)
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -g3 -Wall")
 
 if(LIBXML2)
 list(APPEND LIBELM_LA_SOURCES
@@ -163,8 +163,12 @@ message(STATUS ${LIBXML2})
 target_link_libraries(elm ${LIBXML2})
 target_link_libraries(elm ${LIBXSLT})
 endif(UNIX)
+
+# installation
 if(UNIX)
-install(TARGETS elm DESTINATION ${LIBDIR})
+	install(TARGETS elm DESTINATION ${LIBDIR})
+elseif(MINGW_LINUX)
+	install(TARGETS elm DESTINATION bin)	
 elseif(WIN32)
-install(TARGETS elm DESTINATION ${CMAKE_BINARY_DIR})
+	install(TARGETS elm DESTINATION ${CMAKE_BINARY_DIR})
 endif(UNIX)

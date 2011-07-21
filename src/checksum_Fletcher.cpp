@@ -77,8 +77,10 @@ void Fletcher::put(io::InStream& in) {
 	while(true) {
 		while(size < 2) {
 			int result = in.read(half + size, 2 - size);
-			if(result < 0)
+			if(result < 0) {
+				cerr << "DEBUG: fletcher: " << result << ": " << in.lastErrorMessage() << io::endl;;
 				throw MessageException("elm::checksum::Fletcher: error during stream read");
+			}
 			if(!result)
 				break;
 			size += result;
