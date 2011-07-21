@@ -165,10 +165,8 @@ target_link_libraries(elm ${LIBXSLT})
 endif(UNIX)
 
 # installation
-if(UNIX)
-	install(TARGETS elm DESTINATION ${LIBDIR})
-elseif(MINGW_LINUX)
-	install(TARGETS elm DESTINATION bin)	
+if(MINGW_LINUX OR MINGW_WIN OR UNIX)
+	install(TARGETS elm DESTINATION ${LIBDIR})	
 elseif(WIN32)
 	install(TARGETS elm DESTINATION ${CMAKE_BINARY_DIR})
-endif(UNIX)
+endif()

@@ -36,21 +36,20 @@ endif (CMAKE_COMPILER_IS_GNUCXX AND (CMAKE_BUILD_TYPE MATCHES Release))
 include(TestBigEndian)
 TEST_BIG_ENDIAN(BIG_ENDIAN)
 
-# Unix
-if(UNIX OR APPLE)
-find_package(LibXml2 0)
-set(LIBXML2 ${LIBXML2_FOUND})
-find_package(LibXslt 0)
-set(LIBXSLT ${LIBXSLT_FOUND})
-
 # MINGW_LINUX
-elseif(MINGW_LINUX)
+if(MINGW_LINUX OR MINGW_WIN)
+	message(STATUS "here !")
+	set(LIBXML2 ${CMAKE_BINARY_DIR}/../site/bin/libxml2.dll)
+	set(LIBXML2_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../site/include)
+	set(LIBXSLT ${CMAKE_BINARY_DIR}/../site/bin/libxslt.dll)
+	set(LIBXSLT_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../site/include)
 
-message(STATUS "DEBUG: libxml2 mingw")
-set(LIBXML2 ${CMAKE_BINARY_DIR}/../site/bin/libxml2.dll)
-set(LIBXML2_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../site/include)
-set(LIBXSLT ${CMAKE_BINARY_DIR}/../site/bin/libxslt.dll)
-set(LIBXSLT_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../site/include)
+# Unix
+elseif(UNIX OR APPLE)
+	find_package(LibXml2 0)
+	set(LIBXML2 ${LIBXML2_FOUND})
+	find_package(LibXslt 0)
+	set(LIBXSLT ${LIBXSLT_FOUND})
 
 # Windows
 elseif(WIN32)
