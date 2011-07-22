@@ -87,7 +87,11 @@ Plugger::Plugger(CString hook, const Version& plugger_version, String _paths)
 
 	// Look in the system paths
 	if(_paths == "*")
-		_paths = getenv("LD_LIBRARY_PATH");
+#if defined(__APPLE__)
+		_paths = getenv("DYLD_LIBRARY_PATH");
+#else
+	_paths = getenv("LD_LIBRARY_PATH");
+#endif
 
 	// Scan the paths
 	int index = _paths.indexOf(elm::system::Path::PATH_SEPARATOR);
