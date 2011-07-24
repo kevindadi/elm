@@ -39,12 +39,15 @@ namespace elm { namespace io {
  * @ingroup ios
  */
 
-/*#if defined(__unix)
-bool isReady(void)  { return fd() >= 0; }
+#if defined(__unix) || defined(__APPLE__)
+	bool InFileStream::isReady(void) {
+		return fd() >= 0;
+	}
 #elif defined(__WIN32) || defined(__WIN64)
-bool isReady(void)  {
-	return (GetHandleInformation((HANDLE)WinInStream::fd(),NULL) != 0); }
-#endif*/
+	bool InFileStream::isReady(void) {
+		return _fd != INVALID_HANDLE_VALUE;
+	}
+#endif
 
 /**
  * Build an output file stream by creating a new file or deleting an old one.
@@ -61,15 +64,11 @@ InFileStream::InFileStream(CString path)
 InFileStream::InFileStream(CString path)
 : SystemInStream(CreateFile(&path,
 		GENERIC_READ,
-		FILE_SHARE_READ|FILE_SHARE_WRITE,		// FILE_SHARE_DELETE|
+		FILE_SHARE_READ,
 		NULL,
 		OPEN_EXISTING,
 		FILE_ATTRIBUTE_NORMAL,
 		NULL)) {
-
-	cerr << "DEBUG: fd = " << fd() << ", INVALID_HANDLE_VALUE=" << INVALID_HANDLE_VALUE << io::endl;
-
-
 }
 #endif
 
@@ -90,7 +89,6 @@ void InFileStream::close() {
 		_fd = -1;
 	}
 #elif defined(__WIN32) || defined(__WIN64)
-	cerr << "DEBUG: close(" << _fd << ")\n";
 	CloseHandle(_fd);
 #endif
 }

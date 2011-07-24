@@ -62,7 +62,6 @@ int WinInStream::read(void *buffer, int size) {
 	else if(GetLastError() == ERROR_HANDLE_EOF)
 		return 0;
 	else {
-		cerr << "DEBUG: => " << GetLastError() << ":" << (void *)_fd  << ":" << r << io::endl;
 		return -1;
 	}
 }

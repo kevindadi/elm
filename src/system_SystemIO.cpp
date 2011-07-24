@@ -49,15 +49,25 @@ namespace elm { namespace system {
  */
 
 
-// Actual stdio objects
+// Unixes support
 #if defined(__unix) || defined(__APPLE__)
 	static system::SystemInStream stdin_object(0);
 	static system::SystemOutStream stdout_object(1);
 	static system::SystemOutStream stderr_object(2);
+		
+	SystemInStream::SystemInStream(int fd): UnixInStream(fd) { }
+	SystemOutStream::SystemOutStream(int fd): UnixOutStream(fd) { }
+
+// Windows support
 #elif defined(__WIN32) || defined(WIN64)
 	static system::SystemInStream stdin_object(GetStdHandle(STD_INPUT_HANDLE));
 	static system::SystemOutStream stdout_object(GetStdHandle(STD_OUTPUT_HANDLE));
 	static system::SystemOutStream stderr_object(GetStdHandle(STD_ERROR_HANDLE));
+
+	SystemInStream::SystemInStream(void* fd): WinInStream(fd) { }
+	SystemOutStream::SystemOutStream(void* fd): WinOutStream(fd) { }
+
+// Unsupported OS
 #else
 #	error "Unsupported OS !"
 #endif

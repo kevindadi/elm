@@ -8,7 +8,7 @@
 #define ELM_SYSTEM_SYSTEM_IO_H
 
 // Unix system streams
-#if defined(__unix) || __APPLE__
+#if defined(__unix) || defined(__APPLE__)
 #	include <elm/io/UnixInStream.h>
 #	include <elm/io/UnixOutStream.h>
 
@@ -16,14 +16,14 @@
 
 	class SystemInStream: public io::UnixInStream {
 	public:
-		inline SystemInStream(int fd): UnixInStream(fd) { }
+			SystemInStream(int fd);
 	protected:
 		friend class System;
 	};
 
 	class SystemOutStream: public io::UnixOutStream {
 	public:
-		inline SystemOutStream(int fd): UnixOutStream(fd) { };
+		SystemOutStream(int fd);
 	protected:
 		friend class System;
 	};
@@ -41,16 +41,14 @@
 	protected:
 		friend class System;
 	public:
-		inline SystemInStream(void* fd): WinInStream(WinInStream::fd()) { }
-		inline ~SystemInStream(void) { }
+		SystemInStream(void* fd);
 	};
 
 	class SystemOutStream: public io::WinOutStream {
 	protected:
 		friend class System;
 	public:
-		inline SystemOutStream(void* fd): WinOutStream(WinOutStream::fd()) { }
-		inline ~SystemOutStream(void) { }
+		SystemOutStream(void* fd);
 	};
 
 	} }		// elm::system
