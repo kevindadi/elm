@@ -39,10 +39,10 @@ TEST_BIG_ENDIAN(BIG_ENDIAN)
 # MINGW_LINUX
 if(MINGW_LINUX OR MINGW_WIN)
 	message(STATUS "here !")
-	set(LIBXML2 ${CMAKE_BINARY_DIR}/../site/bin/libxml2.dll)
-	set(LIBXML2_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../site/include)
-	set(LIBXSLT ${CMAKE_BINARY_DIR}/../site/bin/libxslt.dll)
-	set(LIBXSLT_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../site/include)
+	set(LIBXML2 ${CMAKE_BINARY_DIR}/../libotawa/bin/libxml2.dll)
+	set(LIBXML2_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../libotawa/include)
+	set(LIBXSLT ${CMAKE_BINARY_DIR}/../libotawa/bin/libxslt.dll)
+	set(LIBXSLT_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../libotawa/include)
 
 # Unix
 elseif(UNIX OR APPLE)
