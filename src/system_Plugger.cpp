@@ -21,11 +21,7 @@
  */
 
 
-#if defined(__unix) || defined(__APPLE__)
 #include "../config.h"
-#elif defined(__WIN32) || defined(__WIN64)
-#include "../config.h"
-#endif
 #include <elm/deprecated.h>
 #include <elm/assert.h>
 #include <stdlib.h>
@@ -90,7 +86,7 @@ Plugger::Plugger(CString hook, const Version& plugger_version, String _paths)
 #if defined(__APPLE__)
 		_paths = getenv("DYLD_LIBRARY_PATH");
 #else
-	_paths = getenv("LD_LIBRARY_PATH");
+		_paths = getenv("LD_LIBRARY_PATH");
 #endif
 
 	// Scan the paths
@@ -417,9 +413,6 @@ void Plugger::Iterator::go(void) {
 	if(i < statics.count()) {
 		i++;
 		while(i < statics.count()) {
-			/*cerr << "STATIC: " << i << " "
-				 << statics[i]->name() << " "
-				 << statics[i]->hook() << io::endl;*/
 			if(statics[i]->hook() == plugger.hook())
 				return;
 			i++;
@@ -453,8 +446,10 @@ void Plugger::Iterator::go(void) {
 		}
 
 		// Look current file
-#if defined(__unix)
+#if defined(WITH_LIBTOOL)
 		if(file->item()->path().toString().endsWith(".la"))
+#elif defined(__unix)
+		if(file->item()->path().toString().endsWith(".so"))
 #elif defined(__WIN32) || defined(__WIN64)
 		if(file->item()->path().toString().endsWith(".dll"))
 #endif
