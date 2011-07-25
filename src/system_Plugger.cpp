@@ -182,6 +182,8 @@ Plugin *Plugger::plug(const string& name) {
 			buf << paths[i] << "/" << name << ".la";
 		#elif defined(__WIN32) || defined(__WIN64)
 			buf << paths[i] << "/" << name << ".dll";
+		#elif defined(__APPLE__)
+			buf << paths[i] << "/" << name << ".dylib";
 		#else
 			buf << paths[i] << "/" << name << ".so";
 		#endif
@@ -212,6 +214,8 @@ Plugin *Plugger::plug(Plugin *plugin, void *handle) {
  */
 Plugin *Plugger::plugFile(String path) {
 	err = OK;
+	cerr << "DEBUG: plugFile(" << path << ")" << io::endl;
+
 
 	// Check existence of the file
 	system::FileItem *file = 0;
@@ -448,6 +452,8 @@ void Plugger::Iterator::go(void) {
 		// Look current file
 #if defined(WITH_LIBTOOL)
 		if(file->item()->path().toString().endsWith(".la"))
+#elif defined(__APPLE__)
+		if(file->item()->path().toString().endsWith(".dylib"))
 #elif defined(__unix)
 		if(file->item()->path().toString().endsWith(".so"))
 #elif defined(__WIN32) || defined(__WIN64)

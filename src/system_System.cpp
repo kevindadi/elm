@@ -461,7 +461,7 @@ throw(SystemException)
  * 					due to relocation function stub and due to duplication of some small data.
  */
 Path System::getUnitPath(void *address) {
-#	ifdef __USE_GNU
+#	if defined(__USE_GNU) || defined(__APPLE__)
 	Dl_info info;
 	if(!dladdr(address, &info))
 		return "";
