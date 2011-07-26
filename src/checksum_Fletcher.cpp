@@ -61,7 +61,7 @@ void Fletcher::shuffle(void) {
 /**
  */
 void Fletcher::add(void) {
-	sum1 += *(unsigned short *)half;
+	sum1 += *(t::uint16 *)half;
 	sum2 += sum1;
 	len += 2;
 	if(len == 360)
@@ -77,9 +77,8 @@ void Fletcher::put(io::InStream& in) {
 	while(true) {
 		while(size < 2) {
 			int result = in.read(half + size, 2 - size);
-			if(result < 0) {
+			if(result < 0)
 				throw MessageException("elm::checksum::Fletcher: error during stream read");
-			}
 			if(!result)
 				break;
 			size += result;

@@ -32,7 +32,7 @@ class Fletcher {
 	t::uint32 sum1, sum2;
 	t::uint32 len;
 	char half[2];
-	unsigned short size;
+	t::uint16 size;
 	inline void shuffle(void);
 	inline void add(void);
 public:
