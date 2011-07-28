@@ -20,6 +20,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <stdio.h>
 #include <elm/system/SystemIO.h>
 #if defined(__WIN32)
 #include <windows.h>
@@ -60,9 +61,21 @@ namespace elm { namespace system {
 
 // Windows support
 #elif defined(__WIN32) || defined(WIN64)
+
+	class NoFaultOutStream: public SystemOutStream {
+	public:
+			NoFaultOutStream(HANDLE handle): SystemOutStream(handle) { }
+			
+			virtual int write(const char *buffer, int size) {
+					// with Eclipse (normal mode), strange stdandard IO causing write errors: ignored.
+					SystemOutStream::write(buffer, size);
+					return size;
+			}
+	};
+	
 	static system::SystemInStream stdin_object(GetStdHandle(STD_INPUT_HANDLE));
-	static system::SystemOutStream stdout_object(GetStdHandle(STD_OUTPUT_HANDLE));
-	static system::SystemOutStream stderr_object(GetStdHandle(STD_ERROR_HANDLE));
+	static system::NoFaultOutStream stdout_object(GetStdHandle(STD_OUTPUT_HANDLE));
+	static system::NoFaultOutStream stderr_object(GetStdHandle(STD_ERROR_HANDLE));
 
 	SystemInStream::SystemInStream(void* fd): WinInStream(fd) { }
 	SystemOutStream::SystemOutStream(void* fd): WinOutStream(fd) { }
