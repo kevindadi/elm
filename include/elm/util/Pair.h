@@ -9,52 +9,37 @@
 
 namespace elm {
 
+namespace io { class Output; }
+
 // Pair class
 template <class T1, class T2>
 class Pair {
 public:
 	T1 fst;
 	T2 snd;
-	inline Pair(void);
-	inline Pair(const T1& _fst, const T2& _snd);
-	inline Pair(const Pair<T1, T2>& pair);
-	inline Pair<T1, T2>& operator=(const Pair<T1, T2>& pair);
-	inline bool operator==(const Pair<T1, T2>& pair) const;
+	inline Pair(void) { }
+	inline Pair(const T1& _fst, const T2& _snd)
+		: fst(_fst), snd(_snd) { }
+	inline Pair(const Pair<T1, T2>& pair)
+		: fst(pair.fst), snd(pair.snd) { }
+	inline Pair<T1, T2>& operator=(const Pair<T1, T2>& pair) 
+		{ fst = pair.fst; snd = pair.snd; return *this; }
+	inline bool operator==(const Pair<T1, T2>& pair) const
+		{
+	return ((fst== pair.fst) && (snd == pair.snd));
+}
 };
 
 
-// Shortcut
+// Shortcuts
 template <class T1, class T2>
 inline Pair<T1, T2> pair(const T1& v1, const T2& v2) {
 	return Pair<T1, T2>(v1, v2);
 }
 
-
-// Pair inlines
 template <class T1, class T2>
-inline Pair<T1, T2>::Pair(void) {
-}
-
-template <class T1, class T2>
-inline Pair<T1, T2>::Pair(const T1& _fst, const T2& _snd): fst(_fst), snd(_snd) {
-}
-
-template <class T1, class T2>
-inline Pair<T1, T2>::Pair(const Pair<T1, T2>& pair)
-: fst(pair.fst), snd(pair.snd) {
-}
-
-template <class T1, class T2>
-inline Pair<T1, T2>& Pair<T1, T2>::operator=(const Pair<T1, T2>& pair) {
-	fst = pair.fst;
-	snd = pair.snd;
-	return *this;
-}
-
-template <class T1, class T2>
-inline bool Pair<T1, T2>::operator==(const Pair<T1, T2>& pair)  const {
-	return ((fst== pair.fst) && (snd == pair.snd));
-}
+io::Output& operator<<(io::Output& out, Pair<T1, T2>& p)
+	{ out << p.fst << ", " << p.snd; return out; }
 
 } // elm
 
