@@ -37,7 +37,7 @@ public:
 	inline AutoString& operator<<(const T& value)
 		{ buf << value; return *this; }
 
-	inline operator String(void) {
+	inline operator const string(void) {
 		String result = buf.toString();
 		delete this;
 		return result;
