@@ -106,7 +106,8 @@ set(LIBELM_LA_SOURCES
 	)
 
 if(UNIX AND NOT APPLE)
-	list(APPEND LIBELM_LA_SOURCES "debug_CrashHandler.cpp" "debug_GDBCrashHandler.cpp")
+	# be careful: the order of these sources matters for static object initialization
+	list(APPEND LIBELM_LA_SOURCES "debug_GDBCrashHandler.cpp" "debug_CrashHandler.cpp")
 endif()
 
 include_directories("../include")
