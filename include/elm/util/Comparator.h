@@ -23,6 +23,7 @@
 #define ELM_COMPARATOR_H_
 
 #include <elm/string.h>
+#include <elm/type_info.h>
 #include <elm/util/Pair.h>
 #include <elm/util/Equiv.h>
 
@@ -48,7 +49,7 @@ public:
 };
 
 // SubstractComparator class
-template <class T>
+/*template <class T>
 class SubstractComparator: public PreComparator<T, SubstractComparator<T> > {
 public:
 	static inline int compare(const T& v1, const T& v2) { return v1 - v2; }
@@ -62,7 +63,7 @@ template <> class Comparator<unsigned int>: public SubstractComparator<unsigned 
 template <> class Comparator<signed long>: public SubstractComparator<signed long> { };
 template <> class Comparator<unsigned long>: public SubstractComparator<unsigned long> { };
 template <> class Comparator<signed long long>: public SubstractComparator<signed long long> { };
-template <> class Comparator<unsigned long long>: public SubstractComparator<unsigned long long> { };
+template <> class Comparator<unsigned long long>: public SubstractComparator<unsigned long long> { };*/
 
 
 // CompareComparator class
@@ -106,9 +107,9 @@ public:
 
 
 // Useful inlines
-template <class T> inline int min(const T& x, const T& y)
+template <class T> inline const T& min(const T& x, const T& y)
 	{ return Comparator<T>::min(x, y); }
-template <class T> inline int max(const T& x, const T y)
+template <class T> inline const T& max(const T& x, const T y)
 	{ return Comparator<T>::max(x, y); }
 
 } // elm
