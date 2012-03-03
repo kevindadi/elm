@@ -344,12 +344,9 @@ double Input::scanDouble(void) {
 	// Read exponent part
 	if(chr == 'e' || chr == 'E') {
 		int exp = 0;
-		bool eneg = false;
 		chr = get();
-		if(chr == '-') {
-			eneg = true;
+		if(chr == '-')
 			chr = get();
-		}
 		else if(chr == '+')
 			chr = get();
 		if(chr < '0' || chr > '9')

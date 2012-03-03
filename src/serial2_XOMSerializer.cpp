@@ -88,8 +88,8 @@ void XOMSerializer::beginObject(AbstractType& clazz, const void *object) {
 	    	cout << "Objet deja traite, on recopie!\n";
 	    }
 		/* move the XML node */
-		xom::Element *src = done.get(object, false);
-		ASSERT(src != false);
+		xom::Element *src = done.get(object, 0);
+		ASSERT(src != 0);
 		
 		for (int i = 0; i < src->getChildCount(); i++) {
 			xom::Node *tmp = src->getChild(0);
