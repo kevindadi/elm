@@ -26,20 +26,26 @@ typedef enum alignment_t {
 
 // IntFormat class
 class IntFormat {
-	inline void init(bool _sign);
+	inline void init(bool _sign)  {
+		base = 10;
+		width = 0;
+		align = LEFT;
+		pad = ' ';
+		upper = false;
+		sign = _sign;
+		displaySign = false;
+	}
 public:
-	inline IntFormat(char value);
-	inline IntFormat(unsigned char value);
-	inline IntFormat(short value);
-	inline IntFormat(unsigned short value);
-	inline IntFormat(int value);
-	inline IntFormat(unsigned int value);
-#	ifndef __LP64__
-		inline IntFormat(long value);
-		inline IntFormat(unsigned long value);
-#	endif
+	inline IntFormat(t::int8	value): val(value) { init(true); }
+	inline IntFormat(t::uint8	value): val(value) { init(false); }
+	inline IntFormat(t::int16	value): val(value) { init(true); }
+	inline IntFormat(t::uint16	value): val(value) { init(false); }
+	inline IntFormat(t::int32	value): val(value) { init(true); }
+	inline IntFormat(t::uint32	value): val(value) { init(false); }
+	inline IntFormat(t::int64	value): val(value) { init(true); }
+	inline IntFormat(t::uint64	value): val(value) { init(false); }
 
-	t::int32 val;
+	t::int64 val;
 	unsigned char base;
 	unsigned char width;
 	unsigned align : 5;
@@ -112,51 +118,7 @@ inline Output& operator<<(Output& out, IntFormat value) { out.print(value); retu
 // End-of-line
 const char endl = '\n';
 
-// IntFormat Inlines
-inline void IntFormat::init(bool _sign) {
-	base = 10;
-	width = 0;
-	align = LEFT;
-	pad = ' ';
-	upper = false;
-	sign = _sign;
-	displaySign = false;
-};
-
-#ifndef __LP64__
-	inline IntFormat::IntFormat(long value): val(value) {
-		init(true);
-	}
-
-	inline IntFormat::IntFormat(unsigned long value): val(value) {
-		init(false);
-	}
-#endif
-
-inline IntFormat::IntFormat(int value): val(value) {
-	init(true);
-}
-
-inline IntFormat::IntFormat(unsigned int value): val(value) {
-	init(false);
-}
-
-inline IntFormat::IntFormat(char value): val(value) {
-	init(true);
-}
-
-inline IntFormat::IntFormat(unsigned char value): val(value) {
-	init(false);
-}
-
-inline IntFormat::IntFormat(signed short value): val(value) {
-	init(true);
-}
-
-inline IntFormat::IntFormat(unsigned short value): val(value) {
-	init(false);
-}
-
+// useful macros
 inline IntFormat base(int base, IntFormat fmt) {
 	fmt.base = base;
 	return fmt;
@@ -225,11 +187,9 @@ inline IntFormat lowercase(IntFormat fmt) {
 	return fmt;
 }
 
-#ifndef __LP64__
-	inline IntFormat pointer(const void *p) {
-		return width(8, pad('0', hex(t::uint32(p))));
-	}
-#endif
+inline IntFormat pointer(const void *p) {
+	return width(sizeof(t::intptr) * 2, pad('0', hex(t::intptr(p))));
+}
 
 } } // elm::io
 

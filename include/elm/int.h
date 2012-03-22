@@ -37,14 +37,23 @@ typedef int64_t int64;
 typedef uint64_t uint64;
 
 // other types
-typedef uint32 size;
-typedef uint32 offset;
-typedef uint32 uint;
-
+#ifndef __LP64__
+	typedef uint32 size;
+	typedef uint32 offset;
+	typedef uint32 uint;
+	typedef uint32 intptr;
+#else
+	typedef uint64 size;
+	typedef uint64 offset;
+	typedef uint64 uint;
+	typedef uint64 intptr;
+#endif
 }	// t
 
 // prototypes
 int msb32(t::uint32 i);
+inline t::uint32 roundup(t::uint32 v, t::uint32 m) { return ((v - 1) / m + 1) * m; }
+inline t::uint32 rounddown(t::uint32 v, t::uint32 m) { return v / m * m; }
 
 } // elm
 

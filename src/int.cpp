@@ -37,9 +37,32 @@ namespace elm {
  * @li t::size -- memory size type (according to the system configuration)
  * @li t::offset -- memory offset type (according to the system configuration)
  * @li t::uint -- short to unsigned int
+ * @li t::intptr -- integer sufficiently big to store a pointer (according to the system configuration)
  *
  * And some optimized functions of not-builtin functions:
  * @li msb32 -- most-left bit to one
+ * @li roundup -- round upto upper multiple integer
+ * @li rounddown -- round downto lower multiple integer
+ */
+
+
+/**
+ * @fn t::uint32 roundup(t::uint32 v, t::uint32 m);
+ * Round upto upper multiple integer
+ * @param v		Value to round.
+ * @param m		Multiple to round with.
+ * @return		Value round upto the upper multiple integer.
+ * @ingroup int
+ */
+
+
+/**
+ * @fn t::uint32 rounddown(t::uint32 v, t::uint32 m);
+ * Round upto upper multiple integer
+ * @param v		Value to round.
+ * @param m		Multiple to round with.
+ * @return		Value round upto the upper multiple integer.
+ * @ingroup int
  */
 
 /**
