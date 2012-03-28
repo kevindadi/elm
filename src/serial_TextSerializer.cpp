@@ -154,11 +154,7 @@ void TextSerializer::write(String& val) {
 /**
  */
 bool TextSerializer::writePointer(const void *ptr) {
-#	ifndef __LP64__
-		cout << io::hex((unsigned long)ptr);
-#	else
-		cout << t::uint64(ptr);
-#	endif
+	cout << io::hex(t::intptr(ptr));
 	checkField();
 	return ptr && !objects.get(ptr);
 }
@@ -176,11 +172,7 @@ void TextSerializer::delayObject(const void *ptr, delay_t fun) {
  */
 void TextSerializer::beginObject(CString name, const void *ptr) {
 	objects.put(ptr, 1);
-#	ifndef __LP64__
-		cout << name << '(' << io::hex((unsigned long)ptr) << ") = {";
-#	else
-		cout << name << '(' << t::uint64(ptr) << ") = {";
-#	endif
+		cout << name << '(' << io::hex(t::intptr(ptr)) << ") = {";
 }
 
 
