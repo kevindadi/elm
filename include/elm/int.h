@@ -54,6 +54,7 @@ typedef uint64_t uint64;
 int msb32(t::uint32 i);
 inline t::uint32 roundup(t::uint32 v, t::uint32 m) { return ((v - 1) / m + 1) * m; }
 inline t::uint32 rounddown(t::uint32 v, t::uint32 m) { return v / m * m; }
+inline t::uint32 abs(t::int32 v) { return  v >= 0 ? v : (-v); }
 
 } // elm
 
