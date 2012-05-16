@@ -86,6 +86,7 @@ public:
 	inline Table<T> detach(void);
 	inline void copy(const Vector& vec);
 	inline Vector<T>& operator=(const Vector& vec) { copy(vec); return *this; };
+	inline void swallow(Vector<T>& v) { if(tab) delete [] tab; tab = v.tab; v.tab = 0; }
 
 	// Stack processing
 	inline void push(const T& value);

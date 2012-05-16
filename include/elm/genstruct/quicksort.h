@@ -28,33 +28,30 @@ namespace elm { namespace genstruct {
 
 // quick sort
 template <class T, template <class T> class A, class C>
-/*struct quicksort {
-	static void sort(A& array) {*/
-	void quicksort(A<T>& array) {
-		static const int max = 300;
-		int beg[max], end[max], i = 0, L, R, swap;
-		T piv;
+void quicksort(A<T>& array) {
+	static const int max = 300;
+	int beg[max], end[max], i = 0, L, R, swap;
+	T piv;
 
-		beg[0] = 0; end[0] = array.count();
-		while(i >= 0) {
-			L = beg[i]; R = end[i] - 1;
-			if(L < R) {
-				piv = array[L];
-				while(L < R) {
-					while(C::compare(array[R], piv) >= 0 && L < R) R--; if(L < R) array[L++] = array[R];
-					while(C::compare(array[L], piv) <= 0 && L<R) L++; if (L < R) array[R--] = array[L];
-				}
-				array[L] = piv; beg[i+1] = L+1; end[i+1] = end[i]; end[i++] = L;
-				if(end[i] - beg[i] > end[i-1] - beg[i-1]) {
-					swap = beg[i]; beg[i] = beg[i-1]; beg[i-1] = swap;
-					swap = end[i]; end[i] = end[i-1]; end[i-1] = swap;
-				}
+	beg[0] = 0; end[0] = array.count();
+	while(i >= 0) {
+		L = beg[i]; R = end[i] - 1;
+		if(L < R) {
+			piv = array[L];
+			while(L < R) {
+				while(C::compare(array[R], piv) >= 0 && L < R) R--; if(L < R) array[L++] = array[R];
+				while(C::compare(array[L], piv) <= 0 && L<R) L++; if (L < R) array[R--] = array[L];
 			}
-			else
-				i--;
+			array[L] = piv; beg[i+1] = L+1; end[i+1] = end[i]; end[i++] = L;
+			if(end[i] - beg[i] > end[i-1] - beg[i-1]) {
+				swap = beg[i]; beg[i] = beg[i-1]; beg[i-1] = swap;
+				swap = end[i]; end[i] = end[i-1]; end[i-1] = swap;
+			}
 		}
+		else
+			i--;
 	}
-//};
+}
 
 } }	// elm
 

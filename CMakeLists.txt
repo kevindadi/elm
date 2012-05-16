@@ -23,14 +23,6 @@ if (CMAKE_COMPILER_IS_GNUCXX AND (CMAKE_BUILD_TYPE MATCHES Release))
   set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
 endif (CMAKE_COMPILER_IS_GNUCXX AND (CMAKE_BUILD_TYPE MATCHES Release))
 
-#IF(MINGW)
-#	SET(WIN32 on)
-#	SET(CMAKE_FIND_LIBRARY_PREFIXES "lib" "")
-#	SET(CMAKE_FIND_LIBRARY_SUFFIXES ".dll" ".dll.a" ".a" ".lib")
-#ENDIF(MINGW)
-
-#message(STATUS ${source_files})
-
 #check endianness
 #not in makefile.am, why here ?
 include(TestBigEndian)
@@ -54,20 +46,18 @@ elseif(UNIX OR APPLE)
 # Windows
 elseif(WIN32)
 
-find_library(LIBXML2 libxml2 PATHS "${CMAKE_BINARY_DIR}/../libxml2-2.7.7.win32/bin")
-get_filename_component(LIBXML2_DIR ${LIBXML2} PATH)
-set(LIBXML2_INCLUDE_DIR "${LIBXML2_DIR}/../include" CACHE PATH "path to libxml2 include directory")
-include_directories(${LIBXML2_INCLUDE_DIR})
+	find_library(LIBXML2 libxml2 PATHS "${CMAKE_BINARY_DIR}/../libxml2-2.7.7.win32/bin")
+	get_filename_component(LIBXML2_DIR ${LIBXML2} PATH)
+	set(LIBXML2_INCLUDE_DIR "${LIBXML2_DIR}/../include" CACHE PATH "path to libxml2 include directory")
+	include_directories(${LIBXML2_INCLUDE_DIR})
+	if(LIBXML2)
+		add_definitions("-DHAS_LIBXML")
+	endif()
 
-if(LIBXML2)
-add_definitions("-DHAS_LIBXML")
-endif()
-
-find_library(LIBXSLT libxslt PATHS "${CMAKE_BINARY_DIR}/../libxslt-1.1.26.win32/bin")
-get_filename_component(LIBXSLT_DIR ${LIBXSLT} PATH)
-set(LIBXSLT_INCLUDE_DIR "${LIBXSLT_DIR}/../include"  CACHE PATH "path to libxslt include directory")
-include_directories(${LIBXSLT_INCLUDE_DIR})
-
+	find_library(LIBXSLT libxslt PATHS "${CMAKE_BINARY_DIR}/../libxslt-1.1.26.win32/bin")
+	get_filename_component(LIBXSLT_DIR ${LIBXSLT} PATH)
+	set(LIBXSLT_INCLUDE_DIR "${LIBXSLT_DIR}/../include"  CACHE PATH "path to libxslt include directory")
+	include_directories(${LIBXSLT_INCLUDE_DIR})
 endif()
 
 

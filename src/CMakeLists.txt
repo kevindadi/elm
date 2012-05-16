@@ -155,15 +155,16 @@ list(APPEND LIBELM_LA_SOURCES
 endif(LIBXSLT)
 
 add_library(elm SHARED ${LIBELM_LA_SOURCES})
+if(LIBXML2)
+	if(UNIX)
+		target_link_libraries(elm ${LIBXML2_LIBRARIES})
+		target_link_libraries(elm ${LIBXSLT_LIBRARIES})
+	elseif(WIN32)
+		target_link_libraries(elm ${LIBXML2})
+		target_link_libraries(elm ${LIBXSLT})
+	endif(UNIX)
+endif(LIBXML2)
 
-if(UNIX)
-target_link_libraries(elm ${LIBXML2_LIBRARIES})
-target_link_libraries(elm ${LIBXSLT_LIBRARIES})
-elseif(WIN32)
-message(STATUS ${LIBXML2})
-target_link_libraries(elm ${LIBXML2})
-target_link_libraries(elm ${LIBXSLT})
-endif(UNIX)
 
 # installation
 if(MINGW_LINUX OR MINGW_WIN OR UNIX)
