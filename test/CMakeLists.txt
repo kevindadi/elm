@@ -58,6 +58,7 @@ set(TEST_SOURCES
 #	"test_thread.cpp"
 )
 
+add_subdirectory(socket)
 
 include_directories("../include")
 include_directories(".")
