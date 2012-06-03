@@ -14,8 +14,7 @@ using namespace elm;
 using namespace elm::io;
 
 // Entry point
-void test_io_output(void) {	
-	CHECK_BEGIN("io_output");
+int main(void) {
 	
 	// Standard output
 	{
@@ -31,5 +30,18 @@ void test_io_output(void) {
 		out << "+++++++++++++++++++++++++++++++++++++++++++++\n";
 	}
 	
-	CHECK_END
+	// IntFormat test
+	{
+		cout << "p = " << pointer((void *)main) << io::endl;
+	}
+
+	// Test float
+	{
+		cout << "0 = " << FloatFormat(0.).decimal() << io::endl;
+		cout << "decimal   : 1234.1234 = " << FloatFormat(1234.1234).decimal() << io::endl;
+		cout << "scientific: 1234.1234 = " << FloatFormat(1234.1234).scientific() << io::endl;
+		cout << "shortest  : 1234.1234 = " << FloatFormat(1234.1234).shortest() << io::endl;
+	}
+
+	return 0;
 }

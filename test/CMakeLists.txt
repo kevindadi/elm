@@ -39,7 +39,6 @@ set(TEST_SOURCES
 	"test_hashkey.cpp"
 	"test_hashtable.cpp"
 	"test_io_format.cpp"
-	"test_io_output.cpp"
 	"test_lock.cpp"
 	"test_md5.cpp"
 	"test_option.cpp"
@@ -65,3 +64,7 @@ include_directories(".")
 
 add_executable(test ${TEST_SOURCES})
 target_link_libraries(test elm)
+
+add_executable(test_io "test_io_output.cpp")
+target_link_libraries(test_io elm)
+

@@ -21,7 +21,6 @@ void test_frag_table(void);
 void test_hashtable(void);
 void test_int(void);
 void test_io_format(void);
-void test_io_output(void);
 void test_lock(void);
 void test_md5(void);
 void test_option(void);
@@ -60,7 +59,6 @@ struct test_t {
 	{ "hashtable", test_hashtable },
 	//{ "int", test_int },
 	{ "io_format", test_io_format },
-	{ "io_output", test_io_output },
 	{ "lock", test_lock },
 	{ "option", test_option },
 	{ "md5", test_md5 },

@@ -27,10 +27,10 @@
 #include <elm/genstruct/Vector.h>
 #include <elm/genstruct/VectorQueue.h>
 #include <elm/inhstruct/BinTree.h>
+#include <elm/util/Comparator.h>
+
 
 namespace elm { namespace genstruct {
-
-#include <elm/util/Comparator.h>
 
 // DefaultKey class
 template <class T>
@@ -157,6 +157,8 @@ void SortedBinTree<T, C, K>::add(const T& value) {
 
 template <class T, class C, class K>
 void SortedBinTree<T, C, K>::clear(void) {
+	if(isEmpty())
+		return;
 	VectorQueue<Node *> todo;
 	todo.put((Node *)root.root());
 	while(todo) {

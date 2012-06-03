@@ -54,32 +54,56 @@ namespace elm { namespace io {
  * formatting objects. For integer, the work is performed by @ref IntFormat
  * that provides display features like representation base, field width,
  * alignment, uppercase letters for base greater than 10, signess, padding.
- * These features may easily be accessed with special functions:
- * @li @ref io::base -- select a specific base,
- * @li @ref io::bin -- binary base,
- * @li @ref io::hex -- hexadecimal base,
- * @li @ref op::width -- field with,
- * @li @ref io::align -- alignment,
- * @li @ref io::left -- alignment to left,
- * @li @ref io::center -- centered alignment,
- * @li @ref io::right -- alignment to right,
- * @li @ref io::pad -- padding character,
- * @li @ref io::uppercase -- uppercase character for digits greater than 10,
- * @li @ref io::lowercase -- lowercase character for digits greater than 10.
- * 
- * Below, an example to format an integer as an hexadecimal pointer:
- * @code
- * 	int i;
- *	IntFormat ptr(IntFormat v) {
- * 		return io::uppercase(io::hex(io::width(8, io::pad('0', io::right(v))))); 
- * 	}
- * 	cout << ptr(v) << io::endl;
- * @endcode
- * 
- * More formats will come soon (for float numbers for example).
- * 
+ * For float values, it exists the class @ref FloatFormat.
+ *
  * The errors are managed here using exception objects derivated from the
- * @ref IOException class.  
+ * @ref IOException class.
+ *
+ *
+ *
+ * @section int_format Formatting
+ *
+ * The class @ref IntFormat embeds the value of an integer and
+ * its format configuration. Such is usually passed to @ref Output object
+ * and is built from a list of usual inline functions (described below):
+ *
+ * @code
+ * void *p;
+ * cout << pointer(p) << io::endl;
+ * @endcode
+ *
+ * The basic to display a formatted integer is to use a constructor inline
+ * function as io::f(). This builds an @ref IntFormat object to display
+ * the passed integer. The format can then be modified by calling specific
+ * functions as listed below:
+ * @li IntFormat::base() -- select a specific base,
+ * @li IntFormat::bin() -- binary base,
+ * @li IntFormat::dec() -- decimal base,
+ * @li IntFormat::hex() -- hexadecimal base,
+ * @li IntFormat::width() -- field with (in characters),
+ * @li IntFormat::align() -- alignment (one of io::LEFT, io::CENTER or io::RIGHT),
+ * @li IntFormat::left -- left alignment,
+ * @li IntFormat::center -- centered alignment,
+ * @li IntFormat::right -- right alignment,
+ * @li IntFormat::pad -- padding character (if the number does not occupy the full width),
+ * @li IntFormat::uppercase -- uppercase character for digits greater than 10,
+ * @li IntFormat::lowercase -- lowercase character for digits greater than 10.
+ * 
+ * One way to implement the pointer of the above example is to define an inline function as this:
+ * @code
+ * inline IntFormat pointer(void *p) {
+ * 	return io::f(t::uint64(p)).width(16).pad('0').right().hex();
+ * }
+ * @endcode
+ *
+ * Notice the function io::f() that is a shortcut to create an @ref IntFormat object.
+ *
+ * Another way to define this format is to declare an IntFormat variable and to benefit
+ * from the overlaod of operator() of this class to pass the actual value to the format:
+ * @code
+ * 	IntFormat pointer = IntFormat().width(16).pad('0').right().hex();
+ * @endcode
+ *
  * 
  * @section low_level Byte Streams
  * 
