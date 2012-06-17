@@ -52,14 +52,16 @@ class IntFormat {
 	}
 public:
 	inline IntFormat(void): _val(0) { init(true); }
-	inline IntFormat(t::int8	value): _val(value) { init(true); }
-	inline IntFormat(t::uint8	value): _val(value) { init(false); }
-	inline IntFormat(t::int16	value): _val(value) { init(true); }
-	inline IntFormat(t::uint16	value): _val(value) { init(false); }
-	inline IntFormat(t::int32	value): _val(value) { init(true); }
-	inline IntFormat(t::uint32	value): _val(value) { init(false); }
-	inline IntFormat(t::int64	value): _val(value) { init(true); }
-	inline IntFormat(t::uint64	value): _val(value) { init(false); }
+	inline IntFormat(signed char			value): _val(value) { init(true); }
+	inline IntFormat(unsigned char		value): _val(value) { init(false); }
+	inline IntFormat(signed short			value): _val(value) { init(true); }
+	inline IntFormat(unsigned short		value): _val(value) { init(false); }
+	inline IntFormat(signed int			value): _val(value) { init(true); }
+	inline IntFormat(unsigned int			value): _val(value) { init(false); }
+	inline IntFormat(signed long			value): _val(value) { init(true); }
+	inline IntFormat(unsigned long		value): _val(value) { init(false); }
+	inline IntFormat(signed long long	value): _val(value) { init(true); }
+	inline IntFormat(unsigned long long	value): _val(value) { init(false); }
 
 	inline IntFormat operator()(t::int8	value) { IntFormat f = *this; f._val = value; return f; }
 	inline IntFormat operator()(t::uint8	value) { IntFormat f = *this; f._val = value; return f; }
@@ -211,16 +213,18 @@ inline Output& operator<<(Output& out, const FloatFormat& value) { out.print(val
 const char endl = '\n';
 
 // starter macro
-inline IntFormat f(t::int8	value)		{ return IntFormat(value); }
-inline IntFormat f(t::uint8	value) 		{ return IntFormat(value); }
-inline IntFormat f(t::int16	value) 		{ return IntFormat(value); }
-inline IntFormat f(t::uint16	value)	{ return IntFormat(value); }
-inline IntFormat f(t::int32	value) 		{ return IntFormat(value); }
-inline IntFormat f(t::uint32	value) 	{ return IntFormat(value); }
-inline IntFormat f(t::int64	value) 		{ return IntFormat(value); }
-inline IntFormat f(t::uint64	value) 	{ return IntFormat(value); }
-inline FloatFormat f(float value)		{ return FloatFormat(value); }
-inline FloatFormat f(double value)		{ return FloatFormat(value); }
+inline IntFormat f(signed char			value)	{ return IntFormat(value); }
+inline IntFormat f(unsigned char			value) 	{ return IntFormat(value); }
+inline IntFormat f(signed short			value) 	{ return IntFormat(value); }
+inline IntFormat f(unsigned short			value)	{ return IntFormat(value); }
+inline IntFormat f(signed int				value)	{ return IntFormat(value); }
+inline IntFormat f(unsigned int			value) 	{ return IntFormat(value); }
+inline IntFormat f(signed long			value) 	{ return IntFormat(value); }
+inline IntFormat f(unsigned long			value) 	{ return IntFormat(value); }
+inline IntFormat f(signed long long		value) 	{ return IntFormat(value); }
+inline IntFormat f(unsigned long long	value) 	{ return IntFormat(value); }
+inline FloatFormat f(float value)					{ return FloatFormat(value); }
+inline FloatFormat f(double value)				{ return FloatFormat(value); }
 
 // predefined styles
 IntFormat pointer(const void *p);
