@@ -57,7 +57,9 @@ set(TEST_SOURCES
 #	"test_thread.cpp"
 )
 
-add_subdirectory(socket)
+if(NOT(WIN32) AND NOT(WIN64))
+	add_subdirectory(socket)
+endif()
 
 include_directories("../include")
 include_directories(".")

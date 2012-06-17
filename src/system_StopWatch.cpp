@@ -30,6 +30,7 @@
 #include <unistd.h>
 #include <elm/system/StopWatch.h>
 #include <elm/io.h>
+#include <stdio.h>
 namespace elm { namespace system {
 
 /**
@@ -43,58 +44,45 @@ namespace elm { namespace system {
 
 //used on windows to convert FILETIME to uint64
 #if defined(__WIN32) || defined(__WIN64)
-time_t to_int64(FILETIME ft) {
-	return static_cast<time_t>(ft.dwHighDateTime) << 32 | ft.dwLowDateTime;
-}
+	time_t to_int64(FILETIME ft) {
+		return ((time_t(ft.dwHighDateTime) << 32) | ft.dwLowDateTime) / 10;
+	}
 #endif
 
 /**
  * Must be called at the start of the time to measure.
  */
-#if defined(__unix)
 void StopWatch::start(void) {
-	struct rusage buf;
-	getrusage(RUSAGE_SELF, &buf);
-	start_time = (time_t)(buf.ru_utime.tv_sec*1000000 + buf.ru_utime.tv_usec);
+#	if defined(__unix)
+		struct rusage buf;
+		getrusage(RUSAGE_SELF, &buf);
+		start_time = (time_t)(buf.ru_utime.tv_sec*1000000 + buf.ru_utime.tv_usec);
+#	elif defined(__WIN32) || defined(__WIN64)
+		FILETIME time;
+		GetSystemTimeAsFileTime(&time);
+		start_time = to_int64(time);
+#	else
+		#error "Unsupported System";
+#	endif
 }
-#elif defined(__WIN32) || defined(__WIN64)
-void StopWatch::start(void){
 
-}
-#else
-void StopWatch::start(){
-	throw "Unsupported System";
-}
-#endif
 
 /**
  * Must be called at the end of the time to measure.
  */
-#if defined(__unix)
 void StopWatch::stop(void) {
-	struct rusage buf;
-	getrusage(RUSAGE_SELF, &buf);
-	stop_time = (time_t)(buf.ru_utime.tv_sec*1000000 + buf.ru_utime.tv_usec);
-}
-#elif defined(__WIN32) || defined(__WIN64)
-void StopWatch::stop(void){
-	LPFILETIME lpCreationTime;
-	LPFILETIME lpExitTime;
-	LPFILETIME lpKernelTime;
-	LPFILETIME lpUserTime;
-	GetProcessTimes(GetCurrentProcess(),lpCreationTime,lpExitTime,lpKernelTime,lpUserTime);
-	//
-	// start_time et stop_time a revoir ?
-	//
-	start_time=to_int64(*lpCreationTime);
-	stop_time=to_int64(*lpExitTime);
-	delay_time=to_int64(*lpKernelTime);
-}
+#	if defined(__unix)
+		struct rusage buf;
+		getrusage(RUSAGE_SELF, &buf);
+		stop_time = (time_t)(buf.ru_utime.tv_sec*1000000 + buf.ru_utime.tv_usec);
+#	elif defined(__WIN32) || defined(__WIN64)
+		FILETIME time;
+		GetSystemTimeAsFileTime(&time);
+		stop_time = to_int64(time);
 #else
-void StopWatch::stop(){
-	throw "Unsupported System";
-}
+#	error "Unsupported System";
 #endif
+}
 
 
 /**
