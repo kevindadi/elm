@@ -151,8 +151,7 @@ private:
 // Output class
 class Output {
 	OutStream *strm;
-	char *horner(char *p, t::uint32 val, int base, char enc = 'a');
-	char *horner(char *p, t::uint64 val, int base);
+	char *horner(char *p, t::uint64 val, int base, char enc = 'a');
 public:
 	inline Output(void): strm(&out) { };
 	inline Output(OutStream& stream): strm(&stream) { };

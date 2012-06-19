@@ -30,11 +30,7 @@ public:
 
 // Inlines
 inline time_t StopWatch::delay(void) const {
-#if defined(__unix)
 	return stop_time - start_time;
-#elif defined(__WIN32) || defined(__WIN64)
-	return delay_time;
-#endif
 }
 
 inline time_t StopWatch::startTime(void) const {

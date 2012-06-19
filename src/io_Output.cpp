@@ -59,7 +59,7 @@ namespace elm { namespace io {
  * @param enc		Base character for encoding digits upper than 10.
  * @return				First character.
  */
-char *Output::horner(char *p, t::uint32 val, int base, char enc) {
+char *Output::horner(char *p, t::uint64 val, int base, char enc) {
 	
 	// Special case of 0
 	if(!val)
@@ -78,39 +78,6 @@ char *Output::horner(char *p, t::uint32 val, int base, char enc) {
 				*--p = '0' + digit;
 			else
 				*--p = enc + digit - 10;
-		}
-	
-	// Return the first character position
-	return p;
-}
-
-
-/**
- * Convert an integer to character using the horner method.
- * @param p			Pointer on top of buffer.
- * @param val		Integer value to convert.
- * @param base	Base of the conversion.
- * @return				First character.
- */
-char *Output::horner(char *p, t::uint64 val, int base) {
-	
-	// Special case of 0
-	if(!val)
-		*--p = '0';
-	
-	// Horner method
-	else
-		while(val) {
-			
-			// Compute the digit
-			int digit = val % base;
-			val /= base;
-			
-			// Put the character
-			if(digit < 10)
-				*--p = '0' + digit;
-			else
-				*--p = 'a' + digit - 10;
 		}
 	
 	// Return the first character position
@@ -348,7 +315,7 @@ void Output::format(CString fmt, VarArg& args) {
 void Output::print(const IntFormat& fmt) {
 	
 	// To horner
-	t::uint32 uval;
+	t::uint64 uval;
 	if(fmt._sign && fmt._val < 0)
 		uval = -fmt._val;
 	else
