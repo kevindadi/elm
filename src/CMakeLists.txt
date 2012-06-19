@@ -49,8 +49,6 @@ set(LIBELM_LA_SOURCES
 	"io_WinInStream.cpp"
 	"io_WinOutStream.cpp"
 	"Iterator.cpp"
-	#"net_ClientSocket.cpp"
-	#"net_ServerSocket.cpp"
 	"option_Option.cpp"
 	"option_BoolOption.cpp"
 	"option_ActionOption.cpp"
@@ -111,6 +109,11 @@ if(UNIX AND NOT APPLE)
 	# be careful: the order of these sources matters for static object initialization
 	list(APPEND LIBELM_LA_SOURCES "debug_GDBCrashHandler.cpp" "debug_CrashHandler.cpp")
 endif()
+
+if(NOT(WIN32) AND NOT(WIN64))
+	list(APPEND LIBELM_LA_SOURCES "net_ClientSocket.cpp" "net_ServerSocket.cpp")
+endif()
+
 
 include_directories("../include")
 include_directories(".")
