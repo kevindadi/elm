@@ -151,7 +151,7 @@ bool HashTable<K, T, H>::isEmpty(void) const {
 }
 
 template <class K, class T, class H>
-struct HashTable<K, T, H>::node_t *HashTable<K, T, H>::find(const K& key) {
+typename HashTable<K, T, H>::node_t *HashTable<K, T, H>::find(const K& key) {
 	int i = H::hash(key) % size;
 	for(node_t *node = tab[i], *prev = 0; node; prev = node, node = node->next)
 		if(H::equals(node->key, key)) {

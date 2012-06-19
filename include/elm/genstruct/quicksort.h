@@ -27,7 +27,7 @@
 namespace elm { namespace genstruct {
 
 // quick sort
-template <class T, template <class T> class A, class C>
+template <class T, template <class> class A, class C>
 void quicksort(A<T>& array) {
 	static const int max = 300;
 	int beg[max], end[max], i = 0, L, R, swap;

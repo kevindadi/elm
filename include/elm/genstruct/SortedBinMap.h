@@ -67,9 +67,9 @@ public:
 		const value_t *val = tree.look(key);
 		return val ? val->snd : def;
 	}
-	inline Option<const T> get(const K &key) const {
+	inline Option<T> get(const K &key) const {
 		const value_t *res = tree.look(key);
-		return res ? res.snd : none;
+		return res ? Option<T>(res->snd) : none;
 	}
 	inline bool hasKey(const K &key) const { return look(key); }
 
