@@ -214,7 +214,6 @@ Plugin *Plugger::plug(Plugin *plugin, void *handle) {
  */
 Plugin *Plugger::plugFile(String path) {
 	err = OK;
-	cerr << "DEBUG: plugFile(" << path << ")" << io::endl;
 
 
 	// Check existence of the file
