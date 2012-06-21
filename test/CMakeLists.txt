@@ -73,3 +73,5 @@ target_link_libraries(test_io elm)
 add_executable(test_sw "test_sw.cpp")
 target_link_libraries(test_sw elm)
 
+add_executable(test_bgc "test_bgc.cpp")
+target_link_libraries(test_bgc elm)

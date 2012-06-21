@@ -4,6 +4,7 @@ set(LIBELM_LA_SOURCES
 	"concepts.h"
 	"doc.h"
 	"alloc_BlockAllocator.cpp"
+	"alloc_BlockAllocatorWithGC.cpp"
 	"alloc_DefaultAllocator.cpp"
 	"alloc_StackAllocator.cpp"
 	"block_DynBlock.cpp"

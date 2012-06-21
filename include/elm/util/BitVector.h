@@ -67,17 +67,28 @@ public:
 	
 	void print(io::Output& out) const;
 	
-	// Iterator iter
+	// OneIterator iter
 	class OneIterator: public PreIterator<OneIterator, int> {
 		const BitVector& bvec;
 		int i;
 	public:
-		inline OneIterator(const BitVector& bit_vector);
-		inline int item(void) const;
-		inline bool ended(void) const;
-		inline void next(void);		
+		inline OneIterator(const BitVector& bit_vector): bvec(bit_vector), i(-1) { next(); }
+		inline int item(void) const  { return i; }
+		inline bool ended(void) const { return i >= bvec.size(); }
+		inline void next(void) { do i++; while(i < bvec.size() && !bvec.bit(i)); }
 	};
-	
+
+	// ZeroIterator iter
+	class ZeroIterator: public PreIterator<ZeroIterator, int> {
+		const BitVector& bvec;
+		int i;
+	public:
+		inline ZeroIterator(const BitVector& bit_vector): bvec(bit_vector), i(-1) { next(); }
+		inline int item(void) const  { return i; }
+		inline bool ended(void) const { return i >= bvec.size(); }
+		inline void next(void) { do i++; while(i < bvec.size() && bvec.bit(i)); }
+	};
+
 	// Operators
 	inline operator bool(void) const;
 	inline bool operator[](int index) const;
@@ -364,27 +375,6 @@ inline bool BitVector::operator>(const BitVector& vec) const {
 
 inline bool BitVector::operator>=(const BitVector& vec) const {
 	return includes(vec);
-}
-
-
-// BitVector::OneIterator inlines
-inline BitVector::OneIterator::OneIterator(const BitVector& bit_vector)
-: bvec(bit_vector), i(-1) {
-	next();
-}
-
-inline int BitVector::OneIterator::item(void) const {
-	return i;
-}
-
-inline bool BitVector::OneIterator::ended(void) const {
-	return i >= bvec.size();
-}
-
-inline void BitVector::OneIterator::next(void) {
-	do
-		i++;
-	while(i < bvec.size() && !bvec.bit(i));
 }
 
 inline void BitVector::resize(int new_size) {
