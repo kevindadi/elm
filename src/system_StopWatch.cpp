@@ -53,7 +53,7 @@ namespace elm { namespace system {
  * Must be called at the start of the time to measure.
  */
 void StopWatch::start(void) {
-#	if defined(__unix)
+#	if defined(__unix) || (defined __APPLE__)
 		struct rusage buf;
 		getrusage(RUSAGE_SELF, &buf);
 		start_time = (time_t)(buf.ru_utime.tv_sec*1000000 + buf.ru_utime.tv_usec);
@@ -71,7 +71,7 @@ void StopWatch::start(void) {
  * Must be called at the end of the time to measure.
  */
 void StopWatch::stop(void) {
-#	if defined(__unix)
+#	if defined(__unix) || (defined __APPLE__)
 		struct rusage buf;
 		getrusage(RUSAGE_SELF, &buf);
 		stop_time = (time_t)(buf.ru_utime.tv_sec*1000000 + buf.ru_utime.tv_usec);
