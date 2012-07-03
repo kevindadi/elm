@@ -1,5 +1,5 @@
 #include <elm/alloc/BlockAllocatorWithGC.h>
-#include <elm/system/System.h>
+#include <elm/sys/System.h>
 #include <elm/io.h>
 
 using namespace elm;
@@ -42,8 +42,8 @@ public:
 
 		// perform the work
 		for(int i = 0; i < test_cnt; i++) {
-			int action = system::System::random(total_prob);
-			int hd = system::System::random(heads_cnt);
+			int action = sys::System::random(total_prob);
+			int hd = sys::System::random(heads_cnt);
 			if(new_thresh <= action && action < new_thresh + new_prob) {
 				hds[hd] = new(*this) Cons(0, hds[hd]);
 				cout << "creating " << (void *)hds[hd] << " in head " << hd << io::endl;
@@ -57,7 +57,7 @@ public:
 					i--;
 			}
 			else if(relink_thresh <= action && action < relink_thresh + relink_prob) {
-				int rhd = system::System::random(heads_cnt);
+				int rhd = sys::System::random(heads_cnt);
 				cerr << "relinking head " << hd << " to head " << rhd << io::endl;
 				hds[rhd] = hds[hd];
 			}

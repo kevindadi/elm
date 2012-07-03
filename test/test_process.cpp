@@ -6,8 +6,8 @@
  */
 
 #include <elm/util/test.h>
-#include <elm/system/ProcessBuilder.h>
-#include <elm/system/System.h>
+#include <elm/sys/ProcessBuilder.h>
+#include <elm/sys/System.h>
 #include <elm/io.h>
 #include <elm/io/OutFileStream.h>
 
@@ -19,7 +19,7 @@
 #endif
 
 using namespace elm;
-using namespace elm::system;
+using namespace elm::sys;
 
 // test_process()
 void test_process(void) {

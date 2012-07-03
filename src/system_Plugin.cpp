@@ -34,10 +34,10 @@
 #else
 #	include <dlfcn.h>
 #endif
-#include <elm/system/Plugin.h>
-#include <elm/system/Plugger.h>
+#include <elm/sys/Plugin.h>
+#include <elm/sys/Plugger.h>
 
-namespace elm { namespace system {
+namespace elm { namespace sys {
 
 /* Maximal age for unused plugins before deletion
  * (expressed in plugin getting cycles).
@@ -379,4 +379,4 @@ bool Plugin::matches(const string& name) const {
 	return false;
 }
 
-} } // elm::system
+} } // elm::sys

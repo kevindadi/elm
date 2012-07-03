@@ -24,15 +24,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
-#include <elm/system/ProcessBuilder.h>
-#include <elm/system/SystemException.h>
+#include <elm/sys/ProcessBuilder.h>
+#include <elm/sys/SystemException.h>
 #if defined(__WIN32) || defined(WIN64)
 #include <windows.h>
 #endif
 
 extern char **environ;
 
-namespace elm { namespace system {
+namespace elm { namespace sys {
 
 /**
  * @class ProcessBuilder
@@ -216,4 +216,4 @@ else
 	return process;
 }
 
-} } // elm::system
+} } // elm::sys

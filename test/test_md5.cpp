@@ -22,7 +22,7 @@
 
 #include <elm/util/test.h>
 #include <elm/checksum/MD5.h>
-#include <elm/system/System.h>
+#include <elm/sys/System.h>
 
 using namespace elm;
 using namespace elm::checksum;
@@ -38,7 +38,7 @@ using namespace elm::checksum;
 void test_md5(void) {
 	CHECK_BEGIN("MD5");
 	MD5 md5;
-	io::InStream *in = system::System::readFile(INPUT);
+	io::InStream *in = sys::System::readFile(INPUT);
 	md5.put(*in);
 	delete in;
 	md5.print(cout);

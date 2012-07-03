@@ -26,10 +26,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
-#include <elm/system/Directory.h>
-#include <elm/system/SystemException.h>
+#include <elm/sys/Directory.h>
+#include <elm/sys/SystemException.h>
 
-namespace elm { namespace system {
+namespace elm { namespace sys {
 
 /**
  * @class Directory
@@ -141,4 +141,4 @@ void Directory::Iterator::next(void) {
 	go();
 }
 
-} } // elm::system
+} } // elm::sys

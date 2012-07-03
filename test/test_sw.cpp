@@ -3,10 +3,10 @@
  */
 
 #include <elm/io.h>
-#include <elm/system/StopWatch.h>
+#include <elm/sys/StopWatch.h>
 
 using namespace elm;
-using namespace elm::system;
+using namespace elm::sys;
 
 int main(void) {
 	StopWatch sw;

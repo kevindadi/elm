@@ -1,9 +1,8 @@
 /*
- *	$Id$
  *	Plugin class interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2005-07, IRIT UPS.
+ *	Copyright (c) 2005-12, IRIT UPS.
  *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -19,17 +18,17 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_SYSTEM_PLUGIN_H
-#define ELM_SYSTEM_PLUGIN_H
+#ifndef ELM_SYS_PLUGIN_H
+#define ELM_SYS_PLUGIN_H
 
 #include <elm/types.h>
 #include <elm/string.h>
 #include <elm/genstruct/Vector.h>
 #include <elm/genstruct/Table.h>
 #include <elm/util/Version.h>
-#include <elm/system/Path.h>
+#include <elm/sys/Path.h>
 
-namespace elm { namespace system {
+namespace elm { namespace sys {
 
 // Plugin class
 class Plugin {
@@ -102,6 +101,6 @@ inline const Plugin::aliases_t& Plugin::aliases(void) const {
 	return _aliases;
 }
 
-} } // elm::system
+} } // elm::sys
 
-#endif // ELM_SYSTEM_PLUGIN_H
+#endif // ELM_SYS_PLUGIN_H

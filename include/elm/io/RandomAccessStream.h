@@ -25,8 +25,8 @@
 #include <elm/types.h>
 #include <elm/io/InStream.h>
 #include <elm/io/OutStream.h>
-#include <elm/system/Path.h>
-#include <elm/system/SystemException.h>
+#include <elm/sys/Path.h>
+#include <elm/sys/SystemException.h>
 
 namespace elm { namespace io {
 
@@ -46,10 +46,10 @@ public:
 	virtual bool moveForward(pos_t pos) = 0;
 	virtual bool moveBackward(pos_t pos) = 0;
 	virtual void resetPos(void) { moveTo(0); }
-	static RandomAccessStream *openFile(const system::Path& path,
-		access_t access = READ) throw(system::SystemException);
-	static RandomAccessStream *createFile(const system::Path& path,
-		access_t access = WRITE) throw(system::SystemException);
+	static RandomAccessStream *openFile(const sys::Path& path,
+		access_t access = READ) throw(sys::SystemException);
+	static RandomAccessStream *createFile(const sys::Path& path,
+		access_t access = WRITE) throw(sys::SystemException);
 };
 
 } } // elm::io

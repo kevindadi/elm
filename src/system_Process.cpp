@@ -32,12 +32,12 @@
 #include <windows.h>
 #endif
 #include <signal.h>
-#include <elm/system/Process.h>
-#include <elm/system/SystemException.h>
+#include <elm/sys/Process.h>
+#include <elm/sys/SystemException.h>
 
 #include <stdio.h>
 
-namespace elm { namespace system {
+namespace elm { namespace sys {
 
 /**
  * @class Process
@@ -173,4 +173,4 @@ void Process::wait(void) {
 #endif
 }
 
-} } // elm::system
+} } // elm::sys

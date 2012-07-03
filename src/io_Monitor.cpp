@@ -20,7 +20,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #include <elm/io/Monitor.h>
-#include <elm/system/SystemIO.h>
+#include <elm/sys/SystemIO.h>
 
 namespace elm { namespace io {
 

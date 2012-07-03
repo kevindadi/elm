@@ -28,10 +28,11 @@
 #include <windows.h>
 #endif
 #include <unistd.h>
-#include <elm/system/StopWatch.h>
+#include <elm/sys/StopWatch.h>
 #include <elm/io.h>
 #include <stdio.h>
-namespace elm { namespace system {
+
+namespace elm { namespace sys {
 
 /**
  * @class StopWatch
@@ -103,4 +104,4 @@ void StopWatch::stop(void) {
  * @return	Stop time in micro-seconds.
  */
 
-} } // elm::system
+} } // elm::sys

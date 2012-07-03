@@ -6,11 +6,11 @@
  */
 
 #include <elm/util/test.h>
-#include <elm/system/Directory.h>
+#include <elm/sys/Directory.h>
 #include <elm/io.h>
 
 using namespace elm;
-using namespace elm::system;
+using namespace elm::sys;
 
 cstring files[] = {
 	"a.txt",
@@ -51,7 +51,7 @@ void test_file(void) {
 	CHECK_BEGIN("file");
 
 	// Read directory
-	FileItem *file = FileItem::get(system::Path::current() / "test-file");
+	FileItem *file = FileItem::get(sys::Path::current() / "test-file");
 	CHECK(file->path().namePart() == "test-file");
 	CHECK(file);
 	Directory *dir = file->toDirectory();

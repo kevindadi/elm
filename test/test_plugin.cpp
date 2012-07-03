@@ -6,19 +6,19 @@
  */
 
 #include <elm/util/test.h>
-#include <elm/system/Plugger.h>
+#include <elm/sys/Plugger.h>
 #if defined(__WIN32) || defined(__WIN64)
 #include <windows.h>
 #endif
 
 using namespace elm;
-using namespace elm::system;
+using namespace elm::sys;
 
 bool startup_flag = false;
 bool cleanup_flag = false;
 
 // Linked plugin
-class PluginTwo: public elm::system::Plugin {
+class PluginTwo: public elm::sys::Plugin {
 protected:
 	virtual void startup(void) {
 		startup_flag = true;

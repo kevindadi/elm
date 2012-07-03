@@ -1,10 +1,9 @@
 /*
- *	$Id$
- *	OutFileStream class interface
+ *	Process class interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2007-8, IRIT UPS.
- * 
+ *	Copyright (c) 2006-12, IRIT UPS.
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,29 +15,36 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_IO_OUTFILESTREAM_H
-#define ELM_IO_OUTFILESTREAM_H
+#ifndef ELM_SYS_PROCESS_H
+#define ELM_SYS_PROCESS_H
 
-#include <elm/string.h>
-#include <elm/sys/SystemIO.h>
-#include <elm/sys/Path.h>
 
-namespace elm { namespace io {
+namespace elm { namespace sys {
 
-// OutFileStream class
-class OutFileStream: public sys::SystemOutStream {
+// Process class
+class Process {
+	friend class ProcessBuilder;
+#if defined(__unix) || defined(__APPLE__)
+	int pid, rcode;
+	Process(int _pid);
+#elif defined(__WIN32) || defined(__WIN64)
+	void* pi;
+	unsigned long  rcode;
+	Process(void const* _pi);
+#else
+#	error "System not supported"
+#endif
+
 public:
-	OutFileStream(const char *path);
-	OutFileStream(const Path& path);
-	virtual ~OutFileStream(void);
-	bool isReady(void);
-
-	void close();
+	bool isAlive(void);
+	int returnCode(void);
+	void kill(void);
+	void wait(void);
 };
 
-} } // elm::io
+} } // elm::system
 
-#endif // ELM_IO_OUTFILESTREAM_H
+#endif // ELM_SYS_PROCESS_H

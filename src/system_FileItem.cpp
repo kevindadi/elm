@@ -25,11 +25,11 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
-#include <elm/system/FileItem.h>
-#include <elm/system/File.h>
-#include <elm/system/Directory.h>
+#include <elm/sys/FileItem.h>
+#include <elm/sys/File.h>
+#include <elm/sys/Directory.h>
 #include <elm/genstruct/HashTable.h>
-#include <elm/system/SystemException.h>
+#include <elm/sys/SystemException.h>
 #include <elm/util/strong_type.h>
 
 //#define DEBUG
@@ -57,11 +57,11 @@ STRONG_TYPE(inode_t, ino_t);
 	};
 
 	// Used for retrieving files by name.
-	static genstruct::HashTable<inode_t, system::FileItem *> *files = 0;
+	static genstruct::HashTable<inode_t, sys::FileItem *> *files = 0;
 #endif
 
 
-namespace system {
+namespace sys {
 
 /**
  * @class FileItem

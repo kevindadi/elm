@@ -32,8 +32,8 @@
 #else
 #	include <dlfcn.h>
 #endif
-#include <elm/system/Plugger.h>
-#include <elm/system/System.h>
+#include <elm/sys/Plugger.h>
+#include <elm/sys/System.h>
 #include <elm/io.h>
 
 
@@ -43,7 +43,7 @@
 	}
 #endif*/
 
-namespace elm { namespace system {
+namespace elm { namespace sys {
 
 /**
  * @class Plugger
@@ -90,12 +90,12 @@ Plugger::Plugger(CString hook, const Version& plugger_version, String _paths)
 #endif
 
 	// Scan the paths
-	int index = _paths.indexOf(elm::system::Path::PATH_SEPARATOR);
+	int index = _paths.indexOf(elm::sys::Path::PATH_SEPARATOR);
 	while(index >= 0) {
 		if(index)
 			paths.add(_paths.substring(0, index));
 		_paths = _paths.substring(index + 1);
-		index = _paths.indexOf(elm::system::Path::PATH_SEPARATOR);
+		index = _paths.indexOf(elm::sys::Path::PATH_SEPARATOR);
 	}
 	if(_paths)
 		paths.add(_paths);
@@ -217,9 +217,9 @@ Plugin *Plugger::plugFile(String path) {
 
 
 	// Check existence of the file
-	system::FileItem *file = 0;
+	sys::FileItem *file = 0;
 	try {
-		file = system::FileItem::get(path);
+		file = sys::FileItem::get(path);
 	}
 	catch(SystemException& exn) {
 	}
@@ -542,4 +542,4 @@ Plugin *Plugger::Iterator::plug(void) const {
 		return plugger.plugFile(file->item()->path().toString());
 }
 
-} }	// elm::system
+} }	// elm::sys

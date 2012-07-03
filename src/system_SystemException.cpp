@@ -22,11 +22,11 @@
 
 #include <elm/assert.h>
 #include <errno.h>
-#include <elm/system/SystemException.h>
+#include <elm/sys/SystemException.h>
 
 
 
-namespace elm { namespace system {
+namespace elm { namespace sys {
 
 /**
  * @class SystemException
@@ -108,5 +108,5 @@ String SystemException::message(void) {
 	return msg;
 }
 	
-} } // elm::system
+} } // elm::sys
 

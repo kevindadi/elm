@@ -8,7 +8,7 @@
 #define ELM_IO_IO_H
 
 #include <elm/util/MessageException.h>
-#include <elm/system/SystemIO.h>
+#include <elm/sys/SystemIO.h>
 #include <elm/io/Output.h>
 #include <elm/io/Input.h>
 #include <elm/string.h>

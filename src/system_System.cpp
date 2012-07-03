@@ -39,11 +39,10 @@
 #include <elm/assert.h>
 #include <elm/deprecated.h>
 #include <elm/io/RandomAccessStream.h>
-#include <elm/system/System.h>
-#include <elm/system/SystemException.h>
+#include <elm/sys/System.h>
+#include <elm/sys/SystemException.h>
 
-namespace elm {
-namespace system {
+namespace elm { namespace sys {
 
 /**
  * @defgroup system_inter System Interface
@@ -407,7 +406,7 @@ static inline int makeFlags(System::access_t access) {
  * @throws IOException	Thrown if there is an error.
  */
 io::RandomAccessStream *System::openRandomFile(
-		const system::Path& path,
+		const sys::Path& path,
 		access_t access )
 throw(SystemException)
 {
@@ -432,7 +431,7 @@ throw(SystemException)
  * @throws IOException	Thrown if there is an error.
  */
 io::RandomAccessStream *System::createRandomFile(
-		const system::Path& path,
+		const sys::Path& path,
 		access_t access)
 throw(SystemException)
 {
@@ -513,4 +512,4 @@ bool System::hasEnv(cstring key) {
 	return getenv(&key);
 }
 
-}} // elm::system
+} } // elm::sys

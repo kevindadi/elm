@@ -1,9 +1,8 @@
 /*
- *	$Id$
  *	System class interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2006-07, IRIT UPS.
+ *	Copyright (c) 2006-12, IRIT UPS.
  *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -19,13 +18,13 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_SYSTEM_SYSTEM_H
-#define ELM_SYSTEM_SYSTEM_H
+#ifndef ELM_SYS_SYSTEM_H
+#define ELM_SYS_SYSTEM_H
 
 #include <elm/util/Pair.h>
-#include <elm/system/Path.h>
-#include <elm/system/SystemIO.h>
-#include <elm/system/SystemException.h>
+#include <elm/sys/Path.h>
+#include <elm/sys/SystemIO.h>
+#include <elm/sys/SystemException.h>
 
 namespace elm { namespace io {
 	class InStream;
@@ -33,7 +32,7 @@ namespace elm { namespace io {
 	class RandomAccessStream;
 } } // elm::io
 
-namespace elm { namespace system {
+namespace elm { namespace sys {
 
 /* weirdly, while a HANDLE is just a typedef for void*
  * PipeInStream(HANDLE fd) doesn't meet compiler expectations
@@ -87,5 +86,5 @@ public:
 
 } } // elm::system
 
-#endif // ELM_SYSTEM_SYSTEM_H
+#endif // ELM_SYS_SYSTEM_H
 

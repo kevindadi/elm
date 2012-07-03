@@ -23,7 +23,7 @@
 #include <elm/deprecated.h>
 #include <elm/assert.h>
 #include <elm/io/RandomAccessStream.h>
-#include <elm/system/System.h>
+#include <elm/sys/System.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -104,11 +104,11 @@ static inline int makeFlags(RandomAccessStream::access_t access) {
  * @throws IOException	Thrown if there is an error.
  */
 RandomAccessStream *RandomAccessStream::openFile(
-	const system::Path& path,
+	const sys::Path& path,
 	access_t access )
-	throw(system::SystemException)
+	throw(sys::SystemException)
 {
-	return system::System::openRandomFile(path, access);
+	return sys::System::openRandomFile(path, access);
 };
 
 
@@ -120,11 +120,11 @@ RandomAccessStream *RandomAccessStream::openFile(
  * @throws IOException	Thrown if there is an error.
  */
 RandomAccessStream *RandomAccessStream::createFile(
-	const system::Path& path,
+	const sys::Path& path,
 	access_t access)
-	throw(system::SystemException)
+	throw(sys::SystemException)
 {
-	return system::System::createRandomFile(path, access);
+	return sys::System::createRandomFile(path, access);
 }
 
 } } // elm::io

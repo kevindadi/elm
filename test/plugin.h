@@ -9,12 +9,12 @@
 #define ELM_TEST_PLUGIN_H
 
 #include <elm/io.h>
-#include <elm/system/Plugin.h>
+#include <elm/sys/Plugin.h>
 
 
 
 // MyPlugin class
-class MyPlugin: public elm::system::Plugin {
+class MyPlugin: public elm::sys::Plugin {
 protected:
 	virtual void startup(void);
 	virtual void cleanup(void);

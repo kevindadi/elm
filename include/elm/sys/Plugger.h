@@ -1,20 +1,34 @@
 /*
- * $Id$
- * Copyright (c) 2005, IRIT-UPS.
+ *	Path class interface
  *
- * elm/system/Plugger.h -- Plugger class interface.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2005-12, IRIT UPS.
+ *
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_SYSTEM_PLUGGER_H
-#define ELM_SYSTEM_PLUGGER_H
+#ifndef ELM_SYS_PLUGGER_H
+#define ELM_SYS_PLUGGER_H
 
 #include <elm/PreIterator.h>
-#include <elm/system/Plugin.h>
+#include <elm/sys/Plugin.h>
 #include <elm/genstruct/Vector.h>
-#include <elm/system/Directory.h>
-#include <elm/system/Path.h>
+#include <elm/sys/Directory.h>
+#include <elm/sys/Path.h>
 #include <elm/util/ErrorHandler.h>
 
-namespace elm { namespace system {
+namespace elm { namespace sys {
 
 // Plugger class
 class Plugger: public ErrorBase {
@@ -95,6 +109,6 @@ inline genstruct::Vector<Plugin *>& Plugger::statics(void) {
 	return Plugin::static_plugins;
 }
 
-} } // elm::system
+} } // elm::sys
 
-#endif // ELM_SYSTEM_PLUGGER_H
+#endif // ELM_SYS_PLUGGER_H

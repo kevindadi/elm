@@ -1,10 +1,9 @@
 /*
- *	$Id$
- *	OutFileStream class interface
+ *	ProcessBuilder class interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2007-8, IRIT UPS.
- * 
+ *	Copyright (c) 2006-12, IRIT UPS.
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,29 +15,32 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_IO_OUTFILESTREAM_H
-#define ELM_IO_OUTFILESTREAM_H
+#ifndef ELM_SYS_PROCESS_BUILDER_H
+#define ELM_SYS_PROCESS_BUILDER_H
 
-#include <elm/string.h>
+#include <elm/genstruct/Vector.h>
 #include <elm/sys/SystemIO.h>
-#include <elm/sys/Path.h>
+#include <elm/sys/Process.h>
 
-namespace elm { namespace io {
+namespace elm { namespace sys {
 
-// OutFileStream class
-class OutFileStream: public sys::SystemOutStream {
+// ProcessBuilder class
+class ProcessBuilder {
+	genstruct::Vector<CString> args;
+	SystemInStream *in;
+	SystemOutStream *out, *err;
 public:
-	OutFileStream(const char *path);
-	OutFileStream(const Path& path);
-	virtual ~OutFileStream(void);
-	bool isReady(void);
-
-	void close();
+	ProcessBuilder(CString command);
+	void addArgument(CString argument);
+	void setInput(SystemInStream *_in);
+	void setOutput(SystemOutStream *_out);
+	void setError(SystemOutStream *_out);
+	Process *run(void);
 };
 
-} } // elm::io
+} } // elm::sys
 
-#endif // ELM_IO_OUTFILESTREAM_H
+#endif // ELM_SYS_PROCESS_BUILDER_H

@@ -6,7 +6,7 @@
  */
 
 #include <elm/util/test.h>
-#include <elm/system/System.h>
+#include <elm/sys/System.h>
 #include <elm/genstruct/SortedBinTree.h>
 #include <elm/genstruct/SortedBinMap.h>
 
@@ -49,7 +49,7 @@ void test_sorted_bintree(void) {
 		int cnt = 0, vals[COUNT];
 		genstruct::SortedBinTree<int> tree;
 		for(int i = 0; i < COUNT; i++) {
-			int v = system::System::random(MAX * 2);
+			int v = sys::System::random(MAX * 2);
 			
 			// Add
 			if(!cnt || v & 1) {
@@ -82,7 +82,7 @@ void test_sorted_bintree(void) {
 		genstruct::SortedBinMap<int, int *> map;
 		int cnt = 0, vals[COUNT];
 		for(int i = 0; !error && i < COUNT; i++) {
-			int v = system::System::random(MAX * 4);
+			int v = sys::System::random(MAX * 4);
 			switch(v & 0x3) {
 				
 			case 0:		// remove

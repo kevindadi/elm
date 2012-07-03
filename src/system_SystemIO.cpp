@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	System stream classes implementation
  *
  *	This file is part of OTAWA
@@ -21,12 +20,12 @@
  */
 
 #include <stdio.h>
-#include <elm/system/SystemIO.h>
+#include <elm/sys/SystemIO.h>
 #if defined(__WIN32)
-#include <windows.h>
+#	include <windows.h>
 #endif
 
-namespace elm { namespace system {
+namespace elm { namespace sys {
 
 /**
  * @class SystemInStream
@@ -52,9 +51,9 @@ namespace elm { namespace system {
 
 // Unixes support
 #if defined(__unix) || defined(__APPLE__)
-	static system::SystemInStream stdin_object(0);
-	static system::SystemOutStream stdout_object(1);
-	static system::SystemOutStream stderr_object(2);
+	static sys::SystemInStream stdin_object(0);
+	static sys::SystemOutStream stdout_object(1);
+	static sys::SystemOutStream stderr_object(2);
 		
 	SystemInStream::SystemInStream(int fd): UnixInStream(fd) { }
 	SystemOutStream::SystemOutStream(int fd): UnixOutStream(fd) { }
@@ -85,7 +84,7 @@ namespace elm { namespace system {
 #	error "Unsupported OS !"
 #endif
 
-} // system
+} // sys
 
 namespace io {
 
@@ -93,18 +92,18 @@ namespace io {
  * Standard input stream.
  * @ingroup ios
  */
-system::SystemInStream& in = system::stdin_object;
+sys::SystemInStream& in = sys::stdin_object;
 
 /**
  * Standard output stream.
  * @ingroup ios
  */
-system::SystemOutStream& out = system::stdout_object;
+sys::SystemOutStream& out = sys::stdout_object;
 
 /**
  * Standard error stream.
  * @ingroup ios
  */
-system::SystemOutStream& err = system::stderr_object;
+sys::SystemOutStream& err = sys::stderr_object;
 
 } } // elm::io

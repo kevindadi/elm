@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	Path class interface
  *
  *	This file is part of OTAWA
@@ -19,13 +18,13 @@
  *	along with OTAWA; if not, write to the Free Software 
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_SYSTEM_PATH_H
-#define ELM_SYSTEM_PATH_H
+#ifndef ELM_SYS_PATH_H
+#define ELM_SYS_PATH_H
 
 #include <elm/string.h>
 #include <elm/io.h>
 
-namespace elm { namespace system {
+namespace elm { namespace sys {
 
 // Path class
 class Path {
@@ -101,8 +100,8 @@ inline io::Output& operator<<(io::Output& out, const Path& path)
 
 }	// system
 
-typedef elm::system::Path Path;
+typedef elm::sys::Path Path;
 
 } // elm
 
-#endif // ELM_SYSTEM_PATH_H
+#endif // ELM_SYS_PATH_H

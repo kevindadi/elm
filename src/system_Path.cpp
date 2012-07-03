@@ -26,8 +26,8 @@
 #include <sys/stat.h>
 
 #include <elm/genstruct/Vector.h>
-#include <elm/system/Path.h>
-#include <elm/system/SystemException.h>
+#include <elm/sys/Path.h>
+#include <elm/sys/SystemException.h>
 
 //#define DEBUG
 #if defined(DEBUG) && !defined(NDEBUG)
@@ -36,7 +36,7 @@
 #	define TRACE
 #endif
 
-namespace elm { namespace system {
+namespace elm { namespace sys {
 
 /**
  * @class Path
@@ -460,4 +460,4 @@ bool Path::isExecutable(void) const {
 	return res == 0;
 }
 
-} } // elm::system
+} } // elm::sys
