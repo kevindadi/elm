@@ -227,7 +227,7 @@ Plugin *Plugger::plugFile(String path) {
 		if(!file) {
 			Path rpath = path;
 			rpath = rpath.setExtension("link");
-			file = system::FileItem::get(rpath);
+			file = sys::FileItem::get(rpath);
 			if(file) {
 				file->release();
 				file = 0;
@@ -238,7 +238,7 @@ Plugin *Plugger::plugFile(String path) {
 					String npath;
 					input >> npath;
 					path = rpath.parent() / npath;
-					file = system::FileItem::get(path);
+					file = sys::FileItem::get(path);
 				}
 				catch(io::IOException& e) {
 					onError(level_error, e.message());

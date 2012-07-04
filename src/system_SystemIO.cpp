@@ -72,9 +72,9 @@ namespace elm { namespace sys {
 			}
 	};
 	
-	static system::SystemInStream stdin_object(GetStdHandle(STD_INPUT_HANDLE));
-	static system::NoFaultOutStream stdout_object(GetStdHandle(STD_OUTPUT_HANDLE));
-	static system::NoFaultOutStream stderr_object(GetStdHandle(STD_ERROR_HANDLE));
+	static sys::SystemInStream stdin_object(GetStdHandle(STD_INPUT_HANDLE));
+	static sys::NoFaultOutStream stdout_object(GetStdHandle(STD_OUTPUT_HANDLE));
+	static sys::NoFaultOutStream stderr_object(GetStdHandle(STD_ERROR_HANDLE));
 
 	SystemInStream::SystemInStream(void* fd): WinInStream(fd) { }
 	SystemOutStream::SystemOutStream(void* fd): WinOutStream(fd) { }

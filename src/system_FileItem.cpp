@@ -44,7 +44,7 @@ namespace elm {
 STRONG_TYPE(inode_t, ino_t);
 
 #if defined(__WIN32) || defined(__WIN64)
-	static genstruct::HashTable<String, system::FileItem *> *files = 0;
+	static genstruct::HashTable<String, sys::FileItem *> *files = 0;
 #else
 // inode_t hash key
 	template <>
