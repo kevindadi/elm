@@ -37,7 +37,7 @@ typedef int64_t int64;
 typedef uint64_t uint64;
 
 // other types
-#ifndef __LP64__
+#if !defined(__LP64__) && !defined(_WIN64)
 	typedef uint32 size;
 	typedef uint32 offset;
 	typedef uint32 uint;

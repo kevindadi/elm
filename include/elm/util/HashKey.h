@@ -13,7 +13,7 @@
 
 namespace elm {
 
-namespace t { typedef t::uint32 hash; }
+namespace t { typedef t::intptr hash; }
 
 // Useful hash functions
 t::hash hash_string(const char *chars, int length);
@@ -39,18 +39,13 @@ public:
 
 template <> class HashKey<void *> {
 public:
-	static inline t::hash hash(void *key) { return (unsigned long)key; }
+	static inline t::hash hash(void *key) { return t::hash(key); }
 	static inline bool equals(void *key1, void *key2) { return key1 == key2; } 
 };
 
 template <> class HashKey<const void *> {
 public:
-	static inline t::hash hash(const void *key)
-#		ifndef __LP64__
-			{ return t::hash(key); }
-#		else
-			{ return t::hash(t::uint64(key)); }
-#		endif
+	static inline t::hash hash(const void *key) { return t::hash(key); }
 	static inline bool equals(const void *key1, const void *key2)
 		{ return key1 == key2; }
 };

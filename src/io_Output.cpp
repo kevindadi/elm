@@ -231,11 +231,7 @@ void Output::print(void *value) {
 		print("<null>");
 	else {
 		char buffer[sizeof(void *) * 2];
-#		ifndef __LP64__
-			char *p = horner(buffer + sizeof(buffer), t::uint32(value), 16);
-#		else
-			char *p = horner(buffer + sizeof(buffer), t::uint64(value), 16);
-#		endif
+		char *p = horner(buffer + sizeof(buffer), t::intptr(value), 16);
 		while(p != buffer)
 			*--p = '0';
 		if(strm->write(buffer, sizeof(buffer)) < 0)

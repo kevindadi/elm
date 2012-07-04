@@ -101,50 +101,12 @@ install(
 	${EXCLUDES}
 )
 
-###########################
-#adding Doxygen support
-if(UNIX OR APPLE)
-	#if using a unix system
-	message(STATUS "Using Unix system, not MacOS")
-	find_program(DOXYGEN doxygen
-		/usr/local/bin
-		/usr/bin
-		)
-elseif(WIN32 OR MINGW)
-	#not tested
-	message(STATUS "Using Win32 system")
-	find_program(DOXYGEN doxygen
-		PATH
-		)
-elseif(APPLE)
-	#not tested either, and shall not test
-	message(WARNING "MacOS not supported")
-else(UNIX AND NOT APPLE)
-	#in case of some more exotic OS
-	message(WARNING "OS not supported")
+# handle autodoc
+find_program(DOXYGEN doxygen)
+
+if(DOXYGEN)
+	add_custom_target(autodoc COMMAND ${DOXYGEN})
+	execute_process(COMMAND ${DOXYGEN})
+	install(DIRECTORY autodoc DESTINATION ${CMAKE_INSTALL_PREFIX}/share/Elm/)
 endif()
-	
-#once Doxygen path has been searched for
-#generation of documentation IF Doxygen has been found
-#tried testing for DEFINED DOXYGEN_DIR, doesn't work
-if(DOXYGEN AND WIN32)
-	message(STATUS "Doxygen found, generation of documentation")
-	execute_process(COMMAND "cmd" "/C doxygen Doxyfile")
-elseif(DOXYGEN AND UNIX) #not tested
-	message(STATUS "Doxygen found, generation of documentation")
-	execute_process(COMMAND "bash" "doxygen Doxyfile")
-else(DOXYGEN AND WIN32)
-	message(WARNING "Doxygen not found, cannot generate documentation")
-endif(DOXYGEN AND WIN32)
-
-
-###########################
-
-# Documentation install
-#if(DOXYGEN)
-#	install(
-#		DIRECTORY autodoc
-#		DESTINATION share/Elm/
-#	)
-#endif(DOXYGEN)
 
