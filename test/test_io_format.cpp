@@ -48,8 +48,8 @@ void test_io_format(void) {
 	// Test special numbers
 	CHECK_EQUAL(test(center(width(8, pad('!', -666)))), String("!!-666!!"));
 	CHECK_EQUAL(test(center(width(8, pad('!', 0)))), String("!!!0!!!!"));
-	CHECK_EQUAL(test(hex((unsigned long)-1)), String("ffffffff"));
-	CHECK_EQUAL(test(hex((long)-1)), String("ffffffff"));
+	CHECK_EQUAL(test(hex(t::uint32(-1))), String("ffffffff"));
+	CHECK_EQUAL(test(hex(t::int32(-1))), String("ffffffffffffffff"));
 	
 	// Test upper case
 	CHECK_EQUAL(test(hex(uppercase(666))), String("29A"));

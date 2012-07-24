@@ -89,22 +89,23 @@ struct test_t {
 
 // Entry point
 int main(int argc, char *argv[]) {
-	
-	// Test all
-	if(argc == 1)
+
+	for(int i = 1; i < argc; i++)
+		if(string("-h") == argv[i] || string("--help") == argv[i]) {
+		cerr << "Modules:\n";
 		for(struct test_t *test = tests; test->fun; test++)
-			test->fun();
+			cerr << "\t" << test->name << io::endl;
+		return 0;
+	}
 	
-	// Test some
-	else 
-		for(int i = 1; i < argc; i++) {
-			bool found = false;
-			for(struct test_t *test = tests; test->fun; test++)
-				if(test->name == argv[i]) {
-					test->fun();
-					found = true;
-				}
-			if(!found)
-				cerr << "ERROR: no test called \"" << argv[i] << "\"\n";
-		}
+	for(int i = 1; i < argc; i++) {
+		bool found = false;
+		for(struct test_t *test = tests; test->fun; test++)
+			if(test->name == argv[i]) {
+				test->fun();
+				found = true;
+			}
+		if(!found)
+			cerr << "ERROR: no test called \"" << argv[i] << "\"\n";
+	}
 }
