@@ -485,12 +485,8 @@ int String::lastIndexOf(const String& string, int pos) {
 	ASSERTP(string, "cannot look for an empty string");
 	while(pos >= 0) {
 		pos = lastIndexOf(string[0], pos);
-		if(pos >= 0) {
-			if(substring(pos, string.length()) == string) 
+		if(pos >= 0 && substring(pos, string.length()) == string)
 				return pos;
-			else
-				pos--;
-		}
 	}
 	return -1;
 }

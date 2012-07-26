@@ -90,6 +90,7 @@ struct test_t {
 // Entry point
 int main(int argc, char *argv[]) {
 
+	// process the help
 	for(int i = 1; i < argc; i++)
 		if(string("-h") == argv[i] || string("--help") == argv[i]) {
 		cerr << "Modules:\n";
@@ -98,6 +99,8 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 	
+	// process the tests
+	bool one = false;
 	for(int i = 1; i < argc; i++) {
 		bool found = false;
 		for(struct test_t *test = tests; test->fun; test++)
@@ -105,7 +108,13 @@ int main(int argc, char *argv[]) {
 				test->fun();
 				found = true;
 			}
+		one = true;
 		if(!found)
 			cerr << "ERROR: no test called \"" << argv[i] << "\"\n";
 	}
+
+	// if none selected, test all
+	if(!one)
+		for(struct test_t *test = tests; test->fun; test++)
+			test->fun();
 }
