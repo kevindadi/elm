@@ -71,6 +71,7 @@ extern AutoStringStartup &_;
 // StringInput class
 class StringInput {
 public:
+	StringInput(const char *str);
 	StringInput(const string& str);
 	StringInput(cstring str);
 	~StringInput(void);

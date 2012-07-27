@@ -205,11 +205,53 @@ void test_Input(void) {
 }
 
 
+// StringInput class
+void test_StringInput(void) {
+	CHECK_BEGIN("io::StringInput");
+
+	{
+		StringInput in("128");
+		t::int32 v;
+		in >> v;
+		CHECK_EQUAL(v, 128);
+	}
+
+	{
+		string in = "128";
+		t::int32 v;
+		in >> v;
+		CHECK_EQUAL(v, 128);
+	}
+
+	{
+		string in = "0x80";
+		t::int32 v;
+		in >> v;
+		CHECK_EQUAL(v, 0x80);
+	}
+
+	{
+		string in = "aa";
+		t::int32 v;
+		CHECK_EXCEPTION(elm::io::IOException, in >> v);
+	}
+
+	{
+		string in = "0xffffffffff";
+		t::int32 v;
+		CHECK_EXCEPTION(elm::io::IOException, in >> v);
+	}
+
+	CHECK_END;
+}
+
+
 int main(void) {
 	test_RandomAccessStream();
 	test_BufferedInStream();
 	test_BufferedOutStream();
 	test_Input();
+	test_StringInput();
 	return 0;
 }
 
