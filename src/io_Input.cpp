@@ -195,12 +195,14 @@ t::uint32 Input::scanULong(void) {
 		}
 
 	// read the digits
+	bool one = false;
 	int digit = test_base(chr, base);
 	while(digit >= 0) {
 		if(digit < 0)
 			throw IOException("bad formatted integer");
 		t::uint32 old = val;
 		val = val * base + digit;
+		one = true;
 		if(val < old)
 			throw IOException("32-bits value too big");
 		chr = get();
@@ -208,6 +210,8 @@ t::uint32 Input::scanULong(void) {
 	}
 	if(chr >= 0)
 		back(chr);
+	if(!one)
+		throw IOException("not a number");
 	return val;
 }
 

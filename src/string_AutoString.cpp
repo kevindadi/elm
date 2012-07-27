@@ -91,6 +91,13 @@ StringInput::StringInput(cstring str) {
 
 /**
  */
+StringInput::StringInput(const char *str) {
+	in.setStream(*(new io::BlockInStream(str)));
+}
+
+
+/**
+ */
 StringInput::~StringInput(void) {
 	if(&in.stream() != &io::in) delete &in.stream();
 }

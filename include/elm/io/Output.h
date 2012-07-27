@@ -51,17 +51,17 @@ class IntFormat {
 		_displaySign = false;
 	}
 public:
-	inline IntFormat(void): _val(0) { init(true); }
-	inline IntFormat(signed char			value): _val(value) { init(true); }
-	inline IntFormat(unsigned char		value): _val(value) { init(false); }
-	inline IntFormat(signed short			value): _val(value) { init(true); }
-	inline IntFormat(unsigned short		value): _val(value) { init(false); }
-	inline IntFormat(signed int			value): _val(value) { init(true); }
-	inline IntFormat(unsigned int			value): _val(value) { init(false); }
-	inline IntFormat(signed long			value): _val(value) { init(true); }
-	inline IntFormat(unsigned long		value): _val(value) { init(false); }
-	inline IntFormat(signed long long	value): _val(value) { init(true); }
-	inline IntFormat(unsigned long long	value): _val(value) { init(false); }
+	inline IntFormat(void					)		: _val(0) 					{ init(true); }
+	inline IntFormat(signed char			value)	: _val(value) 				{ init(true); }
+	inline IntFormat(unsigned char		value)	: _val(t::uint64(value)) 	{ init(false); }
+	inline IntFormat(signed short		value)	: _val(value) 				{ init(true); }
+	inline IntFormat(unsigned short		value)	: _val(t::uint64(value)) 	{ init(false); }
+	inline IntFormat(signed int			value)	: _val(value) 				{ init(true); }
+	inline IntFormat(unsigned int		value)	: _val(t::uint64(value)) 	{ init(false); }
+	inline IntFormat(signed long			value)	: _val(value) 				{ init(true); }
+	inline IntFormat(unsigned long		value)	: _val(t::uint64(value)) 	{ init(false); }
+	inline IntFormat(signed long long	value)	: _val(value)				{ init(true); }
+	inline IntFormat(unsigned long long	value)	: _val(value)				{ init(false); }
 
 	inline IntFormat operator()(t::int8	value) { IntFormat f = *this; f._val = value; return f; }
 	inline IntFormat operator()(t::uint8	value) { IntFormat f = *this; f._val = value; return f; }

@@ -52,7 +52,7 @@ public:
 		inline AbstractIterator(const AbstractIterator& iter)
 			: list(iter.list), cur(iter.cur) { }
 		inline AbstractIterator& operator=(const AbstractIterator& iter)
-			{ list = iter.list; cur = iter.cur; }
+			{ list = iter.list; cur = iter.cur; return *this; }
 	protected:
 		const inhstruct::DLList *list;
 		DLNode *cur;
