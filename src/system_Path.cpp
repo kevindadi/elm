@@ -460,4 +460,58 @@ bool Path::isExecutable(void) const {
 	return res == 0;
 }
 
+
+/**
+ * @class Path::PathIter
+ * This iterator allows to iterate over a list of paths, contained in a string,
+ * separated by the OS path separator.
+ */
+
+
+/**
+ */
+Path::PathIter::PathIter(const string& str)
+: s(str), p(0), n(-1) {
+	look();
+}
+
+
+/**
+ */
+Path::PathIter::PathIter(const PathIter& iter)
+: s(iter.s), p(iter.p), n(iter.n) {
+}
+
+
+/**
+ */
+bool Path::PathIter::ended(void) const {
+	return p >= s.length();
+}
+
+
+/**
+ */
+Path Path::PathIter::item(void) const {
+	return s.substring(p, n - p);
+}
+
+
+/**
+ */
+void Path::PathIter::next(void) {
+	p = n + 1;
+	look();
+}
+
+
+void Path::PathIter::look(void) {
+	if(p >= s.length())
+		return;
+	n = s.indexOf(Path::PATH_SEPARATOR, n + 1);
+	if(n < 0)
+		n = s.length();
+	//cerr << "DEBUG: s=" << s << ", p=" << p << ", n=" << n << io::endl;
+}
+
 } } // elm::sys

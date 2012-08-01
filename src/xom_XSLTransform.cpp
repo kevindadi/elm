@@ -92,6 +92,9 @@ XSLTransform::XSLTransform(Document *stylesheet, NodeFactory *factory) throw(XSL
  *
  * @param name	the name of the parameter
  * @param value	the value of the parameter
+ * @note	The parameter value must be a valid XPath expression, meaning that,
+ * @li		strings must be quoted with "'",
+ * @li		boolean value must converted to integer (zero for false, non-zero for true) or using functions true() or false().
  */
 void XSLTransform::setParameter(const string& name, const string& value) {
 	params.put(name, value);

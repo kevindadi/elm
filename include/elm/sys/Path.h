@@ -23,6 +23,7 @@
 
 #include <elm/string.h>
 #include <elm/io.h>
+#include <elm/PreIterator.h>
 
 namespace elm { namespace sys {
 
@@ -89,6 +90,20 @@ public:
 	inline operator const String& (void) const { return toString(); }
 	inline operator bool (void) const  { return buf; }
 	inline const char *operator&(void) const { return &buf; };
+
+	// Path iterator
+	class PathIter: public PreIterator<PathIter, string> {
+	public:
+		PathIter(const string& str);
+		PathIter(const PathIter& iter);
+		bool ended(void) const;
+		Path item(void) const;
+		void next(void);
+	private:
+		void look(void);
+		const string& s;
+		int p, n;
+	};
 
 private:
 	int nextSeparator(int start = 0) const;
