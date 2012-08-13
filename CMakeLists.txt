@@ -9,8 +9,6 @@ endif()
 # debugging activated
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -g3")
 
-#set(LIBRARY_OUTPUT_PATH lib/${CMAKE_BUILD_TYPE})
-
 if(MINGW OR WIN32)
 set(LIBDIR "bin")
 else()
@@ -25,15 +23,25 @@ endif (CMAKE_COMPILER_IS_GNUCXX AND (CMAKE_BUILD_TYPE MATCHES Release))
 
 #check endianness
 #not in makefile.am, why here ?
-include(TestBigEndian)
-TEST_BIG_ENDIAN(BIG_ENDIAN)
+#include(TestBigEndian)
+#TEST_BIG_ENDIAN(BIG_ENDIAN)
 
 # MINGW_LINUX
 if(MINGW_LINUX OR MINGW_WIN)
 	message(STATUS "here !")
-	set(LIBXML2 ${CMAKE_BINARY_DIR}/../libotawa/bin/libxml2.dll)
+	set(LIBXML2_LIBRARIES ${CMAKE_BINARY_DIR}/../libotawa/bin/libxml2.dll)
+	if(EXISTS "${LIBXML2_LIBRARIES}")
+		set(LIBXML2_LIBRARIES FOUND)
+	else()
+		set(LIBXML2_LIBRARIES NOTFOUND)
+	endif()
 	set(LIBXML2_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../libotawa/include)
-	set(LIBXSLT ${CMAKE_BINARY_DIR}/../libotawa/bin/libxslt.dll)
+	set(LIBXSLT_LIBRARIES ${CMAKE_BINARY_DIR}/../libotawa/bin/libxslt.dll)
+	if(EXISTS "${LIBXSLT_LIBRARIES}")
+		set(LIBXSLT_LIBRARIES FOUND)
+	else()
+		set(LIBXSLT_LIBRARIES NOTFOUND)
+	endif()
 	set(LIBXSLT_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../libotawa/include)
 
 # Unix
@@ -102,11 +110,13 @@ install(
 )
 
 # handle autodoc
+option(AUTODOC "generate auto-documentation" OFF)
 find_program(DOXYGEN doxygen)
-
-if(DOXYGEN)
-	add_custom_target(autodoc COMMAND ${DOXYGEN})
-	execute_process(COMMAND ${DOXYGEN})
-	install(DIRECTORY autodoc DESTINATION ${CMAKE_INSTALL_PREFIX}/share/Elm/)
+if((DOXYGEN AND NOT EXISTS autodoc) OR AUTODOC)
+	execute_process(COMMAND "${DOXYGEN}" OUTPUT_QUIET)
 endif()
+if(DOXYGEN)
+	install(DIRECTORY autodoc DESTINATION "${CMAKE_INSTALL_PREFIX}/share/GEL/")
+endif()
+unset(AUTODOC CACHE)
 

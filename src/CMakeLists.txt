@@ -160,13 +160,20 @@ list(APPEND LIBELM_LA_SOURCES
 	)
 endif(LIBXSLT)
 
+
+# add dependencies
 add_library(elm SHARED ${LIBELM_LA_SOURCES})
 if(LIBXML2)
 	if(UNIX)
 		target_link_libraries(elm ${LIBXML2_LIBRARIES})
-		target_link_libraries(elm ${LIBXSLT_LIBRARIES})
 	elseif(WIN32)
 		target_link_libraries(elm ${LIBXML2})
+	endif(UNIX)
+endif(LIBXML2)
+if(LIBXSLT)
+	if(UNIX)
+		target_link_libraries(elm ${LIBXSLT_LIBRARIES})
+	elseif(WIN32)
 		target_link_libraries(elm ${LIBXSLT})
 	endif(UNIX)
 endif(LIBXML2)
