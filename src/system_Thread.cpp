@@ -21,12 +21,12 @@
  */
 
 #include <elm/assert.h>
-#include <elm/system/Thread.h>
+#include <elm/sys/Thread.h>
 #include <pthread.h>
 #include <errno.h>
 #include <string.h>
 
-namespace elm { namespace system {
+namespace elm { namespace sys {
 
 /**
  * @class Runnable
@@ -129,4 +129,4 @@ Thread *Thread::make(Runnable& runnable) {
 
 //static Thread *current(void);
 
-} }	// elm::system
+} }	// elm::sys

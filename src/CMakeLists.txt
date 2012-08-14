@@ -1,5 +1,17 @@
 
+# compilation options
+include_directories("../include")
+include_directories(".")
+if(LIBXML2_FOUND)
+	include_directories(${LIBXML2_INCLUDE_DIR})
+endif()
+if(LIBXSLT_FOUND)
+	include_directories(${LIBXSLT_INCLUDE_DIR})
+endif()
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -g3 -Wall")
 
+
+# source list
 set(LIBELM_LA_SOURCES
 	"concepts.h"
 	"doc.h"
@@ -83,7 +95,6 @@ set(LIBELM_LA_SOURCES
 	"system_System.cpp"
 	"system_SystemException.cpp"
 	"system_SystemIO.cpp"
-	#"system_Thread.cpp"
 	"type_info.cpp"
 	"util_AutoDestructor.cpp"
 	"util_BitVector.cpp"
@@ -106,46 +117,54 @@ set(LIBELM_LA_SOURCES
 	"utility.cpp"
 	)
 
-if(UNIX AND NOT APPLE)
+
+# optional crash handler
+if(GDB_PATH AND UNIX AND NOT APPLE AND NOT WIN32 AND NOT WIN64)
 	# be careful: the order of these sources matters for static object initialization
 	list(APPEND LIBELM_LA_SOURCES "debug_GDBCrashHandler.cpp" "debug_CrashHandler.cpp")
 endif()
 
+
+# optional socket
 if(NOT(WIN32) AND NOT(WIN64))
-	list(APPEND LIBELM_LA_SOURCES "net_ClientSocket.cpp" "net_ServerSocket.cpp")
+	list(APPEND LIBELM_LA_SOURCES
+		"system_Thread.cpp"
+		"net_ClientSocket.cpp"
+		"net_ServerSocket.cpp")
 endif()
 
 
-include_directories("../include")
-include_directories(".")
-include_directories(${LIBXML2_INCLUDE_DIR})
-include_directories(${LIBXSLT_INCLUDE_DIR})
-set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -g3 -Wall")
+# optional xom module
+if(LIBXML2_FOUND)
+	list(APPEND LIBELM_LA_SOURCES
+		"serial_XOMUnserializer.cpp"
+		"serial2_XOMUnserializer.cpp"
+		"serial2_XOMSerializer.cpp"
+		"xom_Attribute.cpp"
+		"xom_Builder.cpp"
+		"xom_Comment.cpp"
+		"xom_Document.cpp"
+		"xom_Element.cpp"
+		"xom_Elements.cpp"
+		"xom_Exception.cpp"
+		"xom_Node.cpp"
+		"xom_NodeFactory.cpp"
+		"xom_ParentNode.cpp"
+		"xom_Serializer.cpp"
+		"xom_String.cpp"
+		"xom_Text.cpp"
+		"xom_XIncluder.cpp"
+		"xom_macros.h")
+endif()
 
-if(LIBXML2)
-list(APPEND LIBELM_LA_SOURCES
-	"serial_XOMUnserializer.cpp"
-	"serial2_XOMUnserializer.cpp"
-	"serial2_XOMSerializer.cpp"
-	"xom_Attribute.cpp"
-	"xom_Builder.cpp"
-	"xom_Comment.cpp"
-	"xom_Document.cpp"
-	"xom_Element.cpp"
-	"xom_Elements.cpp"
-	"xom_Exception.cpp"
-	"xom_Node.cpp"
-	"xom_NodeFactory.cpp"
-	"xom_ParentNode.cpp"
-	"xom_Serializer.cpp"
-	"xom_String.cpp"
-	"xom_Text.cpp"
-	"xom_XIncluder.cpp"
-	"xom_macros.h")
-endif(LIBXML2)
-	
-#removing OS-special files
-#it's hardcoded, havn't found (yet) a better way to do
+
+# optional xom XSLT support
+if(LIBXSLT_FOUND)
+	list(APPEND LIBELM_LA_SOURCES "xom_XSLTransform.cpp")
+endif()
+
+
+# system IO selection	
 if(MINGW_LINUX OR WIN32)
 	list(REMOVE_ITEM LIBELM_LA_SOURCES io_UnixInStream.cpp)
 	list(REMOVE_ITEM LIBELM_LA_SOURCES io_UnixOutStream.cpp)
@@ -154,34 +173,24 @@ elseif(UNIX OR APPLE)
 	list(REMOVE_ITEM LIBELM_LA_SOURCES io_WinOutStream.cpp)
 endif()
 
-if(LIBXSLT)
-list(APPEND LIBELM_LA_SOURCES
-	"xom_XSLTransform.cpp"
-	)
-endif(LIBXSLT)
 
-
-# add dependencies
+# library definition
 add_library(elm SHARED ${LIBELM_LA_SOURCES})
-if(LIBXML2)
-	if(UNIX)
+if(LIBXML2_FOUND)
+	#if(UNIX)
 		target_link_libraries(elm ${LIBXML2_LIBRARIES})
-	elseif(WIN32)
-		target_link_libraries(elm ${LIBXML2})
-	endif(UNIX)
-endif(LIBXML2)
-if(LIBXSLT)
-	if(UNIX)
+	#elseif(WIN32)
+	#	target_link_libraries(elm ${LIBXML2})
+	#endif(UNIX)
+endif()
+if(LIBXSLT_FOUND)
+	#if(UNIX)
 		target_link_libraries(elm ${LIBXSLT_LIBRARIES})
-	elseif(WIN32)
-		target_link_libraries(elm ${LIBXSLT})
-	endif(UNIX)
-endif(LIBXML2)
+	#elseif(WIN32)
+	#	target_link_libraries(elm ${LIBXSLT})
+	#endif(UNIX)
+endif()
 
 
 # installation
-if(MINGW_LINUX OR MINGW_WIN OR UNIX)
-	install(TARGETS elm DESTINATION ${LIBDIR})	
-elseif(WIN32)
-	install(TARGETS elm DESTINATION ${CMAKE_BINARY_DIR})
-endif()
+install(TARGETS elm RUNTIME DESTINATION bin LIBRARY DESTINATION lin)

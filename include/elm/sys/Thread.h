@@ -1,8 +1,9 @@
 /*
+ *	$Id$
  *	System class interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2012, IRIT UPS.
+ *	Copyright (c) 2011, IRIT UPS.
  *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,8 +19,8 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_SYS_THREAD_H_
-#define ELM_SYS_THREAD_H_
+#ifndef ELM_SYSTEM_THREAD_H_
+#define ELM_SYSTEM_THREAD_H_
 
 #include <elm/util/MessageException.h>
 
@@ -37,7 +38,6 @@ public:
 // Runnable class
 class Runnable {
 public:
-	virtual ~Runnable(void) { }
 	virtual void run(void) = 0;
 protected:
 	void stop(void);
@@ -50,7 +50,6 @@ private:
 class Thread {
 	friend class Runnable;
 public:
-	virtual ~Runnable(void) { }
 	static Thread *make(Runnable& runnable);
 	virtual void start(void) throw(ThreadException) = 0;
 	virtual void join(void) throw(ThreadException) = 0;
@@ -66,4 +65,4 @@ protected:
 } }	// elm::sys
 
 
-#endif /* ELM_SYS_THREAD_H_ */
+#endif /* ELM_SYSTEM_THREAD_H_ */
