@@ -6,7 +6,7 @@
  */
 
 #include <elm/io.h>
-#include <elm/system/Thread.h>
+#include <elm/sys/Thread.h>
 #include <elm/system/StopWatch.h>
 #include <math.h>
 
@@ -74,4 +74,9 @@ void test_thread(void) {
 	thread->join();
 	sw.stop();
 	cerr << "two: " << sw.delay() << io::endl;
+}
+
+int main(void) {
+	test_thread();
+	return 0;
 }

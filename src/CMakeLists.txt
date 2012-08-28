@@ -126,11 +126,11 @@ endif()
 
 
 # optional socket
-if(NOT(WIN32) AND NOT(WIN64))
-	list(APPEND LIBELM_LA_SOURCES
-		"system_Thread.cpp"
-		"net_ClientSocket.cpp"
-		"net_ServerSocket.cpp")
+if(CMAKE_THREAD_LIBS_INIT)
+	list(APPEND LIBELM_LA_SOURCES "system_Thread.cpp")
+endif()
+if(HAS_SOCKET)
+	list(APPEND LIBELM_LA_SOURCES  "net_ClientSocket.cpp" "net_ServerSocket.cpp")
 endif()
 
 
@@ -190,7 +190,10 @@ if(LIBXSLT_FOUND)
 	#	target_link_libraries(elm ${LIBXSLT})
 	#endif(UNIX)
 endif()
-
+if(CMAKE_THREAD_LIBS_INIT)
+	message(STATUS "link with ${CMAKE_THREAD_LIBS_INIT}")
+	target_link_libraries(elm ${CMAKE_THREAD_LIBS_INIT})
+endif()
 
 # installation
 install(TARGETS elm RUNTIME DESTINATION bin LIBRARY DESTINATION lin)

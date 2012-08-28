@@ -109,6 +109,7 @@ public:
 	inline CString name(void) const { return _name; };
 	inline AbstractClass *base(void) const { return _base; };
 	virtual void *instantiate(void) = 0;
+	bool baseOf(AbstractClass *clazz);
 };
 
 

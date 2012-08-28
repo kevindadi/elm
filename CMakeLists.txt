@@ -34,10 +34,10 @@ else()
 endif()
 
 
-#process subdirectories
-add_subdirectory(src)
-if(ELM_TEST)
-	add_subdirectory(test)
+# check for thread and socket
+if(NOT(WIN32) AND NOT(WIN64))
+	find_package(Threads)
+	set(HAS_SOCKET ON CACHE BOOL "sockets are supported")
 endif()
 
 
@@ -48,6 +48,13 @@ if(GDB_PATH)
 	set(CRASH_HANDLER "GDBCrashHandler::DEFAULT")
 	message(STATUS "crash handler is " ${CRASH_HANDLER})
 endif(GDB_PATH)
+
+
+#process subdirectories
+add_subdirectory(src)
+if(ELM_TEST)
+	add_subdirectory(test)
+endif()
 
 
 # build configuration file
@@ -75,6 +82,7 @@ install(
 	FILES_MATCHING PATTERN "*.h"
 	${EXCLUDES}
 )
+
 
 # handle autodoc
 option(AUTODOC "generate auto-documentation" OFF)

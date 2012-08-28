@@ -57,7 +57,7 @@ set(TEST_SOURCES
 #	"test_thread.cpp"
 )
 
-if(NOT(WIN32) AND NOT(WIN64))
+if(HAS_SOCKET)
 	add_subdirectory(socket)
 endif()
 
@@ -78,3 +78,6 @@ target_link_libraries(test_sw elm)
 
 add_executable(test_bgc "test_bgc.cpp")
 target_link_libraries(test_bgc elm)
+
+add_executable(test_thread "test_thread.cpp")
+target_link_libraries(test_thread elm)

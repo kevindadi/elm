@@ -21,6 +21,7 @@
  */
 
 #include <elm/type_info.h>
+#include <elm/rtti.h>
 
 namespace elm {
 
@@ -164,6 +165,23 @@ namespace elm {
 // Statics
 const cstring type_info<cstring>::null = "";
 const string type_info<string>::null = "";
+
+
+/**
+ * Test if the current class is base class of the given one.
+ * Notice that this class is a base class of clazz even if this
+ * class equals the class clazz.
+ * @param clazz		Class to test.
+ * @return			True if this class is a base class, false else.
+ */
+bool AbstractClass::baseOf(AbstractClass *clazz) {
+	while(clazz) {
+		if(clazz == this)
+			return true;
+		clazz = clazz->base();
+	}
+	return false;
+}
 
 }  // elm
 
