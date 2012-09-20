@@ -469,49 +469,32 @@ bool Path::isExecutable(void) const {
 
 
 /**
+ * @fn Path::PathIter::PathIter(const string& str);
  */
-Path::PathIter::PathIter(const string& str)
-: s(str), p(0), n(-1) {
-	look();
-}
 
 
 /**
+ * @fn Path::PathIter::PathIter(const PathIter& iter);
  */
-Path::PathIter::PathIter(const PathIter& iter)
-: s(iter.s), p(iter.p), n(iter.n) {
-}
 
 
 /**
+ * @fn bool Path::PathIter::ended(void) const;
  */
-bool Path::PathIter::ended(void) const {
-	return p >= s.length();
-}
 
 
 /**
+ * @fn Path Path::PathIter::item(void) const;
  */
-Path Path::PathIter::item(void) const {
-	return s.substring(p, n - p);
-}
 
 
 /**
+ * @fn void Path::PathIter::next(void);
  */
-void Path::PathIter::next(void) {
-	p = n + 1;
-	look();
-}
 
 
-void Path::PathIter::look(void) {
-	if(p >= s.length())
-		return;
-	n = s.indexOf(Path::PATH_SEPARATOR, n + 1);
-	if(n < 0)
-		n = s.length();
-	//cerr << "DEBUG: s=" << s << ", p=" << p << ", n=" << n << io::endl;
-}
+/**
+ * @fn void Path::PathIter::look(void);
+ */
 
 } } // elm::sys

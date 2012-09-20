@@ -152,14 +152,14 @@ template <> struct type_info<float>: public scalar_t {
 	static inline cstring name(void) { return "<float>"; }
 };
 template <> struct type_info<double>: public scalar_t {
-	static const float min = FLT_MIN;
-	static const float max = FLT_MAX;
+	static const double min = DBL_MIN;
+	static const double max = DBL_MAX;
 	static const double null = 0;
 	static inline cstring name(void) { return "<double>"; }
 };
 template <> struct type_info<long double>: public scalar_t {
-	static const float min = LDBL_MIN;
-	static const float max = LDBL_MAX;
+	static const long double min = LDBL_MIN;
+	static const long double max = LDBL_MAX;
 	static const long double null = 0;
 	static inline CString name(void) { return "<long double>"; }
 };

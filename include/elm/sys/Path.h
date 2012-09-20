@@ -94,13 +94,13 @@ public:
 	// Path iterator
 	class PathIter: public PreIterator<PathIter, string> {
 	public:
-		PathIter(const string& str);
-		PathIter(const PathIter& iter);
-		bool ended(void) const;
-		Path item(void) const;
-		void next(void);
+		inline PathIter(const string& str);
+		inline PathIter(const PathIter& iter);
+		inline bool ended(void) const;
+		inline Path item(void) const;
+		inline void next(void);
 	private:
-		void look(void);
+		inline void look(void);
 		const string& s;
 		int p, n;
 	};
@@ -116,6 +116,37 @@ inline io::Output& operator<<(io::Output& out, const Path& path)
 }	// system
 
 typedef elm::sys::Path Path;
+
+Path::PathIter::PathIter(const string& str)
+: s(str), p(0), n(-1) {
+	look();
+}
+
+Path::PathIter::PathIter(const PathIter& iter)
+: s(iter.s), p(iter.p), n(iter.n) {
+}
+
+bool Path::PathIter::ended(void) const {
+	return p >= s.length();
+}
+
+Path Path::PathIter::item(void) const {
+	return s.substring(p, n - p);
+}
+
+void Path::PathIter::next(void) {
+	p = n + 1;
+	look();
+}
+
+void Path::PathIter::look(void) {
+	if(p >= s.length())
+		return;
+	n = s.indexOf(Path::PATH_SEPARATOR, n + 1);
+	if(n < 0)
+		n = s.length();
+	//cerr << "DEBUG: s=" << s << ", p=" << p << ", n=" << n << io::endl;
+}
 
 } // elm
 
