@@ -146,20 +146,20 @@ template <> struct type_info<unsigned long long>: public int_info<unsigned long 
 	
 // float specialization
 template <> struct type_info<float>: public scalar_t {
-	static const float min = FLT_MIN;
-	static const float max = FLT_MAX;
+	static const float min;
+	static const float max;
 	static const float null = 0;
 	static inline cstring name(void) { return "<float>"; }
 };
 template <> struct type_info<double>: public scalar_t {
-	static const double min = DBL_MIN;
-	static const double max = DBL_MAX;
+	static const double min;
+	static const double max;
 	static const double null = 0;
 	static inline cstring name(void) { return "<double>"; }
 };
 template <> struct type_info<long double>: public scalar_t {
-	static const long double min = LDBL_MIN;
-	static const long double max = LDBL_MAX;
+	static const long double min;
+	static const long double max;
 	static const long double null = 0;
 	static inline CString name(void) { return "<long double>"; }
 };

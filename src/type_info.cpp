@@ -183,5 +183,18 @@ bool AbstractClass::baseOf(AbstractClass *clazz) {
 	return false;
 }
 
+
+// type_info<float>
+const float type_info<float>::min = -FLT_MAX;
+const float type_info<float>::max = FLT_MAX;
+
+// type_info<double>
+const double type_info<double>::min = -DBL_MAX;
+const double type_info<double>::max = DBL_MAX;
+
+// type_info<long double>
+const long double type_info<long double>::min = -LDBL_MAX;
+const long double type_info<long double>::max = LDBL_MAX;
+
 }  // elm
 
