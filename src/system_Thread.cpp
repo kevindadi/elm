@@ -26,7 +26,7 @@
 #	include <pthread.h>
 #	include <errno.h>
 #	include <string.h>
-#elif defined(__WINDOWS)
+#elif defined(WIN32) || defined(WIN64)
 #	include <windows.h>
 #else
 #	error "thread: unsupported system"
@@ -126,7 +126,7 @@ Thread::Thread(Runnable& runnable): _runnable(runnable) {
 
 	};
 
-#elif defined(__WINDOWS)
+#elif defined(__WIN32) || defined(__WIN64)
 
 	/**
 	 * Thread implementation for Windows.
@@ -136,8 +136,8 @@ Thread::Thread(Runnable& runnable): _runnable(runnable) {
 		WinThread(Runnable& runnable): Thread(runnable), handle(NULL) { }
 
 		static DWORD WINAPI boot(LPVOID param) {
-			WinThread *thread = (WinThread *)param;
-			thread->_runnable->run();
+			WinThread *thread = static_cast<WinThread *>(param);
+			thread->_runnable.run();
 			return 0;
 		}
 
@@ -166,7 +166,9 @@ Thread::Thread(Runnable& runnable): _runnable(runnable) {
 		virtual bool isRunning(void) {
 			if(handle == NULL)
 				return false;
-			// TODO
+			DWORD status;
+			GetExitCodeThread(handle, &status);
+			return status == STILL_ACTIVE;
 		}
 
 	protected:
@@ -187,7 +189,10 @@ Thread::Thread(Runnable& runnable): _runnable(runnable) {
 Thread *Thread::make(Runnable& runnable) {
 #	ifdef __unix
 		return new PThread(runnable);
-#	elif defined(__WINDOWS)
+#	elif defined(__WIN32) || defined(__WIN64)
+		return new WinThread(runnable);
+#	else
+#		error "Threads unsupported."
 #	endif
 }
 

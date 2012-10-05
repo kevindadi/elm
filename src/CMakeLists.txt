@@ -126,7 +126,7 @@ endif()
 
 
 # optional socket
-if(CMAKE_THREAD_LIBS_INIT)
+if(CMAKE_THREAD_LIBS_INIT OR WIN32 OR WIN64)
 	list(APPEND LIBELM_LA_SOURCES "system_Thread.cpp")
 endif()
 if(HAS_SOCKET)
