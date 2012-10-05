@@ -5,6 +5,11 @@ Directories:
 	src/			ELM sources
 	test/			Test programs
 
+Bootstrap:
+	cmake .
+Under Windows:
+	cmake . -G "MSYS Makefiles"
+
 Auto-documentation:
 	xdg-open autodoc/index.html
 
@@ -17,4 +22,8 @@ Activating the test compilation:
 Testing:
 	test/test			launch all automated tests
 	test/test-thread	thread classes
+
+Under Windows:
+	move src/libelm.dll to test/
+
 
