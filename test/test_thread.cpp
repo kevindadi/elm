@@ -36,10 +36,10 @@ int int_comp(int x) {
 			s += i * j;
 }
 
-void work(long long m, long long n) {
+void work(long long m, long long n, int step) {
 	float x = 0;
 	cerr << "WORK from " << m << " to " << n << io::endl;
-	for(long long i = m; i < n; i++)
+	for(long long i = m; i < n; i += step)
 		//x += my_cos(i);
 		x += int_comp(i);
 }
@@ -47,11 +47,13 @@ void work(long long m, long long n) {
 class MyRunnable: public Runnable {
 public:
 	long long n, m;
+	int step;
 
-	MyRunnable(long long _n, long long _m): n(_n), m(_m) { }
+	MyRunnable(long long _n, long long _m, int s):
+		n(_n), m(_m), step(s) { }
 
 	virtual void run(void) {
-		work(n, m);
+		work(n, m, step);
 	}
 };
 
@@ -61,19 +63,20 @@ void test_thread(void) {
 	// alone
 	StopWatch sw;
 	sw.start();
-	work(0, N);
+	work(0, N, 1);
 	sw.stop();
 	cerr << "alone: " << sw.delay() << io::endl;
 
 	// at two
-	sw.start();
-	MyRunnable run(0, N / 2);
+	StopWatch sw2;
+	sw2.start();
+	MyRunnable run(0, N, 2);
 	Thread *thread = Thread::make(run);
 	thread->start();
-	work(N / 2, N);
+	work(1, N, 2);
 	thread->join();
-	sw.stop();
-	cerr << "two: " << sw.delay() << io::endl;
+	sw2.stop();
+	cerr << "two: " << sw2.delay() << io::endl;
 }
 
 int main(void) {

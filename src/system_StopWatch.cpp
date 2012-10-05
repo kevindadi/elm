@@ -56,7 +56,11 @@ namespace elm { namespace sys {
 void StopWatch::start(void) {
 #	if defined(__unix) || defined(__APPLE__)
 		struct rusage buf;
-		getrusage(RUSAGE_SELF, &buf);
+#		ifdef __linux
+			getrusage(RUSAGE_THREAD, &buf);
+#		else
+			getrusage(RUSAGE_SELF, &buf);
+#		endif
 		start_time = (time_t)(buf.ru_utime.tv_sec*1000000 + buf.ru_utime.tv_usec);
 #	elif defined(__WIN32) || defined(__WIN64)
 		FILETIME time;
@@ -75,7 +79,11 @@ void StopWatch::start(void) {
 void StopWatch::stop(void) {
 #	if defined(__unix) || defined(__APPLE__)
 		struct rusage buf;
-		getrusage(RUSAGE_SELF, &buf);
+#		ifdef __linux
+			getrusage(RUSAGE_THREAD, &buf);
+#		else
+			getrusage(RUSAGE_SELF, &buf);
+#		endif
 		stop_time = (time_t)(buf.ru_utime.tv_sec*1000000 + buf.ru_utime.tv_usec);
 #	elif defined(__WIN32) || defined(__WIN64)
 		FILETIME time;
