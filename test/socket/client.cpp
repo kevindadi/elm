@@ -26,28 +26,29 @@ using namespace elm;
 using namespace elm::net;
 
 int main(void) {
-	ClientSocket client(8888);
+	ClientSocket *client = ClientSocket::make(8888);
 	try {
-		client.connect();
+		client->connect();
 		cout << "CLIENT: waiting !\n";
-		char c = client.in().read();
+		char c = client->in().read();
 		while(c >= 0 && c != '\n') {
 			cout << c;
-			c = client.in().read();
+			c = client->in().read();
 		}
 		cout << io::endl;
 
 		if(c != io::InStream::FAILED) {
 			cstring msg = "Bye bye !\n";
-			client.out().write(msg.chars(), msg.length());
+			client->out().write(msg.chars(), msg.length());
 			cout << "CLIENT: success\n";
 		}
 		else
 			cout << "CLIENT: error\n";
-		client.disconnect();
+		client->disconnect();
 	}
 	catch(net::Exception& e) {
 		cerr << "ERROR: exception thrown: " << e.message() << io::endl;
 	}
+	delete client;
 	return 0;
 }

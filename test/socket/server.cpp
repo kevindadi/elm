@@ -25,25 +25,24 @@
 using namespace elm;
 using namespace elm::net;
 
-class MyServer: public ServerSocket {
+class MyServer: public Server {
 public:
-	MyServer(void): ServerSocket(8888) { }
+	MyServer(void): Server(8888) { }
 protected:
-	virtual void onConnection(Connection *connection) {
+	virtual void onConnection(Connection& connection) {
 		cstring hello = "Hello !\n";
-		int r = connection->out().write(hello.chars(), hello.length());
+		int r = connection.out().write(hello.chars(), hello.length());
 		if(r <= 0)
 			cerr << "ERROR: when sending " << hello << io::endl;
 		else {
 			cerr << "INFO: success of sending hello !\n";
 		}
-		char c = connection->in().read();
+		char c = connection.in().read();
 		while(c != io::InStream::ENDED && c != '\n') {
 			cout << c;
-			c = connection->in().read();
+			c = connection.in().read();
 		}
 		cout << io::endl;
-		delete connection;
 	}
 };
 

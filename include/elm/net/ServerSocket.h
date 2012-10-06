@@ -41,18 +41,30 @@ private:
 
 class ServerSocket {
 public:
-	ServerSocket(void);
-	ServerSocket(int port);
+	static ServerSocket *make(void);
+	static ServerSocket *make(int port);
 	virtual ~ServerSocket(void);
-	inline int port(void) const { return _port; }
+	virtual int port(void) const = 0;
+	virtual void open(void) throw(Exception) = 0;
+	virtual Connection *listen(void) throw(Exception) = 0;
+	virtual void close(void) = 0;
+};
+
+class Server {
+public:
+	Server(void);
+	Server(int port);
+	virtual ~Server(void);
+	inline int port(void) const { if(sock) return sock->port(); else return -1; }
 	void open(void) throw(Exception);
 	void manage(void) throw(Exception);
 	void close(void);
 protected:
-	virtual void onConnection(Connection *connection) = 0;
+	virtual void onConnection(Connection& connection) = 0;
 private:
 	int _port;
-	int _fd;
+	ServerSocket *sock;
+	bool on;
 };
 
 } }	// elm::net

@@ -29,24 +29,18 @@ namespace elm { namespace net {
 
 class ClientSocket {
 public:
-	ClientSocket(const string& host, int port);
-	ClientSocket(const string& host, const string& service);
-	ClientSocket(int port);
-	virtual ~ClientSocket(void);
-	inline int port(void) const { return _port; }
-	inline const string& host(void) const { return _host; }
-	inline const string& service(void) const { return _serv; }
-	void connect(void) throw(Exception);
-	void disconnect(void) throw(Exception);
-	io::InStream& in(void) throw(Exception);
-	io::OutStream& out(void) throw(Exception);
-private:
-	string _host;
-	string _serv;
-	int _port;
-	int _fd;
-	io::InStream *_in;
-	io::OutStream *_out;
+	static ClientSocket *make(const string& host, int port);
+	static ClientSocket *make(const string& host, const string& service);
+	static ClientSocket *make(int port);
+
+	virtual ~ClientSocket(void) { }
+	virtual int port(void) const = 0;
+	virtual const string& host(void) const = 0;
+	virtual const string& service(void) const = 0;
+	virtual void connect(void) throw(Exception) = 0;
+	virtual void disconnect(void) throw(Exception) = 0;
+	virtual io::InStream& in(void) throw(Exception) = 0;
+	virtual io::OutStream& out(void) throw(Exception) = 0;
 };
 
 } }	// elm::net
