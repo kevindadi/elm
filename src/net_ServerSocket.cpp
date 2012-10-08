@@ -31,6 +31,12 @@
 #	include <elm/string.h>
 #	include <elm/io/UnixInStream.h>
 #	include <elm/io/UnixOutStream.h>
+#elif defined(__WIN32) || defined(__WIN64)
+#	include <windows.h>
+#	include <winsock2.h>
+#	include <ws2tcpip.h>
+#	include <iphlpapi.h>
+#	include <stdio.h>
 #else
 #	error "unsupported platform"
 #endif
@@ -38,28 +44,56 @@
 
 namespace elm { namespace net {
 
+/**
+ * @class Connection
+ * This object represents a connection to a server from a client socket.
+ * It provides in and out streams for this connection.
+ */
+
+
+/**
+ * Close the connection
+ */
+Connection::~Connection(void) {
+}
+
+
+/**
+ * @fn io::InStream& Connection::in(void);
+ * Provides the input stream to get bytes from the client.
+ * @return	Server in stream.
+ */
+
+
+/**
+ * @fn io::OutStream& Connection::out(void);
+ * Provides the output stream to send bytes to the client.
+ * @return 	Server out stream.
+ */
+
+
 // unix socket server implementation
 #ifdef __unix
 
-	class NativeServerSocket: public ServerSocket {
+	class NativeServerSocket: public elm::net::ServerSocket {
 	public:
 		NativeServerSocket(void): _port(-1), _fd(-1) { }
 		NativeServerSocket(int port): _port(port), _fd(-1) { }
 		virtual ~NativeServerSocket(void) { close(); }
 		virtual int port(void) const { return _port; }
 
-		virtual void open(void) throw(Exception) {
+		virtual void open(void) throw(net::Exception) {
 
 			// create the socket
 			_fd = socket(AF_INET, SOCK_STREAM, 0);
 			if(_fd == -1)
-				throw Exception(_ << "cannot create socket: " << strerror(errno));
+				throw net::Exception(_ << "cannot create socket: " << strerror(errno));
 
 			// set the REUEADDR option
 			int b = 1;
 			int res = setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &b, sizeof(b));
 			if (res == -1)
-				throw Exception(_ << "cannot set REUSEADDR option: " << strerror(errno));
+				throw net::Exception(_ << "cannot set REUSEADDR option: " << strerror(errno));
 
 			// bind the socket
 			struct sockaddr_in addr;
@@ -70,13 +104,13 @@ namespace elm { namespace net {
 			res = bind(_fd, (struct sockaddr *)&addr, sizeof(struct sockaddr));
 			if(res == -1) {
 				close();
-				throw Exception(_ << "cannot bind the socket: " << strerror(errno));
+				throw net::Exception(_ << "cannot bind the socket: " << strerror(errno));
 			}
 
 			// start listening
 			if(::listen(_fd, 5) == -1) {
 				close();
-				throw Exception(_ << "cannot listening: " << strerror(errno));
+				throw net::Exception(_ << "cannot listening: " << strerror(errno));
 			}
 
 			// if required, get back the port name
@@ -88,7 +122,7 @@ namespace elm { namespace net {
 			}
 		}
 
-		virtual Connection *listen(void) throw(Exception) {
+		virtual elm::net::Connection *listen(void) throw(net::Exception) {
 
 			// accept the connection
 			struct sockaddr_in caddr;
@@ -109,8 +143,116 @@ namespace elm { namespace net {
 		}
 
 	private:
+
+		class Connection: public elm::net::Connection {
+		public:
+			Connection(int fd): _fd(fd), _in(fd), _out(fd) { }
+			virtual ~Connection(void) { ::close(_fd); }
+			virtual io::InStream& in(void) { return _in; }
+			virtual io::OutStream& out(void) { return _out; }
+		private:
+			int _fd;
+			io::UnixInStream _in;
+			io::UnixOutStream _out;
+		};
+
 		int _port;
 		int _fd;
+	};
+
+
+// Windows implementation
+#elif defined(__WIN32) || defined(WIN64)
+	class NativeServerSocket: public ServerSocket {
+	public:
+		NativeServerSocket(void): _port(-1), sock(INVALID_SOCKET) { }
+		NativeServerSocket(int port): _port(port), sock(INVALID_SOCKET) { }
+		virtual ~NativeServerSocket(void) { close(); }
+		virtual int port(void) const { return _port; }
+
+		virtual void open(void) throw(Exception) {
+
+			// create the socket
+			sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+			if(sock == INVALID_SOCKET)
+				throw next::Exception(_ << "cannot create socket: " << WSAGetLastError());
+
+			// bind the socket
+			struct sockaddr_in addr;
+			ZeroMemory(&addr, sizeof (addr));
+			addr.sin_family = AF_INET;
+			addr.sin_port = htons(_port < 0 ? 0 : _port);
+		    addr.sin_addr.s_addr = INADDR_ANY;
+		    if(bind(sock, &addr, sizeof(addr)) == SOCKET_ERROR) {
+		    	close();
+				throw next::Exception(_ << "cannot bind socket: " << WSAGetLastError());
+		    }
+
+			// start listening
+		    if(listen(sock, SOMAXCONN) == SOCKET_ERROR) {
+		    	close();
+				throw Exception(_ << "cannot listening: " << WSAGetLastError());
+			}
+
+			// if required, get back the port name
+			if(_port < 0) {
+				struct sockaddr_in maddr;
+				socklen_t mlen = sizeof(maddr);
+				getsockname(_fd, (struct sockaddr *)&maddr, &mlen);
+				_port = maddr.sin_port;
+			}
+		}
+
+		virtual Connection *listen(void) throw(Exception) {
+			SOCKENT con = accept(sock, NULL, NULL);
+			if(con == INVALID_SOCKET)
+				throw net::Exception(_ << "cannot accept: " << WSAGetLastError());
+			return new Connection(*this, con);
+		}
+
+		virtual void close(void) {
+			if(sock != INVALID_SOCKET)
+				closesocket(sock);
+		}
+
+	private:
+
+		inline string lastError() { return _ << "socket error: " << WSAGetLastError(); }
+
+		class In: public InStream {
+		public:
+			inline In(NativeServerSocket& server, SOCKET sock): serv(server), sock(socket) { }
+			virtual ~In(void) { }
+			virtual int read (void *buffer, int size) { return recv(sock, buffer, size, 0); }
+			virtual CString lastErrorMessage(void) { return serv->lastError(); }
+		private:
+			NativeServerSocket& serv;
+			SOCK sock;
+		};
+
+		class Out: public OutStream {
+		public:
+			inline Out(NativeServerSocket& server, SOCKET socket): serv(server), sock(socket) { }
+			virtual ~Out(void) { }
+			virtual int write(const char *buffer, int size) { send(sock, buffer, size, 0); }
+			virtual CString lastErrorMessage(void) { return serv->lastError(); }
+		private:
+			NativeServerSocket& serv;
+			SOCKET sock;
+		};
+
+		class Connection: public net::Connection {
+		public:
+			Connection(NativeServerSocket& server, SOCKET socket): in(server, socket), out(server, socket), sock(socket) { }
+			virtual ~Connection(void) { closesocket(sock); }
+		private:
+			In _in;
+			Out _out;
+			SOCKET sock;
+		}
+
+		int _port;
+		SOCKET sock;
 	};
 
 
@@ -130,31 +272,6 @@ namespace elm { namespace net {
  * @param message	Exception message.
  */
 Exception::Exception(const string& message): elm::MessageException(message) {
-}
-
-
-/**
- * @class Connection
- * Represents a connection on a server socket. The connection is bidirectional
- * formed of an in and an out stream. The connection is either closed by the client,
- * or by a deletion of this object.
- */
-
-
-/**
- * Build a connection with the given stream.
- * @param in	Input stream.
- * @param out	Output stream.
- */
-Connection::Connection(int fd): _fd(fd), _in(fd), _out(fd) {
-}
-
-
-/**
- * Cause the deconnection.
- */
-Connection::~Connection(void) {
-	::close(_fd);
 }
 
 

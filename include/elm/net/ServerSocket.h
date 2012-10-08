@@ -21,22 +21,17 @@
 #ifndef ELM_NET_SERVERSOCKET_H_
 #define ELM_NET_SERVERSOCKET_H_
 
-#include <elm/io/UnixInStream.h>
-#include <elm/io/UnixOutStream.h>
+#include <elm/io/InStream.h>
+#include <elm/io/OutStream.h>
 #include <elm/net/Exception.h>
 
 namespace elm { namespace net {
 
 class Connection {
 public:
-	Connection(int fd);
-	~Connection(void);
-	inline io::InStream& in(void) { return _in; }
-	inline io::OutStream& out(void) { return _out; }
-private:
-	int _fd;
-	io::UnixInStream _in;
-	io::UnixOutStream _out;
+	virtual ~Connection(void);
+	virtual io::InStream& in(void) = 0;
+	virtual io::OutStream& out(void) = 0;
 };
 
 class ServerSocket {

@@ -31,6 +31,12 @@
 #	include <errno.h>
 #	include <elm/io/UnixInStream.h>
 #	include <elm/io/UnixOutStream.h>
+#elif defined(__WIN32) || defined(__WIN64)
+#	include <windows.h>
+#	include <winsock2.h>
+#	include <ws2tcpip.h>
+#	include <iphlpapi.h>
+#	include <stdio.h>
 #else
 #	error "unsupported platform"
 #endif
@@ -71,7 +77,7 @@ namespace elm { namespace net {
 			struct addrinfo *info;
 			string service = _serv ? _serv: (_ << _port);
 			if(getaddrinfo(_host.toCString().chars(), service.toCString().chars(), &hints, &info) != 0)
-				throw Exception(_ << "cannot get the host address: ");
+				throw Exception(_ << "cannot get the host address: " << _host << ": " << service);
 
 			// build the socket
 			_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -119,6 +125,107 @@ namespace elm { namespace net {
 		int _fd;
 		io::InStream *_in;
 		io::OutStream *_out;
+	};
+
+
+// Windows client implementation
+#elif defined(__WIN32) || (__WIN64)
+	class NativeClientSocket: public ClientSocket {
+	public:
+
+		NativeClientSocket(const string& host, int port)
+			: _host(host), _port(port), sock(INVALID_SOCKET), _in(this), _out(this) { }
+
+		NativeClientSocket(const string& host, const string& service)
+			: _host(host), _serv(service), sock(INVALID_SOCKET), _in(this), _out(this) { }
+
+		NativeClientSocket(int port)
+			: _host("127.0.0.1"), _port(port), sock(INVALID_SOCKET), _in(this), _out(this) { }
+
+		virtual ~NativeClientSocket(void) { disconnect(); }
+		virtual int port(void) const { return _port; }
+		virtual const string& host(void) const { return _host; }
+		virtual const string& service(void) const { return _serv; }
+
+		virtual void connect(void) throw(Exception)  {
+
+			// initialization
+			struct addrinfo *result = 0, *ptr = 0, hints;
+			ZeroMemory( &hints, sizeof(hints) );
+			hints.ai_family = AF_UNSPEC;
+			hints.ai_socktype = SOCK_STREAM;
+			hints.ai_protocol = IPPROTO_TCP;
+			string service = _serv ? _serv: (_ << _port);
+			if(getaddrinfo(_host.toCString().chars(), service.toCString().chars(), &hints, &result) != 0)
+				throw Exception(_ << "cannot get the host address: " << _host << ": " << service);
+
+			// build the socket
+			sock = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+			_fd = socket(AF_INET, SOCK_STREAM, 0);
+			if(sock == INVALID_SOCKET) {
+				freeaddrinfo(result);
+				throw Exception(_ << "cannot create the socket: " << WSAGetLastError());
+			}
+
+			// perform the connection
+			if(::connect(sock, info->ai_addr, info->ai_addrlen) != 0) {
+				disconnect();
+				throw Exception(_ << "cannot connect: " << WSAGetLastError());
+			}
+		}
+
+		virtual void disconnect(void) throw(Exception)  {
+			if(sock != INVALID_SOCKET)
+				closesocket(sock);
+		}
+
+		virtual io::InStream& in(void) throw(Exception)  {
+			if(sock == INVALID_SOCKET)
+				throw Exception("client not connected");
+			else
+				return _in;
+		}
+
+		virtual io::OutStream& out(void) throw(Exception)  {
+			if(sock == INVALID_SOCKET)
+				throw Exception("client not connected");
+			else
+				return _out;
+		}
+
+	private:
+
+		class In: public InStream {
+		public:
+			inline In(NativeClientSocket& socket): sock(socket) { }
+			virtual ~In(void) { }
+			virtual int read (void *buffer, int size) { return recv(sock->sock, buffer, size, 0); }
+			virtual CString lastErrorMessage(void) { return sock->lastError(); }
+		private:
+			NativeClientSocket& sock;
+		};
+
+		class Out: public OutStream {
+		public:
+			inline Out(NativeClientSocket& socket): sock(socket) { }
+			virtual ~Out(void) { }
+			virtual int write(const char *buffer, int size) { send(sock->sock, buffer, size, 0); }
+			virtual CString lastErrorMessage(void) { return sock->lastError(); }
+		private:
+			NativeClientSocket& sock;
+		};
+
+		cstring lastError(void) {
+			last_error = _ << "IO error: " << WSAGetLastError();
+			return last_error.toCString();
+		}
+
+		string _host;
+		int _port;
+		SOCKET sock;
+		In _in;
+		Out _out;
+		string last_error;
 	};
 
 // no client
