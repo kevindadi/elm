@@ -20,6 +20,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <float.h>
 #include <elm/type_info.h>
 #include <elm/rtti.h>
 
@@ -60,7 +61,7 @@ namespace elm {
  * using namespace elm;
  * @endcode
  *
- * Class @ref elm::type_info<T> allows to get from type passed as the parametric argument.
+ * Class @ref elm::type_info<T> allows to get from the type passed as the parametric argument.
  * This may be useful for templates using static evaluation. The common fields includes:
  * @li is_type -- true if T is not a class
  * @li is_scalar -- true if T is a simple type (neither a structure, nor union, nor class)
@@ -71,6 +72,24 @@ namespace elm {
  * @li is_deep -- true if T requires deep copy (that is, requires copy using operator = instead of
  * system fast byte-per-byte copy mechanism)
  * @li is_virtual -- true if T contains virtual functions
+ * @li name() -- get the name of a type.
+ *
+ * Notice that ELM provides type for basic (integer, float, string) and composed types (pointer, references)
+ * but need the developer help other types like classes, struct or unions. Either one can add the specialized
+ * type_info structure for the defined type:
+ * @code
+ *	class MyClass { ... };
+ *	template <class T> struct type_info<T> { static cstring name() { return "MyClass"; }
+ * @endcode
+ *
+ * Or just add a static member named "__type_name" in the class declaration:
+ * @code
+ *	class MyClass {
+ *	public:
+ *		static cstring __type_name(void) { return "MyClass"; }
+ *		...
+ *	};
+ *	@endcode
  *
  * @par Array Copying
  *
@@ -184,17 +203,38 @@ bool AbstractClass::baseOf(AbstractClass *clazz) {
 }
 
 
+// type_info<integer types>
+cstring type_info<signed int>::name(void) { return "int"; }
+cstring type_info<unsigned int>::name(void) { return "unsigned"; }
+cstring type_info<char>::name(void) { return "char"; }
+cstring type_info<signed char>::name(void) { return "signed char"; }
+cstring type_info<unsigned char>::name(void) { return "unsigned char"; }
+cstring type_info<signed short>::name(void) { return "short"; }
+cstring type_info<unsigned short>::name(void) { return "unsigned short"; }
+cstring type_info<signed long>::name(void) { return "long"; }
+cstring type_info<unsigned long>::name(void) { return "unsigned long"; }
+cstring type_info<signed long long>::name(void) { return "long long"; }
+cstring type_info<unsigned long long>::name(void) { return "unsigned long long"; }
+
+
 // type_info<float>
 const float type_info<float>::min = -FLT_MAX;
 const float type_info<float>::max = FLT_MAX;
+cstring type_info<float>::name(void) { return "float"; }
 
 // type_info<double>
 const double type_info<double>::min = -DBL_MAX;
 const double type_info<double>::max = DBL_MAX;
+cstring type_info<double>::name(void) { return "double"; }
 
 // type_info<long double>
 const long double type_info<long double>::min = -LDBL_MAX;
 const long double type_info<long double>::max = LDBL_MAX;
+cstring type_info<long double>::name(void) { return "long double"; }
+
+// type_info<string types>
+cstring type_info<cstring>::name(void) { return "cstring"; }
+cstring type_info<string>::name(void) { return "string"; }
 
 }  // elm
 

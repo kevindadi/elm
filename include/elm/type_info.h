@@ -22,7 +22,6 @@
 #ifndef ELM_TYPE_INFO_H_
 #define ELM_TYPE_INFO_H_
 
-#include <float.h>
 #include <elm/string.h>
 
 namespace elm {
@@ -41,7 +40,9 @@ public:
 	enum { is_virtual = 1 };
 	static inline CString name(void) { return T::_class.name(); }
 };
-template <class T> class type_info: public class_t<T> { };
+template <class T> class type_info: public class_t<T> {
+	static cstring name(void) { return T::__type_name(); }
+};
 typedef struct type_t {
 	enum { is_type = 1 };
 	enum { is_scalar = 0 };
@@ -105,43 +106,39 @@ template <> struct type_info<bool>: public scalar_t {
 
 // integer specialization
 template <class I>
-struct int_info: public scalar_t {
+struct signed_info: public scalar_t {
 	static const int size = sizeof(I) * 8;
-	static const bool is_signed = I(-1) < I(0);
-	static const I min = !is_signed ? 0 : (I(-1) << (size - 1));
-	static const I max = (is_signed ? ((I(1) << (size - 1)) - 1) : I(-1));
+	static const bool is_signed = true;
+	static const I min = I(-1) << (size - 1);
+	static const I max = I(1) << (size - 1);
 	static const I null = 0;
 };
-template <class I> const I int_info<I>::null; 
-template <class I> const I int_info<I>::min; 
-template <class I> const I int_info<I>::max; 
+template <class I> const I signed_info<I>::null;
+template <class I> const I signed_info<I>::min;
+template <class I> const I signed_info<I>::max;
+template <class I>
+struct unsigned_info: public scalar_t {
+	static const int size = sizeof(I) * 8;
+	static const bool is_signed = false;
+	static const I min = 0;
+	static const I max = I(-1);
+	static const I null = 0;
+};
+template <class I> const I unsigned_info<I>::null;
+template <class I> const I unsigned_info<I>::min;
+template <class I> const I unsigned_info<I>::max;
 
-template <> struct type_info<signed int>: public int_info<signed int>
-	{ static inline cstring name(void) { return "<int>"; } };
-template <> struct type_info<unsigned int>: public int_info<unsigned int>
-	{ static inline cstring name(void) { return "<unsigned>"; } };
-
-template <> struct type_info<char>: public int_info<char>
-	{ static inline cstring name(void) { return "<char>"; } };
-template <> struct type_info<signed char>: public int_info<signed char>
-	{ static inline cstring name(void) { return "<signed char>"; } };
-template <> struct type_info<unsigned char>: public int_info<unsigned char>
-		{ static inline cstring name(void) { return "<unsigned char>"; } };
-
-template <> struct type_info<signed short>: public int_info<signed short>
-	{ static inline cstring name(void) { return "<short>"; } };
-template <> struct type_info<unsigned short>: public int_info<unsigned short>
-	{ static inline cstring name(void) { return "<unsigned short>"; } };
-
-template <> struct type_info<signed long>: public int_info<signed long>
-	{ static inline cstring name(void) { return "<long>"; } };
-template <> struct type_info<unsigned long>: public int_info<unsigned long>
-	{ static inline cstring name(void) { return "<unsigned long>"; } };
-
-template <> struct type_info<signed long long>: public int_info<signed long long>
-	{ static inline cstring name(void) { return "<long long>"; } };
-template <> struct type_info<unsigned long long>: public int_info<unsigned long long>
-	{ static inline cstring name(void) { return "<unsigned long long>"; } };
+template <> struct type_info<signed int>: public signed_info<signed int> { static cstring name(void); };
+template <> struct type_info<unsigned int>: public unsigned_info<unsigned int> { static cstring name(void); };
+template <> struct type_info<char>: public signed_info<char> { static cstring name(void); };
+template <> struct type_info<signed char>: public signed_info<signed char> { static cstring name(void); };
+template <> struct type_info<unsigned char>: public unsigned_info<unsigned char>  { static cstring name(void); };
+template <> struct type_info<signed short>: public signed_info<signed short> { static cstring name(void); };
+template <> struct type_info<unsigned short>: public unsigned_info<unsigned short> { static cstring name(void); };
+template <> struct type_info<signed long>: public signed_info<signed long> { static cstring name(void); };
+template <> struct type_info<unsigned long>: public unsigned_info<unsigned long> { static cstring name(void); };
+template <> struct type_info<signed long long>: public signed_info<signed long long> { static cstring name(void); };
+template <> struct type_info<unsigned long long>: public unsigned_info<unsigned long long> { static cstring name(void); };
 
 	
 // float specialization
@@ -149,31 +146,31 @@ template <> struct type_info<float>: public scalar_t {
 	static const float min;
 	static const float max;
 	static const float null = 0;
-	static inline cstring name(void) { return "<float>"; }
+	static cstring name(void);
 };
 template <> struct type_info<double>: public scalar_t {
 	static const double min;
 	static const double max;
 	static const double null = 0;
-	static inline cstring name(void) { return "<double>"; }
+	static cstring name(void);
 };
 template <> struct type_info<long double>: public scalar_t {
 	static const long double min;
 	static const long double max;
 	static const long double null = 0;
-	static inline CString name(void) { return "<long double>"; }
+	static cstring name(void);
 };
 
 
 // String specialization
 template <> struct type_info<cstring>: public type_t {
 	static const cstring null;
-	static inline cstring name(void) { return "<cstring>"; }
+	static cstring name(void);
 };
 
 template <> struct type_info<String>: public type_t {
 	static const string null;
-	static inline cstring name(void) { return "<string>"; }
+	static cstring name(void);
 };
 
 
@@ -182,6 +179,7 @@ template <class T> struct type_info<const T *>: public ptr_t {
 	typedef T of;
 	enum { is_const = 1 };
 	static const T * const null;
+	static string name(void) { return _ << "const " + type_info<T>::name() << " *"; }
 };
 template <class T> const T * const type_info<const T *>::null = 0;
 
@@ -190,6 +188,7 @@ template <class T> struct type_info<T *>: public ptr_t {
 	typedef T of;
 	enum { is_const = 0 };
 	static T * const null;
+	static string name(void) { return _ << type_info<T>::name() << " *"; }
 };
 template <class T> T * const type_info<T *>::null = 0;
 
@@ -198,11 +197,13 @@ template <class T> T * const type_info<T *>::null = 0;
 template <class T> struct type_info<const T&>: public ref_t {
 	typedef T of;
 	enum { is_const = 1 };
+	static string name(void) { return _ << "const " + type_info<T>::name() << "& "; }
 };
 
 template <class T> struct type_info<T&>: public ref_t {
 	typedef T of;
 	enum { is_const = 0 };
+	static string name(void) { return _ << type_info<T>::name() << "& "; }
 };
 
 } // elm
