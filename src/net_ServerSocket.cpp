@@ -20,7 +20,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifdef __unix
+#if defined(__unix) || defined(__APPLE__)
 #	include <sys/types.h>
 #	include <sys/socket.h>
 #	include <netinet/in.h>
@@ -73,7 +73,7 @@ Connection::~Connection(void) {
 
 
 // unix socket server implementation
-#ifdef __unix
+#if defined(__unix) || defined(__APPLE__)
 
 	class NativeServerSocket: public elm::net::ServerSocket {
 	public:
