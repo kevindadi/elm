@@ -19,7 +19,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifdef __unix
+#if defined(__unix) || defined(__APPLE__)
 #	include <sys/socket.h>
 #	include <sys/types.h>
 #	include <netinet/in.h>
@@ -47,7 +47,7 @@
 namespace elm { namespace net {
 
 // ClientSocket for Unix
-#ifdef __unix
+#if defined(__unix) || defined(__APPLE__)
 	class NativeClientSocket: public ClientSocket {
 	public:
 
