@@ -107,14 +107,12 @@ Path Path::canonical(void) const {
 		if(!comp || comp == ".")
 			;
 		
-		// Select the com	Path path = *this;
-		if(isRelative())
-			path = absolute();
-		else if(comp == "..") {
+		// Select the component
+		if(comp == "..") {
 			if(comps.count() > 0)
 				comps.setLength(comps.count() - 1);
 		}
-		else
+		else if(comp)
 			comps.add(comp);
 
 		// Go to next component

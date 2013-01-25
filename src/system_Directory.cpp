@@ -88,14 +88,22 @@ Directory *Directory::toDirectory(void) {
  */
 void Directory::Iterator::go(void) {
 	errno = 0;
-	struct dirent *dirent = readdir((DIR *)dir);
-	if(dirent) {
-		file = FileItem::get(path / dirent->d_name);
+	while(true) {
+		struct dirent *dirent = readdir((DIR *)dir);
+		if(dirent) {
+			if(cstring(dirent->d_name) != "." && cstring(dirent->d_name) != "..") {
+				file = FileItem::get(path / dirent->d_name);
+				return;
+			}
+		}
+		else {
+			if(errno)
+				throw SystemException(errno, "file");
+			else
+				file = 0;
+			break;
+		}
 	}
-	else if(errno)
-		throw SystemException(errno, "file");
-	else
-		file = 0;
 }
 
 

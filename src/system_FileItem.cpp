@@ -90,11 +90,10 @@ FileItem::~FileItem(void) {
  * Find a file by its name.
  * @param path				Path of the looked file.
  * @return					File matching the given path or null if file does not exists.
- * @throw SystemException	If the file does not exist or can not be accessed.
+ * @throw SystemException	If there is a system error.
  */
 FileItem *FileItem::get(Path path) throw(SystemException) {
 	path = path.canonical();
-	TRACE
 	
 	// Need to initialize ?
 	if(!files)
@@ -103,7 +102,6 @@ FileItem *FileItem::get(Path path) throw(SystemException) {
 #		else
 			files = new genstruct::HashTable<inode_t, FileItem *>;
 #		endif
-	TRACE
 	
 	 // Look at stat
 	 struct stat st;
