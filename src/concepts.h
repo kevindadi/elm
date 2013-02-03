@@ -20,6 +20,8 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <elm/util/Equiv.h>
+
 namespace elm { namespace concept {
 
 /**
@@ -76,7 +78,7 @@ public:
 	 * Just a clone constructor.
 	 * @param iterator	Iterator to clone.
 	 */
-	Iterator(const IteratorConcept& iterator);
+	Iterator(const Iterator& iterator);
 	
 	/**
 	 * Test if the end of the traversal is reached.
@@ -133,7 +135,7 @@ public:
  * 
  * @ingroup concepts
  */
-template <class T, template <class _> E = Equiv<T> >
+template <class T, template <class _> class E = Equiv<T> >
 class Collection {
 public:
 
@@ -607,10 +609,16 @@ public:
 
 /**
  * This concept defines collections of items retrievable by an assigned key.
+ * @par
+ * Implemented by:
+ * @li @ref elm::genstruct::AVLMap
+ * @li @ref elm::genstruct::HashTable
+ * @li @ref elm::genstruct::SortedBinMap
+ * @par
  * @ingroup concepts
  */
 template <class K, class T>
-class Map: public  Collection {
+class Map: public  Collection<Pair<K, T> > {
 public:
 	
 	/**
@@ -645,7 +653,7 @@ public:
 		 * Iterates on the given map.
 		 * @param map	Map to iterate on.
 		 */
-		KeyIterator(const Map<T>& map);
+		KeyIterator(const Map<K, T>& map);
 		
 		/**
 		 * Copy the given iterator.
@@ -664,7 +672,7 @@ public:
 		 * An iterator on values and keys of the map.
 		 * @param map	Map to iterate on.
 		 */
-		PairIterator(const Map<T>& map);
+		PairIterator(const Map<K, T>& map);
 		
 		/**
 		 * An iterator by copy.
@@ -677,10 +685,16 @@ public:
 
 /**
  * A map that may be modified.
+ * @par
+ * Implemented by:
+ * @li @ref elm::genstruct::AVLMap
+ * @li @ref elm::genstruct::HashTable
+ * @li @ref elm::genstruct::SortedBinMap
+ * @par
  * @ingroup concepts
  */
 template <class K, class T>
-class MutableMap: public  Map, public  Collection {
+class MutableMap: public  Map<K, T>, public Collection<Pair<K, T> > {
 public:
 	
 	/**
@@ -850,6 +864,10 @@ public:
  * when comparison must be done.
  * @param K		Type of the key.
  * @param T		Type of the item.
+ *
+ * Implemented by:
+ * @li	@ref elm::Id<T>
+ * @li @ref elm::PairAdapter<K, T>
  */
 template <class K, class T>
 class Key {
@@ -865,37 +883,7 @@ public:
 	 * @param value	Value to get the key of.
 	 * @return		Key of the current value.
 	 */
-	const K& key(const T& value);
-};
-
-/**
- * A collection that supports key embodied in data.
- * @param T	Type of stored objects.
- * @param K	Identification class (must implements the Identified<?, T> concept).
- */
-template <class T, class I>
-class KeyLooker {
-public:
-
-	/**
-	 * Look for a value in the collection with the given key.
-	 * @param key	Key of the object to get.
-	 * @return		Objec matching the key or null if not found.
-	 */
-	const T *look(const K::key_t& key) const;
-};
-
-template <class T, class I>
-class MutableKeyLooker: pubic Lookable<T, I> {	
-public:
-
-	/**
-	 * Look for a value in the collection with the given key that may
-	 * possibly modified.
-	 * @param key	Key of the object to get.
-	 * @return		Objec matching the key or null if not found.
-	 */
-	T *look(const K::key_t& key);
+	static const K& key(const T& value);
 };
 
 } } // elm::concept

@@ -30,7 +30,7 @@ namespace elm { namespace genstruct {
 template <class K, class T, class C = Comparator<K> >
 class AVLMap {
 	typedef Pair<K, T> pair_t;
-	typedef AVLTree<pair_t, PairAdapter<K, T>, C > tree_t;
+	typedef GenAVLTree<pair_t, PairAdapter<K, T>, C > tree_t;
 public:
 
 	// Map concept

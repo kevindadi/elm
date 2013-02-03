@@ -22,8 +22,7 @@ public:
 
 
 // test_lock()
-void test_lock(void) {
-	CHECK_BEGIN("Lock");
+TEST_BEGIN(lock)
 	
 	// Simple test
 	{
@@ -96,7 +95,7 @@ void test_lock(void) {
 		CHECK(p->getAlloc() == alloc);
 	}
 	
-	CHECK_END
-}	
+TEST_END
+
 
 

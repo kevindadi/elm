@@ -11,9 +11,7 @@
 using namespace elm;
 using namespace elm::genstruct;
 
-void test_frag_table(void) {
-	
-	CHECK_BEGIN("frag_table");
+TEST_BEGIN(frag_table)
 	
 	FragTable<int> tab(2);
 	
@@ -77,6 +75,4 @@ void test_frag_table(void) {
 		}
 	CHECK(test_mut_iter);*/
 	
-	CHECK_END;
-	
-}
+TEST_END

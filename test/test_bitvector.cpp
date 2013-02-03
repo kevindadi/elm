@@ -25,9 +25,7 @@ bool equalsBitVector(const BitVector& vec, unsigned long v) {
 	return true;
 }
 
-void test_bitvector(void) {
-	
-	CHECK_BEGIN("BitVector");
+TEST_BEGIN(bitvector)
 	
 	// Initial test
 	BitVector v1(13);
@@ -100,6 +98,5 @@ void test_bitvector(void) {
 	BitVector v12 = v4.makeNot();
 	CHECK(equalsBitVector(v12, 0xfcfc));
 	
-	CHECK_END;
-}
+TEST_END
 

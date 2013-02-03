@@ -6,6 +6,7 @@
  */
 
 #include <elm/io.h>
+#include <elm/util/test.h>
 
 using namespace elm;
 
@@ -29,6 +30,7 @@ void test_process(void);
 void test_ref(void);
 void test_sllist(void);
 void test_sorted_bintree(void);
+void test_stree(void);
 void test_string(void);
 void test_string_buffer(void);
 void test_table(void);
@@ -49,41 +51,12 @@ struct test_t {
 	CString name;
 	void (*fun)(void);
 } tests[] = {
-	//{ "array", test_array },
-	//{ "avl", test_avl },
-	{ "autostr", test_autostr },
-	{ "bitvector", test_bitvector },
-	{ "dllist", test_dllist },
-	{ "file", test_file },
-	{ "formatter", test_formatter },
-	{ "hashtable", test_hashtable },
-	//{ "int", test_int },
-	{ "io_format", test_io_format },
-	{ "lock", test_lock },
-	{ "option", test_option },
-	{ "md5", test_md5 },
-	{ "process", test_process },
-#	ifdef IS_SHARED
-		{ "plugin", test_plugin },
-#	endif
-	{ "ref", test_ref },
-	{ "sllist", test_sllist },
-	{ "sorted_bintree", test_sorted_bintree },
-	{ "string", test_string },
-	{ "string_buffer", test_string_buffer },
-	{ "table", test_table },
-	{ "frag_table", test_frag_table },
 //	{ "thread", test_thread },
-	{ "utility", test_utility },
-	{ "vector", test_vector },	
-	{ "vararg", test_vararg },
-	{ "vector_queue", test_vector_queue },
-	{ "hash_key", test_hashkey },
+//		{ "serial", test_serial },
+//		{ "xom", test_xom },
 	//{ "wah", test_wah },
-	#ifdef HAS_LIBXML
-		{ "serial", test_serial },
-		{ "xom", test_xom },
-	#endif
+//	#ifdef HAS_LIBXML
+//	#endif
 	{ "", 0 }
 };
 
@@ -96,6 +69,8 @@ int main(int argc, char *argv[]) {
 		cerr << "Modules:\n";
 		for(struct test_t *test = tests; test->fun; test++)
 			cerr << "\t" << test->name << io::endl;
+		for(TestSet::Iterator test; test; test++)
+			cerr << "\t" << test->name() << io::endl;
 		return 0;
 	}
 	
@@ -103,18 +78,37 @@ int main(int argc, char *argv[]) {
 	bool one = false;
 	for(int i = 1; i < argc; i++) {
 		bool found = false;
+		one = true;
+
+		// look in the old table
 		for(struct test_t *test = tests; test->fun; test++)
 			if(test->name == argv[i]) {
-				test->fun();
 				found = true;
+				test->fun();
 			}
-		one = true;
+
+		// look in the test set
+		if(!found)
+			for(TestSet::Iterator test; test; test++)
+				if(test->name() == argv[i]) {
+					found = true;
+					test->perform();
+				}
+
+		// not found: error
 		if(!found)
 			cerr << "ERROR: no test called \"" << argv[i] << "\"\n";
 	}
 
 	// if none selected, test all
-	if(!one)
+	if(!one) {
+
+		// perform tests from the table
 		for(struct test_t *test = tests; test->fun; test++)
 			test->fun();
+
+		// perform test from the test set
+		for(TestSet::Iterator test; test; test++)
+			test->perform();
+	}
 }

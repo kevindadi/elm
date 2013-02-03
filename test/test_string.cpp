@@ -10,8 +10,7 @@
 
 using namespace elm;
 
-void test_string(void) {
-	CHECK_BEGIN("string");
+TEST_BEGIN(string)
 	
 	// Comparison overload test
 	{
@@ -344,5 +343,5 @@ void test_string(void) {
 		CHECK(x == 0xff);
 	}
 
-	CHECK_END;
-}
+TEST_END
+

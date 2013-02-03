@@ -17,9 +17,7 @@ typedef struct {
 } s_t;
 
 // Entry point
-void test_ref(void) {
-	
-	CHECK_BEGIN("Ref");
+TEST_BEGIN(ref)
 		int x = 666, y = 111;
 		Ref<int> px = &x;
 		CHECK_EQUAL(&px, &x);
@@ -42,5 +40,5 @@ void test_ref(void) {
 		CHECK_EQUAL(pt->i, 666);
 		CHECK_EQUAL(pt->f, 111.666);
 		CHECK_EQUAL(pt->t[0], 'a');
-	CHECK_END;
-}
+
+TEST_END

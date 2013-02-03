@@ -36,8 +36,7 @@ public:
 
 
 // Test
-void test_dllist(void) {
-	CHECK_BEGIN("elm::datastruct::DLList");
+TEST_BEGIN(dllist)
 	
 	// Base tests
 	{
@@ -147,7 +146,6 @@ void test_dllist(void) {
 			CHECK_EQUAL(*iter, n); 
 	}
 
-	CHECK_END;
-}
+TEST_END
 
 

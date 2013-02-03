@@ -16,8 +16,7 @@ using namespace elm;
 #define MAX		10000
 
 // test routine
-void test_sorted_bintree(void) {
-	CHECK_BEGIN("SortedBinTree");
+TEST_BEGIN(sorted_bintree)
 	
 	// Base test
 	{
@@ -122,5 +121,5 @@ void test_sorted_bintree(void) {
 		CHECK(!error);		
 	}
 	
-	CHECK_END;
-}
+TEST_END
+

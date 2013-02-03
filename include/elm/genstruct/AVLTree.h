@@ -47,9 +47,9 @@ protected:
 	int cnt;
 };
 
-// AVLTree class
+// GenAVLTree class
 template <class T, class K = Id<T>, class C = elm::Comparator<typename K::t> >
-class AVLTree: public AbstractAVLTree {
+class GenAVLTree: public AbstractAVLTree {
 	static const int MAX_HEIGHT = 32;
 protected:
 	class Node: public AbstractAVLTree::Node {
@@ -82,7 +82,7 @@ public:
 
 	// Collection concept
 	inline int count(void) const { return cnt; }
-	inline bool contains(const typename K::t& item) const { return find(item) != NULL; }
+	inline bool contains(const typename K::t& item) const { return find(item) != 0; }
 	inline bool isEmpty(void) const { return cnt == 0; }
 	inline operator bool(void) const { return !isEmpty(); }
 
@@ -94,7 +94,7 @@ public:
 	// Iterator class	
 	class Iterator: public PreIterator<Iterator, T> {
 	public:
-		inline Iterator(const AVLTree<T, K, C>& tree): sp(stack)
+		inline Iterator(const GenAVLTree<T, K, C>& tree): sp(stack)
 			{ if(tree.root) visit((Node *)tree.root); }
 		inline Iterator(const Iterator& iter): sp(stack + iter.sp - iter.stack)
 			{ for(Node **p = stack, **q = iter.stack; q < sp; p++, q++) *p = *q; }
@@ -123,7 +123,8 @@ public:
 	
 	// MutableCollection concept
 	void clear(void) {
-		Node *stack[MAX_HEIGHT + 1], *sp = stack;
+		Node *stack[MAX_HEIGHT + 1];
+		Node *sp = stack;
 		if(root)
 			*sp++ = (Node *)root;
 		while(sp != stack) {
@@ -142,7 +143,7 @@ public:
 
 		// finding the insertion position
 		unsigned char dir = 0;
-		for(q = z, p = y; p != NULL; q = p, p = p->succ(dir)) {
+		for(q = z, p = y; p != 0; q = p, p = p->succ(dir)) {
 			int cmp = C::compare(K::key(item), K::key(p->data));
 			if(p->balance != 0) {
      			z = q;
@@ -175,7 +176,7 @@ public:
 			pa[k] = p;
 			da[k++] = dir ;
 			p = p->succ(dir);
-			ASSERTP(p != NULL, "removed item not in the tree");
+			ASSERTP(!p, "removed item not in the tree");
 		}
 		
 		// remove the item
@@ -190,6 +191,11 @@ public:
 		{ for(typename Co<T>::Iterator iter(coll); iter; iter++) remove(iter); }
 	
 	inline void remove(const Iterator& iter) { remove(iter.item()); }
+};
+
+// GenAVLTree class
+template <class T, class C = elm::Comparator<T> >
+class AVLTree: public GenAVLTree<T, Id<T>, C> {
 };
 
 } }	// elm::genstruct

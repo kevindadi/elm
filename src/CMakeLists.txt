@@ -80,6 +80,7 @@ set(LIBELM_LA_SOURCES
 	"option_ValueOption.cpp"
 	"serial2_serial.cpp"
 	"serial2_TextSerializer.cpp"
+	"stree_Tree.cpp"
 	"string_AutoString.cpp"
 	"string_String.cpp"
 	"string_StringBuffer.cpp"

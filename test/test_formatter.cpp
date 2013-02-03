@@ -35,9 +35,7 @@ public:
 	}
 };
 
-void test_formatter(void) {
-	
-	CHECK_BEGIN("formatter");
+TEST_BEGIN(formatter)
 	
 	MyFormatter format(3);
 	BlockInStream temp("r%d = %%%a");
@@ -47,5 +45,4 @@ void test_formatter(void) {
 	CString res = buf.toCString();
 	CHECK_EQUAL(res, CString("r3 = %d"));
 	
-	CHECK_END;
-}
+TEST_END

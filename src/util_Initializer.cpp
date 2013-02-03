@@ -46,7 +46,8 @@ namespace elm {
  * object itself, all memory used will be returned to the system after the
  * initialization stage.
  * 
- * @param T	Type of the objects to give an order to.
+ * @param T	Type of the objects to give an order to. Must contain a method named initialize()
+ * that is called to perform the real initialization of the object.
  * @ingroup utility
  */
 

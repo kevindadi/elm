@@ -64,8 +64,7 @@ ListOption<int> l(man, cmd, "-l", end);
 
 
 // test_option()
-void test_option(void) {
-	CHECK_BEGIN("Option");
+TEST_BEGIN(option)
 
 	try {
 
@@ -186,5 +185,5 @@ void test_option(void) {
 		cerr << "FAILURE: " << e.message() << io::endl;
 	}
 
-	CHECK_END
-}
+TEST_END
+

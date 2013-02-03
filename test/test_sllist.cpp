@@ -11,9 +11,7 @@
 using namespace elm;
 using namespace genstruct;
 
-void test_sllist(void) {
-	
-	CHECK_BEGIN("SLList");
+TEST_BEGIN(sllist)
 
 	// Test initial
 	{
@@ -37,6 +35,5 @@ void test_sllist(void) {
 		CHECK(good);
 	}
 	
-	CHECK_END;
-}
+TEST_END
 

@@ -9,8 +9,7 @@
 
 using namespace elm;
 
-void test_string_buffer(void) {
-	CHECK_BEGIN("StringBuffer");
+TEST_BEGIN(string_buffer)
 	
 	// Empty string
 	{
@@ -54,6 +53,6 @@ void test_string_buffer(void) {
 		CHECK(str == "0123");
 	}
 	
-	CHECK_END;
-}
+TEST_END
+
 

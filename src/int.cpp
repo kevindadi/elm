@@ -71,7 +71,7 @@ namespace elm {
  * @return		Position of left-most bit to one or -1 if the integer is 0.
  * @ingroup int
  */
-int msb32(t::uint32 i) {
+int msb(t::uint32 i) {
 	#define LT(n) n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n
 	static const char tab[256] = {
 		-1, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -90,6 +90,106 @@ int msb32(t::uint32 i) {
 		if(n)	return tab[n] + 8;
 		else	return tab[i];
 	}
+}
+
+
+/**
+ * Compute the position of the left-most bit to one.
+ * @param i		Integer to test.
+ * @return		Position of left-most bit to one or -1 if the integer is 0.
+ * @ingroup int
+ */
+int msb(t::uint64 i) {
+	t::uint32 uw = (i >> 32);
+	if(uw)
+		return msb(uw) + 32;
+	else
+		return msb(t::uint32(i));
+}
+
+
+/**
+ * Count the number of ones in the given byte.
+ * @param i		Byte to count ones in.
+ * @return		Number of ones in the byte.
+ */
+int ones(t::uint8 i) {
+	static int t[] = {
+		0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4,
+		1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
+		1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
+		2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+		1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
+		2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+		2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+		3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
+		1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
+		2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+		2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+		3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
+		2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+		3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
+		3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
+		4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8
+	};
+	return t[i];
+}
+
+
+/**
+ * @fn int ones(t::uint16 i);
+ * Count the number of ones in the given half-word.
+ * @param i		Half-word to count ones in.
+ * @return		Number of ones in the half-word.
+ */
+
+/**
+ * @fn int ones(t::uint32 i);
+ * Count the number of ones in the given word.
+ * @param i		Word to count ones in.
+ * @return		Number of ones in the word.
+ */
+
+/**
+ * @fn int ones(t::uint64 i);
+ * Count the number of ones in the given double-word.
+ * @param i		Double-word to count ones in.
+ * @return		Number of ones in the double-word.
+ */
+
+
+/**
+ * Get the least upper power of 2 for the given value.
+ * If the value is a power of two, return it else compute
+ * the least greater power.
+ * @param v		Value to process.
+ * @return		Least upper power of two.
+ */
+t::uint32 leastUpperPowerOf2(t::uint32 v) {
+	int m = msb(v);
+	if(m < 0)
+		return 0;
+	else if(v == (1 << m))
+		return v;
+	else
+		return 1 << (m + 1);
+}
+
+/**
+ * Get the least upper power of 2 for the given value.
+ * If the value is a power of two, return it else compute
+ * the least greater power.
+ * @param v		Value to process.
+ * @return		Least upper power of two.
+ */
+t::uint64 leastUpperPowerOf2(t::uint64 v) {
+	int m = msb(v);
+	if(m < 0)
+		return 0;
+	else if(v == (1 << m))
+		return v;
+	else
+		return 1 << (m + 1);
 }
 
 }	// elm

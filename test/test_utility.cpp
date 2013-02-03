@@ -13,8 +13,7 @@
 using namespace elm;
 
 // Utility tests
-void test_utility(void) {
-	CHECK_BEGIN("Utility");
+TEST_BEGIN(utility)
 	
 	// Optional test
 	{
@@ -123,5 +122,5 @@ void test_utility(void) {
 		CHECK(string_comp.compare(v1, v3) == 0);		// Internal representation
 	}*/
 	
-	CHECK_END;
-}
+TEST_END
+

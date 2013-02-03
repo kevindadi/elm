@@ -12,8 +12,7 @@
 using namespace elm::genstruct;
 using namespace elm;
 
-void test_vector_queue(void) {
-	CHECK_BEGIN("vector_queue");
+TEST_BEGIN(vector_queue)
 	
 	{
 		
@@ -92,6 +91,6 @@ void test_vector_queue(void) {
 		}
 	}
 	
-	CHECK_END;
-}
+TEST_END
+
 

@@ -21,6 +21,7 @@
  */
 
 #include <elm/util/BitVector.h>
+#include <elm/int.h>
 
 namespace elm {
 
@@ -373,6 +374,26 @@ int BitVector::countBits(void) const {
  * @fn BitVector::OneIterator::OneIterator(const BitVector& bit_vector);
  * Build a new bit-to-one iterator.
  * @param bit_vector	Bit vector to iterate on.
+ */
+
+
+/**
+ * @fn int BitVector::countOnes(void) const;
+ * Count the number of ones in the vector.
+ * @return	Number of ones.
+ */
+int BitVector::countOnes(void) const {
+	int cnt = 0;
+	for(int i = 0; i < bytes(); i++)
+		cnt += ones(bits[i]);
+	return cnt;
+}
+
+
+/**
+ * @fn int BitVector::countZeroes(void) const;
+ * Count the number of zeroes in the vector.
+ * @return	Number of zeroes.
  */
 
 } // elm

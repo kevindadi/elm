@@ -35,13 +35,12 @@ using namespace elm::checksum;
 #	error "Unsupported architecture !"
 #endif
 
-void test_md5(void) {
-	CHECK_BEGIN("MD5");
+TEST_BEGIN(md5)
 	MD5 md5;
 	io::InStream *in = sys::System::readFile(INPUT);
 	md5.put(*in);
 	delete in;
 	md5.print(cout);
 	cout << io::endl;
-	CHECK_END;
-}
+TEST_END
+

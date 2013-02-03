@@ -22,8 +22,7 @@ using namespace elm;
 using namespace elm::sys;
 
 // test_process()
-void test_process(void) {
-	CHECK_BEGIN("Process");
+TEST_BEGIN(process)
 
 #if defined (__unix)
 	ProcessBuilder builder("ls");
@@ -47,5 +46,5 @@ void test_process(void) {
 	process->wait();
 	CHECK_EQUAL(process->returnCode(), 0);
 	
-	CHECK_END;
-}
+TEST_END
+

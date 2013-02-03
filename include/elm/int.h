@@ -51,10 +51,19 @@ typedef uint64_t uint64;
 }	// t
 
 // prototypes
-int msb32(t::uint32 i);
+int msb(t::uint32 i);
+inline int msb(t::int32 i) { return msb(t::uint32(i)); }
+int msb(t::uint64 i);
+inline int msb(t::int64 i) { return msb(t::uint64(i)); }
+int ones(t::uint8 i);
+inline int ones(t::uint16 i) { return ones(t::uint8(i)) + ones(t::uint8(i >> 8)); }
+inline int ones(t::uint32 i) { return ones(t::uint16(i)) + ones(t::uint16(i >> 16)); }
+inline int ones(t::uint64 i) { return ones(t::uint32(i)) + ones(t::uint32(i >> 32)); }
 inline t::uint32 roundup(t::uint32 v, t::uint32 m) { return ((v - 1) / m + 1) * m; }
 inline t::uint32 rounddown(t::uint32 v, t::uint32 m) { return v / m * m; }
 inline t::uint32 abs(t::int32 v) { return  v >= 0 ? v : (-v); }
+t::uint32 leastUpperPowerOf2(t::uint32 v);
+t::uint64 leastUpperPowerOf2(t::uint64 v);
 
 } // elm
 

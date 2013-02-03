@@ -9,6 +9,8 @@
 
 #include <elm/string.h>
 #include <elm/io.h>
+#include <elm/util/Initializer.h>
+#include <elm/genstruct/SLList.h>
 
 namespace elm {
 
@@ -19,6 +21,9 @@ class TestCase {
 	int errors;
 public:
 	TestCase(CString name);
+	void initialize(void);
+	virtual ~TestCase(void);
+	inline cstring name(void) { return _name; }
 	void test(CString file, int line, CString text);
 	void failed(void);
 	void succeeded(void);
@@ -26,7 +31,28 @@ public:
 	bool require(CString file, int line, CString text, bool result);
 	template <class T> inline void check_equal(CString file, int line, 
 		CString text, const T& result, const T& reference);
+	void prepare(void);
 	void complete(void);
+	void perform(void);
+protected:
+	virtual void execute(void);
+	TestCase& __case;
+};
+
+class TestSet: private Initializer<TestCase> {
+public:
+	static TestSet def;
+
+	class Iterator: public genstruct::SLList<TestCase *>::Iterator {
+	public:
+		inline Iterator(void): genstruct::SLList<TestCase *>::Iterator(def.cases) { }
+		inline Iterator(const Iterator& iter): genstruct::SLList<TestCase *>::Iterator(iter) { }
+	};
+
+private:
+	friend class TestCase;
+	void add(TestCase *tcase);
+	genstruct::SLList<TestCase *> cases;
 };
 
 
@@ -41,7 +67,8 @@ const T& result, const T& reference) {
 
 
 // Macros
-#define ELM_CHECK_BEGIN(name)	{ elm::TestCase __case(name);
+//#define ELM_CHECK_MAKE(name, actions) class name##Test: public { name##Test(void)
+#define ELM_CHECK_BEGIN(name)	{ elm::TestCase __case(name); __case.prepare();
 #define ELM_CHECK(tst)			__case.check(__FILE__, __LINE__, #tst, tst)
 #define ELM_CHECK_END 			__case.complete(); }
 #define ELM_REQUIRE(tst, action)	if(!__case.require(__FILE__, __LINE__, #tst, tst)) action
@@ -51,6 +78,17 @@ const T& result, const T& reference) {
 #define ELM_FAIL_ON_EXCEPTION(exn, stat) { __case.test(__FILE__, __LINE__, #stat); \
 	try { stat; __case.succeeded(); } \
 	catch(exn e) { __case.failed(); cerr << "exception = " << e.message() << elm::io::endl; } }
+#define ELM_TEST_BEGIN(name) \
+	static class name##Test: public elm::TestCase { \
+	public: \
+		name##Test(void): elm::TestCase(#name) { } \
+	protected: \
+		virtual void execute(void) {
+#define ELM_TEST_END \
+		} \
+	} __test;
+
+// shortcuts
 #ifndef ELM_NO_SHORTCUT
 #	define CHECK_BEGIN(name) ELM_CHECK_BEGIN(name)
 #	define CHECK(tst) ELM_CHECK(tst)
@@ -59,6 +97,8 @@ const T& result, const T& reference) {
 #	define CHECK_END ELM_CHECK_END
 #	define CHECK_EXCEPTION(exn, stat) ELM_CHECK_EXCEPTION(exn, stat)
 #	define FAIL_ON_EXCEPTION(exn, stat) ELM_FAIL_ON_EXCEPTION(exn, stat)
+#	define TEST_BEGIN(name) ELM_TEST_BEGIN(name)
+#	define TEST_END	 ELM_TEST_END
 #endif
 
 } // elm

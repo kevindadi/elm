@@ -28,18 +28,11 @@
 
 namespace elm { namespace genstruct {
 
-template <class K, class T>
-class DefaultIdent<Pair<K, T> > {
-public:
-	typedef K key_t;
-	static const K& key(const Pair<K, T>& pair) { return pair.fst; }
-};
-
 // SortedBinMap class
 template <class K, class T, class C = Comparator<K> >
 class SortedBinMap {
 	typedef Pair<K, T> value_t;
-	typedef genstruct::SortedBinTree<value_t, C> tree_t;
+	typedef genstruct::GenSortedBinTree<value_t, PairAdapter<K, T>, C> tree_t;
 public:
 	inline SortedBinMap(void) { }
 	inline SortedBinMap(const SortedBinMap& map): tree(map.tree) { }
@@ -106,7 +99,7 @@ public:
 		{ tree.remove(iter.iter); }
 
 private:
-	genstruct::SortedBinTree<value_t, C> tree;
+	tree_t tree;
 };
 
 } } // elm::genstruct

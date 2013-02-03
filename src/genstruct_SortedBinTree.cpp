@@ -36,9 +36,19 @@ namespace elm { namespace genstruct {
  * This class implements the concept of @ref concept::MutableCollection. 
  * 
  * @param T	Type of items in the data structure.
- * @param C	Type describing the comparison operation (Comparator<T> as a default).
+ * @param C	Type describing the comparison operation (must implement @ref elm::concept::Comparator<T>, @ref elm::Comparator<T> as a default).
  */
 
+
+/**
+ * @class GenSortedBinTree
+ * Generative class for sorted binary trees. Base class of SortedBinTree
+ * or SortedBinMap.
+ *
+ * @param T	Type of items in the tree.
+ * @param K	Key accessor (must implement @ref elm::concept::Key concept, Id<T> as a default).
+ * @param C Comparator for keys (must implement @ref elm::concept::Comparator<T>,@ref  elm::Comparator<T> as a default).
+ */
 
 /**
  * @fn SortedBinTree<T, C>::SortedBinTree(void)

@@ -26,9 +26,8 @@ public:
 	BottomTable(int size): tab(size) { }
 };
 
-void test_table(void) {
-	CHECK_BEGIN("table");
-	
+TEST_BEGIN(table)
+
 	// Simple tests
 	{
 		int t[] = { 0, 1, 2, 3 };
@@ -80,6 +79,7 @@ void test_table(void) {
 		tab[1] = true;
 		CHECK(tab[1] == true);
 	}
-	CHECK_END;
-}
+TEST_END
+
 	
+

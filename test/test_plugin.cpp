@@ -44,9 +44,8 @@ PluginTwo plugin_two;
 
 
 // test routine
-void test_plugin(void) {
+TEST_BEGIN(plugin)
 	cout << "!!! " << &plugin_two << io::endl;
-	CHECK_BEGIN("Plugin");
 
 	// Simple open
 	Plugger plugger("my_plugin", Version(0, 0, 0), ".");
@@ -142,5 +141,5 @@ void test_plugin(void) {
 		CHECK(!plugin);
 	}
 
-	CHECK_END;
-}
+TEST_END
+

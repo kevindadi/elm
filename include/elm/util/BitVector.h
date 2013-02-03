@@ -67,6 +67,10 @@ public:
 	
 	void print(io::Output& out) const;
 	
+	// useful operations
+	int countOnes(void) const;
+	inline int countZeroes(void) const { return countBits() - countOnes(); }
+
 	// OneIterator iter
 	class OneIterator: public PreIterator<OneIterator, int> {
 		const BitVector& bvec;

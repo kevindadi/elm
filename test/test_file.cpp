@@ -15,9 +15,7 @@ using namespace elm::sys;
 cstring files[] = {
 	"a.txt",
 	"b.txt",
-	"c.txt",
-	"test-file",
-	".."
+	"c.txt"
 };
 int found = 0;
 
@@ -46,8 +44,7 @@ static bool look_all(void) {
 }
 
 // Entry point
-void test_file(void) {
-	CHECK_BEGIN("file");
+TEST_BEGIN(file)
 
 	// Read directory
 	FileItem *file = FileItem::get(sys::Path::current() / "test-file");
@@ -61,5 +58,4 @@ void test_file(void) {
 		CHECK(lookup(item));
 	}
 	CHECK(look_all());	
-	CHECK_END;
-}
+TEST_END

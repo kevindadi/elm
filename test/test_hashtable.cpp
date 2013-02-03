@@ -11,8 +11,7 @@
 using namespace elm;
 
 // test_hashtable()
-void test_hashtable(void) {
-	CHECK_BEGIN("HashTable");
+TEST_BEGIN(hashtable)
 	
 	// Simple key
 	{
@@ -78,7 +77,6 @@ void test_hashtable(void) {
 		CHECK(!mask);
 	}
 	
-	CHECK_END;
-}
+TEST_END
 
 

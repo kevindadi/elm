@@ -11,8 +11,7 @@
 using namespace elm;
 
 // test_vector()
-void test_vector(void) {
-	CHECK_BEGIN("Vector");
+TEST_BEGIN(vector)
 	
 	// Simple test
 	{
@@ -129,6 +128,6 @@ void test_vector(void) {
 			CHECK(v2[i] == i);
 	}
 	
-	CHECK_END;
-}
+TEST_END
+
 
