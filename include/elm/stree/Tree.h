@@ -1,5 +1,5 @@
 /*
- *	SegmentTree class interface
+ *	stree::Tree class interface
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2013, IRIT UPS.
@@ -27,11 +27,20 @@
 
 namespace elm { namespace stree {
 
+/*template <class T>
+class AsIs {
+public:
+	typedef T item_t;
+	typedef T store_t;
+	void add(const store_t& store, const item_t& item) { store = item; }
+};*/
+
 // Tree class
 template <class K, class T, class C = Comparator<K> >
 class Tree {
 	static const int null = -1;
 
+public:
 	typedef struct node_t {
 		inline node_t(void) { }
 		inline node_t(struct node_t s[], int _ll, int _rl)
@@ -45,12 +54,13 @@ class Tree {
 		inline const K& upperBound(void) const { return ub; }
 		K lb, ub;
 		int ll, rl;
-		typename T::t data;
+		T data;
 	} node_t;
 
-public:
+	inline Tree(void): root(-1), nodes(0) { }
+	inline Tree(int _root, node_t *_nodes): root(_root), nodes(_nodes) { }
+	inline void set(int _root, node_t *_nodes) { root = _root; nodes = _nodes; }
 
-	Tree(int _root, node_t *_nodes): root(_root), nodes(_nodes) { }
 		/*genstruct::AVLTree<K, C> tree;
 
 		// build the bounds
@@ -84,7 +94,7 @@ public:
 		delete [] nodes;
 	}
 
-	typename T::t& find(const K& key) const {
+	T& find(const K& key) const {
 		int i = root;
 		while(!nodes[i].isLeaf()) {
 			if(C::compare(key, nodes[nodes[i].right()].lowerBound()) < 0)

@@ -21,6 +21,7 @@
  */
 
 #include <elm/genstruct/AVLTree.h>
+#include <elm/genstruct/Vector.h>
 
 namespace elm { namespace genstruct {
 
@@ -213,6 +214,26 @@ void AbstractAVLTree::remove(Node *pa[], unsigned char da[], int k, Node *p) {
 			}
 		}
 	}
+}
+
+
+/**
+ * Count the number of nodes.
+ * @return	Number of nodes.
+ */
+int AbstractAVLTree::count(void) const {
+	int cnt = 0;
+	genstruct::Vector<Node *> s;
+	s.push(root);
+	while(s) {
+		Node *node = s.pop();
+		cnt++;
+		if(node->links[0])
+			s.push(node->links[0]);
+		if(node->links[1])
+			s.push(node->links[1]);
+	}
+	return cnt;
 }
 
 

@@ -40,6 +40,7 @@ public:
 		{ const pair_t *p = tree.get(key); if(!p) return def; else return p->snd; }
 	inline bool hasKey (const K &key) const
 		{ const pair_t *p = tree.get(key); return p; }
+	inline int count(void) const { return tree.count(); }
 
 	// KeyIterator class
 	class KeyIterator: public PreIterator<KeyIterator, K> {
@@ -62,9 +63,16 @@ public:
 		inline PairIterator& operator=(const PairIterator& iter) { it = iter; return *this; }
 		inline bool ended(void) const { return it.ended(); }
 		inline void next(void) { it.next(); }
-		inline const K& item(void) const { return it.item(); }
+		inline pair_t item(void) const { return *it; }
 	private:
 		typename tree_t::Iterator it;
+	};
+
+	// Iterator class
+	class Iterator: public PairIterator {
+	public:
+		inline Iterator(const AVLMap<K, T, C>& map): PairIterator(map) { }
+		inline Iterator(const Iterator& iter): PairIterator(iter) { }
 	};
 
 	// MutableMap concept

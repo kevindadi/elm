@@ -42,6 +42,7 @@ protected:
 
 	void insert(unsigned char da[], int dir, Node *node, Node *q, Node *y, Node *z);
 	void remove(Node *pa[], unsigned char da[], int k, Node *p);
+	int count(void) const;
 
 	Node *root;
 	int cnt;
