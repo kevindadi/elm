@@ -1,25 +1,38 @@
 /*
- * $Id$
- * Copyright (c) 2004, IRIT-UPS.
+ *	avl::Tree class implementation
  *
- * src/inhstruct_AVLTree.cpp -- AVLTree implementation.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2008, IRIT UPS.
+ *
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
 #include <elm/assert.h>
-#include <elm/inhstruct/AVLTree.h>
+#include <elm/avl/Tree.h>
 #include <elm/io.h>
 
 #define MARK	cerr << __FILE__ << ":" << __LINE__ << io::endl
 
-namespace elm { namespace inhstruct {
+namespace elm { namespace avl {
 
 // Private
-static inline int max(int x, int y) {
+/*static inline int max(int x, int y) {
 	if(x > y)
 		return x;
 	else
 		return y;
-}
+}*/
 static int inline abs(int x) {
 	if(x >= 0)
 		return x;
@@ -34,10 +47,10 @@ static int inline abs(int x) {
  * @param old		Old child to replace.
  * @param _new		New child for replacement.
  */
-static inline void replaceChild(
-	AVLTree::Node *parent,
-	AVLTree::Node *old,
-	AVLTree::Node *_new
+/*static inline void replaceChild(
+	Tree::Node *parent,
+	Tree::Node *old,
+	Tree::Node *_new
 ) {
 	if(parent->_left() == old)
 		parent->insertLeft(_new);
@@ -45,10 +58,10 @@ static inline void replaceChild(
 		ASSERT(parent->_right() == old);
 		parent->insertRight(_new);
 	}
-}
+}*/
 
 
-static void dump(AVLTree::Node *node, int tab = 0) {
+static void dump(Tree::Node *node, int tab = 0) {
 	for(int i = 0; i < tab; i++)
 		cout << "  ";
 	cout << node << io::endl;
@@ -60,19 +73,19 @@ static void dump(AVLTree::Node *node, int tab = 0) {
 
 
 /**
- * @class AVLTree::AVLNode
+ * @class Tree::Node
  * AVL tree requires a special kind of nodes implemenetd by this class.
  * For using inherited AVL trees, the tree ndoe must inherit this class.
  */
 
 
 /**
- * @class AVLTree
+ * @class Tree
  * Implementation of the Adelson-Velskii and Landis (AVL) tree algorithm.
  * In order to use this class, you must make a class inheriting this class
  * and overload the compare() protected method. Nodes inserted in the tree
  * must also inherit from the AVLTree::AVLNode class.
- * 
+ * @par
  * Performances:
  * @li lookup: O(Log n)
  * @li add: O(Log n)
@@ -80,7 +93,7 @@ static void dump(AVLTree::Node *node, int tab = 0) {
  */
 
 /**
- * @fn int AVLTree::compare(Node *node1, Node *node2);
+ * @fn int Tree::compare(Node *node1, Node *node2);
  * This method is called for comparing nodes. It must be overloaded for getting
  * an actual implementation of AVL tree.
  * @param node1	First node to compare.
@@ -90,14 +103,14 @@ static void dump(AVLTree::Node *node, int tab = 0) {
 
 
 /**
- * @fn bool AVLTree::isEmpty(void);
+ * @fn bool Tree::isEmpty(void);
  * Test if the tree is empty.
  * @return	True if the tree is empty, false else.
  */
 
 
 /**
- * @fn int AVLTree::count(void);
+ * @fn int Tree::count(void);
  * count the number of nodes in the tree.
  * @return	Node count.
  */
@@ -107,7 +120,7 @@ static void dump(AVLTree::Node *node, int tab = 0) {
  * Get a tree node equal to the given one.
  * @param node	Node to test for equality.
  */
-AVLTree::Node *AVLTree::get(Node *node) {
+Tree::Node *Tree::get(Node *node) {
 	ASSERTP(node, "null node");
 	Node *cur = _root();
 	while(cur) {
@@ -124,14 +137,14 @@ AVLTree::Node *AVLTree::get(Node *node) {
 
 
 /**
- * @fn bool AVLTree::contains(Node *node);
+ * @fn bool Tree::contains(Node *node);
  * Test if the given node value is contained in the tree.
  * @return	True if the node is contained, false else.
  */
 
 
 /**
- * @fn void AVLTree::visit(Visitor *visitor);
+ * @fn void Tree::visit(Visitor *visitor);
  * Visit the node of the tree.
  * @param visitor	The method process() of this object is called with each
  * tree node.
@@ -139,7 +152,7 @@ AVLTree::Node *AVLTree::get(Node *node) {
 
 
 /**
- * @fn void AVLTree::search(Visitor *visitor);
+ * @fn void Tree::search(Visitor *visitor);
  * Look for a special node in the given tree.For each node, the process() method
  * of the visitor is called. If it returns 0, search stops. If it returns,
  * <0 traversal continue with left child else with the right child.
@@ -151,7 +164,7 @@ AVLTree::Node *AVLTree::get(Node *node) {
  * Insert a new node in the tree.
  * @param node	Node to insert.
  */
-void AVLTree::insert(Node *node) {
+void Tree::insert(Node *node) {
 	setRoot(insert(_root(), node));
 }
 
@@ -160,13 +173,13 @@ void AVLTree::insert(Node *node) {
  * Remove a node from the tree.
  * @param node	Node to remove.
  */
-void AVLTree::remove(Node *node) {
+void Tree::remove(Node *node) {
 	setRoot(remove(_root(), node));
 }
 
 
 // Private
-AVLTree::Node *AVLTree::insert(Node *cur, Node *node) {
+Tree::Node *Tree::insert(Node *cur, Node *node) {
 	ASSERTP(node, "null node");
 	if(!cur) {
 		node->h = 1;
@@ -209,7 +222,7 @@ AVLTree::Node *AVLTree::insert(Node *cur, Node *node) {
 }
 
 // Private
-AVLTree::Node *AVLTree::rotateSingleLeft(Node *root) {
+Tree::Node *Tree::rotateSingleLeft(Node *root) {
 	ASSERTP(root, "null root");
 	Node *new_root = root->_left();
 	root->insertLeft(new_root->_right());
@@ -220,7 +233,7 @@ AVLTree::Node *AVLTree::rotateSingleLeft(Node *root) {
 }
 
 // Private
-AVLTree::Node *AVLTree::rotateSingleRight(Node *root) {
+Tree::Node *Tree::rotateSingleRight(Node *root) {
 	ASSERTP(root, "null root");
 	Node *new_root = root->_right();
 	root->insertRight(new_root->_left());
@@ -231,20 +244,20 @@ AVLTree::Node *AVLTree::rotateSingleRight(Node *root) {
 }
 
 // Private
-AVLTree::Node *AVLTree::rotateDoubleLeft(Node *root) {
+Tree::Node *Tree::rotateDoubleLeft(Node *root) {
 	root->insertLeft(rotateSingleRight(root->_left()));
 	return rotateSingleLeft(root);
 }
 
 // Private
-AVLTree::Node *AVLTree::rotateDoubleRight(Node *root) {
+Tree::Node *Tree::rotateDoubleRight(Node *root) {
 	root->insertRight(rotateSingleLeft(root->_right()));
 	return rotateSingleRight(root);
 }
 
 
 // Private
-AVLTree::Node *AVLTree::balanceLeft(Node *cur, Node*& root) {
+Tree::Node *Tree::balanceLeft(Node *cur, Node*& root) {
 	if(!cur->_left()) {
 		root = cur;
 		return cur->_right();
@@ -260,7 +273,7 @@ AVLTree::Node *AVLTree::balanceLeft(Node *cur, Node*& root) {
 
 
 // Private
-AVLTree::Node *AVLTree::balanceRight(Node *cur, Node*& root) {
+Tree::Node *Tree::balanceRight(Node *cur, Node*& root) {
 	if(!cur->_right()) {
 		root = cur;
 		return cur->_left();
@@ -276,7 +289,7 @@ AVLTree::Node *AVLTree::balanceRight(Node *cur, Node*& root) {
 
 
 // Private
-AVLTree::Node *AVLTree::remap(Node *left, Node *right) {
+Tree::Node *Tree::remap(Node *left, Node *right) {
 	
 	/* Trivial case */
 	if(!left)
@@ -324,7 +337,7 @@ AVLTree::Node *AVLTree::remap(Node *left, Node *right) {
  * Dump the content of tree. For debugging purpose, only.
  */
 #ifdef ELM_DEBUG_AVLTREE
-void AVLTree::dump(Node *node, int level) {
+void Tree::dump(Node *node, int level) {
 	if(!node)
 		dump(_root(), 0);
 	else {
@@ -343,16 +356,16 @@ void AVLTree::dump(Node *node, int level) {
 
 
 /**
- * this method is called for freeing a node in the tree. This method may be
+ * This method is called for freeing a node in the tree. This method may be
  * overloaded for providing special freeing method. Not overloaded, do nothing.
  * @param node	Node to free.
  */
-void AVLTree::free(Node *node) {
+void Tree::free(Node *node) {
 }
 
 
 // Private
-void AVLTree::clean(Node *node) {
+void Tree::clean(Node *node) {
 	if(!node)
 		return;
 	else {
@@ -369,7 +382,7 @@ void AVLTree::clean(Node *node) {
  * @param node	Node to remove.
  * @return		New root of the tree.
  */
-AVLTree::Node *AVLTree::remove(Node *root, Node *node) {
+Tree::Node *Tree::remove(Node *root, Node *node) {
 	ASSERTP(node, "null node to remove");
 	ASSERT(!root || abs(height(root->_left()) - height(root->_right())) < 2);
 	Node *cur = root;
@@ -430,7 +443,7 @@ AVLTree::Node *AVLTree::remove(Node *root, Node *node) {
  * @param res	To return the removed node.
  * @return		New top of the subtree.
  */
-AVLTree::Node *AVLTree::removeGreatest(Node *root, Node *&res) {
+Tree::Node *Tree::removeGreatest(Node *root, Node *&res) {
 	ASSERT(root);
 	
 	// At the end
@@ -460,7 +473,7 @@ AVLTree::Node *AVLTree::removeGreatest(Node *root, Node *&res) {
  * @param res	To return the removed node.
  * @return		New top of the subtree.
  */
-AVLTree::Node *AVLTree::removeLeast(Node *root, Node *&res) {
+Tree::Node *Tree::removeLeast(Node *root, Node *&res) {
 	ASSERT(root);
 	
 	// At the end
@@ -485,9 +498,18 @@ AVLTree::Node *AVLTree::removeLeast(Node *root, Node *&res) {
 
 
 /**
- * @fn void AVLTree::clean(void)
+ * @fn void Tree::clean(void)
  * Remove all nodes from the tree.
  */
 
-} } // elm::inhstruct
+} // avl
+
+namespace inhstruct {
+
+/**
+ * @class AVLTree
+ * @deprecated		Kept only for code compatibility. Use the class @ref elm::avl::Tree instead.
+ */
+
+} }	// elm::inhstruct
 

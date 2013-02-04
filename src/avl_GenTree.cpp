@@ -1,9 +1,8 @@
 /*
- *	$Id$
- *	AVLTree class implementation
+ *	avl::GenTree class implementation
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2008, IRIT UPS.
+ *	Copyright (c) 2013, IRIT UPS.
  * 
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,14 +19,16 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <elm/genstruct/AVLTree.h>
+#include <elm/avl/GenTree.h>
+#include <elm/avl/Set.h>
+#include <elm/avl/Map.h>
 #include <elm/genstruct/Vector.h>
 
-namespace elm { namespace genstruct {
+namespace elm { namespace avl {
 
 /**
  */
-void AbstractAVLTree::insert(unsigned char da[], int dir, Node *node, Node *q, Node *y, Node *z) {
+void AbstractTree::insert(unsigned char da[], int dir, Node *node, Node *q, Node *y, Node *z) {
 	int k;
 	Node *p;
 	
@@ -94,13 +95,13 @@ void AbstractAVLTree::insert(unsigned char da[], int dir, Node *node, Node *q, N
 
 /**
  */
-void AbstractAVLTree::remove(Node *pa[], unsigned char da[], int k, Node *p) {
+void AbstractTree::remove(Node *pa[], unsigned char da[], int k, Node *p) {
 	// remove the item
-	if(p->links[1] == NULL)
+	if(p->links[1] == 0)
 		pa[k - 1]->links[da[k - 1]] = p->links[0];
 	else {
 		Node *r = p->links[1];
-		if(r->links[0] == NULL) {
+		if(r->links[0] == 0) {
 			r->links[0] = p->links[0];
 			r->balance = p->balance;
 			pa[k - 1]->links[da[k - 1]] = r ;
@@ -114,7 +115,7 @@ void AbstractAVLTree::remove(Node *pa[], unsigned char da[], int k, Node *p) {
 				da[k] = 0;
 				pa[k ++] = r;
 				s = r->links[0];
-				if(s->links[0] == NULL)
+				if(s->links[0] == 0)
 					break;
 				r = s;
 			}
@@ -221,7 +222,7 @@ void AbstractAVLTree::remove(Node *pa[], unsigned char da[], int k, Node *p) {
  * Count the number of nodes.
  * @return	Number of nodes.
  */
-int AbstractAVLTree::count(void) const {
+int AbstractTree::count(void) const {
 	int cnt = 0;
 	genstruct::Vector<Node *> s;
 	s.push(root);
@@ -238,14 +239,17 @@ int AbstractAVLTree::count(void) const {
 
 
 /**
- * @class AVLTree
- * This class implements an AVL tree collection as provided by:
+ * @class GenTree
+ * This class implements an AVL tree collection based on C++ templates as provided by:
  * Ben Pfaff, "An Introduction to
  * Binary Search Trees and Balanced Trees",
  * Libavl Binary Search Tree Library, Volume 1: Source Code, Version 2.0.2.
+ * @par
+ * This class is rarely used as is but used as a base class for @ref elm::avl::Set or @ref elm::avl::Map.
  * 
  * @param T		Type of contained items.
  * @param C		Comparator for T items (default to @ref elm::Comparator<T>).
+ * @see			@ref elm::avl::Set, @ref elm::avl::Map
  * 
  * @par Implemented concepts
  * @li @ref elm::concept::Collection<T>
@@ -253,7 +257,7 @@ int AbstractAVLTree::count(void) const {
  */
 
 /**
- * @fn int AVLTree::count(void) const;
+ * @fn int GenTree::count(void) const;
  * Get the count of items in the tree.
  * @return	Item count.
  * @notice	This function call is fast as the item count is maintained
@@ -261,7 +265,7 @@ int AbstractAVLTree::count(void) const {
  */
 
 /**
- * @fn bool AVLTree::contains(const T& item) const;
+ * @fn bool GenTree::contains(const T& item) const;
  * Test if the tree contains the given item.
  * @param item	Item to look for.
  * @return		True if it is contained, false else.
@@ -269,7 +273,7 @@ int AbstractAVLTree::count(void) const {
  */
 
 /**
- * @fn bool AVLTree::containsAll(const Co<T>& coll) const;
+ * @fn bool GenTree::containsAll(const Co<T>& coll) const;
  * Test if the given collection is contained in the current one.
  * @param coll	Collection to test.
  * @return		True if the collection is containted, false else.
@@ -277,38 +281,38 @@ int AbstractAVLTree::count(void) const {
  */
 
 /**
- * @fn bool AVLTree::isEmpty(void) const;
+ * @fn bool GenTree::isEmpty(void) const;
  * Test if the tree is empty.
  * @return	True if the tree is empty, false else.
  */
 
 /**
- * @class ALTree::Iterator
+ * @class GenTree::Iterator
  * Iterator on items of the tree. No assumption may be made on the order of traversal
  * of the items of the tree.
  */
 
 /**
- * @fn void AVLTree::clear(void);
+ * @fn void GenTree::clear(void);
  * Remove all items from the tree and let it cleared.
  */
 
 /**
- * @fn void AVLTree::add(const T& item);
+ * @fn void GenTree::add(const T& item);
  * Add an item to the tree. Note that the item is still added even if it is already
  * contained in the tree, leading to duplicates.
  * @param item	Item to add.
  */
 
 /**
- * @fn void AVLTree::addAll(const Co<T>& coll);
+ * @fn void GenTree::addAll(const Co<T>& coll);
  * Add a collection to this tree.
  * @param coll	Collection to add.
  * @param C		Type of the collection.
  */
 
 /**
- * @fn void AVLTree::remove(const T& item);
+ * @fn void GenTree::remove(const T& item);
  * Remove an item from a tree. Notice that if the tree contains duplicates of the item,
  * only the first duplicate is removed.
  * @param item	Item to remove.
@@ -316,16 +320,66 @@ int AbstractAVLTree::count(void) const {
  */
 
 /**
- * @fn void AVLTree::removeAll(const Co<T>& coll);
+ * @fn void GenTree::removeAll(const Co<T>& coll);
  * Remove a collection from this tree.
  * @param coll	Collection to remove.
  * @param C		Type of the collection.
  */
 
 /**
- * @fn void AVLTree::remove(const Iterator& iter);
+ * @fn void GenTree::remove(const Iterator& iter);
  * Remove the item pointed by the iterator.
  * @param	Iterator pointing to the item to remove.
+ */
+
+
+/**
+ * @class Set
+ * Implements a set collection based on an AVL tree, that is, supporting access and modifications
+ * with a O(log n) complexity.
+ * @par Implemented concepts
+ * @li @ref elm::concept::Collection<T>
+ * @li @ref elm::concept::MutableCollection<T>
+ * @li @ref elm::concept::Set<T>
+ *
+ * @param T		Type of stored items.
+ * @param C		Comparator used to sort the items (must implements the @ref elm::concept::Comparator<T> concept,
+ * 				as a default @ref elm::Comparator<T>).
+ * @see			@ref elm::avl::GenTree
+ */
+
+
+/**
+ * @class Map
+ * Implements a map based on AVL tree, that is, a map supporting O(log n) accesses.
+ * @par Implemented concepts
+ * @li @ref elm::concept::Collection<T>
+ * @li @ref elm::concept::Map<K, T>
+ *
+ * @param K		Type of keys of the map.
+ * @param T		Type of stored items.
+ * @param C		Comparator used to sort the items (must implements the @ref elm::concept::Comparator<K> concept,
+ * 				as a default @ref elm::Comparator<K>).
+ * @see			@ref elm::avl::GenTree
+ */
+
+}	// avl
+
+namespace genstruct {
+
+/**
+ * @class AbstractAVLTree
+ * @deprecated	Only for compilation compatibility. Use @ref elm::avl::AbstractTree.
+ */
+
+/**
+ * @class GenAVLTree
+ * @deprecated	Only for compilation compatibility. Use @ref elm::avl::GenTree.
+ */
+
+/**
+ * @class AVLTree
+ * @deprecated	Only for compilation compatibility. Use @ref elm::avl::Set.
  */
 
 } }	// elm::genstruct

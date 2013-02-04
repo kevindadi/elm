@@ -5,34 +5,42 @@
  * test/test_avl.cpp -- AVLTree class test.
  */
 
+#define ELM_DEBUG_AVL
+
 #include <elm/util/test.h>
 #include <elm/genstruct/Vector.h>
-#include <elm/genstruct/AVLTree.h>
-#include <elm/genstruct/AVLMap.h>
+#include <elm/avl/Set.h>
+#include <elm/avl/Map.h>
 #include <elm/genstruct/HashTable.h>
 #include <elm/system/System.h>
 #include <elm/io.h>
  
 using namespace elm;
+using namespace elm::avl;
+
+#ifdef ELM_DEBUG_AVL
+#	define LOG(cmd)	cmd
+#endif
 
 static const int maxv = 1000;
 static const int count = 1000;
 
 // Entry point
-void test_avl(void) {
-	CHECK_BEGIN("avltree");
+TEST_BEGIN(avl)
 	
 	// check AVLTree
 	{
 		genstruct::Vector<int> ints;
-		genstruct::AVLTree<int> tree;
+		Set<int> tree;
 		
 		for(int i = 0; i < count; i++) {
+			LOG(tree.dump(cerr); cerr << io::endl;)
 			int a = system::System::random(maxv * 3);
 
 			// remove
 			if(a < 2 * maxv && ints.count()) {
 				int n = ints[a % ints.count()];
+				LOG(cerr << "removing " << ints[a % ints.count()] << io::endl;)
 				ints.remove(n);
 				tree.remove(n);
 				CHECK(!tree.contains(n));
@@ -41,6 +49,7 @@ void test_avl(void) {
 			// insert
 			else if(a < maxv) {
 				int n = a % maxv;
+				LOG(cerr << "adding " << n << io::endl;)
 				if(!ints.contains(n))
 					ints.add(n);
 				tree.add(n);
@@ -51,9 +60,8 @@ void test_avl(void) {
 			else {
 				bool ok = true;
 				for(int i = 0; i < ints.count(); i++)
-					if(!tree.contains(ints[i])) {
+					if(!tree.contains(ints[i]))
 						ok = false;
-					}
 				CHECK(ok);
 			}
 		}
@@ -61,7 +69,7 @@ void test_avl(void) {
 	
 	// AVLMap
 	{
-		genstruct::AVLMap<string, int> map;
+		Map<string, int> map;
 		genstruct::HashTable<string, int> htab;
 		for(int i = 0; i < count; i++) {
 			int a = system::System::random(maxv * 4);
@@ -106,5 +114,5 @@ void test_avl(void) {
 		}
 	}
 
-	CHECK_END;
-}
+TEST_END
+
