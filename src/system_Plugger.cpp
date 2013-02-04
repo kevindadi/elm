@@ -187,9 +187,12 @@ Plugin *Plugger::plug(const string& name) {
 		#else
 			buf << paths[i] << "/" << name << ".so";
 		#endif
+		error_t old_err = err;
 		Plugin *plugin = plugFile(buf.toString());
 		if(plugin)
 			return plugin;
+		if(old_err != OK && err == NO_PLUGIN)
+			err = old_err;
 	}
 
 	// No plugin available
@@ -214,7 +217,6 @@ Plugin *Plugger::plug(Plugin *plugin, void *handle) {
  */
 Plugin *Plugger::plugFile(String path) {
 	err = OK;
-
 
 	// Check existence of the file
 	sys::FileItem *file = 0;
@@ -264,7 +266,7 @@ Plugin *Plugger::plugFile(String path) {
 		void *handle = dlopen(&path, RTLD_LAZY);
 	#endif
 	if(!handle) {
-		err = NO_PLUGIN;
+		err = BAD_PLUGIN;
 		onError(level_warning, _ << "invalid plugin found at \"" << path << "\" (no handle): "
 #			if defined(__WIN32) || defined(__WIN64)
 				<< GetLastError());
@@ -341,7 +343,7 @@ string Plugger::getLastError() {
 	switch(err) {
 	case OK:
 		return "Success.";
-	case NO_PLUGIN: {
+	case BAD_PLUGIN: {
 			StringBuffer buf;
 			#if defined(__WIN32) || defined(__WIN64)
 				buf << "cannot open the plugin(" << GetLastError() << ").";
@@ -353,6 +355,8 @@ string Plugger::getLastError() {
 			#endif
 			return buf.toString();
 		}
+	case NO_PLUGIN:
+		return "cannot find any plugin matching the given name";
 	case NO_HOOK:
 		return "Found plugin does not contain a hook symbol.";
 	case BAD_VERSION:

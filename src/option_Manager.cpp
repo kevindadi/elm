@@ -35,7 +35,7 @@ namespace elm { namespace option {
  * #include <elm/options.h>
  * @endcode
  * 
- * ELM provides several class to manage efficiently and easily command line
+ * ELM provides several classes to manage efficiently and easily command line
  * options. There are currently two ways to use these classes, the old approach
  * that will become quickly deprecated (please no more use it) and the new one.
  *
@@ -233,6 +233,7 @@ OptionException::OptionException(const String& message)
  * @class Manager
  * This class is used for managing the options of a command.
  * @ingroup options
+ * @see @ref options
  */
 
 

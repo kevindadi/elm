@@ -25,6 +25,8 @@
 using namespace elm;
 using namespace elm::sys;
 
+ELM_PLUGIN_ID("", "myplugin");
+
 #if !defined(__WIN32) && !defined(__WIN64)
 extern bool startup_flag;
 extern bool cleanup_flag;

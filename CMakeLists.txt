@@ -56,6 +56,7 @@ if(ELM_TEST)
 	add_subdirectory(test)
 endif()
 
+add_subdirectory(tools)
 
 # build configuration file
 configure_file (

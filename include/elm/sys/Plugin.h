@@ -30,6 +30,9 @@
 
 namespace elm { namespace sys {
 
+#define ELM_PLUGIN_ID_PREFIX		"@@ELM-PLUGIN-ID@@:"
+#define ELM_PLUGIN_ID(hook, info)	static const char __plugin_id[] = ELM_PLUGIN_ID_PREFIX hook ":" info;
+
 // Plugin class
 class Plugin {
 public:

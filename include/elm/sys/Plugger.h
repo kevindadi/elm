@@ -39,7 +39,8 @@ public:
 		NO_PLUGIN,
 		NO_HOOK,
 		BAD_VERSION,
-		NO_MAGIC
+		NO_MAGIC,
+		BAD_PLUGIN
 	} error_t;
 
 public:
