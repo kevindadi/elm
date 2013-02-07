@@ -27,14 +27,6 @@
 
 namespace elm { namespace stree {
 
-/*template <class T>
-class AsIs {
-public:
-	typedef T item_t;
-	typedef T store_t;
-	void add(const store_t& store, const item_t& item) { store = item; }
-};*/
-
 // Tree class
 template <class K, class T, class C = Comparator<K> >
 class Tree {
@@ -61,82 +53,52 @@ public:
 	inline Tree(int _root, node_t *_nodes): root(_root), nodes(_nodes) { }
 	inline void set(int _root, node_t *_nodes) { root = _root; nodes = _nodes; }
 
-		/*genstruct::AVLTree<K, C> tree;
+	~Tree(void) { delete [] nodes; }
 
-		// build the bounds
-		for(segment_list_t item = list; item; item = item->next) {
-			tree.add(item->lb);
-			tree.add(item->ub);
+	inline const T& get(const K& key, const T& def) const
+		{ T *val = find(key); if(!val) return def; else return *val; }
+	inline const T& get(const K& key) const
+		{ T *val = find(key); ASSERTP(val, "out of tree"); return *val; }
+	inline T& get(const K& key)
+		{ T *val = find(key); ASSERTP(val, "out of tree"); return *val; }
+	inline bool contains(const K& key) const
+		{ return C::compare(key, nodes[root].lowerBound()) >= 0 && C::compare(key, nodes[root].upperBound()) <= 0; }
+
+#	ifdef ELM_STREE_DEBUG
+		void dump(io::Output& out = cout, int i = -1, int t = 0) {
+			if(i < 0) i = root;
+			for(int j = 0; j < t; j++) out << "| ";
+			out << "|- ";
+			out << io::hex(nodes[i].lowerBound()) << " - " << io::hex(nodes[i].upperBound());
+			if(nodes[i].isLeaf())
+				out << " -> " << nodes[i].data << io::endl;
+			else {
+				out << io::endl;
+				dump(out, nodes[i].left(), t + 1);
+				dump(out, nodes[i].right(), t + 1);
+			}
 		}
+#	endif
 
-		// allocate the memory
-		t::uint32 n = tree.count();
-		int s = n + leastUpperPowerOf2(n) - 1;
-		nodes = new node_t[s];
-
-		// insert the bounds
-		int i = 0;
-		typename genstruct::AVLTree<K, C>::Iterator iter(tree);
-		K l = *iter;
-		for(iter++; iter; iter++) {
-			K u = *iter;
-			nodes[i++] = node_t(l, u);
-			l = u;
-		}
-		root = make(i, 0, i - 1);
-
-		// insert the segments
-		for(segment_list_t item = list; item; item = item->next)
-			insert(root, item->lb, item->ub, item->val);
-	}*/
-
-	~Tree(void) {
-		delete [] nodes;
-	}
-
-	T& find(const K& key) const {
+protected:
+	T *find(const K& key) const {
+		ASSERTP(nodes && root >= 0, "uninitialized stree");
 		int i = root;
+		if(!contains(key))
+			return 0;
 		while(!nodes[i].isLeaf()) {
 			if(C::compare(key, nodes[nodes[i].right()].lowerBound()) < 0)
 				i = nodes[i].left();
 			else
 				i = nodes[i].right();
 		}
-		return nodes[i].data;
+		return &nodes[i].data;
 	}
 
 private:
-
-	/*int make(int& s, int start, int end) {
-		if(start == end)
-			return start;
-		else {
-			int m = (start + end) / 2,
-				l = make(s, start, m),
-				u = make(s, m + 1, end);
-			int p = s;
-			nodes[s++] = node_t(nodes[start].lb, nodes[end].ub, l, u);
-			return p;
-		}
-	}
-
-	void insert(int c, const K& l, const K& u, const typename T::t& v) {
-		if(nodes[c].isLeaf())
-			T::set(nodes[c].data, v);
-		else {
-		}
-	}*/
-
 	int root;
 	node_t *nodes;
 };
-
-// SegmentTreeBuilder class
-/*template <class K, class T, class C = Comparator<K> >
-class SegmentTreeBuilder {
-public:
-protected:
-};*/
 
 } }	// elm::stree
 

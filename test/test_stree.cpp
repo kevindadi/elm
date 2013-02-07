@@ -20,86 +20,56 @@
  */
 
 #include <elm/util/test.h>
+#define ELM_STREE_DEBUG
 #include <elm/stree/MarkerBuilder.h>
 
 using namespace elm;
 using namespace elm::stree;
 
-namespace elm { namespace stree {
-
-/*template <class K, class T, class C = Comparator<K> >
-class MarkerBuilder {
-	typedef typename Tree<K, T, C>::node_t node_t;
-public:
-
-	void add(const K& mark, const T& val) {
-		marks.put(mark, val);
-	}
-
-	void make(stree::Tree<K, T, C>& tree) {
-
-		// allocate the memory
-		node_t *nodes = allocate(marks.count());
-
-		// insert the bounds
-		int i = 0;
-		typename genstruct::AVLMap<K, T, C>::Iterator iter(marks);
-		Pair<K, T> l = *iter;
-		for(iter++; iter; iter++) {
-			Pair<K, T> u = *iter;
-			nodes[i] = node_t(l.fst, u.fst);
-			nodes[i++].data = l.snd;
-			l = u;
-		}
-
-		// build the tree
-		int root = make(nodes, i, 0, i - 1);
-
-		// perform the transfer
-		tree.set(root, nodes);
-	}
-
-protected:
-
-	node_t *allocate(t::uint32 n) {
-		int s = n + leastUpperPowerOf2(n) - 1;
-		return new node_t[s];
-	}
-
-	int make(node_t *nodes, int& s, int start, int end) {
-		if(start == end)
-			return start;
-		else {
-			int m = (start + end) / 2,
-				l = make(nodes, s, start, m),
-				u = make(nodes, s, m + 1, end);
-			int p = s;
-			nodes[s++] = node_t(nodes, l, u);
-			return p;
-		}
-	}
-
-private:
-	genstruct::AVLMap<K, T, C> marks;
-};*/
-
-} }	// elm::stree
-
 typedef enum {
-	ARM = 0,
-	THUMB = 1,
-	DATA = 2
+	NONE = 0,
+	ARM = 1,
+	THUMB = 2,
+	DATA = 3
 } area_t;
+
+io::Output& operator<<(io::Output& out, area_t area) {
+	switch(area) {
+	case NONE:	out << "none"; break;
+	case ARM:	out << "arm"; break;
+	case THUMB:	out << "thumb"; break;
+	case DATA:	out << "data"; break;
+	}
+	return out;
+}
+
+typedef t::uint32 addr_t;
+io::Output& operator<<(io::Output& out, addr_t addr) {
+	out << io::hex(addr);
+	return out;
+}
 
 TEST_BEGIN(stree)
 
-	MarkerBuilder<t::uint32, area_t> builder;
-	Tree<t::uint32, area_t> tree;
+	MarkerBuilder<addr_t, area_t> builder;
+	Tree<addr_t, area_t> tree;
 
 	// store the values
 	Pair<t::uint32, area_t> marks[] = {
 		pair(0U, ARM),
-		pair(0x00008000U, ARM),
+		pair(0x000080d8U, ARM),
+		pair(0x0000849cU, ARM),
+		pair(0x000084a0U, ARM),
+		pair(0x000104b0U, DATA),
+		pair(0x00008258U, DATA),
+		pair(0x00008484U, DATA),
+		pair(0x000105c0U, DATA),
+		pair(0x000105b0U, DATA),
+		pair(0x000084a8U, DATA),
+		pair(0x0000825cU, THUMB),
+		pair(0x00008498U, THUMB),
+
+		/*pair(0x00008000U, ARM),
 		pair(0x0000a910U, ARM),
 		pair(0x00008020U, ARM),
 		pair(0x000080a8U, ARM),
@@ -247,20 +217,21 @@ TEST_BEGIN(stree)
 		pair(0x00000878U, DATA),
 		pair(0x0000a904U, DATA),
 		pair(0x00008390U, THUMB),
-		pair(0x0000a908U, THUMB),
+		pair(0x0000a908U, THUMB),*/
 		pair(0xffffffff, ARM)
 	};
 	int marks_count = sizeof(marks) / sizeof(Pair<t::uint32, area_t>);
 	for(int i = 0; i < marks_count; i++)
 		builder.add(marks[i].fst, marks[i].snd);
 	builder.make(tree);
+	tree.dump();
 
 	// test start of content
-	for(int i = 0; i < marks_count - 1; i++)
-		CHECK_EQUAL(tree.find(marks[i].fst), marks[i].snd);
+	/*for(int i = 0; i < marks_count - 1; i++)
+		CHECK_EQUAL(tree.get(marks[i].fst, NONE), marks[i].snd);*/
 
 	// test middle of the content
-	for(int i = 0; i < marks_count - 1; i++)
-		CHECK_EQUAL(tree.find(marks[i].fst + 1), marks[i].snd);
+	/*for(int i = 0; i < marks_count - 1; i++)
+		CHECK_EQUAL(tree.get(marks[i].fst + 1, NONE), marks[i].snd);*/
 
 TEST_END

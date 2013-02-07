@@ -48,6 +48,7 @@ set(TEST_SOURCES
 	"test_process.cpp"
 	"test_ref.cpp"
 	"test_sllist.cpp"
+	"test_stopwatch.cpp"
 	"test_stree.cpp"
 	"test_string.cpp"
 	"test_string_buffer.cpp"
