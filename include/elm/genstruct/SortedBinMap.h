@@ -50,7 +50,7 @@ public:
 		inline Iterator(const Iterator& _): iter(_) { }
 		inline bool ended(void) const { return iter.ended(); }
 		inline void next(void) { iter.next(); }
-		const T &item(void) const { return iter.snd; }
+		const T &item(void) const { return iter.item().snd; }
 	private:
 		typename tree_t::Iterator iter;
 	};
@@ -64,7 +64,7 @@ public:
 		const value_t *res = tree.look(key);
 		return res ? Option<T>(res->snd) : none;
 	}
-	inline bool hasKey(const K &key) const { return look(key); }
+	inline bool hasKey(const K &key) const { return tree.look(key); }
 
 	// KeyIterator class
 	class KeyIterator: public PreIterator<KeyIterator, K> {

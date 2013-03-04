@@ -38,7 +38,7 @@ public:
 	void make(stree::Tree<K, T, C>& tree) {
 
 		// allocate the memory
-		node_t *nodes = this->allocate(marks.count());
+		node_t *nodes = Builder<K, T, C>::allocate(marks.count());
 
 		// insert the bounds
 		int i = 0;
