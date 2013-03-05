@@ -179,9 +179,9 @@ template <class T>
 void FragTable<T>::shrink(int length) {
 	ASSERTP(length < this->length(), "length too big");
 	int nl = (length + msk) >> shf;
-	for(int i = nl + 1; i < tab.count(); i++)
+	for(int i = nl; i < tab.count(); i++)
 		delete [] tab[i];
-	tab.setLength(nl + 1);
+	tab.setLength(nl);
 	used = length & msk;
 	if(!used)
 		used = size; 

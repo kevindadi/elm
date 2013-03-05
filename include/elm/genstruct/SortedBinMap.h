@@ -73,7 +73,7 @@ public:
 		inline KeyIterator(const KeyIterator& _): iter(_) { }
 		inline bool ended(void) const { return iter.ended(); }
 		inline void next(void) { iter.next(); }
-		const T &item(void) const { return iter.fst; }
+		const T &item(void) const { return iter.item().fst; }
 	private:
 		typename tree_t::Iterator iter;
 	};
