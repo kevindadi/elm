@@ -29,6 +29,7 @@ static Initializer<AbstractType> initializer;
 /**
  * @class AbstractType
  * Objects representing a type in the serialization module.
+ * @ingroup serial
  */
 
 

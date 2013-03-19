@@ -135,4 +135,31 @@ void Fletcher::put(const String& str) {
 	put(stream);	
 }
 
+/**
+ */
+int Fletcher::write(const char *buffer, int size) {
+	put(buffer, size);
+	return size;
+}
+
+
+/**
+ */
+int Fletcher::flush(void) {
+	return 0;
+}
+
+
+/**
+ */
+cstring Fletcher::lastErrorMessage(void) {
+	return "";
+}
+
+
+/**
+ */
+Fletcher::~Fletcher(void) {
+}
+
 } } // elm::checksum

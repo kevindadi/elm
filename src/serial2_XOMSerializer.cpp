@@ -21,6 +21,7 @@ namespace elm { namespace serial2 {
 
 /**
  * @class XOMSerializer
+ * @ingroup serial
  */
 
 

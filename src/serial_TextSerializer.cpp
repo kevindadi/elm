@@ -14,6 +14,7 @@ namespace elm { namespace serial {
 /**
  * @class TextSerializer
  * Serialize object in textual readable form.
+ * @deprecated
  */
 
 

@@ -14,6 +14,7 @@ namespace elm { namespace serial {
 /**
  * @class Unserializer
  * This interface must be implemented by unserializer engines.
+ * @deprecated
  */
 
 

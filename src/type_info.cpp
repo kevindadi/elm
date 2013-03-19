@@ -36,23 +36,10 @@ namespace elm {
  * @code
  * #include <elm/types.h>
  * using namespace elm;
- * @encode
+ * @endcode
  *
- * This include provides alternative non-ambiguous names for integer types:
- * @li t::int8
- * @li t::uint8
- * @li t::int16
- * @li t::uint16
- * @li t::int32
- * @li t::uint32
- * @li t::int64
- * @li t::uint64
- *
- * In addition, some useful types are provided:
- * @li t::size -- size in memory
- * @li t::offset -- offset in memory
- * @li t::uint -- short notation for unsigned int.
- *
+ * This include provides alternative non-ambiguous names for integer types (@ref int)
+ * and associated basic operations.
  *
  * @par Type Information
  *
@@ -74,12 +61,12 @@ namespace elm {
  * @li is_virtual -- true if T contains virtual functions
  * @li name() -- get the name of a type.
  *
- * Notice that ELM provides type for basic (integer, float, string) and composed types (pointer, references)
- * but need the developer help other types like classes, struct or unions. Either one can add the specialized
+ * Notice that ELM provides type information for basic (integer, float, string) and composed types (pointer, references)
+ * but need the developer help for more complex types like classes, struct or unions. Either one can add the specialized
  * type_info structure for the defined type:
  * @code
  *	class MyClass { ... };
- *	template <class T> struct type_info<T> { static cstring name() { return "MyClass"; }
+ *	template <> struct type_info<T> { static cstring name(void) { return "MyClass"; } }
  * @endcode
  *
  * Or just add a static member named "__type_name" in the class declaration:
@@ -89,7 +76,38 @@ namespace elm {
  *		static cstring __type_name(void) { return "MyClass"; }
  *		...
  *	};
- *	@endcode
+ * @endcode
+ *
+ * @par Enumeration Information
+ *
+ * Users may also benefit from whole facilities of input/output, serialization and like for
+ * the enumerated type. First, the type_info must be specialized
+ * (in the header containing the enumeration declaration):
+ * @code
+ *	typedef enum { V1, V2, V3, ... } my_enum;
+ *	...
+ *	namespace elm {
+ *		template <> struct type_info<my_enum>: enum_info<my_enum> { };
+ *	}
+ * @endcode
+ * And then to provided the missing (usually in the source file providing implementation).
+ * @code
+ *  namespace elm {
+ *		template <> cstring enum_info<my_enum>::name(void) { return "my_enum"; }
+ *		template <> enum_info<my_enum>::value_t enum_info<my_enum>::values[] = {
+ *			value("V1", V1),
+ *			value("V2", V2),
+ *			value("V3", V3),
+ *			last()
+ *		};
+ *	}
+ * @endcode
+ *
+ * As the primitives provided by ELM, the values may examined with such a loop:
+ * @code
+ *	for(type_info<my_enum>::iterator i = type_info<my_enum>::begin(); i != type_info<my_enum>::end(); i++)
+ *		cout << "name = " << i.name << ", value = " << i.value << io::endl;
+ * @endcode
  *
  * @par Array Copying
  *

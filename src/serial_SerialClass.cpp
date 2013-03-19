@@ -13,6 +13,7 @@ namespace elm { namespace serial {
 /**
  * @class SerialClass
  * A serial class records the list of existing serializable classes.
+ * @deprecated
  */
 
 

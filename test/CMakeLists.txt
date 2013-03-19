@@ -34,6 +34,7 @@ set(TEST_SOURCES
 	"test_autostr.cpp"
 	"test_bitvector.cpp"
 	"test_dllist.cpp"
+	"test_enum_info.cpp"
 	"test_file.cpp"
 	"test_formatter.cpp"
 	"test_frag_table.cpp"

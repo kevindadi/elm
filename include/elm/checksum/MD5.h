@@ -26,11 +26,12 @@
 #include <elm/string.h>
 #include <elm/io.h>
 #include <elm/io/InStream.h>
+#include <elm/io/OutStream.h>
 
 namespace elm { namespace checksum {
 
 // MD5 class
-class MD5 {
+class MD5: public io::OutStream {
 public:
 	typedef unsigned char digest_t[16];
 
@@ -48,6 +49,11 @@ public:
 	inline MD5& operator<<(const CString& str) { put(str); return *this; }
 	inline MD5& operator<<(const String& str) { put(str); return *this; }
 	template <class T> inline MD5& operator<<(const T& value) { put(&value, sizeof(T)); return *this; }
+
+	// io::OutStream overload
+	virtual int write(const char *buffer, int size);
+	virtual int flush(void);
+	virtual cstring lastErrorMessage(void);
 
 private:
 	typedef t::uint32 md5_size;

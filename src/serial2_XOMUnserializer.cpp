@@ -15,6 +15,7 @@ namespace elm { namespace serial2 {
 /**
  * @class XOMUnserializer
  * Unserializer from XML using XOM API.
+ * @ingroup serial
  */
 
 

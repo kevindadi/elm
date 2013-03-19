@@ -32,6 +32,7 @@ class value_t {
 	CString _name;
 	int _value;
 public:
+	static inline value_t end(void) { return value_t("", 0); }
 	inline value_t(CString name, int value): _name(name), _value(value) { }
 	inline CString name(void) const { return _name; }
 	inline int value(void) const { return _value; }

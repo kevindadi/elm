@@ -15,6 +15,7 @@ namespace elm { namespace serial {
 /**
  * @class XOMUnserializer
  * Unserializer from XML using XOM API.
+ * @deprecated
  */
 
 

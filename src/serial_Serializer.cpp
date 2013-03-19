@@ -12,6 +12,7 @@ namespace elm { namespace serial {
 /**
  * @class Serializer
  * Interface implemented by objets providing serialization facilities.
+ * @deprecated
  */
 
 

@@ -379,4 +379,26 @@ void MD5::put(io::InStream& in, int length) {
 	} while(size == 0 && l != 0);
 }
 
+
+/**
+ */
+int MD5::write(const char *buffer, int size) {
+	put(buffer, size);
+	return size;
+}
+
+
+/**
+ */
+int MD5::flush(void) {
+	return 0;
+}
+
+
+/**
+ */
+cstring MD5::lastErrorMessage(void) {
+	return "";
+}
+
 } } // elm::checksum

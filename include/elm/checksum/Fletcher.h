@@ -24,19 +24,15 @@
 
 #include <elm/types.h>
 #include <elm/io/InStream.h>
+#include <elm/io/OutStream.h>
 
 namespace elm { namespace checksum {
 
 // Fletcher class
 class Fletcher {
-	t::uint32 sum1, sum2;
-	t::uint32 len;
-	char half[2];
-	t::uint16 size;
-	inline void shuffle(void);
-	inline void add(void);
 public:
 	Fletcher(void);
+	virtual ~Fletcher(void);
 	t::uint32 sum(void);
 	void put(io::InStream& in);
 	void put(const void *buffer, int length);
@@ -50,6 +46,19 @@ public:
 		{ put(str); return *this; }
 	template <class T> inline Fletcher& operator<<(const T& value)
 		{ put(&value, sizeof(T)); return *this; }
+
+	// io::OutStream overload
+	virtual int write(const char *buffer, int size);
+	virtual int flush(void);
+	virtual cstring lastErrorMessage(void);
+
+private:
+	t::uint32 sum1, sum2;
+	t::uint32 len;
+	char half[2];
+	t::uint16 size;
+	inline void shuffle(void);
+	inline void add(void);
 };
 
 } } // elm::checksum

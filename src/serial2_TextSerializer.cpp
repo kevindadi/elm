@@ -16,6 +16,7 @@ namespace elm { namespace serial2 {
  * @class TextSerializer
  * Serialize the given data to a character output stream, readable by
  * human being.
+ * @ingroup serial
  */
 
 

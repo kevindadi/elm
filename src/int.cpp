@@ -25,24 +25,94 @@
 namespace elm {
 
 /**
- * @defgroup int	Integer Operation
+ * @defgroup int	Integer Operations
  *
  * This module provides several facilities to work with integers.
+ * To use, one has to include <elm/int.h>.
  *
- * First, types to ensure typing model without ambiguities:
- * @li t::int8 / t::uint8 -- signed / unsigned 8-bits integers
- * @li t::int16 / t::uint16 -- signed / unsigned 16-bits integers
- * @li t::int32 / t::uint32 -- signed / unsigned 32-bits integers
- * @li t::int64 / t::uint64 -- signed / unsigned 64-bits integers
- * @li t::size -- memory size type (according to the system configuration)
- * @li t::offset -- memory offset type (according to the system configuration)
- * @li t::uint -- short to unsigned int
- * @li t::intptr -- integer sufficiently big to store a pointer (according to the system configuration)
- *
- * And some optimized functions of not-builtin functions:
- * @li msb32 -- most-left bit to one
- * @li roundup -- round upto upper multiple integer
- * @li rounddown -- round downto lower multiple integer
+ * This module provides reliable and OS-independent types to represent integers
+ * together with a list of efficiently-implemented functions to process them.
+ * These types are stored in the @c elm::t sub-namespace and, if you are
+ * using the @c elm namespace, are quickly accessed by syntax @c t::type .
+ * 
+ * @code
+ * #include <elm/int.h>
+ * using namespace elm;
+ * ...
+ * t::uint32 my_variable;
+ * @endcode
+ */
+
+/**
+ * @typedef t::int8
+ * Signed 8-bit integer type.
+ * @ingroup int
+ */
+
+/**
+ * @typedef t::uint8
+ * Unsigned 8-bit integer type.
+ * @ingroup int
+ */
+
+/**
+ * @typedef t::int16
+ * Signed 16-bit integer type.
+ * @ingroup int
+ */
+
+/**
+ * @typedef t::uint16
+ * Unsigned 16-bit integer type.
+ * @ingroup int
+ */
+
+/**
+ * @typedef t::int32
+ * Signed 32-bit integer type.
+ * @ingroup int
+ */
+
+/**
+ * @typedef t::uint32
+ * Unsigned 32-bit integer type.
+ * @ingroup int
+ */
+
+/**
+ * @typedef t::int64
+ * Signed 64-bit integer type.
+ * @ingroup int
+ */
+
+/**
+ * @typedef t::uint64
+ * Unsigned 64-bit integer type.
+ * @ingroup int
+ */
+
+/**
+ * @typedef t::size
+ * Integer type to represent memory size (according to the system configuration).
+ * @ingroup int
+ */
+
+/**
+ * @typedef t::offset
+ * Integer type to represent memory offset (according to the system configuration).
+ * @ingroup int
+ */
+
+/**
+ * @typedef t::uint
+ * Default size unsigned integer type.
+ * @ingroup int
+ */
+
+/**
+ * @typedef t::intptr
+ * Integer sufficiently big to store a pointer (according to the system configuration).
+ * @ingroup int
  */
 
 
@@ -112,6 +182,7 @@ int msb(t::uint64 i) {
  * Count the number of ones in the given byte.
  * @param i		Byte to count ones in.
  * @return		Number of ones in the byte.
+ * @ingroup int
  */
 int ones(t::uint8 i) {
 	static int t[] = {
@@ -141,6 +212,7 @@ int ones(t::uint8 i) {
  * Count the number of ones in the given half-word.
  * @param i		Half-word to count ones in.
  * @return		Number of ones in the half-word.
+ * @ingroup int
  */
 
 /**
@@ -155,6 +227,7 @@ int ones(t::uint8 i) {
  * Count the number of ones in the given double-word.
  * @param i		Double-word to count ones in.
  * @return		Number of ones in the double-word.
+ * @ingroup int
  */
 
 
@@ -164,6 +237,7 @@ int ones(t::uint8 i) {
  * the least greater power.
  * @param v		Value to process.
  * @return		Least upper power of two.
+ * @ingroup int
  */
 t::uint32 leastUpperPowerOf2(t::uint32 v) {
 	int m = msb(v);
@@ -181,6 +255,7 @@ t::uint32 leastUpperPowerOf2(t::uint32 v) {
  * the least greater power.
  * @param v		Value to process.
  * @return		Least upper power of two.
+ * @ingroup int
  */
 t::uint64 leastUpperPowerOf2(t::uint64 v) {
 	int m = msb(v);
