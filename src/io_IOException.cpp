@@ -21,7 +21,6 @@
  */
 
 #include <string.h>
-#include <errno.h>
 #include <elm/io/io.h>
 
 namespace elm { namespace io {

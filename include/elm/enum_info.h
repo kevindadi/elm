@@ -21,24 +21,31 @@
 #ifndef ELM_ENUM_INFO_H_
 #define ELM_ENUM_INFO_H_
 
+#include <elm/io/IOException.h>
 #include <elm/type_info.h>
 
 namespace elm {
 
 template <class T>
-struct enum_info {
+struct enum_info: public enum_t {
 	typedef struct value_t {
 		inline value_t(cstring n, const T& v) { name = n; value = v; }
 		cstring name;
 		T value;
 	} value_t;
-	enum { is_enum = 1 };
+	enum { is_defined_enum = 1 };
 	static value_t values[];
 	static cstring name(void);
 
 	// value building
 	static inline value_t value(const char *n, T v) { return value_t(n, v); }
 	static inline value_t last(void) { return value_t("", T(0)); }
+
+	// usage
+	static cstring toString(T v)
+		{ for(int i = 0; values[i].name; i++) if(v == values[i].value) return values[i].name; return "???"; }
+	static T fromString(const string& name)
+		{ for(int i = 0; values[i].name; i++) if(name == values[i].name) return values[i].value; throw io::IOException("bad enum value"); }
 
 	// iterator on values
 	class iterator {

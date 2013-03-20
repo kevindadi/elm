@@ -21,20 +21,25 @@
 #ifndef ELM_TYPE_INFO_H_
 #define ELM_TYPE_INFO_H_
 
-#include <elm/string.h>
+#include <elm/string/String.h>
 
 namespace elm {
 
 // type_info trait
-template <class T>
-class class_t {
-public:
+typedef struct default_t {
 	enum { is_type = 0 };
 	enum { is_scalar = 0 };
-	enum { is_enum = 0 };
-	enum { is_class = 1 };
+	enum { is_enum = 0, is_defined_enum = 0 };
+	enum { is_class = 0 };
 	enum { is_ptr = 0 };
 	enum { is_ref = 0 };
+	enum { is_deep = 0 };
+	enum { is_virtual = 0 };
+} default_t;
+template <class T>
+class class_t: public default_t {
+public:
+	enum { is_class = 1 };
 	enum { is_deep = 1 };
 	enum { is_virtual = 1 };
 	static inline CString name(void) { return T::_class.name(); }
@@ -42,55 +47,29 @@ public:
 template <class T> class type_info: public class_t<T> {
 	static cstring name(void) { return T::__type_name(); }
 };
-typedef struct type_t {
+typedef struct type_t: public default_t {
 	enum { is_type = 1 };
-	enum { is_scalar = 0 };
-	enum { is_enum = 0 };
-	enum { is_class = 0 };
-	enum { is_ptr = 0 };
-	enum { is_ref = 0 };
 	enum { is_deep = 1 };
-	enum { is_virtual = 0 };
 } type_t;
-typedef struct scalar_t {
+typedef struct scalar_t: public default_t {
 	enum { is_type = 1 };
-	enum { is_scalar = 1 };
-	enum { is_enum = 0 };
-	enum { is_class = 0 };
-	enum { is_ptr = 0 };
-	enum { is_ref = 0 };
-	enum { is_deep = 0 };
-	enum { is_virtual = 0 };
 } scalar_t;
-typedef struct ptr_t {
+typedef struct ptr_t: public default_t {
 	enum { is_type = 1 };
 	enum { is_scalar = 1 };
-	enum { is_enum = 0 };
-	enum { is_class = 0 };
 	enum { is_ptr = 1 };
-	enum { is_ref = 0 };
 	enum { is_deep = 1 };
-	enum { is_virtual = 0 };
 } ptr_t;
-typedef struct ref_t {
+typedef struct ref_t: public default_t {
 	enum { is_type = 1 };
 	enum { is_scalar = 1 };
-	enum { is_enum = 0 };
-	enum { is_class = 0 };
-	enum { is_ptr = 0 };
 	enum { is_ref = 1 };
 	enum { is_deep = 1 };
-	enum { is_virtual = 0 };
 } ref_t;
-typedef struct enum_t {
+typedef struct enum_t: public default_t {
 	enum { is_type = 1 };
 	enum { is_enum = 1 };
-	enum { is_class = 0 };
 	enum { is_scalar = 1 };
-	enum { is_ptr = 0 };
-	enum { is_ref = 0 };
-	enum { is_deep = 0 };
-	enum { is_virtual = 0 };
 } enum_t;
 
 
@@ -178,7 +157,7 @@ template <class T> struct type_info<const T *>: public ptr_t {
 	typedef T of;
 	enum { is_const = 1 };
 	static const T * const null;
-	static string name(void) { return _ << "const " + type_info<T>::name() << " *"; }
+	static string name(void) { return "const " + type_info<T>::name() + " *"; }
 };
 template <class T> const T * const type_info<const T *>::null = 0;
 
@@ -187,7 +166,7 @@ template <class T> struct type_info<T *>: public ptr_t {
 	typedef T of;
 	enum { is_const = 0 };
 	static T * const null;
-	static string name(void) { return _ << type_info<T>::name() << " *"; }
+	static string name(void) { return type_info<T>::name() + " *"; }
 };
 template <class T> T * const type_info<T *>::null = 0;
 
@@ -196,13 +175,13 @@ template <class T> T * const type_info<T *>::null = 0;
 template <class T> struct type_info<const T&>: public ref_t {
 	typedef T of;
 	enum { is_const = 1 };
-	static string name(void) { return _ << "const " + type_info<T>::name() << "& "; }
+	static string name(void) { return "const " + type_info<T>::name() + "& "; }
 };
 
 template <class T> struct type_info<T&>: public ref_t {
 	typedef T of;
 	enum { is_const = 0 };
-	static string name(void) { return _ << type_info<T>::name() << "& "; }
+	static string name(void) { return type_info<T>::name() + "& "; }
 };
 
 } // elm

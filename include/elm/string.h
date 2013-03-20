@@ -7,7 +7,7 @@
 #ifndef ELM_STRING_H
 #define ELM_STRING_H
 
-#include <cstring>
+#include <string.h>
 #include <elm/string/CString.h>
 #include <elm/string/String.h>
 #include <elm/string/StringBuffer.h>

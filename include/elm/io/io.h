@@ -7,27 +7,12 @@
 #ifndef ELM_IO_IO_H
 #define ELM_IO_IO_H
 
-#include <elm/util/MessageException.h>
 #include <elm/sys/SystemIO.h>
+#include <elm/io/IOException.h>
 #include <elm/io/Output.h>
 #include <elm/io/Input.h>
-#include <elm/string.h>
 
-namespace elm { namespace io {
-
-// IOException class
-class IOException: public MessageException {
-	String msg;
-public:
-	inline IOException(const String& message);
-};
-
-// IOException inlines
-inline IOException::IOException(const String& message)
-: MessageException(message) {
-}
-
-} // io
+namespace elm {
 
 // Standard environment
 extern io::Output cout;
