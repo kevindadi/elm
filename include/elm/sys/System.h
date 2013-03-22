@@ -82,6 +82,9 @@ public:
 	static Path getUnitPath(void *address);
 	static cstring getEnv(cstring key);
 	static bool hasEnv(cstring key);
+	static cstring library_prefix, library_suffix, exec_suffix;
+	static string getLibraryFileName(const string& name);
+	static string getPluginFileName(const string& name);
 };
 
 } } // elm::system

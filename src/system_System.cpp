@@ -1,9 +1,8 @@
 /*
- *	$Id$
  *	System class implementation
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2006-08, IRIT UPS.
+ *	Copyright (c) 2006-13, IRIT UPS.
  *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -21,11 +20,11 @@
  */
 
 #if defined(__unix) || defined(__APPLE__)
-#include <dlfcn.h>
+#	include <dlfcn.h>
 #elif defined(__WIN32)
-#include <windows.h>
-#include <elm/io/io.h>
-#include <elm/io/WinInStream.h>
+#	include <windows.h>
+#	include <elm/io/io.h>
+#	include <elm/io/WinInStream.h>
 #endif
 #include <fcntl.h>
 #include <errno.h>
@@ -489,6 +488,57 @@ Path System::getUnitPath(void *address) {
 	return "";
 #	endif
 }
+
+
+/** Prefix of the dynamic libraries of the current OS. */
+cstring System::library_prefix = "lib";
+
+
+/** Suffix of the dynamic libraries of the current OS. */
+cstring System::library_suffix =
+#	if defined(__WIN32) || defined(__WIN64)
+		".dll";
+#	elif defined(__APPLE__)
+		".dylib";
+#	elif defined(__unix)
+		".so";
+#	else
+#		error "Unsupported OS."
+#	endif
+
+
+/** Suffix of the executables of the current OS. */
+cstring System::exec_suffix =
+#	if defined(__WIN32) || defined(__WIN64)
+		".exe";
+#	elif defined(__APPLE__) || defined(__unix)
+		"";
+#	else
+#		error "Unsupported OS."
+#	endif
+
+
+/**
+ * Get the name of a file representing a dynamic library according
+ * to the host OS.
+ * @param name	Name of the library.
+ * @return		Matching library file name.
+ */
+string System::getLibraryFileName(const string& name) {
+	return _ << library_prefix << name << library_suffix;
+}
+
+
+/**
+ * Get the name of a file representing a plugin according
+ * to the host OS.
+ * @param name	Name of the plugin.
+ * @return		Matching plugin file name.
+ */
+string System::getPluginFileName(const string& name) {
+	return _ << name << library_suffix;
+}
+
 
 /**
  * Get an environment variable value.
