@@ -34,6 +34,29 @@ namespace elm { namespace option {
 
 
 /**
+ * @fn  ValueOption::ValueOption(Make& make);
+ * Build a value option from an initializer. It is usually used as below (using a value of type int):
+ * @code
+ * #include <elm/options.h>
+ * ...
+ * option::Manager man;
+ * ValueOption<int> opt(Make()
+ * 		.cmd("-i")
+ * 		.cmd(".int")
+ * 		.description("use an integer")
+ * 		.argDescription("INT")
+ * 		.usage(arg_optional)
+ * 		.def(0));
+ * @endcode
+ *
+ * The initializer supports several commands starting or by "-", a default value @c def,
+ * a usage definition (see @ref usage_t) and an argument description that will follow the command
+ * summary when the command line help message is displayed.
+ */
+
+
+
+/**
  * @fn ValueOption::ValueOption(Manager& manager, char short_name, cstring description, cstring arg_description, const T& value);
  * Build a function with only a short name.
  * @param manager			Owner option manager
@@ -142,6 +165,15 @@ AbstractValueOption::AbstractValueOption(Manager& man, int tag, ...): use(arg_re
  */
 AbstractValueOption::AbstractValueOption(Manager& man, int tag, VarArg& args): use(arg_required) {
 	init(man, tag, args);
+}
+
+
+/**
+ * Constructor with an initializer as in the example velow:
+ * @param make	Current initializer.
+ */
+AbstractValueOption::AbstractValueOption(Make& make)
+: Option(make), arg_desc(make.arg_desc), use(make._usage) {
 }
 
 

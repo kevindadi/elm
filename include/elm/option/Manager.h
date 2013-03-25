@@ -59,9 +59,29 @@ const int end			= 0,
 class Manager {
 	friend class Option;
 public:
+
+	class Make {
+		friend class Manager;
+	public:
+		inline Make(void) { }
+		inline Make(cstring program, Version version = Version::ZERO): _program(program), _version(version) { }
+		inline Make& author(cstring s) { _author = s; return *this; }
+		inline Make& copyright(cstring s) { _copyright = s; return *this; }
+		inline Make& description(cstring s) { _description = s; return *this; }
+		inline Make& free_argument(cstring s) { _free_argument_description = s; return *this; }
+	private:
+		cstring _program;
+		Version _version;
+		cstring _author;
+		cstring _copyright;
+		cstring _description;
+		cstring _free_argument_description;
+	};
+
 	typedef const char * const *argv_t;
 	inline Manager(void) { }
 	Manager(int tag, ...);
+	Manager(const Make& maker);
 	virtual ~Manager(void) { }
 	void addOption(Option *option) throw(OptionException);
 	void removeOption(Option *option);
@@ -69,20 +89,21 @@ public:
 	void displayHelp(void);
 
 	// accessors
-	inline cstring getProgram(void) const { return program; }
-	inline const Version& getVersion(void) const { return version; }
-	inline cstring getAuthor(void) const { return author; }
-	inline cstring getCopyright(void) const { return copyright; }
-	inline cstring getDescription(void) const { return description; }
-	inline cstring getFreeArgumentDescription(void) const { return free_argument_description; }
+	inline cstring getProgram(void) const { return info._program; }
+	inline const Version& getVersion(void) const { return info._version; }
+	inline cstring getAuthor(void) const { return info._author; }
+	inline cstring getCopyright(void) const { return info._copyright; }
+	inline cstring getDescription(void) const { return info._description; }
+	inline cstring getFreeArgumentDescription(void) const { return info._free_argument_description; }
 
 protected:
-	CString program;
+	Make info;
+	/*CString program;
 	Version version;
 	CString author;
 	CString copyright;
 	CString description;
-	CString free_argument_description;
+	CString free_argument_description;*/
 	virtual void process(String arg);
 	virtual void configure(int tag, VarArg& args);
 

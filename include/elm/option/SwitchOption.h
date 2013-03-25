@@ -29,9 +29,8 @@ namespace elm { namespace option {
 // SwitchOption class
 class SwitchOption: public Option {
 public:
-	SwitchOption(Manager& man, char cmd, cstring description = "");
-	SwitchOption(Manager& man, cstring cmd, cstring description = "");
 	SwitchOption(Manager& man, int tag ...);
+	SwitchOption(const Make& make);
 
 	inline void set(bool value) { val = value; }
 	inline bool get(void) const { return val; }
@@ -42,7 +41,6 @@ public:
 	inline SwitchOption& operator=(bool value) { set(value); return *this; }
 
 	// overload
-	virtual cstring description(void);
 	virtual usage_t usage(void);
 	virtual CString argDescription(void);
 	virtual void process(string arg);
@@ -52,7 +50,6 @@ protected:
 
 private:
 	bool val;
-	cstring desc;
 };
 
 } } // otawa::option

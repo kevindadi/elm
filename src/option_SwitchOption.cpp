@@ -32,30 +32,6 @@ namespace elm { namespace option {
 
 
 /**
- * Constructor with a short command "-x".
- * @param man			Owner manager.
- * @param cmd			Single character command.
- * @param description	Option description.
- */
-SwitchOption::SwitchOption(Manager& man, char cmd, cstring description)
-: val(false), desc(description) {
-	init(man, short_cmd, cmd, end);
-}
-
-
-/**
- * Constructor with a long command "--xxx".
- * @param man			Owner manager.
- * @param cmd			Multi-character command.
- * @param description	Option description.
- */
-SwitchOption::SwitchOption(Manager& man, cstring cmd, cstring description)
-: val(false), desc(description) {
-	init(man, long_cmd, &cmd, end);
-}
-
-
-/**
  * Completely free constructor. Supported tags includes
  * @ref CMD, @ref SHORT, @ref LONG, @ref DESCRIPTION and @ref DEFAULT (bool).
  */
@@ -64,13 +40,6 @@ SwitchOption::SwitchOption(Manager& man, int tag ...)
 	VARARG_BEGIN(args, tag)
 		init(man, tag, args);
 	VARARG_END
-}
-
-
-/**
- */
-cstring SwitchOption::description(void) {
-	return desc;
 }
 
 
@@ -109,6 +78,14 @@ void SwitchOption::configure(Manager& manager, int tag, VarArg& args) {
 		Option::configure(manager, tag, args);
 		break;
 	}
+}
+
+
+/**
+ * Build a switch option.
+ * @param make	Make information.
+ */
+SwitchOption::SwitchOption(const Make& make): Option(make), val(false) {
 }
 
 } } // otawa::option

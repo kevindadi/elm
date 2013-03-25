@@ -39,7 +39,98 @@ namespace elm { namespace option {
  * options. There are currently two ways to use these classes, the old approach
  * that will become quickly deprecated (please no more use it) and the new one.
  *
- * @par The New Approach
+ * @par The New Generation Approach (third generation)
+ *
+ * To perform the parsing of command line arguments, ELM provides two basic classes.
+ * @ref elm::option::Manager represents the command as a base of documentation and as a list
+ * of options items. The manager is initialized as in the following example:
+ * @code
+ * 	#include <elm/options.h>
+ * 	...
+ * 	option::Manager manager = Make("my command", Version(1, 0, 0))
+ * 		.description("This is my command !")
+ * 		.license("GPL V")
+ * 		.author("me <me@here.there>");
+ * @endcode
+ *
+ * According to your needs, as many configurations as needed can be passed
+ * to the Make() object while maintaining type checking. Refer to @ref elm::option::Manager::Make
+ * class documentation for the list of available configurations.
+ *
+ * The options works in the same way:
+ * @code
+ * option::SwitchOption opt1 = Make(manager).cmd("-o").cmd("--com").help("option 1");
+ * @endcode
+ *
+ * As many ".cmd()" method calls can be added and other configurations can be passed
+ * using the same syntax. Refer to the documentations of the different option classes
+ * to get details about the configuration items (@ref elm::option::Option::Make,
+ * @ref elm::option::SwitchOption::Make, ...).
+ *
+ * Using both configuration system for the manager and the option, a command is usually defined
+ * as in the following example:
+ * @code
+ * class MyCommand: public option::Manager {
+ * public:
+ * 	MyCommand(void): option::Manager(Make("my-command", Version(1, 0, 0))
+ * 		.description("This is my command !")
+ * 		.license("GPL V")
+ * 		.author("me <me@here.there>")),
+ * 	opt(Make(*this).cmd("-o").cmd("--com").help("option 1")),
+ * 	val(Make(*this).cmd("-v").cmd("--val").help("my value")) { }
+ * 	...
+ * private:
+ * 	option::SwitchOption opt;
+ * 	option::ValueOption val;
+ * };
+ * @endcode
+ *
+ * At this point, the options may be used as normal values in the program as below:
+ * @code
+ * 	if(opt)
+ * 		doSomething(val);
+ * @endcode
+ *
+ * Free arguments, not processed by an option item, are usually handled by overriding
+ * the method
+ * @code
+ * class MyCommand: public option::Manager {
+ * public:
+ * 	...
+ * protected:
+ * 	virtual void process(String arg) {
+ * 		if(!my_arg)
+ * 			my_arg = arg;
+ * 		else
+ * 			throw OptionException("only one argument supported !");
+ *	}
+ *	...
+ * private:
+ * 	string my_arg;
+ * };
+ * @endcode
+ *
+ * The example above supports only one argument. If not defined, the argument @c arg
+ * is copied to the field @c my_arg. If it is already defined, an @ref OptionException
+ * is raised. In this case, the passed message will be displayed and the syntax
+ * of the command will automatically be displayed to the user then.
+ *
+ * To use such a command, the @c main parameters, @c argc and @c argv, must be passed
+ * to the @c parse() method:
+ * @code
+ * int main(int argc, char *argv[]) {
+ * 	MyCommand cmd;
+ * 	return cmd.parse(argc, argv);
+ * }
+ * @endcode
+ *
+ * This new approach allows to combine several benefits:
+ * @li no more used of the risky processing of variable length arguments (second generation),
+ * @li type checking ability,
+ * @li readibility (see below),
+ * @li extensibility (new configurations may be added without breaking the old configurations).
+ *
+ * @par The Second Generation Approach
  *
  * The goal of the new approach is to remove as much developer disturbance as possible.
  * The full option configuration is based on variable arguments formed as list of tags
@@ -129,33 +220,6 @@ namespace elm { namespace option {
  *	@endcode
  *
  *
- * @par The Old Approach
- *
- * The main approach is to declare an option manager which options
- * are linked to. These objects are usually declared static (global or actual
- * class static members) and the option processing is called from the
- * main() function of the program as in the example below.
- *
- * @code
- * #include <elm/options.h>
- * using namespace elm::option;
- *
- * class MyManager: public Manager {
- * public:
- *	MyManager(void) {
- * 		program = "my_program";
- * 		version = "1.2";
- * 		copyright = "GPL (c) 2007 IRIT - UPS";
- * 	};
- *	virtual void process(string arg) {
- * 		cout << "add argument " << arg << io::endl;
- * 	}
- * } manager;
- *
- * BoolOption ok(manager, 'c', "ok", "is ok ?");
- * StringOption arg(manager, 's', "string", "set string", "a simple string", "");
- * @endcode
- *
  * @par The manager
  * 
  * The manager is the main entry to handle options. It provides the list of
@@ -241,6 +305,7 @@ OptionException::OptionException(const String& message)
  * Build a manager with the new method.
  * @param config	First configuration item.
  * @param ...		end() ended configuration item list.
+ * @deprecated		Since 22/03/13.
  */
 Manager::Manager(int tag, ...) {
 	VARARG_BEGIN(args, tag)
@@ -253,6 +318,14 @@ Manager::Manager(int tag, ...) {
 
 
 /**
+ * Build a new option manager.
+ * @param maker		Information for initialization.
+ */
+Manager::Manager(const Make& maker): info(maker) {
+}
+
+
+/**
  * Called for each configuration tag.
  * May be overload to customize Manager configuration.
  * @param tag	Current tag.
@@ -261,26 +334,26 @@ Manager::Manager(int tag, ...) {
 void Manager::configure(int tag, VarArg& args) {
 	switch(tag) {
 	case option::program:
-		program = args.next<const char *>();
+		info._program = args.next<const char *>();
 		break;
 	case option::version: {
 			Version *v = args.next<Version *>();
 			ASSERT(v);
-			version = *v;
+			info._version = *v;
 			delete v;
 		}
 		break;
 	case option::author:
-		author = args.next<const char *>();
+		info._author = args.next<const char *>();
 		break;
 	case option::copyright:
-		copyright = args.next<const char *>();
+		info._copyright = args.next<const char *>();
 		break;
 	case option::description:
-		description = args.next<const char *>();
+		info._description = args.next<const char *>();
 		break;
 	case option::free_arg:
-		free_argument_description = args.next<const char *>();
+		info._free_argument_description = args.next<const char *>();
 		break;
 	default:
 		ASSERTP(false, "unknown configuration tag: " << tag);
@@ -457,23 +530,23 @@ void Manager::displayHelp(void) {
 	// Display header
 	cerr << program;
 	if(version)
-		 cerr << " V" << version;
+		 cerr << " V" << info._version;
 	if(author)
-		cerr << " by " << author;
+		cerr << " by " << info._author;
 	cerr << '\n';
 	if(copyright)
-		cerr << copyright << '\n';
+		cerr << info._copyright << '\n';
 	
 	// Display syntax
 	cerr << '\n'
 		 << "USAGE: " << program;
 	if(options)
 		cerr<< " [OPTIONS]";
-	if(free_argument_description)
-		cerr << ' ' << free_argument_description;
+	if(info._free_argument_description)
+		cerr << ' ' << info._free_argument_description;
 	cerr << '\n';
-	if(description)
-		cerr << description << '\n';
+	if(info._description)
+		cerr << info._description << '\n';
 	cerr << "OPTIONS may be:\n";
 	
 	// Display option description

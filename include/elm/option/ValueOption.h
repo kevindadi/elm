@@ -30,6 +30,21 @@ namespace elm { namespace option {
 // AbstractValueOption class
 class AbstractValueOption: public Option {
 public:
+	class Make: public Option::Make {
+		friend class AbstractValueOption;
+	public:
+		inline Make(Manager *man): Option::Make(man), _usage(arg_none) { }
+		inline Make(Manager& man): Option::Make(man), _usage(arg_none) { }
+		inline Make& argDescription(cstring s) { arg_desc = s; return *this; }
+		inline Make& usage(usage_t u) { _usage = u; return *this; }
+		inline Make& cmd(cstring c) { Option::Make::cmd(c); return *this; }
+		inline Make& description(cstring d) { Option::Make::description(d); return *this; }
+	private:
+		cstring arg_desc;
+		usage_t _usage;
+	};
+
+	AbstractValueOption(Make& make);
 	AbstractValueOption(Manager& man);
 	AbstractValueOption(Manager& man, int tag, ...);
 	AbstractValueOption(Manager& man, int tag, VarArg& args);
@@ -43,7 +58,7 @@ protected:
 	virtual void configure(Manager& manager, int tag, VarArg& args);
 
 private:
-	cstring desc, arg_desc;
+	cstring arg_desc;
 	usage_t use;
 };
 
@@ -57,7 +72,22 @@ inline T read(string arg) { T val; arg >> val; return val; }
 template <class T>
 class ValueOption: public AbstractValueOption {
 public:
+	class Make: public AbstractValueOption::Make {
+	public:
+		inline Make(Manager *man): AbstractValueOption::Make(man) { }
+		inline Make(Manager& man): AbstractValueOption::Make(man) { }
+		inline Make& argDescription(cstring s) { AbstractValueOption::argDescription(s); return *this; }
+		inline Make& usage(usage_t u) { AbstractValueOption::usage(u); return *this; }
+		inline Make& cmd(cstring c) { Option::Make::cmd(c); return *this; }
+		inline Make& description(cstring d) { Option::Make::description(d); return *this; }
+		inline Make& def(const T& d) { _def = d; return *this; }
+	private:
+		T _def;
+	};
+
 	inline ValueOption(void) { }
+
+	inline ValueOption(Make& make): AbstractValueOption(make), val(def) { }
 
 	inline ValueOption(Manager& man, int tag ...)
 		: AbstractValueOption(man)

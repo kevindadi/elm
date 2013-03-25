@@ -63,6 +63,23 @@ SwitchOption sw(man, 'S', "switch option");
 ListOption<int> l(man, cmd, "-l", end);
 
 
+class MyCommand2: public option::Manager {
+public:
+	MyCommand2(void): option::Manager(Make(::program, ::version)
+		.author(::author)
+		.copyright(::copyright)
+		.description(::description)
+		.free_argument(arg_free)),
+	c(SwitchOption::Make(this).cmd("command")),
+	sw(SwitchOption::Make(this).cmd("-S").description("switch option"))
+	{ }
+
+private:
+	SwitchOption c;
+	SwitchOption sw;
+	/*ListOption<int> l;*/
+};
+
 // test_option()
 TEST_BEGIN(option)
 

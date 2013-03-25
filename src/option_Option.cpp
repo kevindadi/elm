@@ -74,8 +74,28 @@ void Option::configure(Manager& manager, int tag, VarArg& args) {
 	case long_cmd:
 		manager.addLong(args.next<const char *>(), this);
 		break;
+	case option::description:
+		desc = args.next<const char *>();
+		break;
 	default:
 		ASSERTP(false, "unknown configuration tag: " << tag);
+	}
+}
+
+
+/**
+ * Build an option.
+ * @param make	Option maker.
+ */
+Option::Option(const Make& make) {
+	make.man.addOption(this);
+	desc = make._desc;
+	for(int i = 0; i < make.cmds.count(); i++) {
+		cstring cmd = make.cmds[i];
+		if(cmd.length() == 2 && cmd[0] == '-')
+			make.man.addShort(cmd[1], this);
+		else
+			make.man.addCommand(cmd, this);
 	}
 }
 
@@ -141,10 +161,12 @@ cstring Option::longName(void) {
 
 	
 /**
- * @fn CString Option::description(void);
  * Get the description of the option.
  * @return	Option description.
  */
+cstring Option::description(void) {
+	return desc;
+}
 
 
 /**

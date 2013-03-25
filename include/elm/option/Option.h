@@ -25,6 +25,7 @@
 #include <elm/util/VarArg.h>
 #include <elm/string.h>
 #include <elm/io.h>
+#include <elm/genstruct/Vector.h>
 
 namespace elm { namespace option {
 
@@ -41,12 +42,27 @@ typedef enum usage_t {
 // Option class
 class Option {
 public:
+
+	class Make {
+		friend class Option;
+	public:
+		inline Make(Manager *m): man(*m) { }
+		inline Make(Manager& m): man(m) { }
+		inline Make& cmd(cstring cmd) { cmds.add(cmd); return *this; }
+		inline Make& description(cstring desc) { _desc = desc; return *this; }
+	protected:
+		Manager& man;
+		genstruct::Vector<cstring> cmds;
+		cstring _desc;
+	};
+
 	inline Option(void) { }
+	Option(const Make& make);
 	virtual ~Option(void) { }
 	void output(io::Output& out);
-	virtual CString description(void) = 0;
+	virtual cstring description(void);
 	virtual usage_t usage(void) = 0;
-	virtual CString argDescription(void) = 0;
+	virtual cstring argDescription(void) = 0;
 	virtual void process(String arg) = 0;
 
 	// deprecated
@@ -57,8 +73,7 @@ protected:
 	virtual void configure(Manager& manager, int tag, VarArg& args);
 	void init(Manager& manager, int tag, ...);
 	void init(Manager& manager, int tag, VarArg& args);
-
-private:
+	cstring desc;
 };
 
 // Inlines
