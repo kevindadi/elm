@@ -12,6 +12,8 @@ typedef enum {
 namespace elm { template <> struct type_info<my_enum>: public enum_info<my_enum> { }; }
 
 TEST_BEGIN(enum_info)
+
+	// enumeration test
 	type_info<my_enum>::iterator i = type_info<my_enum>::begin();
 	CHECK(i != type_info<my_enum>::end());
 	CHECK(i.name() == "a");
@@ -26,6 +28,14 @@ TEST_BEGIN(enum_info)
 	CHECK(i.value() == int(c));
 	i++;
 	CHECK(i == type_info<my_enum>::end());
+
+	// IO test
+	{
+		io::StringInput in("b");
+		my_enum e;
+		in >> e;
+		CHECK(e == b);
+	}
 TEST_END
 
 namespace elm {

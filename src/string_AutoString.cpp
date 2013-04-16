@@ -77,29 +77,29 @@ AutoStringStartup &_ = autostr;
 
 /**
  */
-StringInput::StringInput(const string& str) {
+/*StringInput::StringInput(const string& str) {
 	in.setStream(*(new io::BlockInStream(str)));
-}
+}*/
 
 
 /**
  */
-StringInput::StringInput(cstring str) {
+/*StringInput::StringInput(cstring str) {
 	in.setStream(*(new io::BlockInStream(str)));
-}
+}*/
 
 
 /**
  */
-StringInput::StringInput(const char *str) {
+/*StringInput::StringInput(const char *str) {
 	in.setStream(*(new io::BlockInStream(str)));
-}
+}*/
 
 
 /**
  */
-StringInput::~StringInput(void) {
+/*StringInput::~StringInput(void) {
 	if(&in.stream() != &io::in) delete &in.stream();
-}
+}*/
 
 } // elm

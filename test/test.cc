@@ -10,42 +10,6 @@
 
 using namespace elm;
 
-// Prototypes
-void test_array(void);
-void test_autostr(void);
-void test_avl(void);
-void test_bitvector(void);
-void test_dllist(void);
-void test_file(void);
-void test_formatter(void);
-void test_frag_table(void);
-void test_hashtable(void);
-void test_int(void);
-void test_io_format(void);
-void test_lock(void);
-void test_md5(void);
-void test_option(void);
-void test_plugin(void);
-void test_process(void);
-void test_ref(void);
-void test_sllist(void);
-void test_sorted_bintree(void);
-void test_stree(void);
-void test_string(void);
-void test_string_buffer(void);
-void test_table(void);
-//void test_thread(void);
-void test_utility(void);
-void test_vararg(void);
-void test_vector(void);
-void test_vector_queue(void);
-void test_wah(void);
-void test_hashkey(void);
-#ifdef HAS_LIBXML
-	void test_serial(void);
-	void test_xom(void);
-#endif
-
 // List of tests
 struct test_t {
 	CString name;

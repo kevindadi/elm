@@ -23,7 +23,7 @@
 #define ELM_STRING_AUTOSTRING_H
 
 #include <elm/string/StringBuffer.h>
-#include <elm/io/Input.h>
+#include <elm/io/StringInput.h>
 #ifdef ELM_TEST_AUTOSTR
 #	include <elm/io.h>
 #endif
@@ -69,7 +69,7 @@ extern AutoStringStartup &_;
 
 
 // StringInput class
-class StringInput {
+/*class StringInput {
 public:
 	StringInput(const char *str);
 	StringInput(const string& str);
@@ -80,7 +80,7 @@ public:
 	template <class T> StringInput& operator>>(T& val) { in.operator>>(val); return *this; }
 private:
 	io::Input in;
-};
+};*/
 
 
 // Even faster autostring
@@ -94,12 +94,12 @@ inline AutoString& operator<<(const String& str, const T& value)
 	{ return autostr << str << value; }
 
 template <class T>
-inline StringInput operator>>(const string& str, T& val)
-	{ StringInput in(str); in >> val; return in; }
+inline io::StringInput operator>>(const string& str, T& val)
+	{ io::StringInput in(str); in >> val; return in; }
 
 template <class T>
-inline StringInput operator>>(cstring str, T& val)
-	{ StringInput in(str); in >> val; return in; }
+inline io::StringInput operator>>(cstring str, T& val)
+	{ io::StringInput in(str); in >> val; return in; }
 
 #endif // ELM_AUTOSTR_FAST_NO
 

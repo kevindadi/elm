@@ -37,6 +37,13 @@ namespace elm { namespace io {
 
 
 /**
+ * Raise an exception claiming that the IO is not supported.
+ */
+void Input::unsupported(void) {
+	throw io::IOException("unsupported input");
+}
+
+/**
  * Get the next character.
  * @return	Next character or -1 if there is no more character available.
  */

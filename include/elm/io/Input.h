@@ -75,7 +75,12 @@ public:
 	inline Input& operator>>(cstring text) { swallow(text); return *this; }
 	inline Input& operator>>(const char *text) { swallow(cstring(text)); return *this; }
 
+	template <class T> struct def_scanner { static inline void scan(Input& in, T& v) { unsupported(); } };
+	template <class T> struct enum_scanner { static inline void scan(Input& in, T& v) { string s; in >> s; v = enum_info<T>::fromString(s); } };
+	template <class T> Input& operator>>(T& v)
+		{ _if<type_info<T>::is_defined_enum, enum_scanner<T>, def_scanner<T> >::_::scan(*this, v); return *this; }
 private:
+	static void unsupported(void);
 	InStream *strm;
 	int buf;
 	int get(void);

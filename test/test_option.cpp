@@ -59,7 +59,7 @@ BoolOption b(man, 'b', "boolean", "boolean test", false);
 EnumOption<int> enum_opt(man, 'e', "enum", "", vals);
 StringOption s(man, 's', "string", "string test", "", "");
 SwitchOption c(man, cmd, "command", end);
-SwitchOption sw(man, 'S', "switch option");
+SwitchOption sw(man, cmd, "-S", help, "switch option", end);
 ListOption<int> l(man, cmd, "-l", end);
 
 
