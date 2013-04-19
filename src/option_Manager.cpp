@@ -353,6 +353,7 @@ void Manager::configure(int tag, VarArg& args) {
 		info._description = args.next<const char *>();
 		break;
 	case option::free_arg:
+	case option::arg_desc:
 		info._free_argument_description = args.next<const char *>();
 		break;
 	default:

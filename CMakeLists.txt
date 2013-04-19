@@ -66,35 +66,35 @@ configure_file (
 
 
 # header installation
-set(EXCLUDES PATTERN "CVS" EXCLUDE)
-if(UNIX OR APPLE)
-	set(EXCLUDES ${EXCLUDES} PATTERN "Win*Stream.h" EXCLUDE)
+if(NOT ONLY_RUNTIME)
+	set(EXCLUDES PATTERN "CVS" EXCLUDE)
+	if(UNIX OR APPLE)
+		set(EXCLUDES ${EXCLUDES} PATTERN "Win*Stream.h" EXCLUDE)
+	endif()
+	if(WIN32 OR WIN64 OR MINGW)
+		set(EXCLUDES ${EXCLUDES} PATTERN "GDBCrashHandler.h" EXCLUDE)
+	endif()
+	if(NOT LIBXML2)
+		set(EXCLUDES ${EXCLUDES} PATTERN "elm/xom/*.h" EXCLUDE)
+		set(EXCLUDES ${EXCLUDES} PATTERN "elm/xom.h" EXCLUDE)
+	endif()
+	install(
+		DIRECTORY include/
+		DESTINATION include
+		FILES_MATCHING PATTERN "*.h"
+		${EXCLUDES}
+	)
 endif()
-if(WIN32 OR WIN64 OR MINGW)
-	set(EXCLUDES ${EXCLUDES} PATTERN "GDBCrashHandler.h" EXCLUDE)
-endif()
-if(NOT LIBXML2)
-	set(EXCLUDES ${EXCLUDES} PATTERN "elm/xom/*.h" EXCLUDE)
-	set(EXCLUDES ${EXCLUDES} PATTERN "elm/xom.h" EXCLUDE)
-endif()
-install(
-	DIRECTORY include/
-	DESTINATION include
-	FILES_MATCHING PATTERN "*.h"
-	${EXCLUDES}
-)
 
 
 # handle autodoc
-option(AUTODOC "generate auto-documentation" OFF)
-find_program(DOXYGEN doxygen)
-if((DOXYGEN AND NOT EXISTS autodoc) OR AUTODOC)
-	message(STATUS "generating autodoc...")
-	execute_process(COMMAND "${DOXYGEN}" OUTPUT_QUIET)
-	message(STATUS "autodoc done")
+if(DOXYGEN AND NOT ONLY_RUNTIME)
+	add_custom_target("make-autodoc" ALL DEPENDS "autodoc")
+	add_custom_command(
+		OUTPUT "autodoc"
+		DEPENDS "Doxyfile"
+		COMMAND "${DOXYGEN}"	
+	)
+	install(DIRECTORY autodoc DESTINATION "${CMAKE_INSTALL_PREFIX}/share/Elm/")
 endif()
-if(DOXYGEN)
-	install(DIRECTORY autodoc DESTINATION "${CMAKE_INSTALL_PREFIX}/share/GEL/")
-endif()
-unset(AUTODOC CACHE)
 
