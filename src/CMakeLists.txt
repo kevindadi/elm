@@ -198,6 +198,9 @@ if(CMAKE_THREAD_LIBS_INIT)
 	message(STATUS "link with ${CMAKE_THREAD_LIBS_INIT}")
 	target_link_libraries(elm ${CMAKE_THREAD_LIBS_INIT})
 endif()
+if(UNIX)
+	target_link_libraries(elm "-ldl")
+endif()
 
 # installation
 install(TARGETS elm RUNTIME DESTINATION bin LIBRARY DESTINATION lib)
