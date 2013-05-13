@@ -31,6 +31,8 @@ namespace elm {
 
 // BitVector class
 class BitVector {
+	typedef t::uint8 word_t;
+	static const int shift = 3;
 public:
 	inline BitVector(void): bits(0), _size(0) { }
 	inline BitVector(int size, bool set = false);
@@ -53,7 +55,7 @@ public:
 	
 	inline void copy(const BitVector& bits) const;
 	inline void clear(void);
-	inline void set(void);
+	inline void set(void) { memset(bits, 0xff, bytes()); mask(); }
 
 	inline void applyNot(void);	
 	inline void applyOr(const BitVector& vec);
@@ -114,7 +116,7 @@ public:
 	inline bool operator>=(const BitVector& vec) const;
 
 private:
-	unsigned char *bits;
+	word_t *bits;
 	int _size;
 	inline void mask(void) const;
 	inline int bytes(void) const;
@@ -238,10 +240,6 @@ inline void BitVector::copy(const BitVector& vec) const {
 
 inline void BitVector::clear(void) {
 	memset(bits, 0, bytes());
-}
-
-inline void BitVector::set(void) {
-	memset(bits, 0xff, bytes());
 }
 
 inline void BitVector::applyNot(void) {

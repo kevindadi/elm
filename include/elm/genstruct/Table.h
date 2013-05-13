@@ -75,7 +75,7 @@ public:
 template <class T>
 class AllocatedTable: public Table<T> {
 public:
-	inline AllocatedTable(void);
+	inline AllocatedTable(void) { }
 	inline AllocatedTable(int count);
 	inline AllocatedTable(const Table<T>& table);
 	inline ~AllocatedTable(void);
@@ -172,12 +172,6 @@ inline Table<T>::operator bool(void) const {
 }
 
 
-// Allocated table inlines
-template <class T>
-inline AllocatedTable<T>::AllocatedTable(void) {
-	//cout << "new AllocatedTable() = " << this << io::endl;
-}
-
 template <class T>
 inline AllocatedTable<T>::AllocatedTable(int count)
 : Table<T>(new T[count], count) {
@@ -186,7 +180,7 @@ inline AllocatedTable<T>::AllocatedTable(int count)
 
 template <class T>
 inline AllocatedTable<T>::AllocatedTable(const Table<T>& table)
-: Table<T>(new T[table.count()], table.count()) {
+: Table<T>(table ? new T[table.count()] : 0, table.count()) {
 	for(int i = 0; i < Table<T>::cnt; i++)
 		Table<T>::tab[i] = table[i];
 	//cout << "new AllocatedTable() = " << this << io::endl;
