@@ -76,8 +76,8 @@ public:
 	public:
 		inline Make(Manager *man): AbstractValueOption::Make(man) { }
 		inline Make(Manager& man): AbstractValueOption::Make(man) { }
-		inline Make& argDescription(cstring s) { AbstractValueOption::argDescription(s); return *this; }
-		inline Make& usage(usage_t u) { AbstractValueOption::usage(u); return *this; }
+		inline Make& argDescription(cstring s) { AbstractValueOption::Make::argDescription(s); return *this; }
+		inline Make& usage(usage_t u) { AbstractValueOption::Make::usage(u); return *this; }
 		inline Make& cmd(cstring c) { Option::Make::cmd(c); return *this; }
 		inline Make& description(cstring d) { Option::Make::description(d); return *this; }
 		inline Make& def(const T& d) { _def = d; return *this; }
