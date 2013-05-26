@@ -27,6 +27,7 @@
 #include <windows.h>
 #include <elm/system/SystemIO.h>
 #include <elm/io.h>
+#include <elm/string.h>
 
 #include <stdio.h>
 

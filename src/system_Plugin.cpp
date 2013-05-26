@@ -21,16 +21,18 @@
  */
 
 #if defined(__unix) || defined(__APPLE__)
-#include "../config.h"
+#	include "../config.h"
 #elif defined(__WIN32) || defined(__WIN64)
-#include "../config.h"
+#	include "../config.h"
 #endif
 
 #include <elm/assert.h>
 #ifdef WITH_LIBTOOL
 #	include <ltdl.h>
 #elif defined(__WIN32) || defined(__WIN64)
-#include <windows.h>
+#	include <windows.h>
+#	undef min
+#	undef max
 #else
 #	include <dlfcn.h>
 #endif

@@ -22,6 +22,7 @@
 
 #include <elm/assert.h>
 #include <elm/sys/Thread.h>
+#include <elm/string.h>
 #ifdef __unix
 #	include <pthread.h>
 #	include <errno.h>

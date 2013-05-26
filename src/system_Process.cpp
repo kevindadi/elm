@@ -29,7 +29,9 @@
 #include <errno.h>
 #endif
 #if defined(__WIN32) || defined(__WIN64)
-#include <windows.h>
+#	include <windows.h>
+#	undef min
+#	undef max
 #endif
 #include <signal.h>
 #include <elm/sys/Process.h>

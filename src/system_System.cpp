@@ -25,6 +25,8 @@
 #	include <windows.h>
 #	include <elm/io/io.h>
 #	include <elm/io/WinInStream.h>
+#	undef min
+#	undef max
 #endif
 #include <fcntl.h>
 #include <errno.h>

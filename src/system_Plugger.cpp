@@ -27,6 +27,8 @@
 #include <stdlib.h>
 #if defined(__WIN32) || defined(__WIN64)
 #	include <windows.h>
+#	undef min
+#	undef max
 #elif defined(WITH_LIBTOOL)
 #	include <ltdl.h>
 #else
