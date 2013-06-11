@@ -529,7 +529,7 @@ void Manager::parse(int argc, Manager::argv_t argv) throw(OptionException) {
 void Manager::displayHelp(void) {
 
 	// Display header
-	cerr << program;
+	cerr << info._program;
 	if(version)
 		 cerr << " V" << info._version;
 	if(author)
@@ -540,7 +540,7 @@ void Manager::displayHelp(void) {
 	
 	// Display syntax
 	cerr << '\n'
-		 << "USAGE: " << program;
+		 << "USAGE: " << info._program;
 	if(options)
 		cerr<< " [OPTIONS]";
 	if(info._free_argument_description)
