@@ -48,11 +48,11 @@ public:
 	public:
 		inline Make(Manager *m): man(*m) { }
 		inline Make(Manager& m): man(m) { }
-		inline Make& cmd(cstring cmd) { cmds.add(cmd); return *this; }
+		inline Make& cmd(string cmd) { cmds.add(cmd); return *this; }
 		inline Make& description(cstring desc) { _desc = desc; return *this; }
 	protected:
 		Manager& man;
-		genstruct::Vector<cstring> cmds;
+		genstruct::Vector<string> cmds;
 		cstring _desc;
 	};
 

@@ -86,7 +86,7 @@ protected:
 		// display any lifing is not free !
 		for(int i = 0; i < heads_cnt; i++)
 			for(Cons *cur = hds[i]; cur; cur = cur->tl)
-				for(free_t *f = free; f; f = f->next)
+				for(free_t *f = free_list; f; f = f->next)
 					ASSERTP(f != (free_t *)cur, "block " << (void *)cur << " is in the free list !\n");
 
 		// display end

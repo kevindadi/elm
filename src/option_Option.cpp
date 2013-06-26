@@ -91,7 +91,7 @@ Option::Option(const Make& make) {
 	make.man.addOption(this);
 	desc = make._desc;
 	for(int i = 0; i < make.cmds.count(); i++) {
-		cstring cmd = make.cmds[i];
+		string cmd = make.cmds[i];
 		if(cmd.length() == 2 && cmd[0] == '-')
 			make.man.addShort(cmd[1], this);
 		else

@@ -40,6 +40,10 @@ public:
 	int totalCount(void) const;
 	inline int usedCount(void) const { return totalCount() - freeCount(); }
 
+	// Allocator concept compatibility
+	void *allocate(t::size size) throw(BadAlloc);
+	void free(void *block);
+
 protected:
 	bool mark(void *ptr);
 	virtual void collect(void) = 0;
@@ -47,7 +51,7 @@ protected:
 	virtual void endGC(void);
 
 	typedef struct free_t { free_t *next; } free_t;
-	free_t *free;
+	free_t *free_list;
 	int free_cnt;
 
 private:

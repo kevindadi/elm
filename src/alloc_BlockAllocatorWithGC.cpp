@@ -35,7 +35,7 @@ namespace elm {
  * @param chunk_size	Size of the memory chunks (1Mb as a default).
  */
 AbstractBlockAllocatorWithGC::AbstractBlockAllocatorWithGC(t::size block_size, t::size chunk_size)
-: free(0), free_cnt(0), bsize(block_size), csize(chunk_size) {
+: free_list(0), free_cnt(0), bsize(block_size), csize(chunk_size) {
 	ASSERTP(block_size < chunk_size, "block size must be lower than chunk size");
 	chunks.add(new t::uint8[csize]);
 	top = chunks.top();
@@ -51,13 +51,26 @@ AbstractBlockAllocatorWithGC::~AbstractBlockAllocatorWithGC(void) {
 
 
 /**
+ * Allocate a block of the given size.
+ * This function accepts as size only the size of elements.
+ * @param size		Size of the element.
+ * @return			Allocated block.
+ * @throw BadAlloc	If the allocation fails.
+ */
+void *AbstractBlockAllocatorWithGC::allocate(t::size size) throw(BadAlloc) {
+	ASSERT(size == bsize);
+	return allocate();
+}
+
+
+/**
  */
 void *AbstractBlockAllocatorWithGC::allocate(void) throw(BadAlloc) {
 
 	// take it from free blocks
-	if(free) {
-		void *r = free;
-		free = free->next;
+	if(free_list) {
+		void *r = free_list;
+		free_list = free_list->next;
 		free_cnt--;
 		return r;
 	}
@@ -72,9 +85,9 @@ void *AbstractBlockAllocatorWithGC::allocate(void) throw(BadAlloc) {
 	// else collect garbage
 	else {
 		collectGarbage();
-		if(free) {
-			void *r = free;
-			free = free->next;
+		if(free_list) {
+			void *r = free_list;
+			free_list = free_list->next;
 			free_cnt--;
 			return r;
 		}
@@ -84,6 +97,15 @@ void *AbstractBlockAllocatorWithGC::allocate(void) throw(BadAlloc) {
 			return chunks.top();
 		}
 	}
+}
+
+
+/**
+ * Function for compatibility with Allocator concept.
+ * Do nothing yet.
+ * @param block		Block to free.
+ */
+void AbstractBlockAllocatorWithGC::free(void *block) {
 }
 
 
@@ -104,8 +126,8 @@ void AbstractBlockAllocatorWithGC::collectGarbage(void) {
 	for(BitVector::ZeroIterator n(*coll); n; n++) {
 		int chunk = *n / (csize / bsize);
 		free_t *nfree = (free_t *)(chunks[chunk] + (*n - chunk * (csize / bsize)) * bsize);
-		nfree->next = free;
-		free = nfree;
+		nfree->next = free_list;
+		free_list = nfree;
 		free_cnt++;
 	}
 

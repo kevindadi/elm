@@ -4,6 +4,7 @@ Directories:
 	include/		ELM headers
 	src/			ELM sources
 	test/			Test programs
+	tools/			Tool to work with ELM.
 
 Bootstrap:
 	cmake .

@@ -37,14 +37,14 @@ public:
 		inline Make(Manager& man): Option::Make(man), _usage(arg_none) { }
 		inline Make& argDescription(cstring s) { arg_desc = s; return *this; }
 		inline Make& usage(usage_t u) { _usage = u; return *this; }
-		inline Make& cmd(cstring c) { Option::Make::cmd(c); return *this; }
+		inline Make& cmd(string c) { Option::Make::cmd(c); return *this; }
 		inline Make& description(cstring d) { Option::Make::description(d); return *this; }
 	private:
 		cstring arg_desc;
 		usage_t _usage;
 	};
 
-	AbstractValueOption(Make& make);
+	AbstractValueOption(const Make& make);
 	AbstractValueOption(Manager& man);
 	AbstractValueOption(Manager& man, int tag, ...);
 	AbstractValueOption(Manager& man, int tag, VarArg& args);
@@ -78,7 +78,7 @@ public:
 		inline Make(Manager& man): AbstractValueOption::Make(man) { }
 		inline Make& argDescription(cstring s) { AbstractValueOption::Make::argDescription(s); return *this; }
 		inline Make& usage(usage_t u) { AbstractValueOption::Make::usage(u); return *this; }
-		inline Make& cmd(cstring c) { Option::Make::cmd(c); return *this; }
+		inline Make& cmd(string c) { Option::Make::cmd(c); return *this; }
 		inline Make& description(cstring d) { Option::Make::description(d); return *this; }
 		inline Make& def(const T& d) { _def = d; return *this; }
 	private:
@@ -87,7 +87,7 @@ public:
 
 	inline ValueOption(void) { }
 
-	inline ValueOption(Make& make): AbstractValueOption(make), val(def) { }
+	inline ValueOption(const Make& make): AbstractValueOption(make), val(def) { }
 
 	inline ValueOption(Manager& man, int tag ...)
 		: AbstractValueOption(man)
@@ -101,12 +101,11 @@ public:
 		: AbstractValueOption(man)
 		{ init(man, short_cmd, s, option::description, &desc, option::arg_desc, &adesc, def, val, end); }
 
-	inline ValueOption(Manager& man, cstring l, cstring desc, cstring adesc, const T& val = type_info<T>::null)
-		: AbstractValueOption(man)
-		{ init(man, long_cmd, &l, option::description, &desc, option::arg_desc, &adesc, def, val, end); }
+	inline ValueOption(Manager& man, cstring l, cstring desc, cstring adesc, const T& _val = type_info<T>::null)
+		: AbstractValueOption(Make(man).cmd(l).description(desc).argDescription(adesc)), val(_val) { }
 
-	inline ValueOption(Manager& man, char s, cstring l, cstring desc, cstring adesc, const T& val = type_info<T>::null)
-		{ init(man, short_cmd, s, long_cmd, &l, option::description, &desc, option::arg_desc, &adesc, def, val, end); }
+	inline ValueOption(Manager& man, char s, cstring l, cstring desc, cstring adesc, const T& _val = type_info<T>::null)
+		: AbstractValueOption(Make(man).cmd(l).cmd(_ << '-' << s).description(desc).argDescription(adesc)), val(_val) { }
 
 	inline const T& get(void) const { return val; };
 	inline void set(const T& value) { val = value; };

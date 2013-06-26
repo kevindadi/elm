@@ -172,7 +172,7 @@ AbstractValueOption::AbstractValueOption(Manager& man, int tag, VarArg& args): u
  * Constructor with an initializer as in the example velow:
  * @param make	Current initializer.
  */
-AbstractValueOption::AbstractValueOption(Make& make)
+AbstractValueOption::AbstractValueOption(const Make& make)
 : Option(make), arg_desc(make.arg_desc), use(make._usage) {
 }
 

@@ -19,7 +19,7 @@ using namespace elm;
 using namespace elm::avl;
 
 #ifdef ELM_DEBUG_AVL
-#	define LOG(cmd)	cmd
+#	define LOG(cmd)	// cmd
 #endif
 
 static const int maxv = 1000;
@@ -28,12 +28,23 @@ static const int count = 1000;
 // Entry point
 TEST_BEGIN(avl)
 	
+	// unit test
+	{
+		Set<int> tree;
+		CHECK(tree.isEmpty());
+		tree.add(100);
+		CHECK(!tree.isEmpty());
+		CHECK(tree.contains(100));
+		CHECK(!tree.contains(0));
+	}
+
 	// check AVLTree
 	{
 		genstruct::Vector<int> ints;
 		Set<int> tree;
+		bool intensive = true;
 		
-		for(int i = 0; i < count; i++) {
+		for(int i = 0; intensive && i < count; i++) {
 			LOG(tree.dump(cerr); cerr << io::endl;)
 			int a = system::System::random(maxv * 3);
 
@@ -43,7 +54,7 @@ TEST_BEGIN(avl)
 				LOG(cerr << "removing " << ints[a % ints.count()] << io::endl;)
 				ints.remove(n);
 				tree.remove(n);
-				CHECK(!tree.contains(n));
+				intensive = !tree.contains(n);
 			}
 
 			// insert
@@ -53,7 +64,7 @@ TEST_BEGIN(avl)
 				if(!ints.contains(n))
 					ints.add(n);
 				tree.add(n);
-				CHECK(tree.contains(n));
+				intensive = tree.contains(n);
 			}
 
 			// check
@@ -62,16 +73,18 @@ TEST_BEGIN(avl)
 				for(int i = 0; i < ints.count(); i++)
 					if(!tree.contains(ints[i]))
 						ok = false;
-				CHECK(ok);
+				intensive = ok;
 			}
 		}
+		CHECK(intensive);
 	}
 	
 	// AVLMap
 	{
 		Map<string, int> map;
 		genstruct::HashTable<string, int> htab;
-		for(int i = 0; i < count; i++) {
+		bool map_intensive = true;
+		for(int i = 0; map_intensive && i < count; i++) {
 			int a = system::System::random(maxv * 4);
 
 			// remove
@@ -82,7 +95,7 @@ TEST_BEGIN(avl)
 					kk = k;
 				map.remove(kk);
 				htab.remove(kk);
-				CHECK(!map.hasKey(kk));
+				map_intensive = !map.hasKey(kk);
 			}
 
 			// insert
@@ -91,14 +104,14 @@ TEST_BEGIN(avl)
 				string k = _ << n;
 				htab.put(k, n);
 				map.put(k, n);
-				CHECK(map.get(k) == n);
+				map_intensive = map.get(k) == n;
 			}
 
 			// contains
 			else if(a < 2 * maxv) {
 				int n = a % maxv;
 				string k = _ << n;
-				CHECK(htab.get(k, -1) == map.get(k, -1));
+				map_intensive = htab.get(k, -1) == map.get(k, -1);
 			}
 
 			// check
@@ -109,9 +122,10 @@ TEST_BEGIN(avl)
 						ok = false;
 						break;
 					}
-				CHECK(ok);
+				map_intensive = ok;
 			}
 		}
+		CHECK(map_intensive);
 	}
 
 TEST_END

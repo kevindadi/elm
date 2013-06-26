@@ -96,9 +96,14 @@ void AbstractTree::insert(unsigned char da[], int dir, Node *node, Node *q, Node
 /**
  */
 void AbstractTree::remove(Node *pa[], unsigned char da[], int k, Node *p) {
+
 	// remove the item
-	if(p->links[1] == 0)
-		pa[k - 1]->links[da[k - 1]] = p->links[0];
+	if(p->links[1] == 0) {
+		if(!k)
+			this->root = p->links[0];
+		else
+			pa[k - 1]->links[da[k - 1]] = p->links[0];
+	}
 	else {
 		Node *r = p->links[1];
 		if(r->links[0] == 0) {

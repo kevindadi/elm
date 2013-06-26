@@ -39,6 +39,7 @@ set(LIBELM_LA_SOURCES
 	"genstruct_VectorQueue.cpp"
 	"genstruct_Table.cpp"
 	"genstruct_Tree.cpp"
+	"imm_list.cpp"
 	"inhstruct_BinTree.cpp"
 	"inhstruct_SortedBinTree.cpp"
 	"inhstruct_DLList.cpp"
