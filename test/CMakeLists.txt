@@ -42,6 +42,7 @@ set(TEST_SOURCES
 	"test_hashtable.cpp"
 	"test_int.cpp"
 	"test_io_format.cpp"
+	"test_list.cpp"
 	"test_lock.cpp"
 	"test_md5.cpp"
 	"test_option.cpp"
