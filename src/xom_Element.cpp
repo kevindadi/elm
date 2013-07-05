@@ -517,6 +517,17 @@ void Element::insertChild(String text, int position) {
 
 
 /**
+ * Insert a node at the given position.
+ * @param position Where to insert the child.
+ * @param node Node to insert.
+ */
+void Element::insertChild(Node *node, int position) {
+	ASSERTP(position >= 0, "position must be positive");
+	ParentNode::insertChild(node, position);
+}
+
+
+/**
  * Removes an attribute from this element.
  * @param attribute The attribute to remove.
  * @return The attribute that was removed.

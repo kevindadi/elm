@@ -1,5 +1,5 @@
 /*
- *	imm::List class interface
+ *	imm::list class interface
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2013, IRIT UPS.
@@ -24,64 +24,91 @@
 #include <elm/assert.h>
 #include <elm/alloc/DefaultAllocator.h>
 #include <elm/alloc/BlockAllocatorWithGC.h>
+#include <elm/util/Comparator.h>
+#include <elm/genstruct/SLList.h>
 
 namespace elm { namespace imm {
 
 template <class T>
 class list {
-public:
 	typedef struct node_t {
-		inline node_t(const T& _h, node_t *_t = 0): h(_h), t(_t) { }
-		T h;
-		node_t *t;
+		inline node_t(const T& h, node_t *t): hd(h), tl(t) { }
+		T hd;
+		node_t *tl;
 	} node_t;
-private:
-	inline list(node_t *n): node(n) { }
-	template <class U> friend class ListGC;
-	template <class U, class A> friend class ListAllocator;
+	class GC;
 public:
-	inline static list<T> null(void) { return list<T>(); }
+	class Collector {
+		friend class GC;
+	public:
+		virtual ~Collector(void);
+		inline void mark(list<T> l) { node_t *n = l.node; while(n && !gc->mark(n)) n = n->tl; }
+		virtual void collect(void) = 0;
+	private:
+		GC *gc;
+	};
+
+private:
+	class GC: public BlockAllocatorWithGC<node_t> {
+	public:
+		virtual void collect(void)
+			{ for(typename genstruct::SLList<Collector *>::Iterator coll(colls); coll; coll++) coll->collect(); }
+		inline void add(Collector& coll) { colls.add(&coll); coll.gc = this; }
+		inline void remove(Collector& coll) { colls.remove(&coll); }
+		inline bool mark(node_t *node) { return BlockAllocatorWithGC<node_t>::mark(node); }
+	private:
+		genstruct::SLList<Collector *> colls;
+	};
+	static GC gc;
+
+	inline list(node_t *n): node(n) { }
+public:
+	static inline void add(Collector& coll) { gc.add(coll); }
+	static inline void remove(Collector& coll) { gc.remove(coll); }
+
+	static list<T> null;
 	inline list(void): node(0) { }
-	inline list(const list& l): node(l.node) { }
-	inline list<T>& operator=(const list<T>& l) { node = l.node; return *this; }
+	inline list(const list<T>& l): node(l.node) { }
+	inline list<T>& operator=(list<T> l) { node = l.node; return *this; }
+	static list<T> cons(const T& h, list<T> t)
+		{ node_t *n = list<T>::gc.allocate(); n->hd = h; n->tl = t.node; return list<T>(n); }
 
-	inline const T& hd(void) const { ASSERT(node); return node->h; }
+	inline const T& hd(void) const { ASSERT(node); return node->hd; }
+	inline list<T> tl(void) const { ASSERT(node); return node->tl; }
 	inline const T& operator*(void) const { return hd(); }
-	inline list<T> tl(void) const { ASSERT(node); return list(node->t); }
-
-	inline int length(void) const
-		{ int c = 0; list<T> n = *this; while(n) { c++; n = n.tl(); } return c; }
 	inline bool isEmpty(void) const { return !node; }
 	inline operator bool(void) const { return !isEmpty(); }
-	inline bool contains(const T& v) { node_t *n = node; while(n) { if(n->h == v) return true; n = n->t; } return false; }
+
+	inline int length(void) const
+		{ int c = 0; for(node_t *n = node; n; n = n->tl) c++; return c; }
+	inline bool contains(const T& v)
+		{ for(node_t *n = node; n; n = n->tl) if(Equiv<int>::equals(n->hd, v)) return true; return false; }
+	inline bool equals(list<T> l) const
+		{ if(node == l.node) return true; if(!node || !l.node || !Equiv<T>::equals(hd(), l.hd())) return false; return tl().equals(l.tl()); }
+	inline bool operator==(list<T> l) const { return equals(l); }
+	inline bool operator!=(list<T> l) const { return !equals(l); }
+
+	inline list<T> concat(list<T> l)
+		{ if(isEmpty()) return l; else return cons(hd(), tl().concat(l)); }
+	inline list<T> remove(const T& h)
+		{ if(!node) return *this; if(Equiv<T>::equals(h, hd())) return tl();
+		list<T> t = tl().remove(h); if(node == t.node) return *this; else return cons(hd(), t); }
 
 private:
 	node_t *node;
 };
+template <class T> typename list<T>::GC list<T>::gc;
+template <class T> list<T> list<T>::null(0);
 
-template <class T, class A = DefaultAllocator>
-class ListAllocator {
-	typedef typename list<T>::node_t node_t;
-public:
-	inline ListAllocator(A& allocator = A::DEFAULT): alloc(allocator) { }
-	inline list<T> cons(const T& h, list<T> tl)
-		{ node_t *n = (node_t *)alloc.allocate(sizeof(node_t)); n->h = h; n->t = tl.node; return new list<T>(n); }
-	inline void free(list<T> l) { if(l->node) free(l->node); }
-	inline void freeAll(list<T> l) { node_t *n = l->node; while(n) { node_t *nn = n->t; free(n); n = nn; } }
-private:
-	A& alloc;
-};
+template <class T> inline list<T> cons(const T& h, list<T> t) { return list<T>::cons(h, t); }
+template <class T> inline list<T> operator+(const T& h, list<T> t) { return cons(h, t); }
+template <class T> inline list<T> operator+(list<T> l1, list<T> l2) { return l1.concat(l2); }
+template <class T> inline list<T> make(T a[], int n)
+	{ if(!n) return list<T>::null; else return cons(*a, make(a + 1, n - 1)); }
 
 template <class T>
-class ListGC: public BlockAllocatorWithGC<typename list<T>::node_t > {
-	typedef typename list<T>::node_t node_t;
-public:
-	inline list<T> cons(const T& h, list<T> tl)
-		{ node_t *n = BlockAllocatorWithGC<node_t>::allocate(); n->h = h; n->t = tl.node; return list<T>(n); }
-protected:
-	void mark(list<T> l)
-		{ node_t *n = l.node; while(n && !BlockAllocatorWithGC<typename list<T>::node_t >::mark(n)) n = n->t; }
-};
+io::Output& operator<<(io::Output& out, list<T> l)
+	{ bool f = true; out << "[ "; for(; l; l = l.tl()) { if(f) f = false; else out << ", "; out << l.hd(); } out << " ]"; return out; }
 
 } }	// elm::imm
 

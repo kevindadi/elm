@@ -20,6 +20,7 @@
  */
 
 #include <elm/imm/list.h>
+#include <elm/imm/sorted_list.h>
 
 namespace elm { namespace imm {
 
@@ -42,16 +43,44 @@ namespace elm { namespace imm {
 
 /**
  * @class list
- * Implementation of immutable list. To be built, an item of this data structure
- * requires an allocator, @ref ListAllocator, or a garbage collector, @ref ListGC.
+ * Implementation of immutable and garbage collected list.
+ *
+ * As C++ does not allow
+ * to implement easily and efficiently a garbage collector, the user of this class
+ * is responsible to provided its own collector using the function list<T>::add(object)
+ * with object inheriting from list<T>::Collector and implementing the member function
+ * list<T>::Collector::collect(). This function must call mark() for each list in use
+ * as in the example below:
+ *
+ * @code
+ * list<int> first_list;
+ * genstruct::Vector<list<int> > lists;
+ *
+ * class MyCollector: public list<int>::Collector {
+ * protected:
+ *	virtual void collect(void) {
+ *		mark(first_list);
+ *		for(int i = 0; i < lists.count(); i++)
+ *			mark(lists[i]);
+ *	}
+ * };
+ *
+ * int main(void) {
+ * 	MyCollector coll;
+ * 	list<int>::add(coll);
+ *
+ * 	// work with lists now
+ *
+ * }
+ * @endcode
+ *
  * @param T		Type of items in the list.
  * @ingroup imm
  */
 
 
 /**
- * @fn list<T> list::null(void);
- * Get the empty list.
+ * @fn list<T> list::null;
  */
 
 
@@ -63,7 +92,7 @@ namespace elm { namespace imm {
 
 /**
  * @fn list::list(const list& l);
- * Clone a list (no shallow copy).
+ * Clone a list.
  */
 
 
@@ -75,7 +104,7 @@ namespace elm { namespace imm {
 
 
 /**
- * @fn list<T> *list::tl(void) const;
+ * @fn list<T> list::tl(void) const;
  * Get the sub-list after the first item in the list.
  * @return		Tail of the list.
  */
@@ -89,86 +118,53 @@ namespace elm { namespace imm {
 
 
 /**
- * @class ListAllocator
- * Provide a simple and customized allocator to create lists.
- * @param T		Type of item of the list.
- * @param A		Allocator to use, must implement the @ref Allocator concept (default to @ref DefaultAllocator).
- * @ingroup imm
+ * @fn list<T> list::cons(const T& h, list<T> t);
+ * Build a new list by prepending h to t.
+ * @param h		Item to prepend.
+ * @param t		List to use as tail.
+ * @return		Built list.
  */
 
 
 /**
- * @fn ListAllocator::ListAllocator(A& allocator);
- * @param allocator		Allocator to use (optional).
+ * @fn bool list::isEmpty(void) const;
+ * Test if the list is empty.
+ * @return	True if the list is empty, false else.
  */
 
 
 /**
- * @fn list<T> ListAllocator::cons(const T& h, list<T> tl);
- * Build a list by creating a node and prepending to the given tail list.
- * @param h		Value of the prepended node.
- * @param t		List to prepend the new node to.
- * @return		New list.
+ * @fn bool list::contains(const T& v);
+ * Test if v is in the list. The @ref Equiv<T> is used to perform the test
+ * of equality. Therefore, a user can provide its own implementation of @ref Equiv<T>
+ * to change the usual behavior of the equality tests.
+ * @param v		Item to test.
+ * @return		True if v is in the list, false else.
  */
 
 
 /**
- * @fn void ListAllocator::free(list<T> l);
- * Free the first node of the given list.
- * @param l		List to free the first item from.
+ * @fn bool list::equals(list<T> l) const;
+ * Test if the current list and l are equals.
+ * @param l		List to compare.
+ * @return		True if both lists are equal, false else.
  */
 
 
 /**
- * @fn void ListAllocator::freeAll(list<T> l);
- * Free all nodes from the given list.
- * @param l		List to free.
- */
-
-/**
- * @class ListGC
- * Allocator and garbage collector for the @ref list immutable data structure.
- * This object provides a way to allocate nodes of the @ref list data structure
- * but it must be assisted to perform garbage collection by implementing the abstract function
- * @ref collect(). This function is called each time a garbage collection is required in order
- * to collect all the living lists. For each living list, the user must perform
- * a call to @ref mark() function.
- *
- * The example below show an example of use of ListGC to garbage-collect a set of lists contained
- * in a @ref genstruct::Vector.
- * @code
- * using namespace elm;
- * using namespace imm;
- *
- * genstruct::Vector<list<int> > living_lists;
- *
- * class MyGC: public ListGC {
- * protected:
- * 	virtual void collect(void) {
- * 		for(int i = 0; i < libing_lists.count(); i++)
- * 			mark(my_lists[i]);
- * 	}
- * };
- * @endcode
- *
- * @param T		Type of the item in the list.
- * @ingroup imm
+ * @fn list<T> list::remove(const T& h);
+ * Build a new list without the first instance of h.
+ * @param h		Item to remove.
+ * @return		List without first instance of h.
  */
 
 
 /**
- * @fn list<T> ListGC::cons(const T& h, list<T> tl);
+ * @fn list<T> cons(const T& h, list<T> tl);
  * Build a new list node with h value and prepend it to tl.
  * @param h		Item to store in the new node.
  * @param t		List to preprend to.
  * @return		Created list.
- */
-
-
-/**
- * @fn void ListGC::mark(list<T> l);
- * when a garbage collection is running, inform the collector that the given list is alive.
- * @param l		List to mark as alive.
  */
 
 } }	// elm::imm

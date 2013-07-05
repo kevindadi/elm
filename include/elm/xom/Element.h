@@ -54,6 +54,7 @@ public:
 	virtual String getQualifiedName(void);
 	virtual String getValue(void);
 	virtual void insertChild(String text, int position);
+	virtual void insertChild(Node *node, int position);
 	virtual Attribute *removeAttribute(Attribute *attribute);
 	virtual Nodes *removeChildren(void);
 	virtual void removeNamespaceDeclaration(String prefix);
