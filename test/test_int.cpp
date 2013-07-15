@@ -15,5 +15,16 @@ TEST_BEGIN(int)
 		CHECK_EQUAL(msb(1UL << i), i);
 	for(int i = 1; i < 32; i++)
 		CHECK_EQUAL(msb((1UL << i) | (1UL << (i - 1))), i);
+	
+	CHECK_EQUAL(type_info<int8_t>::max,	 int8_t(0x7f));
+	CHECK_EQUAL(type_info<int16_t>::max, int16_t(0x7fff));
+	CHECK_EQUAL(type_info<int32_t>::max, int32_t(0x7fffffff));
+	CHECK_EQUAL(type_info<int64_t>::max, int64_t(0x7fffffffffffffffLL));
+
+	CHECK_EQUAL(type_info<int8_t>::min,	 int8_t(0x80));
+	CHECK_EQUAL(type_info<int16_t>::min, int16_t(0x8000));
+	CHECK_EQUAL(type_info<int32_t>::min, int32_t(0x80000000));
+	CHECK_EQUAL(type_info<int64_t>::min, int64_t(0x8000000000000000LL));
+	
 TEST_END
 

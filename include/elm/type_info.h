@@ -88,7 +88,7 @@ struct signed_info: public scalar_t {
 	static const int size = sizeof(I) * 8;
 	static const bool is_signed = true;
 	static const I min = I(-1) << (size - 1);
-	static const I max = I(1) << (size - 1);
+	static const I max = min - 1;
 	static const I null = 0;
 };
 template <class I> const I signed_info<I>::null;
