@@ -64,6 +64,8 @@ inline t::uint32 rounddown(t::uint32 v, t::uint32 m) { return v / m * m; }
 inline t::uint32 abs(t::int32 v) { return  v >= 0 ? v : (-v); }
 t::uint32 leastUpperPowerOf2(t::uint32 v);
 t::uint64 leastUpperPowerOf2(t::uint64 v);
+t::uint32 mult(t::uint32 a, t::uint32, bool& over);
+t::uint64 mult(t::uint64 a, t::uint64, bool& over);
 
 } // elm
 

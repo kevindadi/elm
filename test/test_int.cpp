@@ -26,5 +26,14 @@ TEST_BEGIN(int)
 	CHECK_EQUAL(type_info<int32_t>::min, int32_t(0x80000000));
 	CHECK_EQUAL(type_info<int64_t>::min, int64_t(0x8000000000000000LL));
 	
+	t::uint32 r;
+	bool over;
+	r = mult(t::uint32(10), t::uint32(10), over);
+	CHECK(!over && r == 100);
+	r = mult(t::uint32(0x00ffffff), t::uint32(0x100), over);
+	CHECK(!over && r == 0xffffff00);
+	r = mult(t::uint32(0xffffff00), t::uint32(0xff), over);
+	CHECK(over);
+
 TEST_END
 

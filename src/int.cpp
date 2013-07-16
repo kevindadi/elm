@@ -267,4 +267,32 @@ t::uint64 leastUpperPowerOf2(t::uint64 v) {
 		return 1 << (m + 1);
 }
 
+
+/**
+ * Perform multiplication on unsigned integer 32-bits.
+ * @param	a		First number to multiply.
+ * @param	b		Second number to multiply.
+ * @param	over	Set to true if overflow occurs.
+ * @return			Result of multiplication (only valide if over is false).
+ */
+t::uint32 mult(t::uint32 a, t::uint32 b, bool& over) {
+	t::uint32 r = a * b;
+	over = r < a || r < b;
+	return r;
+}
+
+
+/**
+ * Perform multiplication on unsigned integer 64-bits.
+ * @param	a		First number to multiply.
+ * @param	b		Second number to multiply.
+ * @param	over	Set to true if overflow occurs.
+ * @return			Result of multiplication (only valide if over is false).
+ */
+t::uint64 mult(t::uint64 a, t::uint64 b, bool& over) {
+	t::uint64 r = a * b;
+	over = r < a || r < b;
+	return r;
+}
+
 }	// elm
