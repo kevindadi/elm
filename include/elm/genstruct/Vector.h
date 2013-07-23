@@ -56,6 +56,9 @@ public:
 	int indexOf(const T& value, int start = 0) const;
 	int lastIndexOf(const T& value, int start = -1) const;
 	inline operator bool(void) const;
+	inline bool operator==(const Vector<T>& v) const
+		{ if(length() != v.length()) return false; for(int i = 0; i < length(); i++) if(item(i) != v[i]) return false; return true; }
+	inline bool operator!=(const Vector<T>& v) const { return !(*this == v); }
 	
 	// Iterator
 	class Iterator: public PreIterator<Iterator, T> {

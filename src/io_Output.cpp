@@ -341,6 +341,7 @@ void Output::print(const IntFormat& fmt) {
 			break;
 		default:
 			ASSERTP(0, "unknown alignment constant");
+			break;
 		}
 	
 	// Perform the display

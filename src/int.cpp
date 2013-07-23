@@ -274,6 +274,7 @@ t::uint64 leastUpperPowerOf2(t::uint64 v) {
  * @param	b		Second number to multiply.
  * @param	over	Set to true if overflow occurs.
  * @return			Result of multiplication (only valide if over is false).
+ * @ingroup int
  */
 t::uint32 mult(t::uint32 a, t::uint32 b, bool& over) {
 	t::uint32 r = a * b;
@@ -288,6 +289,7 @@ t::uint32 mult(t::uint32 a, t::uint32 b, bool& over) {
  * @param	b		Second number to multiply.
  * @param	over	Set to true if overflow occurs.
  * @return			Result of multiplication (only valide if over is false).
+ * @ingroup int
  */
 t::uint64 mult(t::uint64 a, t::uint64 b, bool& over) {
 	t::uint64 r = a * b;
