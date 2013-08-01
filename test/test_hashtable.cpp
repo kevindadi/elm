@@ -70,7 +70,7 @@ TEST_BEGIN(hashtable)
 		}
 		CHECK(!mask);
 		mask = 0x3ff;
-		for(genstruct::HashTable<int, int>::ItemIterator item(tab); item; item++) {
+		for(genstruct::HashTable<int, int>::Iterator item(tab); item; item++) {
 			CHECK(mask & (1 << item));
 			mask &= ~(1 << item);
 		}

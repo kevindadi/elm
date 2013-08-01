@@ -81,7 +81,7 @@ XOMUnserializer::~XOMUnserializer(void) {
 /**
  */	
 void XOMUnserializer::close(void) {
-	for(genstruct::HashTable<CString,  ref_t *>::ItemIterator ref(refs); ref; ref++)
+	for(genstruct::HashTable<CString,  ref_t *>::Iterator ref(refs); ref; ref++)
 		if(!ref->ptr) {
 			CString id = ref.key();
 			throw io::IOException(_ << "unsolved reference \"" << id << "\"");

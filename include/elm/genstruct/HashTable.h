@@ -44,14 +44,18 @@ class HashTable {
 	
 	// InternIterator
 	class InternIterator {
-		const HashTable<K, T, H>& htab;
-		int i;
+	public:
+		inline InternIterator(const HashTable<K, T, H>& _htab): htab(&_htab) { i = 0; step(); }
+		inline InternIterator(const InternIterator& it): htab(it.htab), i(it.i), node(it.node) { }
+		inline InternIterator& operator=(const InternIterator& it) { htab = it.htab; i = it.i; node = it.node; }
+		inline bool ended(void) const { return i >= htab->size; }
+		inline void next(void) { node = node->next; if(!node) { i++; step(); }  }
 	protected:
 		node_t *node;
-	public:
-		inline InternIterator(const HashTable<K, T, H>& htab);
-		inline bool ended(void) const;
-		inline void next(void);
+	private:
+		inline void step(void) { for(; i < htab->size; i++) if(htab->tab[i]) { node = htab->tab[i]; break; } }
+		const HashTable<K, T, H> *htab;
+		int i;
 	};
 	
 public:
@@ -76,6 +80,8 @@ public:
 	class KeyIterator: public InternIterator, public PreIterator<KeyIterator, K> {
 	public:
 		inline KeyIterator(const HashTable<K, T, H>& htab): InternIterator(htab) { };
+		inline KeyIterator(const KeyIterator& it): InternIterator(it) { }
+		inline KeyIterator& operator=(const KeyIterator& it) { InternIterator::operator==(it); return *this; }
 		inline K item(void) const { return this->node->key; }
 	};
 
@@ -83,6 +89,8 @@ public:
 	class Iterator: public InternIterator, public PreIterator<Iterator, T> {
 	public:
 		inline Iterator(const HashTable<K, T, H>& htab): InternIterator(htab) { };
+		inline Iterator(const Iterator& it): InternIterator(it) { }
+		inline Iterator& operator=(const Iterator& it) { InternIterator::operator==(it); return *this; }
 		inline T item(void) const { return this->node->value; }
 		inline T& useItem(void) const { return this->node->value; }
 		inline const K& key(void) const { return this->node->key; };
@@ -92,6 +100,8 @@ public:
 	class PairIterator: public InternIterator, public PreIterator<PairIterator, Pair<K, T> > {
 	public:
 		inline PairIterator(const HashTable<K, T, H>& htab): InternIterator(htab) { };
+		inline PairIterator(const PairIterator& it): InternIterator(it) { }
+		inline PairIterator& operator=(const PairIterator& it) { InternIterator::operator==(it); return *this; }
 		inline Pair<K, T> item(void) const { return pair(this->node->key, this->node->value); }
 	};
 
@@ -109,12 +119,12 @@ public:
 	};
 
 	// Deprecated
-	class ItemIterator: public InternIterator, public PreIterator<ItemIterator, T> {
+	/*class ItemIterator: public InternIterator, public PreIterator<ItemIterator, T> {
 	public:
 		inline ItemIterator(const HashTable<K, T, H>& htab): InternIterator(htab) { };
 		inline T item(void) const { return this->node->value; }
 		inline const K& key(void) const { return this->node->key; };
-	};
+	};*/
 };
 
 
@@ -254,34 +264,6 @@ void HashTable<K, T, H>::SameKeyIterator::next(void) {
 }
 
 
-// Iterator methods
-template <class K, class T, class H>
-HashTable<K, T, H>::InternIterator::InternIterator(const HashTable<K, T, H>& _htab):
-htab(_htab) {
-	for(i = 0; i < htab.size; i++)
-		if(htab.tab[i]) {
-			node = htab.tab[i];
-			break;
-		}
-}
-
-template <class K, class T, class H>
-bool HashTable<K, T, H>::InternIterator::ended(void) const {
-	return i >= htab.size;
-}
-
-template <class K, class T, class H>
-void HashTable<K, T, H>::InternIterator::next(void) {
-	node = node->next;
-	if(!node)
-		for(i++; i < htab.size; i++)
-			if(htab.tab[i]) {
-				node = htab.tab[i];
-				break;
-			}
-}
-
-	
 } }	// elm::genstruct
 
 #endif	// ELM_GENSTRUCT_HASHTABLE_H
