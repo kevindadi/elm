@@ -90,7 +90,7 @@ public:
 	public:
 		inline Iterator(const HashTable<K, T, H>& htab): InternIterator(htab) { };
 		inline Iterator(const Iterator& it): InternIterator(it) { }
-		inline Iterator& operator=(const Iterator& it) { InternIterator::operator==(it); return *this; }
+		inline Iterator& operator=(const Iterator& it) { InternIterator::operator=(it); return *this; }
 		inline T item(void) const { return this->node->value; }
 		inline T& useItem(void) const { return this->node->value; }
 		inline const K& key(void) const { return this->node->key; };
@@ -101,7 +101,7 @@ public:
 	public:
 		inline PairIterator(const HashTable<K, T, H>& htab): InternIterator(htab) { };
 		inline PairIterator(const PairIterator& it): InternIterator(it) { }
-		inline PairIterator& operator=(const PairIterator& it) { InternIterator::operator==(it); return *this; }
+		inline PairIterator& operator=(const PairIterator& it) { InternIterator::operator=(it); return *this; }
 		inline Pair<K, T> item(void) const { return pair(this->node->key, this->node->value); }
 	};
 

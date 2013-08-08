@@ -33,8 +33,8 @@ public:
 	class Make: public Option::Make {
 		friend class AbstractValueOption;
 	public:
-		inline Make(Manager *man): Option::Make(man), _usage(arg_none) { }
-		inline Make(Manager& man): Option::Make(man), _usage(arg_none) { }
+		inline Make(Manager *man): Option::Make(man), _usage(arg_required) { }
+		inline Make(Manager& man): Option::Make(man), _usage(arg_required) { }
 		inline Make& argDescription(cstring s) { arg_desc = s; return *this; }
 		inline Make& usage(usage_t u) { _usage = u; return *this; }
 		inline Make& cmd(string c) { Option::Make::cmd(c); return *this; }
@@ -73,6 +73,7 @@ template <class T>
 class ValueOption: public AbstractValueOption {
 public:
 	class Make: public AbstractValueOption::Make {
+		friend class ValueOption<T>;
 	public:
 		inline Make(Manager *man): AbstractValueOption::Make(man) { }
 		inline Make(Manager& man): AbstractValueOption::Make(man) { }
@@ -87,7 +88,7 @@ public:
 
 	inline ValueOption(void) { }
 
-	inline ValueOption(const Make& make): AbstractValueOption(make), val(def) { }
+	inline ValueOption(const Make& make): AbstractValueOption(make), val(make._def) { }
 
 	inline ValueOption(Manager& man, int tag ...)
 		: AbstractValueOption(man)
@@ -126,13 +127,20 @@ protected:
 	virtual void configure(Manager& manager, int tag, VarArg& args) {
 		switch(tag) {
 		case def: val = get(args); break;
-		default: AbstractValueOption::configure(manager, tag, args);
+		default: AbstractValueOption::configure(manager, tag, args); break;
 		}
 	}
 
 private:
 	T val;
 	inline T get(VarArg& args) { return args.next<T>(); }
+};
+
+
+// alias
+template <class T> class Value: public ValueOption<T> {
+public:
+	inline Value(const typename ValueOption<T>::Make& make): ValueOption<T>(make) { }
 };
 
 // string specialization

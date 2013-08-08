@@ -52,6 +52,8 @@ private:
 	bool val;
 };
 
+typedef SwitchOption Switch;
+
 } } // otawa::option
 
 #endif /* OTAWA_OPTION_SWITCHOPTION_H_ */
