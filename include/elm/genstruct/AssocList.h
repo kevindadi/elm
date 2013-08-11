@@ -60,7 +60,7 @@ public:
 	class Iterator: public PreIterator<Iterator, T> {
 	public:
 		inline Iterator(const AssocList& list): iter(list) { }
-		inline Iterator(const Iterator& iterator): iter(iterator) { }
+		inline Iterator(const Iterator& iterator): iter(iterator.iter) { }
 		inline Iterator& operator=(const Iterator& iterator)
 			{ iter = iterator.iter; return *this; }
 		
@@ -97,7 +97,7 @@ public:
 	class KeyIterator: public PreIterator<KeyIterator, K> {
 	public:
 		inline KeyIterator(const AssocList& list): iter(list) { }
-		inline KeyIterator(const KeyIterator& iterator): iter(iterator) { }
+		inline KeyIterator(const KeyIterator& iterator): iter(iterator.iter) { }
 		inline KeyIterator& operator=(const KeyIterator& iterator)
 			{ iter = iterator.iter; return *this; }
 		

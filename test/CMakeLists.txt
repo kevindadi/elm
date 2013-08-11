@@ -40,6 +40,7 @@ set(TEST_SOURCES
 	"test_frag_table.cpp"
 	"test_hashkey.cpp"
 	"test_hashtable.cpp"
+	"test_ini.cpp"
 	"test_int.cpp"
 	"test_io_format.cpp"
 	"test_list.cpp"

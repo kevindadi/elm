@@ -45,6 +45,7 @@ set(LIBELM_LA_SOURCES
 	"inhstruct_DLList.cpp"
 	"inhstruct_SLList.cpp"
 	"inhstruct_Tree.cpp"
+	"ini.cpp"
 	"int.cpp"
 	"io_BlockInStream.cpp"
 	"io_BlockOutStream.cpp"
