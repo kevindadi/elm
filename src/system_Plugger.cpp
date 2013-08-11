@@ -37,15 +37,32 @@
 #include <elm/sys/Plugger.h>
 #include <elm/sys/System.h>
 #include <elm/io.h>
+#include <elm/ini.h>
 
-
-/*#ifdef WITH_LIBTOOL
-	extern "C" {
-		extern const lt_dlsymlist lt_preloaded_symbols[];
-	}
-#endif*/
 
 namespace elm { namespace sys {
+
+static cstring ELD_EXT = "eld";
+static cstring
+	SECTION_NAME = "elm-plugin",
+	// NAME_ATT = "name",
+	PATH_ATT = "path",
+	// DESCRIPTION = "description",
+	RPATH_ATT = "rpath",
+	LIBS_ATT = "libs",
+	DEPS_ATT;
+
+static cstring PLUG_EXT =
+#ifdef WITH_LIBTOOL
+		"la";
+#elif defined(__WIN32) || defined(__WIN64)
+		"dll";
+#elif defined(__APPLE__)
+		"dylib";
+#else
+		"so";
+#endif
+
 
 /**
  * @class Plugger
@@ -180,15 +197,7 @@ Plugin *Plugger::plug(const string& name) {
 	// Load the plugin
 	for(int i = 0; i < paths.count(); i++) {
 		StringBuffer buf;
-		#ifdef WITH_LIBTOOL
-			buf << paths[i] << "/" << name << ".la";
-		#elif defined(__WIN32) || defined(__WIN64)
-			buf << paths[i] << "/" << name << ".dll";
-		#elif defined(__APPLE__)
-			buf << paths[i] << "/" << name << ".dylib";
-		#else
-			buf << paths[i] << "/" << name << ".so";
-		#endif
+		buf << paths[i] << "/" << name << "." << PLUG_EXT;
 		error_t old_err = err;
 		Plugin *plugin = plugFile(buf.toString());
 		if(plugin)
@@ -213,12 +222,131 @@ Plugin *Plugger::plug(Plugin *plugin, void *handle) {
 
 
 /**
+ * Evaluate the given path. For now, replaced only prefix "$ORIGIN" by current plugin
+ * path.
+ * @param plugin_path	Path to the current plugin.
+ * @param path			Path to transform.
+ * @return				Transformed path.
+ */
+static inline sys::Path evaluate(sys::Path plugin_path, sys::Path path) {
+	string p = path;
+	if(p.startsWith("$ORIGIN")) {
+		return plugin_path.dirPart() / p.substring(7);
+	}
+	else
+		return path;
+}
+
+
+/**
+ * Link an OS library.
+ * @param lib		Library to link (OS extension is automatically added if required).
+ * @return			Opened library or null.
+ */
+void *Plugger::link(sys::Path lib) {
+#	if defined(__WIN32) || defined(__WIN64)
+		return LoadLibrary(&lib);
+#	elif defined(WITH_LIBTOOL)
+		return lt_dlopen(&lib);
+#	else
+		return dlopen(&lib, RTLD_LAZY);
+#	endif
+}
+
+
+/**
+ * Look and load a library.
+ * @param lib	Library path (OS extension automatically added).
+ * @param rpath	List of paths to look in (if empty, look in OS pathes).
+ * @return		Hook on the library.
+ */
+void *Plugger::lookLibrary(sys::Path lib, genstruct::Vector<string> rpath) {
+	lib = lib.setExtension(PLUG_EXT);
+	if(lib.isAbsolute() || !rpath)
+		return link(lib);
+	else {
+		for(int i = 0; i < rpath.count(); i++) {
+			void *handle = link(sys::Path(rpath[i]) / lib);
+			if(handle)
+				return handle;
+		}
+		return 0;
+	}
+}
+
+
+/**
+ * Look for a symbol in the given library.
+ * @param handle	Handle of the library to look in.
+ * @param name		Name of the looked symbol.
+ * @return			Address of the symbol or null.
+ */
+void *Plugger::lookSymbol(void *handle, cstring name) {
+#	if defined(__WIN32) || defined(__WIN64)
+		return GetProcAddress(reinterpret_cast<HINSTANCE&>(handle), &name);
+#	elif defined(WITH_LIBTOOL)
+		return lt_dlsym((lt_dlhandle)handle, &name);
+#	else
+		return dlsym(handle, &name);
+#	endif
+}
+
+
+/**
  * Plug the given file in the plugger.
  * @param path	Path of file to plug.
  * @return		Plugin or null if there is an error.
  */
-Plugin *Plugger::plugFile(String path) {
+Plugin *Plugger::plugFile(sys::Path path) {
 	err = OK;
+
+	// look for ELD file
+	sys::Path ppath = path;
+	if(ppath.extension() == PLUG_EXT)
+		ppath = ppath.setExtension(ELD_EXT);
+	else if(ppath.extension() != ELD_EXT)
+		ppath = _ << ppath << "." << ELD_EXT;
+	try {
+		ini::File *file = ini::File::load(ppath);
+		ini::Section *sect = file->get(SECTION_NAME);
+		if(sect) {
+
+			// just renaming
+			sys::Path npath = sect->get(PATH_ATT);
+			if(npath)
+				return plugFile(evaluate(ppath, npath).setExtension(PLUG_EXT));
+
+			// pre-link other plugins
+			genstruct::Vector<string> deps;
+			sect->getList(DEPS_ATT, deps);
+			for(int i = 0; i < deps.count(); i++)
+				if(!plug(deps[i])) {
+					onError(level_error, _ << "cannot plug " << deps[i]);
+					return 0;
+				}
+
+			// pre-link libraries
+			genstruct::Vector<string> libs;
+			sect->getList(LIBS_ATT, libs);
+			if(libs) {
+
+				// add the RPATH if any
+				genstruct::Vector<string> rpaths;
+				sect->getList(RPATH_ATT, rpaths);
+				for(int i = 0; i < rpaths.count(); i++)
+					rpaths[i] = evaluate(ppath, rpaths[i]);
+
+				// link the libraries
+				for(int i = 0; i < libs.count(); i++)
+					if(!lookLibrary(evaluate(ppath, libs[i]), rpaths)) {
+						onError(level_error, _ << "cannot link " << libs[i]);
+						return 0;
+					}
+			}
+		}
+	}
+	catch(ini::Exception& e) {
+	}
 
 	// Check existence of the file
 	sys::FileItem *file = 0;
@@ -260,13 +388,14 @@ Plugin *Plugger::plugFile(String path) {
 	file->release();
 
 	// Open shared library
-	#if defined(__WIN32) || defined(__WIN64)
+	/*#if defined(__WIN32) || defined(__WIN64)
 		void *handle = LoadLibrary(&path);
 	#elif defined(WITH_LIBTOOL)
 		void *handle = lt_dlopen(&path);
 	#else
 		void *handle = dlopen(&path, RTLD_LAZY);
-	#endif
+	#endif*/
+	void *handle = link(path);
 	if(!handle) {
 		err = BAD_PLUGIN;
 		onError(level_warning, _ << "invalid plugin found at \"" << path << "\" (no handle): "
@@ -281,13 +410,14 @@ Plugin *Plugger::plugFile(String path) {
 	}
 
 	// Look for the plugin symbol
-	#if defined(__WIN32) || defined(__WIN64)
+	/*#if defined(__WIN32) || defined(__WIN64)
 		Plugin *plugin = (Plugin *)GetProcAddress(reinterpret_cast<HINSTANCE&>(handle),&_hook);
 	#elif defined(WITH_LIBTOOL)
 		Plugin *plugin = (Plugin *)lt_dlsym((lt_dlhandle)handle, &_hook);
 	#else
 		Plugin *plugin = (Plugin *)dlsym(handle, &_hook);
-	#endif
+	#endif*/
+	Plugin *plugin = static_cast<Plugin *>(lookSymbol(handle, &_hook));
 	if(!plugin) {
 		err = NO_HOOK;
 		onError(level_warning, _ << "invalid plugin found at \"" << path << "\" (no hook)");

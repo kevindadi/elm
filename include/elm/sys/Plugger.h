@@ -50,7 +50,7 @@ public:
 	void removePath(String path);
 	void resetPaths(void);
 	Plugin *plug(const string& path);
-	Plugin *plugFile(String path);
+	Plugin *plugFile(sys::Path path);
 	inline String hook(void) const;
 	string getLastError(void);
 
@@ -97,8 +97,10 @@ private:
 	static void leave(Plugin *plugin);
 	Plugin *plug(Plugin *plugin, void *handle);
 	inline genstruct::Vector<Plugin *>& statics(void);
-	//	string getLastError(void);
 	void onError(error_level_t level, const string& message);
+	void *link(sys::Path lib);
+	void *lookSymbol(void *handle, cstring hook);
+	void *lookLibrary(sys::Path lib, genstruct::Vector<string> rpath);
 };
 
 // Inlines

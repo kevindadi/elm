@@ -219,7 +219,7 @@ String Path::namePart(void) const {
  * Return the directory part of the path.
  * @return	Directory part.
  */
-String Path::dirPart(void) const {
+sys::Path Path::dirPart(void) const {
 	int pos = lastSeparator();
 	if(pos < 0)
 		return "";
@@ -360,7 +360,7 @@ Path Path::basePart(void) const {
 
 /**
  * Get the extension of the referenced file name.
- * @return	Extension.
+ * @return	Extension or an empty string if there is no extension.
  */
 String Path::extension(void) const {
 	int pos = lastSeparator();

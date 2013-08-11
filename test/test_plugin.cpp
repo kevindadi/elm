@@ -133,5 +133,11 @@ TEST_BEGIN(plugin)
 		CHECK(!plugin);
 	}
 
+	// check the aliasing
+	{
+		Plugin *alias = plugger.plug("alias");
+		CHECK(alias);
+	}
+
 TEST_END
 

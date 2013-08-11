@@ -52,11 +52,12 @@ namespace elm { namespace sys {
  *
  * @section use_plugins Using a Plugin
  *
- * ELM provides classes to implement plugins in an OS-indepedent way. As this
- * system is based on the libtool package, it may be used on systems with
- * or without shared code facilities.
+ * ELM provides classes to implement plugins in an OS-indepedent way.
+ * To work-around found on some OS, ELM provides also an independent way
+ * to optionaly represent dependencies between plugins based on textual file
+ * with ".ini" syntax.
  *
- * To use plugins, we need to entity kind. A plugin is a piece of code that
+ * A plugin is a piece of code that
  * provides some service while the plugger allows to plug many different
  * plugins to implement this service.
  *
@@ -64,11 +65,11 @@ namespace elm { namespace sys {
  * an application to have different kinds of services and matching plugins -
  * and a version for the current implemented plugin interface. For example,
  * below, the plugger provides "net_plugin" services at version 1.0.0 (see
- * @ref elm::Version for more details). We may also gives a list of directory
- * to look for finding the plugin.
+ * @ref elm::Version for more details). We may also gives a list of directories
+ * to look to find the plugin.
  * @code
- * elm::system::Plugger net_plugger("net_plugin", Version(1, 0, 0),
- * 	".:/usr/local/net_plugins");
+ * #define NET_HOOK	net_plugin
+ * elm::system::Plugger net_plugger(#NET_HOOK, Version(1, 0, 0), ".:/usr/local/net_plugins");
  * @endcode
  *
  * To open a specific plugin named, for example, "my_net_plugin", we have only
@@ -76,7 +77,7 @@ namespace elm { namespace sys {
  * @code
  * elm::system::Plugin *plugin = net_plugger.plug("my_net_plugin");
  * @endcode
- * If the plugin is found, is loadable and has a compatible version, it loaded,
+ * If the plugin is found, is loadable and has a compatible version, it is loaded,
  * initialized and its instance is returned. If there is an error, a null
  * pointer is returned and the method Plugger::lastErrorMessage() may give
  * some information about the error.
@@ -87,15 +88,15 @@ namespace elm { namespace sys {
  *
  * Having just a plugin pointer does not provide any service. To do it, we have
  * usually to define an interface that is implemented by the plugin instance.
- * Let's call it "NetPlugin": it must be implement the elm::system::Plugin class.
+ * Let's call it "NetPlugin": it must be derived from the elm::system::Plugin class.
  * Notice that the interface pass the right name of the service but should not
  * pass the version. Otherwise, the service version would be ever compatible
  * while the actual binary would be compiled for an incompatible version.
  * @code
  * class NetPlugin: public Plugin {
  * public:
-	Plugin(String name, const Version& version)
-		: Plugin(name, version, "net_plugin") {
+ *	NetPlugin(String name, const Version& version)
+ *		: Plugin(name, version, "net_plugin") {
  *  	};
  * 	virtual void performService(void) = 0;
  * };
@@ -103,7 +104,7 @@ namespace elm { namespace sys {
  * Then, we can cast the plugin to its required interface and we can call the
  * service:
  * @code
- * NetPlugin *net_plugin = (NetPlugin *)plugin;
+ * NetPlugin *net_plugin = static_cast<NetPlugin *>(plugin);
  * net_plugin->performService();
  * @endcode
  *
@@ -116,7 +117,7 @@ namespace elm { namespace sys {
  *
  * To create a plugin, we have to define a class implementing the service
  * interface of the plugger to plug to. Let's continue the example started
- * in the example from the previous section. Notice that we must implemented
+ * in the previous section. Notice that we must implement
  * the pure virtual functions of the interface in order to be able to create
  * an instance of the plugin class.
  * @code
@@ -144,13 +145,62 @@ namespace elm { namespace sys {
  * name of the service.
  * @code
  * MyNetPlugin my_net_plugin;
- * Plugin *ney_plugin = &my_net_plugin;
+ * Plugin *NET_HOOK = &my_net_plugin;
  * @endcode
  * The result source must then be compiled to produce a shared code with
- * libtool.
+ * your preferred compiler For example, with GCC on a Unix OS.
  * @code
- * libtool --mode=link g++ -module -o my_net_plugin.la my_net_plugin.cpp \
- * 		-rpath /usr/local/net_plugins
+ * gcc -shared -o my_net_plugin.so my_net_plugin.cpp
+ * @endcode
+ *
+ * @section eld_files ELD Files
+ *
+ * ELM Linkage Description (ELD) files allows to circumvent limitations found on some OSes.
+ * Basically, ELD files are textual files with ".eld" extension implementing the ".ini" file
+ * syntax. They must placed in the same directory as the plugin they apply to and get the same
+ * name as the plugin with the plugin extension replaced by ".eld".
+ *
+ * As usual ".ini" files, they can contain as many sections as possible but ELM is only interested
+ * in the "elm-plugin" section that may contain the following definitions:
+ * @li "author" -- author of the plugin in the form "AUTHOR <EMAIL>",
+ * @li "copyright" -- name and, optionally, link to the license,
+ * @li "deps" -- ";" separated list of plugin names to load before the current plugin.
+ * @li "description" -- description of the plugin for human user,
+ * @li "libs" -- ";" separated list of library names or paths (absolute or relative) to load before the current plugin,
+ * @li "name" -- alternative name of the plugin,
+ * @li "path" -- absolute or relative path to the actual plugin (support for aliasing),
+ * @li "rpaths" -- ";" separated list of paths to look for require plugins,
+ * @li "site" -- URL to the website publising the plugin.
+ *
+ * "path" definition allows to cope with the lack of support for symnolic links on some OSes.
+ *
+ * "rpaths" and "libs" are used to handle easily dependencies between plugins and libraries when the OSes
+ * does not support linkage lookup path encoded in executable.
+ *
+ * Paths found in "path", "libs" and "rpaths" can be prefixed by "$ORIGIN" that is replaced,
+ * at run time, by the path of the directory containing the considered plugin.
+ *
+ * Below is an example of ELD files for our example requiring two other libraries that should be found
+ * in the directory containing the plugin or in directory "/usr/lib".
+ * It is named "net_plugin.eld" and put in the same directory
+ * as "net_plugin.so".
+ * @code
+ * [elm-plugin]
+ * libs=libxml2;libxslt
+ * rpath=$ORIGIN;/usr/lib
+ * @endcode
+ *
+ * Below another example allows to have an alias, "net_plugin_v2" to "net_plugin". The file is named
+ * "net_plugin_v2.eld":
+ * @code
+ * [elm-plugin]
+ * path=$ORIGIN/net_plugin
+ * @endcode
+ *
+ * This last example links with library libxml2 from the OS path:
+ * @code
+ * [elm-plugin]
+ * libs=libxml2
  * @endcode
  */
 

@@ -57,7 +57,7 @@ public:
 	// Accessors
 	inline const String& toString(void) const { return buf; }
 	String namePart(void) const;
-	String dirPart(void) const;
+	sys::Path dirPart(void) const;
 	Path basePart(void) const;
 	String extension(void) const;
 	bool isAbsolute(void) const;
@@ -75,8 +75,6 @@ public:
 	bool isReadable(void) const;
 	bool isWritable(void) const;
 	bool isExecutable(void) const;
-	/*bool operator==(const Path& path) { return buf == path.buf; }
-	bool operator!=(const Path& path) { return !operator==(path); }*/
 	
 	// Operator
 	inline Path& operator=(const char *str) { buf = str; return *this; }
