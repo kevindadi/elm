@@ -283,7 +283,7 @@ void *Plugger::lookLibrary(sys::Path lib, genstruct::Vector<string> rpath) {
  */
 void *Plugger::lookSymbol(void *handle, cstring name) {
 #	if defined(__WIN32) || defined(__WIN64)
-		return GetProcAddress(reinterpret_cast<HINSTANCE&>(handle), &name);
+		return (void *)(GetProcAddress(reinterpret_cast<HINSTANCE&>(handle), &name));
 #	elif defined(WITH_LIBTOOL)
 		return lt_dlsym((lt_dlhandle)handle, &name);
 #	else
