@@ -1,5 +1,5 @@
 /*
- *	stree::Builder class interface
+ *	stree::MarkerBuilder class interface
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2013, IRIT UPS.
@@ -22,7 +22,7 @@
 #define ELM_STREE_MARKERBUILDER_H_
 
 #include <elm/stree/Builder.h>
-#include <elm/genstruct/AVLMap.h>
+#include <elm/avl/Map.h>
 
 namespace elm { namespace stree {
 
@@ -42,7 +42,7 @@ public:
 
 		// insert the bounds
 		int i = 0;
-		typename genstruct::AVLMap<K, T, C>::Iterator iter(marks);
+		typename avl::Map<K, T, C>::Iterator iter(marks);
 		Pair<K, T> l = *iter;
 		for(iter++; iter; iter++) {
 			Pair<K, T> u = *iter;
@@ -59,7 +59,7 @@ public:
 	}
 
 private:
-	genstruct::AVLMap<K, T, C> marks;
+	avl::Map<K, T, C> marks;
 };
 
 } }		// elm::stree

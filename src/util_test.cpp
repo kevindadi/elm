@@ -283,6 +283,15 @@ TestCase::~TestCase(void) {
 
 
 /**
+ * Perform the tests of the test set.
+ */
+void TestSet::perform(void) {
+	for(Iterator test(*this); test; test++)
+		test->perform();
+}
+
+
+/**
  * Singleton of TestSet.
  */
 TestSet TestSet::def;

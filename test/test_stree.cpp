@@ -22,6 +22,7 @@
 #include <elm/util/test.h>
 #define ELM_STREE_DEBUG
 #include <elm/stree/MarkerBuilder.h>
+#include <elm/stree/SegmentBuilder.h>
 
 using namespace elm;
 using namespace elm::stree;
@@ -69,7 +70,7 @@ TEST_BEGIN(stree)
 		pair(0x0000825cU, THUMB),
 		pair(0x00008498U, THUMB),
 
-		/*pair(0x00008000U, ARM),
+		pair(0x00008000U, ARM),
 		pair(0x0000a910U, ARM),
 		pair(0x00008020U, ARM),
 		pair(0x000080a8U, ARM),
@@ -217,21 +218,38 @@ TEST_BEGIN(stree)
 		pair(0x00000878U, DATA),
 		pair(0x0000a904U, DATA),
 		pair(0x00008390U, THUMB),
-		pair(0x0000a908U, THUMB),*/
+		pair(0x0000a908U, THUMB),
 		pair(0xffffffff, ARM)
 	};
 	int marks_count = sizeof(marks) / sizeof(Pair<t::uint32, area_t>);
 	for(int i = 0; i < marks_count; i++)
 		builder.add(marks[i].fst, marks[i].snd);
 	builder.make(tree);
-	tree.dump();
+	//tree.dump();
 
 	// test start of content
-	/*for(int i = 0; i < marks_count - 1; i++)
-		CHECK_EQUAL(tree.get(marks[i].fst, NONE), marks[i].snd);*/
+	for(int i = 0; i < marks_count - 1; i++)
+		CHECK_EQUAL(tree.get(marks[i].fst, NONE), marks[i].snd);
 
 	// test middle of the content
-	/*for(int i = 0; i < marks_count - 1; i++)
-		CHECK_EQUAL(tree.get(marks[i].fst + 1, NONE), marks[i].snd);*/
+	for(int i = 0; i < marks_count - 1; i++)
+		CHECK_EQUAL(tree.get(marks[i].fst + 1, NONE), marks[i].snd);
+
+	// test the segment builder
+	{
+		SegmentBuilder<int, int> sbuilder(0);
+		sbuilder.add(1000, 2000, 1);
+		sbuilder.add(3000, 4000, 2);
+		sbuilder.add(4000, 5000, 3);
+		sbuilder.add(10000, 11000, 4);
+		sbuilder.add(11000, 13000, 5);
+		sbuilder.add(13500, 14000, 6);
+		Tree<int, int> tree;
+		sbuilder.make(tree);
+		CHECK_EQUAL(tree.get(500, 0), 0);
+		CHECK_EQUAL(tree.get(1000, 0), 1);
+		CHECK_EQUAL(tree.get(1500, 0), 1);
+		CHECK_EQUAL(tree.get(2500, 0), 0);
+	}
 
 TEST_END

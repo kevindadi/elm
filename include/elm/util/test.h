@@ -43,9 +43,11 @@ class TestSet: private Initializer<TestCase> {
 public:
 	static TestSet def;
 
+	void perform(void);
+
 	class Iterator: public genstruct::SLList<TestCase *>::Iterator {
 	public:
-		inline Iterator(void): genstruct::SLList<TestCase *>::Iterator(def.cases) { }
+		inline Iterator(const TestSet& set): genstruct::SLList<TestCase *>::Iterator(set.cases) { }
 		inline Iterator(const Iterator& iter): genstruct::SLList<TestCase *>::Iterator(iter) { }
 	};
 

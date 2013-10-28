@@ -69,7 +69,7 @@ public:
 			if(i < 0) i = root;
 			for(int j = 0; j < t; j++) out << "| ";
 			out << "|- ";
-			out << io::hex(nodes[i].lowerBound()) << " - " << io::hex(nodes[i].upperBound());
+			out << nodes[i].lowerBound() << " - " << nodes[i].upperBound();
 			if(nodes[i].isLeaf())
 				out << " -> " << nodes[i].data << io::endl;
 			else {

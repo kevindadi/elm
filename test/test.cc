@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 		cerr << "Modules:\n";
 		for(struct test_t *test = tests; test->fun; test++)
 			cerr << "\t" << test->name << io::endl;
-		for(TestSet::Iterator test; test; test++)
+		for(TestSet::Iterator test(TestSet::def); test; test++)
 			cerr << "\t" << test->name() << io::endl;
 		return 0;
 	}
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
 
 		// look in the test set
 		if(!found)
-			for(TestSet::Iterator test; test; test++)
+			for(TestSet::Iterator test(TestSet::def); test; test++)
 				if(test->name() == argv[i]) {
 					found = true;
 					test->perform();
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
 			test->fun();
 
 		// perform test from the test set
-		for(TestSet::Iterator test; test; test++)
+		for(TestSet::Iterator test(TestSet::def); test; test++)
 			test->perform();
 	}
 }
