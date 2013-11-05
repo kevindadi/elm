@@ -32,45 +32,56 @@ namespace elm { namespace genstruct {
 // EmbedVector class
 template <class T>
 class Vector {
-	T *tab;
-	unsigned short cap, cnt;
 public:
-	inline Vector(int _cap = 8);
-	inline Vector(const Vector<T>& vec);
-	inline ~Vector(void);
+	inline Vector(int _cap = 8): tab(new T[_cap]), cap(_cap), cnt(0) { }
+	inline Vector(const Vector<T>& vec): tab(0), cap(0), cnt(0) { copy(vec); }
+	inline ~Vector(void) { if(tab) delete [] tab; }
 	
+	// Iterator
+	class Iterator: public PreIterator<Iterator, T> {
+	public:
+		inline Iterator(const Vector& vec): _vec(vec), i(0) { }
+		inline Iterator(const Iterator& iter): _vec(iter._vec), i(iter.i) { }
+		inline bool ended(void) const { return i >= _vec.length(); }
+		inline const T& item(void) const { return _vec[i]; }
+		inline void next(void) { i++; }
+		inline int index(void) { return i; }
+		const Vector<T>& vector(void) { return _vec; }
+	private:
+		const Vector<T>& _vec;
+		int i;
+	};
+
 	// Accessors
 	int count(void) const { return cnt; }
 	inline int length(void) const { return count(); }
 	inline int capacity(void) const;
-	inline bool isEmpty(void) const;	
+	inline bool isEmpty(void) const { return cnt == 0; }
 	inline const T& get(int index) const;
 	inline T& item(int index);
 	inline void set(int index, const T value);
-	inline T& operator[](int index);
-	inline const T& operator[](int index) const;
+	inline T& operator[](int index) { return item(index); }
+	inline const T& operator[](int index) const { return get(index); }
 	bool contains(const T& value) const;
 	template <template <class _> class C> inline bool containsAll(const C<T>& items)
 		{ for(typename C<T>::Iterator item(items); item; item++)
 			if(!contains(item)) return false; return true; }
 	int indexOf(const T& value, int start = 0) const;
 	int lastIndexOf(const T& value, int start = -1) const;
-	inline operator bool(void) const;
+	inline operator bool(void) const { return cnt != 0; }
 	inline bool operator==(const Vector<T>& v) const
 		{ if(length() != v.length()) return false; for(int i = 0; i < length(); i++) if(get(i) != v[i]) return false; return true; }
 	inline bool operator!=(const Vector<T>& v) const { return !(*this == v); }
-	
-	// Iterator
-	class Iterator: public PreIterator<Iterator, T> {
-	public:
-		const Vector<T>& _vec;
-		int i;
-		inline Iterator(const Vector& vec);
-		inline Iterator(const Iterator& iter);
-		inline bool ended(void) const;
-		inline const T& item(void) const;
-		inline void next(void);
-	};
+	inline const T& first(void) const
+		{ ASSERT(cnt > 0); return tab[0]; }
+	inline const T& last(void) const
+		{ ASSERT(cnt > 0); return tab[cnt - 1]; }
+	inline Iterator find(const T &item)
+		{ Iterator i(*this); while(i && *i != item) i++; return i; }
+	inline Iterator find (const T &item, const Iterator &start)
+		{ Iterator i(start); while(i && *i != item) i++; return i; }
+	inline const T& top(void) const
+		{ ASSERTP(cnt > 0, "no more data in the stack"); return tab[cnt - 1]; }
 
 	// Mutators
 	inline void add(void);
@@ -78,42 +89,41 @@ public:
 	template <template <class _> class C> inline void addAll(const C<T>& items)
 		{ for(typename C<T>::Iterator item(items); item; item++) add(item); }
 	void removeAt(int index);
-	inline void remove(const T& value);
+	inline void remove(const T& value) { int i = indexOf(value); if(i >= 0) removeAt(i); }
 	inline void remove(const Iterator& iter) { removeAt(iter.i); }
 	template <template <class _> class C> inline void removeAll(const C<T>& items)
 		{ for(typename C<T>::Iterator item(items); item; item++) remove(item); }
 	void insert(int index, const T& value);
-	inline void clear(void);
+	inline void clear(void) { cnt = 0; }
 	void grow(int new_cap);
 	void setLength(int new_length);
 	inline Table<T> detach(void);
 	inline void copy(const Vector& vec);
 	inline Vector<T>& operator=(const Vector& vec) { copy(vec); return *this; };
 	inline void swallow(Vector<T>& v) { if(tab) delete [] tab; tab = v.tab; v.tab = 0; }
+	inline void insert(const T &item) { add(item); }
+	inline void push(const T& value)
+		{ add(value); }
+	inline const T pop(void)
+		{ ASSERTP(cnt > 0, "no more data to pop"); return tab[--cnt]; }
+	inline void addFirst(const T &item) { insert(0, item); }
+	inline void addLast(const T &item) { add(item); }
+	inline void removeFirst(void) { removeAt(0); }
+	inline void removeLast(void) { removeAt(cnt - 1); }
+	inline void set (const Iterator &pos, const T &item) { tab[pos.pos] = item; }
+	inline void addAfter(const Iterator &pos, const T &item) { insert(pos.i + 1, item); }
+	inline void addBefore(const Iterator &pos, const T &item) { insert(pos.i, item); }
 
-	// Stack processing
-	inline void push(const T& value);
-	inline const T pop(void);
-	inline const T& top(void) const;
+private:
+	T *tab;
+	unsigned short cap, cnt;
 };
 
 
 // EmbedVector methods
-template <class T> Vector<T>::Vector(int _cap)
-: tab(new T[_cap]), cap(_cap), cnt(0) {
-}
 
 
-template <class T> inline Vector<T>::Vector(const Vector<T>& vec)
-: tab(0), cap(0), cnt(0) {
-	copy(vec);
-}
 
-
-template <class T> Vector<T>::~Vector(void) {
-	if(tab)
-		delete [] tab;
-}
 
 template <class T>
 inline Table<T> Vector<T>::detach(void) {
@@ -124,9 +134,6 @@ inline Table<T> Vector<T>::detach(void) {
 
 template <class T> int Vector<T>::capacity(void) const {
 	return cap;
-}
-template <class T> bool Vector<T>::isEmpty(void) const {
-	return cnt == 0;
 }
 template <class T> T& Vector<T>::item(int index) {
 	ASSERTP(index < cnt, "index out of bounds");
@@ -139,12 +146,6 @@ template <class T> const T& Vector<T>::get(int index) const {
 template <class T> void Vector<T>::set(int index, const T value) {
 	ASSERTP(index < cnt, "index out of bounds");
 	tab[index] = value;
-}
-template <class T> T& Vector<T>::operator[](int index) {
-	return item(index);
-}
-template <class T> const T& Vector<T>::operator[](int index) const {
-	return get(index);
 }
 template <class T> bool Vector<T>::contains(const T& value) const {
 	for(int i = 0; i < cnt; i++)
@@ -165,9 +166,6 @@ template <class T> int Vector<T>::lastIndexOf(const T& value, int start) const {
 			return i;
 	return -1;
 }
-template <class T> Vector<T>::operator bool(void) const {
-	return cnt != 0;
-}
 
 template <class T> void Vector<T>::add(const T& value) {
 	if(cnt >= cap)
@@ -187,10 +185,6 @@ template <class T> void Vector<T>::removeAt(int index) {
 		tab[i - 1] = tab[i];
 	cnt--;
 }
-template <class T> void Vector<T>::remove(const T& value) {
-	int i = indexOf(value);
-	if(i >= 0) removeAt(i);
-}
 template <class T> void Vector<T>::insert(int index, const T& value) {
 	ASSERTP(index <= cnt, "index out of bounds");
 	if(cnt >= cap)
@@ -199,9 +193,6 @@ template <class T> void Vector<T>::insert(int index, const T& value) {
 		tab[i] = tab[i - 1];
 	tab[index] = value;
 	cnt++;
-}
-template <class T> void Vector<T>::clear(void) {
-	cnt = 0;
 }
 template <class T> void Vector<T>::grow(int new_cap) {
 	ASSERTP(new_cap > 0 && new_cap < 65536, "new capacity out of [1, 65535]");
@@ -236,42 +227,6 @@ template <class T> inline void Vector<T>::copy(const Vector& vec) {
 		tab[i] = vec.tab[i];
 }
 
-template <class T> inline void Vector<T>::push(const T& value) {
-	add(value);
-}
-
-template <class T> inline const T Vector<T>::pop(void) {
-	ASSERTP(cnt > 0, "no more data to pop");
-	return tab[--cnt];
-}
-
-template <class T> inline const T& Vector<T>::top(void) const {
-	ASSERTP(cnt > 0, "no more data in the stack");
-	return tab[cnt - 1];
-}
-
-
-// Vector<T>::Iterator class
-template <class T>
-inline Vector<T>::Iterator::Iterator(const Vector& vec): _vec(vec), i(0) {
-}
-template <class T>
-inline Vector<T>::Iterator::Iterator(const Vector<T>::Iterator& iter)
-: _vec(iter._vec), i(iter.i) {
-}
-template <class T>
-inline bool Vector<T>::Iterator::ended(void) const {
-	return i >= _vec.length();
-}
-template <class T>
-inline const T& Vector<T>::Iterator::item(void) const {
-	return _vec[i];
-}
-template <class T>
-inline void Vector<T>::Iterator::next(void) {
-	i++;
-}
-
-} }		// elm::genstruct
+} }	// elm::genstruct
 
 #endif	// ELM_GENSTRUCT_VECTOR_H

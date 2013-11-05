@@ -26,7 +26,17 @@ namespace elm { namespace genstruct {
 
 /**
  * @class Vector;
- * <p>A vector is an array of items whose size grows dynamically.</p>
+ * A vector is an array of items whose size grows dynamically.
+ *
+ * @par Implemented concepts
+ * @li concept::Array
+ * @li concept::Array
+ * @li concept::List
+ * @li concept::MutableArray
+ * @li concept::MutableCollection
+ * @li concept::MutableList
+ * @li concept::Set
+ * @li concept::Stack
  * 
  * @param T	Type of stored items.
  * @ingroup gen_datastruct
