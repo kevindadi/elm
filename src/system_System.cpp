@@ -470,7 +470,7 @@ Path System::getUnitPath(void *address) {
 	 cerr << "dli_fbase = " << info.dli_fbase << io::endl;
 	 cerr << "dli_sname = " << info.dli_sname << io::endl;
 	 cerr << "dli_saddr = " << info.dli_saddr << io::endl;*/
-		return info.dli_fname;
+		return Path(info.dli_fname).canonical();
 	}
 #elif defined(__WIN32) || defined(__WIN64)
 	MEMORY_BASIC_INFORMATION mbi;
