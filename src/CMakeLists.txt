@@ -181,6 +181,7 @@ endif()
 
 
 # library definition
+set(CMAKE_MACOSX_RPATH true)
 add_library(elm SHARED ${LIBELM_LA_SOURCES})
 if(LIBXML2_FOUND)
 	#if(UNIX)
