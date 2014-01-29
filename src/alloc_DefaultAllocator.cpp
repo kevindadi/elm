@@ -46,6 +46,24 @@ namespace elm {
  *		CollectionWithAllocation(A& allocator = A::DEFAULT);
  *	};
  * @endcode
+ *
+ * An easy use of custom allocator is the overload of @c new and @c delete operators
+ * of a class to let passing the allocator as a parameter. The code below gives an examples:
+ * @code
+ * class MyClass {
+ * public:
+ * 		// usual constructors, methods and attributes
+ * 		inline void *operator new(std::size_t size, Allocator& alloc) { return alloc.allocate(size); }
+ * 		inline void operator delete(void *p, std::size_t size)  { alloc.free(p); }
+ * @endcode
+ *
+ * Then, you can create and delete the object with the following code:
+ * @code
+ * Allocator custom_alloc;
+ * MyClass *object = new(custom_alloc) MyClass(arguments here);
+ * // do the work with object
+ * delete(custom_alloc) object;
+ * @endcode
  */
 
 
@@ -62,7 +80,7 @@ class Allocator {
 	 * @param size		Size in bytes of the allocated block.
 	 * @throw BadAlloc	If the allocation fails.
 	 */
-	void *allocate(size_t size) throw(BadAlloc);
+	void *allocate(t::size size) throw(BadAlloc);
 
 	/**
 	 * Free a block previously allocated.
@@ -115,6 +133,7 @@ void *DefaultAllocator::allocate(t::size size) throw(BadAlloc) {
 	}
 	catch(std::bad_alloc& e) {
 		throw BadAlloc();
+		return 0;
 	}
 }
 

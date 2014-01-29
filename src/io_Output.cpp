@@ -121,6 +121,7 @@ void Output::print(char chr) {
 /**
  * Print an integer.
  * @param value	Integer to print.
+ * @deprecated
  */
 void Output::print(t::int32 value) {
 	char buffer[16];
@@ -151,6 +152,7 @@ void Output::print(t::int32 value) {
 /**
  * Print a long long integer.
  * @param value	Long long integer to print.
+ * @deprecated
  */
 void Output::print(t::int64 value) {
 	char buffer[64];
@@ -181,6 +183,7 @@ void Output::print(t::int64 value) {
 /**
  * Print an unsigned integer.
  * @param value	Integer to print.
+ * @deprecated
  */
 void Output::print(t::uint32 value) {
 	char buffer[16];
@@ -197,6 +200,7 @@ void Output::print(t::uint32 value) {
 /**
  * Print an unsigned long long integer.
  * @param value	Integer to print.
+ * @deprecated
  */
 void Output::print(t::uint64 value) {
 	char buffer[32];
@@ -316,6 +320,8 @@ void Output::print(const IntFormat& fmt) {
 		uval = -fmt._val;
 	else
 		uval = fmt._val;
+	if(!fmt._sign)
+		uval &= (1ULL << (fmt._size * 8)) - 1;
 	char buffer[33];
 	char *res = horner(buffer + 32, uval, fmt._base, fmt._upper ? 'A' : 'a');
 	if(fmt._sign && fmt._val < 0)

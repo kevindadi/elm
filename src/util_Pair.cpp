@@ -27,7 +27,21 @@ namespace elm {
 /**
  * @class Pair <elm/util/Pair.h>
  * This template class is mainly useful for returning or passing in parameter
- * a data item composed of a two values.
+ * a data item composed of two values.
+ *
+ * Pairs are useful to avoid developing specific structures or classes to group two data.
+ * To help using pairs, some shortcut functions are provided:
+ * @li pair(v1, v2) -- allows to build a pair of type Pair<T1, T2> with T1 type of v1, T2 type of v2.
+ * @li let(r1, r2) = pair -- assign quickly a pair to a pair of variables r1 and r2.
+ *
+ * A common use of the last function is:
+ * @code
+ * T1 v1;
+ * T2 v2;
+ * let(v1, v2) = my_pair;
+ * @endcode
+ *
+ *
  * @param T1	First value type.
  * @param T2	Second value type.
  * @ingroup utility
