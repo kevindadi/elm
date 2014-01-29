@@ -44,6 +44,10 @@ public:
 	mark_t mark(void);
 	void release(mark_t mark);
 
+	// template access
+	template <class T>
+	inline T *allocate(int n = 1) throw(BadAlloc) { return static_cast<T *>(StackAllocator::allocate(n * sizeof(T))); }
+
 private:
 	void newChunk(void) throw(BadAlloc);
 	struct chunk_t *cur;

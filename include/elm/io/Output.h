@@ -43,7 +43,7 @@ typedef enum alignment_t {
 
 // IntFormat class
 class IntFormat {
-	inline void init(bool s)  {
+	inline void init(bool s, int size)  {
 		_base = 10;
 		_width = 0;
 		_align = LEFT;
@@ -51,19 +51,25 @@ class IntFormat {
 		_upper = false;
 		_sign = s;
 		_displaySign = false;
+		_size = size;
 	}
 public:
-	inline IntFormat(void					)		: _val(0) 					{ init(true); }
-	inline IntFormat(signed char			value)	: _val(value) 				{ init(true); }
-	inline IntFormat(unsigned char		value)	: _val(t::uint64(value)) 	{ init(false); }
-	inline IntFormat(signed short		value)	: _val(value) 				{ init(true); }
-	inline IntFormat(unsigned short		value)	: _val(t::uint64(value)) 	{ init(false); }
-	inline IntFormat(signed int			value)	: _val(value) 				{ init(true); }
-	inline IntFormat(unsigned int		value)	: _val(t::uint64(value)) 	{ init(false); }
-	inline IntFormat(signed long			value)	: _val(value) 				{ init(true); }
-	inline IntFormat(unsigned long		value)	: _val(t::uint64(value)) 	{ init(false); }
-	inline IntFormat(signed long long	value)	: _val(value)				{ init(true); }
-	inline IntFormat(unsigned long long	value)	: _val(value)				{ init(false); }
+	inline IntFormat(void				)		: _val(0) 					{ init(true, 8); }
+	inline IntFormat(signed char		value)	: _val(value) 				{ init(true,  1); }
+	inline IntFormat(unsigned char		value)	: _val(t::uint64(value)) 	{ init(false, 1); }
+	inline IntFormat(signed short		value)	: _val(value) 				{ init(true,  2); }
+	inline IntFormat(unsigned short		value)	: _val(t::uint64(value)) 	{ init(false, 2); }
+	inline IntFormat(signed int			value)	: _val(value) 				{ init(true,  4); }
+	inline IntFormat(unsigned int		value)	: _val(t::uint64(value)) 	{ init(false, 4); }
+#ifndef __LP64__
+	inline IntFormat(signed long		value)	: _val(value) 				{ init(true, 4); }
+	inline IntFormat(unsigned long		value)	: _val(t::uint64(value)) 	{ init(false, 4); }
+#else
+	inline IntFormat(signed long		value)	: _val(value) 				{ init(true, 8); }
+	inline IntFormat(unsigned long		value)	: _val(t::uint64(value)) 	{ init(false, 8); }
+#endif
+	inline IntFormat(signed long long	value)	: _val(value)				{ init(true,  8); }
+	inline IntFormat(unsigned long long	value)	: _val(value)				{ init(false, 8); }
 
 	inline IntFormat operator()(t::int8	value) { IntFormat f = *this; f._val = value; return f; }
 	inline IntFormat operator()(t::uint8	value) { IntFormat f = *this; f._val = value; return f; }
@@ -97,6 +103,7 @@ public:
 	unsigned _sign : 1;
 	unsigned _displaySign : 1;
 	char _pad;
+	char _size;
 };
 
 
@@ -163,10 +170,6 @@ public:
 
 	void print(bool value);
 	void print(char chr);
-	void print(t::int32 value);
-	void print(t::uint32 value);
-	void print(t::int64 value);
-	void print(t::uint64 value);
 	void print(double value);
 	void print(void *value);
 	inline void print(const char *str) { print(CString(str)); };
@@ -176,6 +179,12 @@ public:
 	void print(const FloatFormat& fmt);
 	void format(CString fmt, ...);
 	void format(CString fmt, VarArg& args);
+
+	// deprecated
+	void print(t::int32 value);
+	void print(t::uint32 value);
+	void print(t::int64 value);
+	void print(t::uint64 value);
 };
 
 
@@ -188,20 +197,16 @@ template <class T> inline Output& operator<<(Output& out, T *v)
 	{ out.print((void *)v); return out; }
 inline Output& operator<<(Output& out, bool value) { out.print(value); return out; };
 inline Output& operator<<(Output& out, char value) { out.print(value); return out; };
-inline Output& operator<<(Output& out, unsigned char value) { out.print(t::uint32(value)); return out; };
-inline Output& operator<<(Output& out, short value) { out.print(t::int32(value)); return out; };
-inline Output& operator<<(Output& out, unsigned short value) { out.print(t::uint32(value)); return out; };
-inline Output& operator<<(Output& out, int value) { out.print(t::int32(value)); return out; };
-inline Output& operator<<(Output& out, unsigned int value) { out.print(t::uint32(value)); return out; };
-#ifndef __LP64__
-	inline Output& operator<<(Output& out, long value) { out.print(t::int32(value)); return out; };
-	inline Output& operator<<(Output& out, unsigned long value) { out.print(t::uint32(value)); return out; };
-#else
-	inline Output& operator<<(Output& out, long value) { out.print(t::int64(value)); return out; };
-	inline Output& operator<<(Output& out, unsigned long value) { out.print(t::uint64(value)); return out; };
-#endif
-inline Output& operator<<(Output& out, long long value) { out.print(t::int64(value)); return out; };
-inline Output& operator<<(Output& out, unsigned long long value) { out.print(t::uint64(value)); return out; };
+inline Output& operator<<(Output& out, unsigned char value) 	{ out.print(IntFormat(value)); return out; };
+inline Output& operator<<(Output& out, signed char value) 		{ out.print(IntFormat(value)); return out; };
+inline Output& operator<<(Output& out, short value) 			{ out.print(IntFormat(value)); return out; };
+inline Output& operator<<(Output& out, unsigned short value)	{ out.print(IntFormat(value)); return out; };
+inline Output& operator<<(Output& out, int value) 				{ out.print(IntFormat(value)); return out; };
+inline Output& operator<<(Output& out, unsigned int value) 		{ out.print(IntFormat(value)); return out; };
+inline Output& operator<<(Output& out, long value) 				{ out.print(IntFormat(value)); return out; };
+inline Output& operator<<(Output& out, unsigned long value) 	{ out.print(IntFormat(value)); return out; };
+inline Output& operator<<(Output& out, long long value) 		{ out.print(IntFormat(value)); return out; };
+inline Output& operator<<(Output& out, unsigned long long value) { out.print(IntFormat(value)); return out; };
 inline Output& operator<<(Output& out, float value) { out.print(value); return out; };
 inline Output& operator<<(Output& out, double value) { out.print(value); return out; };
 inline Output& operator<<(Output& out, const char *value) { out.print(value); return out; };

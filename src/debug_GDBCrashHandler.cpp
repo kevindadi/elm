@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <string.h>
+#include <sys/prctl.h>
 
 namespace elm {
 	
@@ -57,9 +58,13 @@ void GDBCrashHandler::handle(void) {
 	int wait_pid = fork();
 	if(wait_pid == -1)
 		fatal("no fork");
-		
+
 	// Main process
 	else if(wait_pid != 0) {
+		// for Ubuntu-like system that prevent right to ptrace any process
+		// may be subject to race-condition with the debugging process?
+		// if observed, add a small sleep to the GDB process before running it
+		prctl(PR_SET_PTRACER, wait_pid, 0, 0, 0);
 		while(waitpid(wait_pid, 0, 0) != wait_pid) ;
 		abort();
 	}
