@@ -320,7 +320,7 @@ void Output::print(const IntFormat& fmt) {
 		uval = -fmt._val;
 	else
 		uval = fmt._val;
-	if(!fmt._sign)
+	if(!fmt._sign && fmt._size != 8)
 		uval &= (1ULL << (fmt._size * 8)) - 1;
 	char buffer[33];
 	char *res = horner(buffer + 32, uval, fmt._base, fmt._upper ? 'A' : 'a');
