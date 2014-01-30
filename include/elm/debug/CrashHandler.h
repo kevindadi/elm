@@ -7,13 +7,21 @@
 #ifndef ELM_DEBUG_CRASH_HANDLER_H
 #define ELM_DEBUG_CRASH_HANDLER_H
 
+#include <elm/types.h>
+
 namespace elm {
 	
 // CrashHandler class
 class CrashHandler {
 public:
-	static void set(CrashHandler *handler);
+	static const t::uint32
+		DEBUG = 0x01,
+		INT = 0x02;
+	typedef t::uint32 mode_t;
+
+	static void set(CrashHandler *handler, mode_t mode);
 	static inline CrashHandler *get(void) { return current_handler; }
+	static inline mode_t mode(void) { return _mode; }
 	static void crash(void);
 	static CrashHandler DEFAULT;
 
@@ -26,15 +34,16 @@ protected:
 	virtual ~CrashHandler(void) { }
 
 private:
-	static CrashHandler *current_handler; 
+	static mode_t _mode;
+	static CrashHandler *current_handler;
 };
 
 // NoCrashHandler class
 class NoCrashHandler: public CrashHandler {
 public:
-	virtual void setup(void) { }
+	virtual void setup(mode_t mode) { }
 	virtual void handle(void) { }
-	virtual void cleanup(void) { }
+	virtual void cleanup(mode_t mode) { }
 };
 
 } // elm

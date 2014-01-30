@@ -41,6 +41,12 @@ static void handle_SIGFPE(int sig, siginfo_t *info, void *context) {
 	CrashHandler::crash();
 }
 
+// handle SIGKILL support
+static void handle_SIGINT(int sig, siginfo_t *info, void *context) {
+	printf("FATAL: int signal received at %p.\n", info->si_addr);
+	CrashHandler::crash();
+}
+
 
 /**
  * @class CrashHandler
@@ -53,11 +59,13 @@ static void handle_SIGFPE(int sig, siginfo_t *info, void *context) {
 /**
  * Set the current crash handler.
  * @param handler	New crash handler.
+ * @param mode		Working mode of the handler (combination of DEBUG and KILL).
  */
-void CrashHandler::set(CrashHandler *handler) {
+void CrashHandler::set(CrashHandler *handler, mode_t mode) {
 	if(current_handler)
 		current_handler->cleanup();
 	current_handler = handler;
+	_mode = mode;
 	if(current_handler)
 		current_handler->setup();
 }
@@ -108,15 +116,23 @@ void CrashHandler::setup(void) {
 	sa.sa_restorer = 0;
 #endif
 
-	// Set handlers
-	sa.sa_sigaction = handle_SIGSEGV;
-	sigaction(SIGSEGV, &sa, 0);
-	sa.sa_sigaction = handle_SIGILL;
-	sigaction(SIGILL, &sa, 0);
-	sa.sa_sigaction = handle_SIGFPE;
-	sigaction(SIGFPE, &sa, 0);
-	sa.sa_sigaction = handle_SIGABRT;
-	sigaction(SIGABRT, &sa, 0);
+	// set debug handlers
+	if(mode() & DEBUG) {
+		sa.sa_sigaction = handle_SIGSEGV;
+		sigaction(SIGSEGV, &sa, 0);
+		sa.sa_sigaction = handle_SIGILL;
+		sigaction(SIGILL, &sa, 0);
+		sa.sa_sigaction = handle_SIGFPE;
+		sigaction(SIGFPE, &sa, 0);
+		sa.sa_sigaction = handle_SIGABRT;
+		sigaction(SIGABRT, &sa, 0);
+	}
+
+	// set kill handle
+	if(mode() & INT) {
+		sa.sa_sigaction = handle_SIGINT;
+		sigaction(SIGINT, &sa, 0);
+	}
 }
 
 
@@ -139,18 +155,26 @@ void CrashHandler::cleanup(void) {
 	sa.sa_sigaction = 0;
 	sigemptyset(&sa.sa_mask);
 	
-	// Set handlers	
-	sa.sa_flags = SA_SIGINFO;
-#if defined(__unix)
-	sa.sa_restorer = 0;
-#endif
-	sigaction(SIGSEGV, &sa, 0);
-	sa.sa_handler = SIG_DFL;
-	sigaction(SIGILL, &sa, 0);
-	sa.sa_handler = SIG_DFL;
-	sigaction(SIGFPE, &sa, 0);
-	sa.sa_handler = SIG_DFL;
-	sigaction(SIGABRT, &sa, 0);
+	// cleanup debug handlers
+	if(mode() & DEBUG) {
+		sa.sa_flags = SA_SIGINFO;
+#		if defined(__unix)
+			sa.sa_restorer = 0;
+#		endif
+		sigaction(SIGSEGV, &sa, 0);
+		sa.sa_handler = SIG_DFL;
+		sigaction(SIGILL, &sa, 0);
+		sa.sa_handler = SIG_DFL;
+		sigaction(SIGFPE, &sa, 0);
+		sa.sa_handler = SIG_DFL;
+		sigaction(SIGABRT, &sa, 0);
+	}
+
+	// cleanup kill handler
+	if(mode() & INT) {
+		sa.sa_handler = SIG_DFL;
+		sigaction(SIGINT, &sa, 0);
+	}
 }
 
 
@@ -160,22 +184,37 @@ void CrashHandler::cleanup(void) {
 CrashHandler *CrashHandler::current_handler = 0;
 
 
+
+/**
+ * Crash handler current mode.
+ */
+t::uint32 CrashHandler::_mode = 0;
+
+
 /* Initialize / finalize */
 class CrashMonitor {
 public:
-	CrashMonitor(void) {
+	CrashMonitor(void): mode(0) {
 		
 		// Look for the ELM_DEBUG variable
 		const char *elm_debug = getenv("ELM_DEBUG");
-		if(!elm_debug || strcasecmp(elm_debug, "yes") != 0)
-			return;
-	
+		if(elm_debug && strcasecmp(elm_debug, "yes") == 0)
+			mode |= CrashHandler::DEBUG;
+
+		const char *elm_kill = getenv("ELM_INT");
+		if(elm_kill && strcasecmp(elm_kill, "yes") == 0)
+			mode |= CrashHandler::INT;
+
 		// Install the crash handler
-		CrashHandler::set(&CRASH_HANDLER);
+		if(mode)
+			CrashHandler::set(&CRASH_HANDLER, mode);
 	}
 	inline ~CrashMonitor(void) {
-		CrashHandler::set(0);
+		CrashHandler::set(0, 0);
 	}
+
+private:
+	t::uint32 mode;
 };
 static CrashMonitor _;
 
