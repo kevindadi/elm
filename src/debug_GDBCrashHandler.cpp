@@ -15,6 +15,7 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <sys/prctl.h>
+#include "../config.h"
 
 namespace elm {
 	
@@ -61,10 +62,13 @@ void GDBCrashHandler::handle(void) {
 
 	// Main process
 	else if(wait_pid != 0) {
-		// for Ubuntu-like system that prevent right to ptrace any process
-		// may be subject to race-condition with the debugging process?
-		// if observed, add a small sleep to the GDB process before running it
-		prctl(PR_SET_PTRACER, wait_pid, 0, 0, 0);
+
+#		ifdef SET_PTRACER
+			// for Ubuntu-like system that prevent right to ptrace any process
+			// may be subject to race-condition with the debugging process?
+			// if observed, add a small sleep to the GDB process before running it
+			prctl(PR_SET_PTRACER, wait_pid, 0, 0, 0);
+#		endif
 		while(waitpid(wait_pid, 0, 0) != wait_pid) ;
 		abort();
 	}
