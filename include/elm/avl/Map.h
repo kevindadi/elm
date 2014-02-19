@@ -46,7 +46,7 @@ public:
 	class KeyIterator: public PreIterator<KeyIterator, K> {
 	public:
 		inline KeyIterator(const Map<K, T, C>& map): it(map.tree) { }
-		inline KeyIterator(const KeyIterator& iter): it(iter) { }
+		inline KeyIterator(const KeyIterator& iter): it(iter.it) { }
 		inline KeyIterator& operator=(const KeyIterator& iter) { it = iter; return *this; }
 		inline bool ended(void) const { return it.ended(); }
 		inline void next(void) { it.next(); }
@@ -59,7 +59,7 @@ public:
 	class PairIterator: public PreIterator<PairIterator, pair_t> {
 	public:
 		inline PairIterator(const Map<K, T, C>& map): it(map.tree) { }
-		inline PairIterator(const PairIterator& iter): it(iter) { }
+		inline PairIterator(const PairIterator& iter): it(iter.it) { }
 		inline PairIterator& operator=(const PairIterator& iter) { it = iter; return *this; }
 		inline bool ended(void) const { return it.ended(); }
 		inline void next(void) { it.next(); }

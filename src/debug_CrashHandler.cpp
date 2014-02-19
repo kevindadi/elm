@@ -208,6 +208,8 @@ public:
 		// Install the crash handler
 		if(mode)
 			CrashHandler::set(&CRASH_HANDLER, mode);
+		else
+			CrashHandler::set(&CrashHandler::DEFAULT, mode);
 	}
 	inline ~CrashMonitor(void) {
 		CrashHandler::set(0, 0);

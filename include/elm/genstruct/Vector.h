@@ -97,7 +97,7 @@ public:
 	inline void clear(void) { cnt = 0; }
 	void grow(int new_cap);
 	void setLength(int new_length);
-	inline Table<T> detach(void);
+	inline table<T> detach(void);
 	inline void copy(const Vector& vec);
 	inline Vector<T>& operator=(const Vector& vec) { copy(vec); return *this; };
 	inline void swallow(Vector<T>& v) { if(tab) delete [] tab; tab = v.tab; v.tab = 0; }
@@ -126,10 +126,10 @@ private:
 
 
 template <class T>
-inline Table<T> Vector<T>::detach(void) {
+inline table<T> Vector<T>::detach(void) {
 	T *dtab = tab;
 	tab = 0;
-	return Table<T>(dtab, cnt);
+	return table<T>(dtab, cnt);
 }
 
 template <class T> int Vector<T>::capacity(void) const {

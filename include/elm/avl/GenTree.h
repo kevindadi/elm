@@ -24,6 +24,7 @@
 #include <elm/utility.h>
 #include <elm/PreIterator.h>
 #include <elm/genstruct/adapter.h>
+#include <elm/util/array.h>
 
 namespace elm { namespace avl {
 
@@ -108,8 +109,8 @@ public:
 	public:
 		inline Iterator(const GenTree<T, K, C>& tree): sp(stack)
 			{ if(tree.root) visit((Node *)tree.root); }
-		inline Iterator(const Iterator& iter): sp(stack + iter.sp - iter.stack)
-			{ for(Node **p = stack, **q = iter.stack; q < sp; p++, q++) *p = *q; }
+		inline Iterator(const Iterator& iter): sp(stack + (iter.sp - iter.stack))
+			{ array::copy(stack, iter.stack, iter.sp - iter.stack); }
 		inline bool ended(void) const { return sp == stack; }
 		void next(void) {
 			while(true) {
