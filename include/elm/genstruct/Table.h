@@ -78,10 +78,11 @@ protected:
 template <class T>
 class DeletableTable: public Table<T> {
 public:
-	inline DeletableTable(void) { }
+	inline DeletableTable(void) { cerr << "DEBUG: " << (void *)this << "created\n"; }
 	inline DeletableTable(T *table, int count): Table<T>(table, count) { }
-	inline DeletableTable(const Table<T>& table): Table<T>(table) { }
-	inline ~DeletableTable(void) { delete [] Table<T>::tab; }
+	inline DeletableTable(const Table<T>& table): Table<T>(table) { cerr << "DEBUG: " << (void *)this << " get " << (void *)*table << " to " << (void *)**this << io::endl; }
+	inline ~DeletableTable(void) { cerr << "DEBUG: " << (void *)this << " -> " << (void *)Table<T>::tab << io::endl;  if(Table<T>::tab) delete [] Table<T>::tab; }
+	inline DeletableTable<T>& operator=(const DeletableTable<T>& table) { cerr << "DEBUG: " << (void *)this << " copy of " << (void *)&table << io::endl; copy(table); return *this; }
 };
 
 // AllocatedTable class
