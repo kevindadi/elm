@@ -170,7 +170,9 @@ File::~File(void) {
 File *File::load(const sys::Path& path) throw(Exception) {
 	try {
 		io::InStream *in = sys::System::readFile(path);
-		return load(in);
+		File *r = load(in);
+		delete in;
+		return r;
 	}
 	catch(sys::SystemException& e) {
 		throw Exception(e.message());

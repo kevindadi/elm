@@ -88,7 +88,9 @@ TEST_BEGIN(sorted_bintree)
 				if(cnt) {
 					v = (v >> 2) % cnt;
 					//cerr << "removing " << vals[v] << io::endl;
+					int *p = map.get(vals[v]);
 					map.remove(vals[v]);
+					delete p;
 					for(int j = v + 1; j < cnt; j++)
 						vals[j - 1] = vals[j];
 					cnt --;

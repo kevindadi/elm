@@ -16,8 +16,8 @@ TEST_BEGIN(stopwatch)
 	sys::StopWatch sw;
 	sw.start();
 
-	const int n = 1000000;
-	int t[n];
+	static const int n = 1000;
+	static int t[n];
 	for(int i = 0; i < 1000; i++)
 		for(int j = 0; j < n - 1; j++)
 			t[j + 1] = t[j] + t[j + 1];

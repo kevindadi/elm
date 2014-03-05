@@ -45,6 +45,8 @@ TEST_BEGIN(process)
 	}
 	process->wait();
 	CHECK_EQUAL(process->returnCode(), 0);
+	delete process;
+	delete pipes.fst;
 	
 TEST_END
 

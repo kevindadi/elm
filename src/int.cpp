@@ -240,10 +240,10 @@ int ones(t::uint8 i) {
  * @ingroup int
  */
 t::uint32 leastUpperPowerOf2(t::uint32 v) {
-	int m = msb(v);
+	t::uint32 m = msb(v);
 	if(m < 0)
 		return 0;
-	else if(v == (1 << m))
+	else if(v == (t::uint32(1) << m))
 		return v;
 	else
 		return 1 << (m + 1);
@@ -258,10 +258,10 @@ t::uint32 leastUpperPowerOf2(t::uint32 v) {
  * @ingroup int
  */
 t::uint64 leastUpperPowerOf2(t::uint64 v) {
-	int m = msb(v);
+	t::uint64 m = msb(v);
 	if(m < 0)
 		return 0;
-	else if(v == (1 << m))
+	else if(v == (t::uint64(1) << m))
 		return v;
 	else
 		return 1 << (m + 1);
