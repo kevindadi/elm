@@ -36,6 +36,7 @@ public:
 	typedef unsigned char digest_t[16];
 
 	MD5(void);
+	virtual ~MD5(void);
 	void digest(digest_t tab);
 	void print(io::Output& out);
 

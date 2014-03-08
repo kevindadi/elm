@@ -44,5 +44,6 @@ TEST_BEGIN(formatter)
 	String result = buf.toString();
 	CString res = buf.toCString();
 	CHECK_EQUAL(res, CString("r3 = %d"));
+	delete res.chars();
 	
 TEST_END

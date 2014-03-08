@@ -344,6 +344,7 @@ Plugin *Plugger::plugFile(sys::Path path) {
 					}
 			}
 		}
+		delete file;
 	}
 	catch(ini::Exception& e) {
 	}

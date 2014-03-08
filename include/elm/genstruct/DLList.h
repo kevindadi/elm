@@ -175,6 +175,7 @@ template <class T, class E> void DLList<T, E>::remove(const T& value) {
 	for(DLNode *cur = (DLNode *)list.first(); !cur->atEnd(); cur = (DLNode *)cur->next())
 		if(E::equals(cur->value(), value)) {
 			cur->remove();
+			delete cur;
 			break;
 		}
 }

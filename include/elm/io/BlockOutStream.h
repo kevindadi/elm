@@ -16,14 +16,13 @@ namespace elm { namespace io {
 
 // BlockOutStream class
 class BlockOutStream: public OutStream {
-	block::DynBlock _block;
 public:
-	inline BlockOutStream(int size = 4096, int inc = 256);
-	inline const char *block(void) const;
-	inline int size(void) const;
-	inline char *detach(void);
-	inline void clear(void);
-	inline void setSize(int size);
+	inline BlockOutStream(int size = 4096, int inc = 256): _block(size, inc) { }
+	inline const char *block(void) const { return _block.base(); }
+	inline int size(void) const { return _block.size(); }
+	inline char *detach(void) { return _block.detach(); }
+	inline void clear(void) { _block.reset(); }
+	inline void setSize(int size) { _block.setSize(size); }
 	CString toCString(void);
 	String toString(void);
 	
@@ -31,28 +30,10 @@ public:
 	virtual int write(const char *buffer, int size);
 	virtual int write(char byte);
 	virtual int flush(void);
+
+private:
+	block::DynBlock _block;
 };
-
-
-
-// Inlines
-inline BlockOutStream::BlockOutStream(int size, int inc): _block(size, inc) {
-}
-inline const char *BlockOutStream::block(void) const {
-	return _block.base();
-}
-inline int BlockOutStream::size(void) const {
-	return _block.size();
-}
-inline char *BlockOutStream::detach(void) {
-	return _block.detach();
-}
-inline void BlockOutStream::clear(void) {
-	_block.reset();
-}
-inline void BlockOutStream::setSize(int size) {
-	_block.setSize(size);
-}
 
 } } // elm::io
 

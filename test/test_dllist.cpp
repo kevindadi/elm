@@ -109,6 +109,11 @@ TEST_BEGIN(dllist)
 		node = (MyDLNode *)node->previous(), cnt--)
 			CHECK(node->v == cnt);
 		CHECK(cnt == -1);
+		while(!list.isEmpty()) {
+			MyDLNode *node = (MyDLNode *)list.first();
+			list.removeFirst();
+			delete node;
+		}
 	}
 	
 	// Insert before and efter tests
@@ -133,6 +138,11 @@ TEST_BEGIN(dllist)
 		node = (MyDLNode *)node->previous(), cnt--)
 			CHECK(node->v == cnt);
 		CHECK(cnt == -1);		
+		while(!list.isEmpty()) {
+			MyDLNode *node = (MyDLNode *)list.first();
+			list.removeFirst();
+			delete node;
+		}
 	}
 	
 	// Check back iteration

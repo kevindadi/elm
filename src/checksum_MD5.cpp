@@ -109,6 +109,14 @@ MD5::MD5(void): finalized(false) {
 
 
 /**
+ */
+MD5::~MD5(void) {
+	if(buf)
+		delete [] buf;
+}
+
+
+/**
  * Put a data block in the checksum.
  * @param block		Block address.
  * @param length	Block length.
