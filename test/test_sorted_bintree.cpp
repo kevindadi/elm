@@ -51,7 +51,7 @@ TEST_BEGIN(sorted_bintree)
 			int v = sys::System::random(MAX * 2);
 			
 			// Add
-			if(!cnt || v & 1) {
+			if(!cnt || (v & 1)) {
 				v >>= 1;
 				//cerr << "Action " << i << ": add " << v << io::endl;
 				vals[cnt++] = v;
@@ -96,6 +96,7 @@ TEST_BEGIN(sorted_bintree)
 					cnt --;
 					break;
 				}
+				/* no break */
 				
 			case 1:		// add
 			add:
@@ -114,13 +115,18 @@ TEST_BEGIN(sorted_bintree)
 					int *res = map.get(vals[v], 0);
 					error = !res || *res != vals[v];
 				}
+				/* no break */
 			}
 			
 			// Full check
 			for(int j = 0; j < cnt; j++)
 				ASSERT(map.get(vals[j], 0));
 		}
-		CHECK(!error);		
+		CHECK(!error);
+
+		// cleanup in the end
+		for(genstruct::SortedBinMap<int, int *>::Iterator v(map); v; v++)
+			delete *v;
 	}
 	
 TEST_END

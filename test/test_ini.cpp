@@ -54,6 +54,8 @@ TEST_BEGIN(ini)
 	// multi-line
 	CHECK_EQUAL(plug->get("description"), string("multi-line test"));
 
+	delete file;
+
 TEST_END
 
 

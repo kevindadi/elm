@@ -25,6 +25,7 @@
 #include <elm/PreIterator.h>
 #include <elm/genstruct/adapter.h>
 #include <elm/util/array.h>
+#include <elm/genstruct/Vector.h>
 
 namespace elm { namespace avl {
 
@@ -84,6 +85,21 @@ protected:
     }
 
 public:
+
+	~GenTree(void) {
+		if(root) {
+			genstruct::Vector<Node *> todo;
+			todo.add(static_cast<Node *>(root));
+			while(todo) {
+				Node *node = todo.pop();
+				if(node->left())
+					todo.push(node->left());
+				if(node->right())
+					todo.push(node->right());
+				delete node;
+			}
+		}
+	}
 
 #	ifdef ELM_DEBUG_AVL
 		void dump(io::Output& out) { if(root) static_cast<Node *>(root)->dump(out, 0); else out << "<empty>"; }

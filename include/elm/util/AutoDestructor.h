@@ -41,7 +41,7 @@ public:
 
 	inline AutoDestructor& operator=(T *ptr) { set(ptr); return *this; } 
 	inline AutoDestructor& operator=(AutoDestructor& ad)
-		{ clean(); p = ad.p; ad.p = 0; } 
+		{ clean(); p = ad.p; ad.p = 0; return *this; }
 	inline operator T *(void) const { return get(); }
 	inline T *operator->(void) const { return get(); }
 	inline operator bool(void) const { return !isNull(); }

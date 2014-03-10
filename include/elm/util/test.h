@@ -79,7 +79,7 @@ const T& result, const T& reference) {
 	try { stat; __case.failed(); } catch(exn) { __case.succeeded(); } }
 #define ELM_FAIL_ON_EXCEPTION(exn, stat) { __case.test(__FILE__, __LINE__, #stat); \
 	try { stat; __case.succeeded(); } \
-	catch(exn e) { __case.failed(); cerr << "exception = " << e.message() << elm::io::endl; } }
+	catch(exn& e) { __case.failed(); cerr << "exception = " << e.message() << elm::io::endl; } }
 #define ELM_TEST_BEGIN(name) \
 	static class name##Test: public elm::TestCase { \
 	public: \

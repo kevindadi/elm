@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	Plugger class interface
  *
  *	This file is part of OTAWA
@@ -20,7 +19,6 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-
 #include "../config.h"
 #include <elm/deprecated.h>
 #include <elm/assert.h>
@@ -38,7 +36,7 @@
 #include <elm/sys/System.h>
 #include <elm/io.h>
 #include <elm/ini.h>
-
+#include <elm/util/AutoDestructor.h>
 
 namespace elm { namespace sys {
 
@@ -307,7 +305,7 @@ Plugin *Plugger::plugFile(sys::Path path) {
 	else if(ppath.extension() != ELD_EXT)
 		ppath = _ << ppath << "." << ELD_EXT;
 	try {
-		ini::File *file = ini::File::load(ppath);
+		AutoDestructor<ini::File> file(ini::File::load(ppath));
 		ini::Section *sect = file->get(SECTION_NAME);
 		if(sect) {
 
@@ -344,7 +342,6 @@ Plugin *Plugger::plugFile(sys::Path path) {
 					}
 			}
 		}
-		delete file;
 	}
 	catch(ini::Exception& e) {
 	}
