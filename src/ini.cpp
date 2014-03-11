@@ -26,13 +26,13 @@
 namespace elm { namespace ini {
 
 /**
- * @defgroup ini	".INI file support"
+ * @defgroup ini	.INI file support
  * This module provides minimal implementation for loading ".INI" files as found
  * on MS systems. A @ref File content is obtained using one of the @ref elm::ini::load() function.
  * They can be explored by @ref Section and in each section, the values associated with key
  * can be examined and possibly converted in integer or lists.
  *
- * Notice that key/values outside of a section is put in a sectin named "".
+ * Notice that key/values outside of a section is put in a section named "".
  */
 
 /**

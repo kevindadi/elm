@@ -45,6 +45,8 @@
  * fast and light string class  (@ref elm::String), string buffer (@ref elm::StringBuffer) to build strings
  * and automatic string building class (@ref elm::AutoString) with very handy syntax (@c _ << a1 << a2 << ...).
  * 
+ * Facilities to handle efficiently are also provided in @ref array.
+ *
  * The @ref types module provides RTTI support to handle types easily.
  * Used with the <elm/meta.h> primitives, it allows to build
  * powerful template classes and functions.

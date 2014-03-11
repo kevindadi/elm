@@ -22,18 +22,18 @@
 namespace elm {
 
 /**
- * @def group array		Array
+ * @defgroup array		Array
  * This group provides optimized to work with C native array (whatever the running OS).
  *
  * Most of these functions uses information of the type provided by the type_info<T> structure
- * to optimize or not the array operations. Particularly, they uses the id_deep function
+ * to optimize or not the array operations. Particularly, they uses the is_deep definition
  * to know if a value may be copied byte-per-byte or need more complex processing because
- * of its data structure. Any non-scalar type is basically considered as deep but you may
- * change this behavior by specializing the type_info for yout own type, MyType in the
+ * of its data structure. Any non-scalar type is basically considered as non-deep but you may
+ * change this behavior by specializing the type_info for your own type, MyType in the
  * example below:
  * @code
  * template <> struct type_info<MyType>: public class_t<MyType> {
- *	enum { is_type = true };
+ *	enum { is_deep = true };
  * }
  * @endcode
  */
