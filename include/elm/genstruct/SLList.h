@@ -43,8 +43,19 @@ class SLList {
 	};
 
 public:
+	inline SLList(void) { }
+	inline SLList(const SLList& list) { copy(list); }
+	inline SLList& operator=(const SLList& list) { copy(list); return *this; }
 	inline ~SLList(void);
 	
+	inline void copy(const SLList<T>& list) {
+		clear(); if(list) {
+			Iterator item(list); addFirst(*item);
+			Node *cur = static_cast<Node *>(this->list.first());
+			for(item++; item; item++) { cur->insertAfter(new Node(*item)); cur = cur->next(); }
+		}
+	}
+
 	// Collection concept
 	inline int count(void) const;
 	inline bool contains (const T &item) const;
@@ -70,11 +81,16 @@ public:
 	// MutableCollection concept
 	inline void clear(void);
 	inline void add(const T& value) { addFirst(value); }
-	template <template<class _> class C>
-		inline void addAll (const C<T> &items);
+	template <template<class _> class C> inline void addAll (const C<T> &items)
+		{ for(typename C<T>::Iterator iter; iter; iter++) add(iter); }
+	template <template<class _1, class _2> class C> inline void addAll (const C<T, E> &items)
+		{ for(typename C<T, E>::Iterator iter; iter; iter++) add(iter); }
 	inline void remove(const T& value);
-	template <template<class _> class C>
-		inline void removeAll (const C<T> &items);
+	template <template<class _> class C> inline void removeAll (const C<T> &items)
+		{ for(typename C<T>::Iterator iter; iter; iter++) remove(iter);	}
+	template <template<class _1, class _2> class C> inline void removeAll (const C<T, E> &items)
+		{ for(typename C<T, E>::Iterator iter; iter; iter++) remove(iter);	}
+
 	inline void remove(const Iterator &iter);
 	
 	// List concept
@@ -123,18 +139,6 @@ inline void SLList<T, E>::clear(void) {
 template <class T, class E>
 inline SLList<T, E>::~SLList(void) {
 	clear();
-}
-
-template <class T, class E> template <template<class _> class C>
-inline void SLList<T, E>::addAll(const C<T> &items) {
-	for(typename C<T>::Iterator iter; iter; iter++)
-		add(iter);
-}
-
-template <class T, class E> template <template<class _> class C>
-inline void SLList<T, E>::removeAll (const C<T> &items) {
-	for(typename C<T>::Iterator iter; iter; iter++)
-		remove(iter);	
 }
 
 template <class T, class E>
