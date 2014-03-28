@@ -34,6 +34,7 @@ public:
 	void prepare(void);
 	void complete(void);
 	void perform(void);
+	inline bool hasFailed(void) const { return errors; }
 protected:
 	virtual void execute(void);
 	TestCase& __case;

@@ -82,14 +82,14 @@ public:
 	inline void clear(void);
 	inline void add(const T& value) { addFirst(value); }
 	template <template<class _> class C> inline void addAll (const C<T> &items)
-		{ for(typename C<T>::Iterator iter; iter; iter++) add(iter); }
+		{ for(typename C<T>::Iterator iter(items); iter; iter++) add(iter); }
 	template <template<class _1, class _2> class C> inline void addAll (const C<T, E> &items)
-		{ for(typename C<T, E>::Iterator iter; iter; iter++) add(iter); }
+		{ for(typename C<T, E>::Iterator iter; iter(items); iter++) add(iter); }
 	inline void remove(const T& value);
 	template <template<class _> class C> inline void removeAll (const C<T> &items)
-		{ for(typename C<T>::Iterator iter; iter; iter++) remove(iter);	}
+		{ for(typename C<T>::Iterator iter(items); iter; iter++) remove(iter);	}
 	template <template<class _1, class _2> class C> inline void removeAll (const C<T, E> &items)
-		{ for(typename C<T, E>::Iterator iter; iter; iter++) remove(iter);	}
+		{ for(typename C<T, E>::Iterator iter(items); iter; iter++) remove(iter);	}
 
 	inline void remove(const Iterator &iter);
 	

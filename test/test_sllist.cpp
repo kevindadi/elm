@@ -7,6 +7,7 @@
 
 #include <elm/util/test.h>
 #include <elm/genstruct/SLList.h>
+#include <elm/genstruct/Vector.h>
 
 using namespace elm;
 using namespace genstruct;
@@ -61,6 +62,19 @@ TEST_BEGIN(sllist)
 		list2.remove(1);
 		CHECK(!list2.contains(1));
 		CHECK(list1.contains(1));
+	}
+
+	// test addAll, removeAll
+	{
+		genstruct::Vector<int> v;
+		v.add(1);
+		v.add(2);
+		v.add(3);
+		genstruct::SLList<int> l;
+		l.addAll(v);
+		CHECK(l.contains(1));
+		CHECK(l.contains(2));
+		CHECK(l.contains(3));
 	}
 TEST_END
 
