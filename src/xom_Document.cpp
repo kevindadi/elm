@@ -133,7 +133,7 @@ void Document::replaceChild(Node *old_child, Node *new_child) {
 }
 
 void Document::setBaseURI(String uri) {
-	ASSERTP(0, "unsupported");
+	DOC(node)->URL = uri;
 }
 
 void Document::setRootElement(Element *root) {
