@@ -133,7 +133,7 @@ void Document::replaceChild(Node *old_child, Node *new_child) {
 }
 
 void Document::setBaseURI(String uri) {
-	DOC(node)->URL = uri;
+	DOC(node)->URL = xmlCharStrdup(uri);
 }
 
 void Document::setRootElement(Element *root) {
