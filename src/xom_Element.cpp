@@ -219,9 +219,11 @@ Attribute *Element::getAttribute(int index) {
  * @return the attribute of this element with the specified name.
  */
 Attribute *Element::getAttribute(String name) {
-	// !!TODO!!
-	ASSERTP(0, "unsupported");
-	return 0;
+	xmlAttr *attr = xmlHasProp(NODE(node), name);
+	if(!attr)
+		return 0;
+	else
+		return static_cast<Attribute *>(get(attr));
 }
 
 
@@ -233,9 +235,11 @@ Attribute *Element::getAttribute(String name) {
  * @return the attribute of this element with the specified name and namespace.
  */
 Attribute *Element::getAttribute(String localName, String ns) {
-	// !!TODO!!
-	ASSERTP(0, "unsupported");
-	return 0;
+	xmlAttr *attr = xmlHasNsProp(NODE(node), localName, ns);
+	if(!attr)
+		return 0;
+	else
+		return static_cast<Attribute *>(get(attr));
 }
 
 
