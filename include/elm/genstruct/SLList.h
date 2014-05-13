@@ -64,10 +64,10 @@ public:
 	inline operator bool(void) const { return !isEmpty(); }
 
 	// Iterator class
-	class Iterator: public PreIterator<Iterator, T> {
+	class Iterator: public PreIterator<Iterator, const T&> {
 	public:
 		inline Iterator(void): node(0), prev(0) { }
-		inline Iterator(const SLList& _list): node((Node *)_list.list.first()), prev(0) { }
+		inline Iterator(const SLList& _list): node(static_cast<Node *>(_list.list.first())), prev(0) { }
 		inline Iterator(const Iterator& source): node(source.node), prev(source.prev) { }
 		inline Iterator& operator=(const Iterator& i) { node = i.node; prev = i.prev; return *this; }
 		
@@ -82,19 +82,19 @@ public:
 	
 	// MutableCollection concept
 	inline void clear(void)
-		{ while(!list.isEmpty()) { Node *node = (Node *)list.first(); list.removeFirst(); delete node; } }
+		{ while(!list.isEmpty()) { Node *node = static_cast<Node *>(list.first()); list.removeFirst(); delete node; } }
 	inline void add(const T& value) { addFirst(value); }
 	template <template<class _> class C> inline void addAll (const C<T> &items)
 		{ for(typename C<T>::Iterator iter(items); iter; iter++) add(iter); }
 	template <template<class _1, class _2> class C> inline void addAll (const C<T, E> &items)
-		{ for(typename C<T, E>::Iterator iter; iter(items); iter++) add(iter); }
+		{ for(typename C<T, E>::Iterator iter(items); iter; iter++) add(iter); }
 	template <template<class _> class C> inline void removeAll (const C<T> &items)
 		{ for(typename C<T>::Iterator iter(items); iter; iter++) remove(iter);	}
 	template <template<class _1, class _2> class C> inline void removeAll (const C<T, E> &items)
 		{ for(typename C<T, E>::Iterator iter(items); iter; iter++) remove(iter);	}
 
 	void remove(const T& value) {
-		for(Node *prv = 0, *cur = (Node *)list.first(); cur; prv = cur, cur = cur->next())
+		for(Node *prv = 0, *cur = static_cast<Node *>(list.first()); cur; prv = cur, cur = cur->next())
 			if(E::equals(cur->val, value))
 				{ if(!prv) list.removeFirst(); else prv->removeNext(); }
 	}
@@ -102,11 +102,11 @@ public:
 	void remove(Iterator &iter) {
 		ASSERT(iter.node);
 		if(!iter.prev) removeFirst(); else iter.prev->removeNext();
-		iter.node = iter.prev->next();
+		if(iter.prev) iter.node = iter.prev->next(); else iter.node = static_cast<Node *>(list.first());
 	}
 	
 	// List concept
-	inline const T& first(void) const { return ((Node *)list.first())->val; }
+	inline const T& first(void) const { return static_cast<Node *>(list.first())->val; }
 	inline const T& last(void) const { return (static_cast<Node *>(list.last()))->val; }
 	Iterator find(const T& item) const
 		{ Iterator iter(*this); for(; iter; iter++) if(E::equals(item, iter)) break; return iter;  }
