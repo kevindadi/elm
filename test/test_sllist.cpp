@@ -76,5 +76,20 @@ TEST_BEGIN(sllist)
 		CHECK(l.contains(2));
 		CHECK(l.contains(3));
 	}
+
+	// test remove with iterator
+	{
+		genstruct::SLList<int> l;
+		for(int i = 0; i < 10; i++)
+			l.add(i);
+		for(genstruct::SLList<int>::Iterator i(l); i; i && i++)
+			if(*i % 2 == 0)
+				l.remove(i);
+		int pairs = 0;
+		for(genstruct::SLList<int>::Iterator i(l); i; i++)
+			if(*i % 2 == 0)
+				pairs++;
+		CHECK_EQUAL(pairs, 0);
+	}
 TEST_END
 
