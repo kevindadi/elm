@@ -14,7 +14,9 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <string.h>
-#include <sys/prctl.h>
+#ifndef __APPLE__
+#	include <sys/prctl.h>
+#endif
 #include "../config.h"
 
 namespace elm {
@@ -44,15 +46,20 @@ void GDBCrashHandler::handle(void) {
 	// Clean all
 	cleanup();
 	
-	// Test for a tty ?
-	if(!isatty(0) || !isatty(1))
-		abort();
+	// Test for a tty?
+	FILE *out;
+	if(isatty(0))
+		out = stdout;
+	else if(isatty(1))
+		out = stderr;
+	else
+		fatal("no TTY available.");
 	
 	// Ask use to use GDB ?
-	printf("Do you want to start GDB ? [n]\b\b");
+	fprintf(out, "Do you want to start GDB ? [n]\b\b");
 	char chr = getchar();
 	if(chr != 'y' && chr != 'Y')
-		abort(); 
+		fatal("Aborting...");
 	
 	// Make wait process
 	int main_pid = getpid();
@@ -117,7 +124,7 @@ void GDBCrashHandler::handle(void) {
  */
 void GDBCrashHandler::fatal(const char *msg) {
 	fprintf(stderr, "FATAL:%s\n", msg);
-	exit(1);
+	abort();
 }
 
 } // elm

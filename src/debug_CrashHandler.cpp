@@ -195,6 +195,7 @@ t::uint32 CrashHandler::_mode = 0;
 class CrashMonitor {
 public:
 	CrashMonitor(void): mode(0) {
+		printf("DEBUG: setting crash monitor\n");
 		
 		// Look for the ELM_DEBUG variable
 		const char *elm_debug = getenv("ELM_DEBUG");
