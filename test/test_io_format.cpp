@@ -48,7 +48,7 @@ TEST_BEGIN(io_format)
 	CHECK_EQUAL(do_test(center(width(8, pad('!', -666)))), String("!!-666!!"));
 	CHECK_EQUAL(do_test(center(width(8, pad('!', 0)))), String("!!!0!!!!"));
 	CHECK_EQUAL(do_test(hex(t::uint32(-1))), String("ffffffff"));
-	CHECK_EQUAL(do_test(hex(t::int32(-1))), String("ffffffffffffffff"));
+	CHECK_EQUAL(do_test(hex(t::int32(-1))), String("ffffffff"));
 	
 	// Test upper case
 	CHECK_EQUAL(do_test(hex(uppercase(666))), String("29A"));

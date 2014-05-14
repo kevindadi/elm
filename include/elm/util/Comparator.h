@@ -29,46 +29,17 @@
 
 namespace elm {
 
-// PreComparator class
-template <class T, class C>
-class PreComparator {
-public:
-	static inline const T& min(const T& v1, const T& v2)
-		{ return C::compare(v1, v2) < 0 ? v1 : v2; }
-	static inline const T& max(const T& v1, const T& v2)
-		{ return C::compare(v1, v2) > 0 ? v1 : v2; }
-};
-
-
 // Comparator class
 template <class T>
-class Comparator: public PreComparator<T, Comparator<T> > {
+class Comparator {
 public:
 	static inline int compare(const T& v1, const T& v2)
 		{ if(v1 == v2) return 0; else if(v1 > v2) return 1; else return -1; }
 };
 
-// SubstractComparator class
-/*template <class T>
-class SubstractComparator: public PreComparator<T, SubstractComparator<T> > {
-public:
-	static inline int compare(const T& v1, const T& v2) { return v1 - v2; }
-};
-template <> class Comparator<signed char>: public SubstractComparator<signed char> { };
-template <> class Comparator<unsigned char>: public SubstractComparator<unsigned char> { };
-template <> class Comparator<signed short>: public SubstractComparator<signed short> { };
-template <> class Comparator<unsigned short>: public SubstractComparator<unsigned short> { };
-template <> class Comparator<signed int>: public SubstractComparator<signed int> { };
-template <> class Comparator<unsigned int>: public SubstractComparator<unsigned int> { };
-template <> class Comparator<signed long>: public SubstractComparator<signed long> { };
-template <> class Comparator<unsigned long>: public SubstractComparator<unsigned long> { };
-template <> class Comparator<signed long long>: public SubstractComparator<signed long long> { };
-template <> class Comparator<unsigned long long>: public SubstractComparator<unsigned long long> { };*/
-
-
 // CompareComparator class
 template <class T>
-class CompareComparator: public PreComparator<T, CompareComparator<T> > {
+class CompareComparator {
 public:
 	static inline int compare(const T& v1, const T& v2) { return v1.compare(v2); }
 };
@@ -78,7 +49,7 @@ template <> class Comparator<string>: public CompareComparator<string> { };
 
 // AssocComparator class
 template <class K, class T, class C = Comparator<K> >
-class AssocComparator: public PreComparator<Pair<K, T>, AssocComparator<K, T, C> > {
+class AssocComparator {
 public:
 	typedef Pair<K, T> pair_t;
 	static inline int compare(const pair_t& v1, const pair_t& v2)
@@ -90,7 +61,7 @@ template <class K, class T> class Comparator<Pair<K, T> >
 
 // ReverseComparator class
 template <class T, class C>
-class ReverseComparator: public PreComparator<T, ReverseComparator<T, C > > {
+class ReverseComparator {
 public:
 	static inline int compare(const T& v1, const T& v2)
 		{ return -C::compare(v1, v2); }
@@ -108,9 +79,9 @@ public:
 
 // Useful inlines
 template <class T> inline const T& min(const T& x, const T& y)
-	{ return Comparator<T>::min(x, y); }
-template <class T> inline const T& max(const T& x, const T y)
-	{ return Comparator<T>::max(x, y); }
+	{ if(Comparator<T>::compare(x, y) >= 0) return x; else return y; }
+template <class T> inline const T& max(const T& x, const T& y)
+	{ if(Comparator<T>::compare(x, y) >= 0) return x; else return y; }
 
 } // elm
 

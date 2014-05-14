@@ -84,14 +84,10 @@ public:
 	inline void clear(void)
 		{ while(!list.isEmpty()) { Node *node = static_cast<Node *>(list.first()); list.removeFirst(); delete node; } }
 	inline void add(const T& value) { addFirst(value); }
-	template <template<class _> class C> inline void addAll (const C<T> &items)
-		{ for(typename C<T>::Iterator iter(items); iter; iter++) add(iter); }
-	template <template<class _1, class _2> class C> inline void addAll (const C<T, E> &items)
-		{ for(typename C<T, E>::Iterator iter(items); iter; iter++) add(iter); }
-	template <template<class _> class C> inline void removeAll (const C<T> &items)
-		{ for(typename C<T>::Iterator iter(items); iter; iter++) remove(iter);	}
-	template <template<class _1, class _2> class C> inline void removeAll (const C<T, E> &items)
-		{ for(typename C<T, E>::Iterator iter(items); iter; iter++) remove(iter);	}
+	template <class C> inline void addAll(const C& items)
+		{ for(typename C::Iterator iter(items); iter; iter++) add(iter); }
+	template <class C> inline void removeAll(const C& items)
+		{ for(typename C::Iterator iter(items); iter; iter++) remove(iter);	}
 
 	void remove(const T& value) {
 		for(Node *prv = 0, *cur = static_cast<Node *>(list.first()); cur; prv = cur, cur = cur->next())

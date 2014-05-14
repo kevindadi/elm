@@ -7,6 +7,7 @@
 
 #include <elm/util/test.h>
 #include <elm/int.h>
+#include <elm/util/Comparator.h>
 
 using namespace elm;
 
@@ -34,6 +35,15 @@ TEST_BEGIN(int)
 	CHECK(!over && r == 0xffffff00);
 	r = mult(t::uint32(0xffffff00), t::uint32(0xff), over);
 	CHECK(over);
+
+	// test max
+	{
+		int x = 10, y = 20;
+		const int& v = max(x, y);
+		cerr << "DEBUG: " << (void *)&v << " = " << (void *)&y << io::endl;
+		CHECK_EQUAL(elm::max(x, y), 20);
+		CHECK_EQUAL(max(x, 5), 10);
+	}
 
 TEST_END
 
