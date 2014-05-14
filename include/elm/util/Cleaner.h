@@ -40,7 +40,8 @@ template <class T>
 class Deletor: public Cleaner {
 public:
 	inline Deletor(T *object): obj(object) { }
-	virtual ~Deletor(void) { delete obj; }
+	virtual ~Deletor(void) { }
+	virtual void clean(void) { delete obj; }
 private:
 	T *obj;	
 };
@@ -62,9 +63,10 @@ public:
 	void add(Cleaner *cleaner);
 	void clean(void);
 	
-	template <class T> const AutoPtr<T>& operator()(const AutoPtr<T>& object)
+	inline Cleaner *operator()(Cleaner *cleaner) { add(cleaner); return cleaner; }
+	template <class T> inline const AutoPtr<T>& operator()(const AutoPtr<T>& object)
 		{ add(new AutoCleaner<T>(object)); return object; } 
-	template <class T> T *operator()(T *object)
+	template <class T> inline T *operator()(T *object)
 		{ add(new Deletor<T>(object)); return object; } 
 
 private:
