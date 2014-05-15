@@ -64,7 +64,7 @@ public:
 	inline String(const String& str): buf(str.buf), off(str.off), len(str.len) { lock(); };
 	inline ~String(void) { unlock(); };
 	inline String& operator=(const String& str)
-		{ unlock(); buf = str.buf; off = str.off; len = str.len; lock(); return *this; };
+		{ str.lock(); unlock(); buf = str.buf; off = str.off; len = str.len; return *this; };
 	inline String& operator=(const CString str)
 		{ unlock(); copy(str.chars(), str.length()); return *this; };
 	inline String& operator=(const char *str)

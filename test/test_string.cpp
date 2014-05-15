@@ -343,5 +343,12 @@ TEST_BEGIN(string)
 		CHECK(x == 0xff);
 	}
 
+	// shared buffer
+	{
+		string s = "34";
+		s = s;
+		CHECK_EQUAL(s, string("34"));
+	}
+
 TEST_END
 
