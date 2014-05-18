@@ -24,6 +24,7 @@
 #include <iostream>
 #include <elm/type_info.h>
 #include <elm/util/test.h>
+#include <elm/util/Option.h>
 
 using namespace elm;
 
@@ -33,28 +34,27 @@ typedef enum enm_t {
 	C
 } enm_t;
 
-int main(void) {
-	CHECK_BEGIN("inhstruct_Tree")
+TEST_BEGIN(type_info)
 
-	CHECK(type_info<signed char>::null == 0);
-	CHECK(type_info<signed char>::is_signed == true);
-	CHECK(type_info<signed char>::min == -0x80);
-	CHECK(type_info<signed char>::max == 0x7f);
+	CHECK(type_info<t::int8>::null == 0);
+	CHECK(type_info<t::int8>::is_signed == true);
+	CHECK(type_info<t::int8>::min == -0x80);
+	CHECK(type_info<t::int8>::max == 0x7f);
 
-	CHECK(type_info<unsigned char>::null == 0);
-	CHECK(type_info<unsigned char>::is_signed == false);
-	CHECK(type_info<unsigned char>::min == 0);
-	CHECK(type_info<unsigned char>::max == 0xff);
+	CHECK(type_info<t::uint8>::null == 0);
+	CHECK(type_info<t::uint8>::is_signed == false);
+	CHECK(type_info<t::uint8>::min == 0);
+	CHECK(type_info<t::uint8>::max == 0xff);
 
-	CHECK(type_info<signed short>::null == 0);
-	CHECK(type_info<short>::is_signed == true);
-	CHECK((int)type_info<signed short>::min == (int)-32768);
-	CHECK(type_info<signed short>::max == 0x7fff);
+	CHECK(type_info<t::int16>::null == 0);
+	CHECK(type_info<t::int16>::is_signed == true);
+	CHECK(type_info<t::int16>::min == t::int16(-32768));
+	CHECK(type_info<t::int16>::max == 0x7fff);
 
-	CHECK(type_info<unsigned short>::null == 0);
-	CHECK(type_info<unsigned short>::is_signed == false);
-	CHECK(type_info<unsigned short>::min == 0);
-	CHECK(type_info<unsigned short>::max == 0xffff);
+	CHECK(type_info<t::uint16>::null == 0);
+	CHECK(type_info<t::uint16>::is_signed == false);
+	CHECK(type_info<t::uint16>::min == 0);
+	CHECK(type_info<t::uint16>::max == 0xffff);
 
 	CHECK(type_info<int>::null == 0);
 	CHECK(type_info<int>::is_signed == true);
@@ -66,28 +66,57 @@ int main(void) {
 	CHECK(type_info<unsigned>::min == 0);
 	CHECK(type_info<unsigned>::max == 0xffffffff);		 
 
-	CHECK(type_info<long>::null == 0);
-	CHECK(type_info<long>::is_signed == true);
-	CHECK(type_info<long>::min == (long)-0x80000000);
-	CHECK(type_info<long>::max == 0x7fffffff);		 
+	CHECK(type_info<t::int32>::null == 0);
+	CHECK(type_info<t::int32>::is_signed == true);
+	CHECK(type_info<t::int32>::min == t::int32(-0x80000000));
+	CHECK(type_info<t::int32>::max == 0x7fffffff);
 		 
-	CHECK(type_info<unsigned long>::null == 0);
-	CHECK(type_info<unsigned long>::is_signed == false);
-	CHECK(type_info<unsigned long>::min == 0);
-	CHECK(type_info<unsigned long>::max == 0xffffffff);		 
+	CHECK(type_info<t::uint32>::null == 0);
+	CHECK(type_info<t::uint32>::is_signed == false);
+	CHECK(type_info<t::uint32>::min == 0);
+	CHECK(type_info<t::uint32>::max == 0xffffffff);
 
-	CHECK(type_info<long long>::null == 0);
-	CHECK(type_info<long long>::is_signed == true);
-	CHECK(type_info<long long>::min == (long long)-0x8000000000000000LL);
-	CHECK(type_info<long long>::max == 0x7fffffffffffffffLL);		 
+	CHECK(type_info<t::int64>::null == 0);
+	CHECK(type_info<t::int64>::is_signed == true);
+	CHECK(type_info<t::int64>::min == t::int64(-0x8000000000000000LL));
+	CHECK(type_info<t::int64>::max == 0x7fffffffffffffffLL);
 		 
-	CHECK(type_info<unsigned long long>::null == 0);
-	CHECK(type_info<unsigned long long>::is_signed == false);
-	CHECK(type_info<unsigned long long>::min == 0LL);
-	CHECK(type_info<unsigned long long>::max == 0xffffffffffffffffLL);	 
+	CHECK(type_info<t::uint64>::null == 0);
+	CHECK(type_info<t::uint64>::is_signed == false);
+	CHECK(type_info<t::uint64>::min == 0LL);
+	CHECK(type_info<t::uint64>::max == 0xffffffffffffffffLL);
 
 	CHECK(type_info<enm_t>::is_ptr == 0);
 	//cerr << io::hex(type_info<unsigned long long>::max) << io::endl;
 	
-	CHECK_END
-}
+	// embed test
+	{
+		type_info<bool>::embed_t v;
+		type_info<bool>::put(v, true);
+		CHECK_EQUAL(type_info<bool>::get(v), true);
+
+		int i = 666;
+		type_info<int&>::embed_t ir;
+		type_info<int&>::put(ir, i);
+		CHECK_EQUAL(type_info<int&>::get(ir), 666);
+
+		const int ci = 111;
+		type_info<const int&>::embed_t cir;
+		type_info<const int&>::put(cir, ci);
+		CHECK_EQUAL(type_info<const int&>::get(cir), 111);
+	}
+
+	// embed in option test
+	{
+		Option<int&> o = none;
+		int i = 123;
+		int& ir = i;
+		Option<int&> o2(some<int&>(ir));
+		CHECK_EQUAL(o2.isNone(), false);
+		CHECK_EQUAL(o2.value(), 123);
+		o = o2;
+		CHECK_EQUAL(o.isNone(), false);
+		CHECK_EQUAL(o.value(), 123);
+	}
+
+TEST_END

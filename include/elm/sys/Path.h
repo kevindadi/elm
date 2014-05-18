@@ -143,7 +143,6 @@ void Path::PathIter::look(void) {
 	n = s.indexOf(Path::PATH_SEPARATOR, n + 1);
 	if(n < 0)
 		n = s.length();
-	//cerr << "DEBUG: s=" << s << ", p=" << p << ", n=" << n << io::endl;
 }
 
 } // elm

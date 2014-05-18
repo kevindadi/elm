@@ -40,7 +40,6 @@ TEST_BEGIN(int)
 	{
 		int x = 10, y = 20;
 		const int& v = max(x, y);
-		cerr << "DEBUG: " << (void *)&v << " = " << (void *)&y << io::endl;
 		CHECK_EQUAL(elm::max(x, y), 20);
 		CHECK_EQUAL(max(x, 5), 10);
 	}

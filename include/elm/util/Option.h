@@ -8,6 +8,7 @@
 #define ELM_UTIL_OPTION_H
 
 #include <elm/assert.h>
+#include <elm/type_info.h>
 
 namespace elm {
 
@@ -22,32 +23,30 @@ template <class T> class Option {
 public:
 	inline Option(void): one(false) { }
 	inline Option(const OptionalNone& none): one(false) { }
-	inline Option(const T& value): one(true), val(value) { }
+	inline Option(T value): one(true) { type_info<T>::put(val, value); }
 	inline Option(const Option<T> &opt): one(opt.one), val(opt.val) { }
 	inline bool isOne(void) const { return one; }
 	inline bool isNone(void) const { return !one; }
-	inline const T& value(void) const
-		{ ASSERTP(one, "no value in option"); return val; }
+	inline T value(void) const
+		{ ASSERTP(one, "no value in option"); return type_info<T>::get(val); }
 	
 	inline operator bool(void) const { return isOne(); }
-	inline const T& operator*(void) const
-		{ ASSERTP(one, "no value in option");  return val; }
-	inline operator const T&(void) const
-		{ ASSERTP(one, "no value in option"); return val; }
+	inline T operator*(void) const { return value(); }
+	inline operator T(void) const { return value(); }
 	inline Option<T>& operator=(const Option<T>& opt)
-		{ one = opt.one; val = opt.val; return *this; }
-	inline Option<T>& operator=(const T& value)
-		{ one = true; val = value; return *this; }
+		{ one = opt.one; if(one) val = opt.val; return *this; }
+	inline Option<T>& operator=(T value)
+		{ one = true; type_info<T>::put(val, value); return *this; }
 
 private:
 	bool one;
-	T val;
+	typename type_info<T>::embed_t val;
 };
 
 
 // Fast Option building
 template <class T>
-inline Option<T> some(const T& val) { return Option<T>(val); };
+inline Option<T> some(T val) { return Option<T>(val); };
 
 } // elm
 

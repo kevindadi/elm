@@ -60,6 +60,9 @@ namespace elm {
  * system fast byte-per-byte copy mechanism)
  * @li is_virtual -- true if T contains virtual functions
  * @li name() -- get the name of a type.
+ * @li embed_t -- type T to converted to an assignable form.
+ * @li put(embed_t& var, T val) -- assign value of type T to a variable of assigned type.
+ * @li get(embed_t& var) -- convert back a variable in assigned type to T.
  *
  * Notice that ELM provides type information for basic (integer, float, string) and composed types (pointer, references)
  * but need the developer help for more complex types like classes, struct or unions. Either one can add the specialized
