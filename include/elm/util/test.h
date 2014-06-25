@@ -73,6 +73,7 @@ const T& result, const T& reference) {
 //#define ELM_CHECK_MAKE(name, actions) class name##Test: public { name##Test(void)
 #define ELM_CHECK_BEGIN(name)	{ elm::TestCase __case(name); __case.prepare();
 #define ELM_CHECK(tst)			__case.check(__FILE__, __LINE__, #tst, tst)
+#define ELM_CHECK_MSG(msg, res)	__case.check(__FILE__, __LINE__, msg, res)
 #define ELM_CHECK_END 			__case.complete(); }
 #define ELM_REQUIRE(tst, action)	if(!__case.require(__FILE__, __LINE__, #tst, tst)) action
 #define ELM_CHECK_EQUAL(res, ref)	__case.check_equal(__FILE__, __LINE__, #res " == " #ref, res, ref)
@@ -95,6 +96,7 @@ const T& result, const T& reference) {
 #ifndef ELM_NO_SHORTCUT
 #	define CHECK_BEGIN(name) ELM_CHECK_BEGIN(name)
 #	define CHECK(tst) ELM_CHECK(tst)
+#	define CHECK_MSG(msg, res) ELM_CHECK_MSG(msg, res)
 #	define REQUIRE(tst, action) ELM_REQUIRE(tst, action)
 #	define CHECK_EQUAL(res, ref) ELM_CHECK_EQUAL(res, ref)
 #	define CHECK_END ELM_CHECK_END

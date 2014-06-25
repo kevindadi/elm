@@ -41,24 +41,33 @@ typedef struct default_t {
 template <class T>
 struct asis_t {
 	typedef T embed_t;
+	typedef T in_t;
+	typedef T& out_t;
 	static inline void put(T& l, const T& v) { l = v; }
 	static inline const T& get(const T& v) { return v;}
 };
 
 // class info
-template <class T>
-class class_t: public default_t, public asis_t<T> {
+template <class T> class class_t: public default_t, public asis_t<T> {
 public:
 	enum { is_class = 1 };
 	enum { is_deep = 1 };
 	enum { is_virtual = 1 };
-	static inline CString name(void) { return T::_class.name(); }
+	typedef const T& in_t;
 };
 
 // RTTI type
-template <class T> class type_info: public class_t<T> {
+template <class T> class rtti_t: public class_t<T> {
+public:
 	static cstring name(void) { return T::__type_name(); }
 };
+
+// generic class
+template <class T> class type_info: public class_t<T> {
+public:
+	static cstring name(void) { return ""; }
+};
+
 
 // generic type
 typedef struct type_t: public default_t {
@@ -193,6 +202,8 @@ template <class T> struct type_info<const T&>: public ref_t {
 	enum { is_const = 1 };
 	static string name(void) { return "const " + type_info<T>::name() + "& "; }
 	typedef const T *embed_t;
+	typedef const T& in_t;
+	typedef const T& out_t;
 	static inline void put(embed_t& l, const T& v) { l = &v; }
 	static inline const T& get(embed_t l) { return *l; }
 };
@@ -202,6 +213,8 @@ template <class T> struct type_info<T&>: public ref_t {
 	enum { is_const = 0 };
 	static string name(void) { return type_info<T>::name() + "& "; }
 	typedef T *embed_t;
+	typedef T& in_t;
+	typedef T& out_t;
 	static inline void put(embed_t& l, T& v) { l = &v; }
 	static inline T& get(embed_t l) { return *l; }
 };

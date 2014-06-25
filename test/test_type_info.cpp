@@ -25,6 +25,8 @@
 #include <elm/type_info.h>
 #include <elm/util/test.h>
 #include <elm/util/Option.h>
+#include <elm/genstruct/HashTable.h>
+#include <elm/genstruct/Vector.h>
 
 using namespace elm;
 
@@ -117,6 +119,44 @@ TEST_BEGIN(type_info)
 		o = o2;
 		CHECK_EQUAL(o.isNone(), false);
 		CHECK_EQUAL(o.value(), 123);
+	}
+
+	// embed in hashtable (const reference)
+	{
+		genstruct::HashTable<const int&, int> h;
+		int a = 0, b = 1, c = 2, d = 3;
+		h.put(a, a);
+		h.put(b, b);
+		h.put(c, c);
+		CHECK_EQUAL(a, h.get(a, d));
+		CHECK_EQUAL(b, h.get(b, d));
+		CHECK_EQUAL(c, h.get(c, d));
+	}
+
+	// embed in hashtable (reference)
+	{
+		genstruct::HashTable<int&, int> h;
+		int a = 0, b = 1, c = 2, d = 3;
+		h.put(a, a);
+		h.put(b, b);
+		h.put(c, c);
+		CHECK_EQUAL(a, h.get(a, d));
+		CHECK_EQUAL(b, h.get(b, d));
+		CHECK_EQUAL(c, h.get(c, d));
+	}
+
+	// embed a class
+	{
+		typedef genstruct::Vector<int> v_t;
+		genstruct::HashTable<int, v_t> h;
+		v_t v1;
+		v1.add(0);
+		h.put(0, v1);
+		Option<v_t> v = h.get(0);
+		CHECK(v);
+		CHECK_EQUAL(*v, v1);
+		v = h.get(1);
+		CHECK(!v);
 	}
 
 TEST_END

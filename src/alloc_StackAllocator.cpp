@@ -25,12 +25,6 @@
 
 namespace elm {
 
-typedef struct chunk_t {
-	struct chunk_t *next;
-	char buffer[0];
-} chunk_t;
-
-
 /**
  * @class StackAllocator
  * A stack allocator allows to implement quick allocation scheme with even quicker de-allocation.
@@ -81,10 +75,23 @@ StackAllocator::~StackAllocator(void) {
 void *StackAllocator::allocate(t::size size) throw(BadAlloc) {
 	ASSERTP(size <= _size, "allocated block too big !")
 	if(!cur || size_t(max - top) < size)
-		newChunk();
+		return chunkFilled(size);
 	char *res = top;
 	top += size;
 	return res;
+}
+
+
+/**
+ * This method is called when there is no more place in the current chunk.
+ * It may be overload to provide custom behavior of the allocator.
+ * @param	size	Size of block to allocate.
+ * @return			Allocated block.
+ * @throiw BadAlloc	In case of fatal allocation error.
+ */
+void *StackAllocator::chunkFilled(t::size size) throw(BadAlloc) {
+	newChunk();
+	return allocate(size);
 }
 
 

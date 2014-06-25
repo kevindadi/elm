@@ -24,11 +24,22 @@ bool hash_equals(const void *p1, const void *p2, int size);
 // HashKey class
 template <class T> class HashKey {
 public:
-	static t::hash hash(const T& key)
-		{ return hash_jenkins(&key, sizeof(T)); };
-	static inline bool equals(const T& key1, const T& key2)
-		{ return &key1 == &key2 || hash_equals(&key1, &key2, sizeof(T)); }
+	static t::hash hash(const T& key) { return hash_jenkins(&key, sizeof(T)); };
+	static inline bool equals(const T& key1, const T& key2) { return &key1 == &key2 || hash_equals(&key1, &key2, sizeof(T)); }
 };
+
+template <class T> class HashKey<const T&> {
+public:
+	static t::hash hash(const T& key) { return hash_jenkins(&key, sizeof(T)); };
+	static inline bool equals(const T& key1, const T& key2) { return &key1 == &key2 || hash_equals(&key1, &key2, sizeof(T)); }
+};
+
+template <class T> class HashKey<T&> {
+public:
+	static t::hash hash(const T& key) { return hash_jenkins(&key, sizeof(T)); };
+	static inline bool equals(const T& key1, const T& key2) { return &key1 == &key2 || hash_equals(&key1, &key2, sizeof(T)); }
+};
+
 
 // Predefined hash keys
 template <> class HashKey<int> {
