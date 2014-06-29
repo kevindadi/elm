@@ -79,7 +79,7 @@ public:
 
 // Useful inlines
 template <class T> inline const T& min(const T& x, const T& y)
-	{ if(Comparator<T>::compare(x, y) >= 0) return x; else return y; }
+	{ if(Comparator<T>::compare(x, y) >= 0) return y; else return x; }
 template <class T> inline const T& max(const T& x, const T& y)
 	{ if(Comparator<T>::compare(x, y) >= 0) return x; else return y; }
 
