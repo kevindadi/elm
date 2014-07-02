@@ -41,9 +41,9 @@ private:
 // NoCrashHandler class
 class NoCrashHandler: public CrashHandler {
 public:
-	virtual void setup(mode_t mode) { }
+	virtual void setup(void) { }
 	virtual void handle(void) { }
-	virtual void cleanup(mode_t mode) { }
+	virtual void cleanup(void) { }
 };
 
 } // elm

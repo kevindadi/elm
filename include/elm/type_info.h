@@ -148,19 +148,19 @@ template <> struct type_info<unsigned long long>: public unsigned_info<unsigned 
 template <> struct type_info<float>: public scalar_t, public asis_t<float> {
 	static const float min;
 	static const float max;
-	static const float null = 0;
+	static const float null;
 	static cstring name(void);
 };
 template <> struct type_info<double>: public scalar_t, public asis_t<double> {
 	static const double min;
 	static const double max;
-	static const double null = 0;
+	static const double null;
 	static cstring name(void);
 };
 template <> struct type_info<long double>: public scalar_t, public asis_t<long double> {
 	static const long double min;
 	static const long double max;
-	static const long double null = 0;
+	static const long double null;
 	static cstring name(void);
 };
 

@@ -47,7 +47,7 @@ void GDBCrashHandler::handle(void) {
 	cleanup();
 	
 	// Test for a tty?
-	FILE *out;
+	FILE *out = 0;
 	if(isatty(0))
 		out = stdout;
 	else if(isatty(1))

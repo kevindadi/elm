@@ -20,7 +20,7 @@ using namespace genstruct;
 // TextSerializer class
 class TextSerializer: public Serializer {
 public:
-	inline TextSerializer(io::Output out = cout): level(0), _out(out) { }
+	inline TextSerializer(io::Output &out = cout): level(0), _out(out) { }
 	virtual void flush(void);
 
 	// Complex type serializers

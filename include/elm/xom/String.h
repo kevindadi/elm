@@ -51,7 +51,6 @@ public:
 
 	// Operators
 	inline String& operator=(const String& str) { buf = str.buf; return *this; }
-	inline operator CString(void) const { return (const char *)buf; }
 	inline operator char_t *(void) const { return (char_t *)buf; }
 };
 inline io::Output& operator<<(io::Output& out, String str)

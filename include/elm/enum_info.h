@@ -49,7 +49,7 @@ struct enum_info: public enum_t {
 
 	// iterator on values
 	class iterator {
-		friend class enum_info;
+		friend struct enum_info;
 	public:
 		inline iterator(const iterator& it): i(it.i), vs(it.vs) { }
 		iterator& operator++(void) { i++; return *this; }

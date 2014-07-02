@@ -241,16 +241,19 @@ cstring type_info<unsigned long long>::name(void) { return "unsigned long long";
 // type_info<float>
 const float type_info<float>::min = -FLT_MAX;
 const float type_info<float>::max = FLT_MAX;
+const float type_info<float>::null = 0;
 cstring type_info<float>::name(void) { return "float"; }
 
 // type_info<double>
 const double type_info<double>::min = -DBL_MAX;
 const double type_info<double>::max = DBL_MAX;
+const double type_info<double>::null = 0;
 cstring type_info<double>::name(void) { return "double"; }
 
 // type_info<long double>
 const long double type_info<long double>::min = -LDBL_MAX;
 const long double type_info<long double>::max = LDBL_MAX;
+const long double type_info<long double>::null = 0;
 cstring type_info<long double>::name(void) { return "long double"; }
 
 // type_info<string types>

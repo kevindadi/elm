@@ -85,17 +85,6 @@ namespace elm { namespace io {
  */
 
 
-// Build the flags
-static inline int makeFlags(RandomAccessStream::access_t access) {
-	switch(access) {
-	case RandomAccessStream::READ: return O_RDONLY;
-	case RandomAccessStream::WRITE: return O_WRONLY;
-	case RandomAccessStream::READ_WRITE: return O_RDWR;
-	default: ASSERT(false); return 0;
-	}
-}
-
-
 /**
  * Open a random access stream from a file.
  * @param path			Path of the file to open.
