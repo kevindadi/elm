@@ -158,7 +158,10 @@ public:
 	public:
 		inline SameKeyIterator(const HashTable<K, T, H>& _htab, in_k _key)
 			: htab(_htab)
-			{ type_info<K>::put(key, _key); i = H::hash(key) % size; for (node = htab.tab[i]; node && (node->key != key); node = node->next); ASSERT(node != NULL); }
+			{	type_info<K>::put(key, _key); i = H::hash(key) % size; 
+				for (node = htab.tab[i]; node && (node->key != key); node = node->next)
+					; 
+				ASSERT(node != NULL); }
 		inline bool ended(void) const {	return node == 0; }
 		inline void next(void)
 			{ node = node->next; for (node = htab.tab[i]; node && (type_info<K>::get(node->key) != type_info<K>::get(key)); node = node->next); }
