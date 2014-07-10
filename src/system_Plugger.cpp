@@ -48,7 +48,7 @@ static cstring
 	// DESCRIPTION = "description",
 	RPATH_ATT = "rpath",
 	LIBS_ATT = "libs",
-	DEPS_ATT;
+	DEPS_ATT = "deps";
 
 static cstring PLUG_EXT =
 #ifdef WITH_LIBTOOL
@@ -317,11 +317,12 @@ Plugin *Plugger::plugFile(sys::Path path) {
 			// pre-link other plugins
 			genstruct::Vector<string> deps;
 			sect->getList(DEPS_ATT, deps);
-			for(int i = 0; i < deps.count(); i++)
+			for(int i = 0; i < deps.count(); i++) {
 				if(!plug(deps[i])) {
 					onError(level_error, _ << "cannot plug " << deps[i]);
 					return 0;
 				}
+			}
 
 			// pre-link libraries
 			genstruct::Vector<string> libs;
