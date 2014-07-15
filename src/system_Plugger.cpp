@@ -431,9 +431,9 @@ Plugin *Plugger::plugFile(sys::Path path) {
 	}
 
 	// Check plugger version
-	if(!plugin->pluggerVersion().accepts(per_vers)) {
+	if(!per_vers.accepts(plugin->pluggerVersion())) {
 		err = BAD_VERSION;
-		onError(level_warning, _ << "bad version plugin found at \"" << path << "\"");
+		onError(level_warning, _ << "bad version plugin found at \"" << path << "\" (required: " << per_vers << ", provided: " << plugin->pluggerVersion() << ")");
 		return 0;
 	}
 
