@@ -91,5 +91,10 @@ TEST_BEGIN(sllist)
 				pairs++;
 		CHECK_EQUAL(pairs, 0);
 	}
+
+	// test for null
+	{
+		CHECK(genstruct::SLList<int>::null.isEmpty());
+	}
 TEST_END
 

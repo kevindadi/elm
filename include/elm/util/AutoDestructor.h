@@ -30,7 +30,6 @@ class AutoDestructor {
 public:
 	inline AutoDestructor(void): p(0) { }
 	inline AutoDestructor(T *ptr): p(ptr) { };
-	inline AutoDestructor(AutoDestructor& ad): p(ad.p) { ad.p = 0; }
 	inline ~AutoDestructor(void) { clean(); }
 
 	inline bool isNull(void) const { return !p; }

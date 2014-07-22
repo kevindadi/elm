@@ -56,6 +56,8 @@ public:
 		}
 	}
 
+	static SLList<T, E> null;
+
 	// Collection concept
 	inline int count(void) const { return list.count(); }
 	inline bool contains (const T &item) const
@@ -121,7 +123,13 @@ public:
 	inline void removeLast(void)
 		{ Node *node = static_cast<Node *>(list.last()); list.removeLast(); delete node; }
 	inline void set(const Iterator &pos, const T &item) { ASSERT(pos.node); pos.node->val = item; }
+
+	// operators
+	inline SLList<T>& operator+=(const T& h) { addFirst(h); return *this; }
+	inline SLList<T>& operator+=(const SLList<T>& l) { addAll(l); return *this; }
 };
+
+template <class T, class E> SLList<T, E> SLList<T, E>::null;
 
 } } // elm::genstruct
 
