@@ -34,7 +34,7 @@ class AVLMap {
 public:
 
 	// Map concept
-	inline Option<const T &> get(const K &key) const
+	inline Option<type_info<T>::in_t> get(const K &key) const
 		{ const pair_t *p = tree.get(key); if(!p) return none; else return some(p->snd); }
 	inline const T &get(const K &key, const T &def) const
 		{ const pair_t *p = tree.get(key); if(!p) return def; else return p->snd; }

@@ -82,7 +82,11 @@ TEST_BEGIN(avl)
 	// AVLMap
 	{
 		Map<string, int> map;
+		Option<int> r = map.get("ok");
+		CHECK(!r);
+
 		genstruct::HashTable<string, int> htab;
+
 		bool map_intensive = true;
 		for(int i = 0; map_intensive && i < count; i++) {
 			int a = system::System::random(maxv * 4);
