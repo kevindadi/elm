@@ -81,6 +81,23 @@ public:
 		friend class SLList;
 		Node *node, *prev;
 	};
+
+	// MutableIterator class
+	class MutableIterator: public PreIterator<Iterator, T&> {
+	public:
+		inline MutableIterator(void): node(0), prev(0) { }
+		inline MutableIterator(const SLList& _list): node(static_cast<Node *>(_list.list.first())), prev(0) { }
+		inline MutableIterator(const MutableIterator& source): node(source.node), prev(source.prev) { }
+		inline MutableIterator& operator=(const MutableIterator& i) { node = i.node; prev = i.prev; return *this; }
+		
+		inline bool ended(void) const { return !node; }
+		inline T& item(void) const { ASSERT(node); return node->val; }
+		inline void next(void)
+			{ ASSERT(node); prev = node; node = node->next(); }
+	private:
+		friend class SLList;
+		Node *node, *prev;
+	};
 	
 	// MutableCollection concept
 	inline void clear(void)
@@ -104,7 +121,9 @@ public:
 	}
 	
 	// List concept
+	inline T& first(void) { return static_cast<Node *>(list.first())->val; }
 	inline const T& first(void) const { return static_cast<Node *>(list.first())->val; }
+	inline T& last(void) { return (static_cast<Node *>(list.last()))->val; }
 	inline const T& last(void) const { return (static_cast<Node *>(list.last()))->val; }
 	Iterator find(const T& item) const
 		{ Iterator iter(*this); for(; iter; iter++) if(E::equals(item, iter)) break; return iter;  }
