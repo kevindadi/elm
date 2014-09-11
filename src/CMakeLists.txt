@@ -121,6 +121,7 @@ set(LIBELM_LA_SOURCES
 	"util_test.cpp"
 	"util_VarArg.cpp"
 	"util_Version.cpp"
+	"util_WAHVector.cpp"
 	"utility.cpp"
 	)
 

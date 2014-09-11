@@ -65,6 +65,7 @@ set(TEST_SOURCES
 	"test_sorted_bintree.cpp"
 	"test_type_info.cpp"
 #	"test_thread.cpp"
+    "test_wah"
 )
 
 if(HAS_SOCKET)

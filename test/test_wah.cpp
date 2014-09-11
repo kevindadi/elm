@@ -1,334 +1,422 @@
-/*
- *	$Id$
- *	test for WAHBitVector
- *
- *	This file is part of OTAWA
- *	Copyright (c) 2010, IRIT UPS.
- *
- *	OTAWA is free software; you can redistribute it and/or modify
- *	it under the terms of the GNU General Public License as published by
- *	the Free Software Foundation; either version 2 of the License, or
- *	(at your option) any later version.
- *
- *	OTAWA is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *	GNU General Public License for more details.
- *
- *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software
- *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- */
-
+#include <elm/util/WAHVector.h>
+#include "elm/util/test.h"
 #include <elm/util/BitVector.h>
-#include <elm/util/WAHBitVector.h>
-#include <elm/system/System.h>
-#include <elm/genstruct/Vector.h>
-#include <elm/util/test.h>
+#include <elm/sys/System.h>
 
-#define SIZE		256
-#define TESTS		10000
+#define	INTENSIVE
 
 using namespace elm;
-using namespace elm::system;
 
-class Action {
-public:
-	typedef enum {
-		NONE,
-		SET,
-		CLR
-	} t;
-
-	t k;
-	int i;
-
-	Action(t kind = NONE, int index = 0): k(kind), i(index) { }
-	Action& operator=(const Action& a) { k = a.k; i = a.i; return *this; }
-
-	void perform(WAHBitVector& v) {
-		switch(k) {
-		case NONE:
-			break;
-		case SET:
-			v.set(i, true);
-			break;
-		case CLR:
-			v.set(i, false);
-			break;
+void print(io::Output& out, const BitVector& v) {
+	t::uint32 w = 0;
+	int c = 0;
+	for(int i = 0; i < v.size(); i++) {
+		if(v.bit(i))
+			w |= 1 << c;
+		c++;
+		if(c == 31) {
+			out << ' ' << io::hex(w).width(8).pad('0').right();
+			w = 0;
+			c = 0;
 		}
 	}
-
-	void perform(BitVector& v) {
-		switch(k) {
-		case NONE:
-			break;
-		case SET:
-			v.set(i, true);
-			break;
-		case CLR:
-			v.set(i, false);
-			break;
-		}
-	}
-};
-io::Output& operator<<(io::Output& out, Action& act) {
-	switch(act.k) {
-	case Action::NONE:
-		out << "none";
-		break;
-	case Action::SET:
-		out << "set " << act.i;
-		break;
-	case Action::CLR:
-		out << "set " << act.i;
-		break;
-	}
-	return out;
+	if(c)
+		out << ' ' << io::hex(w).width(8).pad('0').right();
 }
 
-void test_wah(void) {
-	CHECK_BEGIN("wah")
+TEST_BEGIN(wah)
 
-	// append 1 bit
-	{ WAHBitVector v; v.set(5, true); CHECK(v.bit(5)); }
-
-	// fill single + append 1 bit
-	{ WAHBitVector v; v.set(32, true); CHECK(v.bit(32)); }
-
-	// fill multiple + append 1 bit
-	{ WAHBitVector v; v.set(65, true); CHECK(v.bit(65)); }
-
-	// append 1 bit + check clear others
+	// empty vector test
 	{
-		WAHBitVector v;
-		v.set(5, true);
-		CHECK(!v.bit(4));
-		CHECK(!v.bit(6));
-		CHECK(!v.bit(200));
+		WAHVector v(256);
+		cout << "v = " << v << io::endl;
+		CHECK(!v.bit(0));
+		CHECK(!v.bit(15));
+		CHECK(!v.bit(128));
+		CHECK(v.isEmpty());
+		CHECK(!v.isFull());
+		CHECK_EQUAL(v.size(), 256);
+		CHECK(v.countBits() == 0);
 	}
 
-	// fill single + append 1 bit + check clear others
+	// full vector test
 	{
-		WAHBitVector v;
-		v.set(35, true);
-		CHECK(!v.bit(32));
-		CHECK(!v.bit(40));
-		CHECK(!v.bit(5));
-	}
-
-	// set several bits
-	{
-		WAHBitVector v;
-		v.set(5, true);
-		v.set(32, true);
-		CHECK(v.bit(5));
-		CHECK(v.bit(32));
-	}
-
-	// set several bits with fill
-	{
-		WAHBitVector v;
-		v.set(5, true);
-		v.set(65, true);
-		CHECK(v.bit(5));
-		CHECK(v.bit(65));
-	}
-
-	// set with fill and set inside fill
-	{
-		WAHBitVector v;
-		v.set(32, true);
-		v.set(5, true);
-		CHECK(v.bit(5));
-		CHECK(v.bit(32));
-	}
-
-	// split fill in middle
-	{
-		WAHBitVector v;
-		v.set(94, true);
-		v.set(32, true);
-		CHECK(v.bit(94));
-		CHECK(v.bit(32));
-	}
-
-	// split fill at start
-	{
-		WAHBitVector v;
-		v.set(94, true);
-		v.set(15, true);
-		CHECK(v.bit(94));
+		WAHVector v(256, true);
+		cout << "v = " << v << io::endl;
+		CHECK(v.bit(0));
 		CHECK(v.bit(15));
+		CHECK(v.bit(128));
+		CHECK(!v.isEmpty());
+		CHECK(v.isFull());
+		CHECK_EQUAL(v.size(), 256);
+		CHECK_EQUAL(v.countBits(), 256);
 	}
 
-	// split fill at end
+	// set first word
 	{
-		WAHBitVector v;
-		v.set(94, true);
-		v.set(63, true);
-		CHECK(v.bit(94));
-		CHECK(v.bit(63));
+		WAHVector v(256);
+		v.set(15);
+		cout << "v = " << v << io::endl;
+		CHECK(v.bit(15));
+		CHECK_EQUAL(v.countBits(), 1);
 	}
 
-	// test one fill single
+	// set middle word
 	{
-		WAHBitVector v;
-		for(int i = 0; i < 31; i++)
-			v.set(i, true);
-		bool one = true;
-		for(int i = 30; i >= 0; i--)
-			if(!v.bit(i)) {
-				cerr << "failed for i=" << i << io::endl;
-				one = false;
+		WAHVector v(256);
+		v.set(50);
+		cout << "v = " << v << io::endl;
+		CHECK(v.bit(50));
+		CHECK_EQUAL(v.countBits(), 1);
+	}
+
+	// set last word
+	{
+		WAHVector v(256);
+		v.set(255);
+		cout << "v = " << v << io::endl;
+		CHECK(v.bit(255));
+		CHECK_EQUAL(v.countBits(), 1);
+	}
+
+	// clear first word
+	{
+		WAHVector v(256, true);
+		v.clear(15);
+		cout << "v = " << v << io::endl;
+		CHECK(!v.bit(15));
+		CHECK_EQUAL(v.countBits(), 255);
+	}
+
+	// clear middle word
+	{
+		WAHVector v(256, true);
+		v.clear(50);
+		cout << "v = " << v << io::endl;
+		CHECK(!v.bit(50));
+		CHECK_EQUAL(v.countBits(), 255);
+	}
+
+	// clear last word
+	{
+		WAHVector v(256, true);
+		v.clear(255);
+		cout << "v = " << v << io::endl;
+		CHECK(!v.bit(255));
+		CHECK_EQUAL(v.countBits(), 255);
+	}
+
+	// multi-set
+	{
+		WAHVector v(256, false);
+		v.set(56);
+		CHECK(v.bit(56));
+		CHECK_EQUAL(v.size(), 256);
+		v.set(101);
+		CHECK(v.bit(101));
+		CHECK_EQUAL(v.size(), 256);
+	}
+
+	// test equality
+	{
+		WAHVector v(256, false), w(256, false);
+		CHECK(v == w);
+		v.set(56);
+		CHECK(v != w);
+		w.set(56);
+		CHECK(v == w);
+		w.clear(56);
+		CHECK(v != w);
+		v.clear(56);
+		CHECK(v == w);
+	}
+
+	// simple and test
+	{
+		WAHVector v(256, false), w(256, false);
+		v.applyAnd(w);
+		CHECK(v.isEmpty());
+	}
+	{
+		WAHVector v(256, false), w(256, true);
+		v.applyAnd(w);
+		CHECK(v.isEmpty());
+	}
+	{
+		WAHVector v(256, true), w(256, false);
+		v.applyAnd(w);
+		CHECK(v.isEmpty());
+	}
+	{
+		WAHVector v(256, true), w(256, true);
+		v.applyAnd(w);
+		CHECK(v.isFull());
+	}
+
+	// more complex and test
+	{
+		WAHVector v(256, false), w(256, false);
+		w.set(18);
+		w.set(19);
+		w.set(101);
+		v.applyAnd(w);
+		CHECK(v.isEmpty());
+	}
+	{
+		WAHVector v(256, false), w(256, false);
+		v.set(18);
+		w.set(55);
+		v.set(101);
+		w.set(101);
+		cerr << "v = " << v << io::endl;
+		cerr << "w = " << w << io::endl;
+		v.applyAnd(w);
+		cerr << "r = " << v << io::endl;
+		CHECK(!v.bit(18));
+		CHECK(!v.bit(55));
+		CHECK(v.bit(101));
+	}
+
+	// simple OR test
+	{
+		WAHVector v(256, false), w(256, false);
+		v.applyOr(w);
+		CHECK(v.isEmpty());
+	}
+	{
+		WAHVector v(256, false), w(256, true);
+		v.applyOr(w);
+		CHECK(v.isFull());
+	}
+	{
+		WAHVector v(256, true), w(256, false);
+		v.applyOr(w);
+		CHECK(v.isFull());
+	}
+	{
+		WAHVector v(256, true), w(256, true);
+		v.applyOr(w);
+		CHECK(v.isFull());
+	}
+
+	// more complex OR test
+	{
+		WAHVector v(256, false), w(256, true);
+		w.set(18);
+		w.set(19);
+		w.set(101);
+		v.applyOr(w);
+		CHECK(v.isFull());
+	}
+	{
+		WAHVector v(256, false), w(256, false);
+		v.set(18);
+		w.set(55);
+		v.set(101);
+		w.set(101);
+		v.applyOr(w);
+		CHECK(v.bit(18));
+		CHECK(v.bit(55));
+		CHECK(v.bit(101));
+	}
+
+	// not testing
+	{
+		WAHVector v(256, false);
+		v.applyNot();
+		CHECK(v.isFull());
+		WAHVector w(256, true);
+		w.applyNot();
+		CHECK(w.isEmpty());
+	}
+	{
+		WAHVector v(256, false);
+		v.set(18);
+		v.set(19);
+		v.set(56);
+		v.set(211);
+		cerr << "DEBUG: v = " << v << io::endl;
+		v.applyNot();
+		cerr << "DEBUG: ~v = " << v << io::endl;
+		CHECK(!v.bit(18));
+		CHECK(!v.bit(19));
+		CHECK(!v.bit(56));
+		CHECK(!v.bit(211));
+		CHECK(v.bit(5));
+		CHECK(v.bit(21));
+		CHECK(v.bit(214));
+	}
+
+	// test array access
+	{
+		WAHVector v(256, false);
+		v[18] = true;
+		v[19] = true;
+		v[51] = true;
+		CHECK(v[18]);
+		CHECK(v[19]);
+		CHECK(v[51]);
+		CHECK(!v[5]);
+		CHECK(!v[121]);
+	}
+
+	// test inclusion
+	{
+		WAHVector v(256, false), w(256, false);
+		CHECK(v.includes(w));
+		CHECK(!v.includesStrictly(w));
+	}
+	{
+		WAHVector v(256, false), w(256, true);
+		cerr << "v = " << v << ", w = " << w << io::endl;
+		CHECK(!v.includes(w));
+		CHECK(!v.includesStrictly(w));
+	}
+	{
+		WAHVector v(256, true), w(256, false);
+		CHECK(v.includes(w));
+		CHECK(v.includesStrictly(w));
+	}
+	{
+		WAHVector v(256, true), w(256, true);
+		CHECK(v.includes(w));
+		CHECK(!v.includesStrictly(w));
+	}
+	{
+		WAHVector v(256, false), w(256, false);
+		v.set(100);
+		w.set(100);
+		v.set(102);
+		CHECK(v.includes(w));
+		CHECK(v.includesStrictly(w));
+	}
+	{
+		WAHVector v(256, false), w(256, false);
+		v.set(100);
+		w.set(100);
+		CHECK(v.includes(w));
+		CHECK(!v.includesStrictly(w));
+	}
+	{
+		WAHVector v(256, false), w(256, false);
+		w.set(100);
+		CHECK(!v.includes(w));
+		CHECK(!v.includesStrictly(w));
+	}
+
+#	ifdef INTENSIVE
+	// massive testing
+	{
+		const int M = 100, T = 100000, S = 256;
+		WAHVector *wvs[M];
+		BitVector *bvs[M];
+		int used = 0;
+		typedef enum {
+			NEW = 0,
+			DELETE,
+			SET,
+			CLR,
+			NOT,
+			AND,
+			OR,
+			RESET,
+			COUNT
+		} action_t;
+		bool failed = false;
+
+		for(int i = 0; !failed && i < T; i++) {
+
+			// determine action
+			action_t action;
+			int v = 0, w = 0;
+			if(used < 2)
+				action = NEW;
+			else {
+				action = action_t(sys::System::random(COUNT));
+				v = sys::System::random(used);
+				w = sys::System::random(used);
 			}
-		CHECK(one);
-	}
+			//cerr << "action = " << int(action) << ", v = " << v << ", w = " << w << ", used = " << used << io::endl;
 
-	// test one fill and packing after
-	{
-		WAHBitVector v;
-		for(int i = 31; i < 62; i++)
-			v.set(i, true);
-		for(int i = 0; i < 31; i++)
-			v.set(i, true);
-		bool one = true;
-		for(int i = 0; i < 62; i++)
-			if(!v.bit(i)) {
-				cerr << "failed for i=" << i << io::endl;
-				one = false;
-			}
-		CHECK(one);
-	}
+			// perform the action
+			switch(action) {
 
-	// test one fill and packing before
-	{
-		WAHBitVector v;
-		for(int i = 0; i < 31; i++)
-			v.set(i, true);
-		for(int i = 31; i < 62; i++)
-			v.set(i, true);
-		bool one = true;
-		for(int i = 0; i < 62; i++)
-			if(!v.bit(i)) {
-				cerr << "failed for i=" << i << io::endl;
-				one = false;
-			}
-		CHECK(one);
-	}
-
-	// test one fill and packing on both ends
-	{
-		WAHBitVector v;
-		for(int i = 0; i < 31; i++)
-			v.set(i, true);
-		for(int i = 62; i < 93; i++)
-			v.set(i, true);
-		for(int i = 31; i < 62; i++)
-			v.set(i, true);
-		bool one = true;
-		for(int i = 0; i < 93; i++)
-			if(!v.bit(i)) {
-				cerr << "failed for i=" << i << io::endl;
-				one = false;
-			}
-		CHECK(one);
-	}
-
-	// test zero fill and packing before
-	{
-		WAHBitVector v;
-		v.set(62, true);
-		v.set(5, true);
-		v.set(5, false);
-		bool zero = true;
-		for(int i = 0; i < 62; i++)
-			if(v.bit(i)) {
-				zero = false;
-				cerr << "failed for i=" << i << io::endl;
-				break;
-			}
-		CHECK(zero);
-		CHECK(v.bit(62));
-	}
-
-	// test zero fill and packing after
-	{
-		WAHBitVector v;
-		v.set(62, true);
-		v.set(32, true);
-		v.set(32, false);
-		bool zero = true;
-		for(int i = 0; i < 62; i++)
-			if(v.bit(i)) {
-				zero = false;
-				cerr << "failed for i=" << i << io::endl;
-				break;
-			}
-		CHECK(zero);
-		CHECK(v.bit(62));
-	}
-
-	// test zero fill and packing in middle
-	{
-		WAHBitVector v;
-		v.set(93, true);
-		v.set(32, true);
-		v.set(32, false);
-		bool zero = true;
-		for(int i = 0; i < 93; i++)
-			if(v.bit(i)) {
-				zero = false;
-				cerr << "failed for i=" << i << io::endl;
-				break;
-			}
-		CHECK(zero);
-		CHECK(v.bit(93));
-	}
-
-	// zero packing at end
-	{
-		WAHBitVector v;
-		v.set(93, true);
-		v.set(93, false);
-		bool zero = true;
-		for(int i = 0; i < 93; i++)
-			if(v.bit(i)) {
-				zero = false;
-				cerr << "failed for i=" << i << io::endl;
-				break;
-			}
-		CHECK(zero);
-	}
-
-	// single vector
-	/*{
-		genstruct::Vector<Action> acts;
-		BitVector v1(SIZE);
-		WAHBitVector v2;
-		for(int i = 0; i < TESTS; i++) {
-			Action act(
-				System::random(20) < 10 ? Action::SET : Action::CLR,
-				System::random(SIZE));
-			acts.add(act);
-
-			act.perform(v1);
-
-			act.perform(v2);
-			cerr << act << io::endl;
-			v2.__print(cerr);
-
-			for(int i = 0; i < SIZE; i++)
-				if(v1.bit(i) != v2.bit(i)) {
-					for(int i = 0; i < acts.count(); i++)
-						cerr << acts[i] << io::endl;
-					cerr << "error: " << i << io::endl;
-					return;
+			case NEW:
+				if(used < M) {
+					v = used;
+					wvs[v] = new WAHVector(S, false);
+					bvs[v] = new BitVector(S, false);
+					used++;
+					break;
 				}
-			cerr << io::endl;
+				/* no break */
+
+			case DELETE:
+				delete wvs[v];
+				wvs[v] = wvs[used - 1];
+				delete bvs[v];
+				bvs[v] = bvs[used - 1];
+				used--;
+				continue;
+
+			case SET:
+				wvs[v]->set(w % S);
+				bvs[v]->set(w % S);
+				break;
+
+			case CLR:
+				//cerr << "wvs = " << *wvs[v] << io::endl;
+				//cerr << "bvs = "; print(cerr, *bvs[v]); cerr << io::endl;
+				wvs[v]->clear(w % S);
+				bvs[v]->clear(w % S);
+				break;
+
+			case NOT:
+				wvs[v]->applyNot();
+				bvs[v]->applyNot();
+				break;
+
+			case AND:
+				wvs[v]->applyAnd(*wvs[w]);
+				bvs[v]->applyAnd(*bvs[w]);
+				break;
+
+			case OR:
+				wvs[v]->applyOr(*wvs[w]);
+				bvs[v]->applyOr(*bvs[w]);
+				break;
+
+			case RESET:
+				wvs[v]->applyReset(*wvs[w]);
+				bvs[v]->applyReset(*bvs[w]);
+				break;
+			}
+
+			// check
+			ASSERT(bvs[v]->size() == S);
+			if(wvs[v]->size() != S) {
+				cerr << "bad size: " << wvs[v]->size() << " ! = " << S << io::endl;
+				failed = true;
+			}
+			else
+				for(int i = 0; i < S; i++)
+					if(wvs[v]->bit(i) != bvs[v]->bit(i)) {
+						failed = true;
+						cerr << "ERROR: bit " << i << io::endl;
+						break;
+					}
+
+			// display result
+			if(failed) {
+				cerr << "wv = " << *wvs[v] << io::endl;
+				//cerr << "bv = " << *bvs[v] << io::endl;
+				cerr << "bv: "; print(cerr, *bvs[v]); cerr << io::endl;
+				cerr << io::endl;
+			}
 		}
-	}*/
 
-	CHECK_END
+		CHECK(!failed);
+	}
+#	endif	// INTENSIVE
 
-}
+TEST_END
