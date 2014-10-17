@@ -347,11 +347,9 @@ Path Path::home(void) {
  * @return	Base part of the path.
  */
 Path Path::basePart(void) const {
-	int pos = lastSeparator();
-	if(pos < 0)
-		pos = 0;
-	pos = buf.indexOf('.', pos);
-	if(pos < 0)
+	int lsep = lastSeparator();
+	int pos = buf.lastIndexOf('.');
+	if(pos <= lsep)
 		return *this;
 	else
 		return buf.substring(0, pos);
@@ -363,11 +361,9 @@ Path Path::basePart(void) const {
  * @return	Extension or an empty string if there is no extension.
  */
 String Path::extension(void) const {
-	int pos = lastSeparator();
-	if(pos < 0)
-		pos = 0;
-	pos = buf.indexOf('.', pos);
-	if(pos < 0)
+	int lsep = lastSeparator();
+	int pos = buf.lastIndexOf('.');
+	if(pos <= lsep)
 		return "";
 	else
 		return buf.substring(pos + 1);
@@ -380,12 +376,10 @@ String Path::extension(void) const {
  * @return				New path with extension set.
  */
 Path Path::setExtension(CString new_extension) const {
-	int pos = lastSeparator();
-	if(pos < 0)
-		pos = 0;
-	pos = buf.indexOf('.', pos);
 	StringBuffer nbuf;
-	if(pos < 0)
+	int lsep = lastSeparator();
+	int pos = buf.lastIndexOf('.');
+	if(pos <= lsep)
 		nbuf << buf;
 	else
 		nbuf << buf.substring(0, pos);
