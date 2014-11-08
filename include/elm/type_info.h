@@ -43,6 +43,8 @@ struct asis_t {
 	typedef T embed_t;
 	typedef T in_t;
 	typedef T& out_t;
+	typedef T val_t;
+	typedef T& ref_t;
 	static inline void put(T& l, const T& v) { l = v; }
 	static inline const T& get(const T& v) { return v;}
 };
@@ -53,7 +55,9 @@ public:
 	enum { is_class = 1 };
 	enum { is_deep = 1 };
 	enum { is_virtual = 1 };
+	static cstring name(void) { return "class"; };
 	typedef const T& in_t;
+	typedef const T& val_t;
 };
 
 // RTTI type
@@ -103,7 +107,7 @@ template <> struct type_info<bool>: public scalar_t, public asis_t<bool> {
 	static const bool min = false;
 	static const bool max = true;
 	static const bool null = false;
-	static inline CString name(void) { return "<bool>"; }	
+	static inline CString name(void) { return "bool"; }
 };
 
 
@@ -201,9 +205,11 @@ template <class T> struct type_info<const T&>: public ref_t {
 	typedef T of;
 	enum { is_const = 1 };
 	static string name(void) { return "const " + type_info<T>::name() + "& "; }
-	typedef const T *embed_t;
+	typedef const T *embed_t, embed;
 	typedef const T& in_t;
 	typedef const T& out_t;
+	typedef const T& val_t;
+	typedef const T& ref_t;
 	static inline void put(embed_t& l, const T& v) { l = &v; }
 	static inline const T& get(embed_t l) { return *l; }
 };
@@ -212,12 +218,16 @@ template <class T> struct type_info<T&>: public ref_t {
 	typedef T of;
 	enum { is_const = 0 };
 	static string name(void) { return type_info<T>::name() + "& "; }
-	typedef T *embed_t;
-	typedef T& in_t;
-	typedef T& out_t;
+	typedef T *embed_t, embed;
+	typedef T& in_t, in;
+	typedef T& out_t, out;
+	typedef T& val_t;
+	typedef T& ref_t;
 	static inline void put(embed_t& l, T& v) { l = &v; }
 	static inline T& get(embed_t l) { return *l; }
 };
+
+template <class T> struct ti: type_info<T> { };
 
 } // elm
 

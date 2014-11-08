@@ -29,18 +29,25 @@ namespace elm { namespace avl {
 // Map class
 template <class K, class T, class C = Comparator<K> >
 class Map {
-	typedef Pair<K, T> pair_t;
+	typedef Pair<typename ti<K>::embed_t, typename ti<T>::embed_t> pair_t;
 	typedef GenTree<pair_t, genstruct::PairAdapter<K, T>, C > tree_t;
+	typedef typename ti<K>::in_t key_t;
+	typedef typename ti<T>::in_t val_t;
+	typedef typename ti<T>::out_t out_t;
 public:
 
 	// Map concept
-	inline Option<const T &> get(const K &key) const
-		{ const pair_t *p = tree.get(key); if(!p) return none; else return one(p->snd); }
-	inline const T &get(const K &key, const T &def) const
-		{ const pair_t *p = tree.get(key); if(!p) return def; else return p->snd; }
-	inline bool hasKey (const K &key) const
+	inline Option<T> get(key_t key) const
+		{ const pair_t *p = tree.get(key); if(!p) return none; else return some(ti<T>::get(p->snd)); }
+	inline val_t get(key_t key, val_t def) const
+		{ const pair_t *p = tree.get(key); if(!p) return def; else return ti<T>::get(p->snd); }
+	inline bool hasKey (key_t key) const
 		{ const pair_t *p = tree.get(key); return p; }
 	inline int count(void) const { return tree.count(); }
+	inline bool isEmpty(void) const { return tree.isEmpty(); }
+	inline bool equals(const Map<K, T, C>& map) const { return tree.equals(map.tree); }
+	inline bool operator==(const Map<K, T, C>& map) const { return equals(map); }
+	inline bool operator!=(const Map<K, T, C>& map) const { return !equals(map); }
 
 	// KeyIterator class
 	class KeyIterator: public PreIterator<KeyIterator, K> {
@@ -50,22 +57,26 @@ public:
 		inline KeyIterator& operator=(const KeyIterator& iter) { it = iter; return *this; }
 		inline bool ended(void) const { return it.ended(); }
 		inline void next(void) { it.next(); }
-		inline const K& item(void) const { return it.item().fst; }
+		inline typename ti<K>::out item(void) const { return it.item().fst; }
 	private:
 		typename tree_t::Iterator it;
 	};
 
 	// PairIterator class
-	class PairIterator: public PreIterator<PairIterator, pair_t> {
+	class PairIterator: public tree_t::Iterator {
 	public:
-		inline PairIterator(const Map<K, T, C>& map): it(map.tree) { }
-		inline PairIterator(const PairIterator& iter): it(iter.it) { }
-		inline PairIterator& operator=(const PairIterator& iter) { it = iter; return *this; }
-		inline bool ended(void) const { return it.ended(); }
-		inline void next(void) { it.next(); }
-		inline pair_t item(void) const { return *it; }
-	private:
-		typename tree_t::Iterator it;
+		inline PairIterator(const Map<K, T, C>& map): tree_t::Iterator(map.tree) { }
+		inline PairIterator(const PairIterator& iter): tree_t::Iterator(iter) { }
+		inline PairIterator& operator=(const PairIterator& iter) { tree_t::Iterator::operand=(iter) ; return *this; }
+	};
+
+	// MutableIterator class
+	class MutableIterator: public PairIterator {
+	public:
+		inline MutableIterator(Map<K, T, C>& map): PairIterator(map) { }
+		inline MutableIterator(const MutableIterator& iter): PairIterator(iter) { }
+		inline MutableIterator& operator=(const MutableIterator& iter) { PairIterator::operator=(iter); return *this; }
+		inline void set(const T& value) { PairIterator::data().snd = value; }
 	};
 
 	// Iterator class
@@ -73,16 +84,20 @@ public:
 	public:
 		inline Iterator(const Map<K, T, C>& map): PairIterator(map) { }
 		inline Iterator(const Iterator& iter): PairIterator(iter) { }
+		inline typename ti<T>::val_t item(void) const { return ti<T>::get(PairIterator::item().snd); }
 	};
 
 	// MutableMap concept
-	inline Option<T> get(const K &key)
-		{ pair_t *p = tree.get(key); if(!p) return none; else return some(p->snd); }
+	inline Option<T> get(key_t key)
+		{ pair_t *p = tree.get(key); if(!p) return none; else return some(ti<T>::get(p->snd)); }
 	inline T & get(const K &key, T& def)
 		{ const pair_t *p = tree.get(key); if(!p) return def; else return one(p->snd); }
-	inline void put(const K &key, const T &value) { tree.add(pair_t(key, value)); }
+	inline void put(const K &key, const T &value) { tree.set(pair_t(key, value)); }
 	inline void remove(const K &key) { tree.remove(key); }
 	inline void remove(const PairIterator &iter) { tree.remove(iter.item().fst); }
+	inline void clear(void) { tree.clear(); }
+	inline void copy(const Map<K, T, C>& map) { tree.copy(map.tree); }
+	inline Map<K, T, C>& operator=(const Map<K, T, C>& map) { copy(map); return *this; }
 
 private:
 	tree_t tree;

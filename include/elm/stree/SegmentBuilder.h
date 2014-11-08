@@ -34,7 +34,7 @@ class SegmentBuilder: public Builder<K, T, C> {
 		static int compare(const segment_t& v1, const segment_t& 	v2) { return C::compare(v1.fst, v2.fst); }
 	} segment_comparator_t;
 	typedef avl::Map<Pair<K, K>, T, segment_comparator_t> map_t;
-	typedef typename map_t::Iterator iter_t;
+	typedef typename map_t::PairIterator iter_t;
 
 public:
 
