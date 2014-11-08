@@ -98,7 +98,7 @@ public:
 		friend class SLList;
 		Node *node, *prev;
 	};
-	
+
 	// MutableCollection concept
 	inline void clear(void)
 		{ while(!list.isEmpty()) { Node *node = static_cast<Node *>(list.first()); list.removeFirst(); delete node; } }
