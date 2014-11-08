@@ -57,6 +57,7 @@ protected:
 	class Node: public AbstractTree::Node {
 	public:
 		inline Node(const T& item): data(item) { }
+		inline Node(const Node *node): data(node->data) { }
 		T data;
 		inline Node *left(void) const { return (Node *)links[0]; }
 		inline Node *right(void) const { return (Node *)links[1]; }
@@ -86,20 +87,9 @@ protected:
 
 public:
 
-	~GenTree(void) {
-		if(root) {
-			genstruct::Vector<Node *> todo;
-			todo.add(static_cast<Node *>(root));
-			while(todo) {
-				Node *node = todo.pop();
-				if(node->left())
-					todo.push(node->left());
-				if(node->right())
-					todo.push(node->right());
-				delete node;
-			}
-		}
-	}
+	GenTree(void) { }
+	GenTree(const GenTree<T>& tree) { copy(tree); }
+	~GenTree(void) { clear(); }
 
 #	ifdef ELM_DEBUG_AVL
 		void dump(io::Output& out) { if(root) static_cast<Node *>(root)->dump(out, 0); else out << "<empty>"; }
@@ -137,6 +127,10 @@ public:
 			}
 		}
 		inline const T& item(void) const { return top()->data; }
+
+	protected:
+		inline T& data(void) { return top()->data; }
+
 	private:
 		inline void push(Node *node) { *sp++ = node; }
 		inline Node *pop(void) { return *--sp; }
@@ -153,17 +147,35 @@ public:
 	// MutableCollection concept
 	void clear(void) {
 		Node *stack[MAX_HEIGHT + 1];
-		Node *sp = stack;
+		Node **sp = stack;
 		if(root)
-			*sp++ = (Node *)root;
+			*sp++ = static_cast<Node *>(root);
 		while(sp != stack) {
 			Node *node = *--sp;
 			if(node->left()) *sp++ = node->left();
 			if(node->right()) *sp++ = node->right();
 			delete node;
 		}
+		root = 0;
+		cnt = 0;
 	}
 	
+	void copy(const GenTree<T, K, C>& tree) {
+		clear();
+		Pair<Node *, AbstractTree::Node **> stack[MAX_HEIGHT + 1], *sp = stack;
+		if(tree.root)
+			*sp++ = pair(static_cast<Node *>(tree.root), &root);
+		while(sp != stack) {
+			Pair<Node *, AbstractTree::Node **> c = *--sp;
+			Node *node = new Node(c.fst);
+			*c.snd = node;
+			if(c.fst->left()) *sp++ = pair(c.fst->left(), &node->links[0]);
+			if(c.fst->right()) *sp++ = pair(c.fst->right(), &node->links[1]);
+		}
+		cnt = tree.cnt;
+	}
+	inline GenTree<T, K, C>& operator=(const GenTree<T, K, C>& tree) { copy(tree); return *this; }
+
 	void add(const T& item) {
 		unsigned char da[MAX_HEIGHT];
 		int k = 0;
@@ -188,10 +200,34 @@ public:
 		AbstractTree::insert(da, dir, node, q, y, z);
 	}
 	
-	template <template <class _> class Co>
-	inline void addAll(const Co<T>& coll)
-		{ for(typename Co<T>::Iterator iter(coll); iter; iter++) add(iter); }
-	
+	void set(const T& item) {
+		unsigned char da[MAX_HEIGHT];
+		int k = 0;
+		Node *z = (Node *)&root;
+		Node *y = (Node *)root, *q, *p;
+
+		// finding the insertion position
+		unsigned char dir = 0;
+		for(q = z, p = y; p != 0; q = p, p = p->succ(dir)) {
+			int cmp = C::compare(K::key(item), K::key(p->data));
+			if(cmp == 0) {
+				p->data = item;
+				return;
+			}
+			if(p->balance != 0) {
+     			z = q;
+     			y = p;
+     			k = 0;
+			}
+			dir = cmp > 0;
+			da[k++] = dir;
+		}
+
+		// node creation
+		Node *node = new Node(item);
+		AbstractTree::insert(da, dir, node, q, y, z);
+	}
+
 	void remove(const typename K::t& item) {
 		AbstractTree::Node *pa[MAX_HEIGHT];
 		unsigned char da[MAX_HEIGHT];
@@ -214,14 +250,23 @@ public:
 		AbstractTree::remove(pa, da, k, p);
 		delete p;
 		cnt--;
-		
 	}
 	
-	template <template <class _> class Co>
-	inline void removeAll(const Co<T>& coll)
-		{ for(typename Co<T>::Iterator iter(coll); iter; iter++) remove(iter); }
-	
 	inline void remove(const Iterator& iter) { remove(iter.item()); }
+	template <class CC> inline void addAll(const CC& coll)
+		{ for(typename CC::Iterator iter(coll); iter; iter++) add(iter); }
+	template <class CC> inline void removeAll(const CC& coll)
+		{ for(typename CC::Iterator iter(coll); iter; iter++) remove(iter); }
+
+	bool equals(const GenTree<T, K, C>& tree) const {
+		GenTree<T, K, C>:: Iterator ai(*this), bi(tree);
+		for(; ai && bi; ai++, bi++)
+			if(!(ai == bi))
+				return false;
+		return !ai && !bi;
+	}
+	inline bool operator==(const GenTree<T, K, C>& tree) const { return equals(tree); }
+	inline bool operator!=(const GenTree<T, K, C>& tree) const { return !equals(tree); }
 };
 
 } }	// elm::avl

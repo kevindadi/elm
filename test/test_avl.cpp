@@ -23,7 +23,7 @@ using namespace elm::avl;
 #endif
 
 static const int maxv = 1000;
-static const int count = 1000;
+static const int count = 10000;
 
 // Entry point
 TEST_BEGIN(avl)
@@ -36,6 +36,36 @@ TEST_BEGIN(avl)
 		CHECK(!tree.isEmpty());
 		CHECK(tree.contains(100));
 		CHECK(!tree.contains(0));
+	}
+
+	// copy and clear
+	{
+		Set<int> tree;
+		tree.add(10);
+		tree.add(15);
+		tree.add(0);
+		tree.add(-10);
+		tree.add(8);
+		tree.add(20);
+		CHECK(tree.contains(10));
+		CHECK(tree.contains(15));
+		CHECK(tree.contains(0));
+		CHECK(tree.contains(-10));
+		CHECK(tree.contains(8));
+		CHECK(tree.contains(20));
+		Set<int> tree2;
+		tree2 = tree;
+		CHECK(!tree2.isEmpty());
+		CHECK(tree2.contains(10));
+		CHECK(tree2.contains(15));
+		CHECK(tree2.contains(0));
+		CHECK(tree2.contains(-10));
+		CHECK(tree2.contains(8));
+		CHECK(tree2.contains(20));
+		CHECK(tree == tree2);
+		tree.clear();
+		CHECK(tree.isEmpty());
+
 	}
 
 	// check AVLTree
@@ -130,6 +160,39 @@ TEST_BEGIN(avl)
 			}
 		}
 		CHECK(map_intensive);
+	}
+
+	// Map::PairIterator test
+	{
+		avl::Map<int, int> map;
+		map.put(0, 0);
+		map.put(1, 1);
+		map.put(2, 2);
+		map.put(3, 3);
+		map.put(4, 4);
+		bool equals = true;
+		for(avl::Map<int, int>::Iterator i(map); i; i++)
+			if((*i).fst != (*i).snd)
+				equals = false;
+		CHECK(equals);
+	}
+
+	// map with setting
+	{
+		avl::Map<int, int> map;
+		map.put(0, 0);
+		map.put(1, 1);
+		map.put(2, 2);
+		map.put(3, 3);
+		map.put(4, 4);
+		for(avl::Map<int, int>::MutableIterator i(map); i; i++)
+			if((*i).fst % 2 == 0)
+				i.set(0);
+		CHECK(map.get(0) == 0);
+		CHECK(map.get(1) == 1);
+		CHECK(map.get(2) == 0);
+		CHECK(map.get(3) == 3);
+		CHECK(map.get(4) == 0);
 	}
 
 TEST_END

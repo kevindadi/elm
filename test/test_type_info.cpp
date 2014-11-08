@@ -20,7 +20,6 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <stdio.h>
 #include <iostream>
 #include <elm/type_info.h>
 #include <elm/util/test.h>
@@ -35,6 +34,8 @@ typedef enum enm_t {
 	B,
 	C
 } enm_t;
+
+class MyClass { };
 
 TEST_BEGIN(type_info)
 
@@ -157,6 +158,36 @@ TEST_BEGIN(type_info)
 		CHECK_EQUAL(*v, v1);
 		v = h.get(1);
 		CHECK(!v);
+	}
+
+	// parameter/result passing
+	{
+		cout << "T (in, out, val, ref)\n";
+		cout << "bool: "
+			 << type_info<type_info<bool>::in_t>::name() << ", "
+			 << type_info<type_info<bool>::out_t>::name() << ", "
+			 << type_info<type_info<bool>::val_t>::name() << ", "
+			 << type_info<type_info<bool>::ref_t>::name()<< io::endl;
+		cout << "int: "
+			 << type_info<type_info<int>::in_t>::name() << ", "
+			 << type_info<type_info<int>::out_t>::name() << ", "
+			 << type_info<type_info<int>::val_t>::name() << ", "
+			 << type_info<type_info<int>::ref_t>::name()<< io::endl;
+		cout << "float: "
+			 << type_info<type_info<float>::in_t>::name() << ", "
+			 << type_info<type_info<float>::out_t>::name() << ", "
+			 << type_info<type_info<float>::val_t>::name() << ", "
+			 << type_info<type_info<float>::ref_t>::name()<< io::endl;
+		cout << "int *: "
+			 << type_info<type_info<int *>::in_t>::name() << ", "
+			 << type_info<type_info<int *>::out_t>::name() << ", "
+			 << type_info<type_info<int *>::val_t>::name() << ", "
+			 << type_info<type_info<int *>::ref_t>::name()<< io::endl;
+		cout << "C: "
+			 << type_info<type_info<MyClass>::in_t>::name() << ", "
+			 << type_info<type_info<MyClass>::out_t>::name() << ", "
+			 << type_info<type_info<MyClass>::val_t>::name() << ", "
+			 << type_info<type_info<MyClass>::ref_t>::name() << io::endl;
 	}
 
 TEST_END

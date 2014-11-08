@@ -27,6 +27,7 @@ namespace elm { namespace avl {
 
 template <class T, class C = elm::Comparator<T> >
 class Set: public GenTree<T, genstruct::Id<T>, C> {
+	static const Set<T, C> null;
 };
 
 } }	// elm::avl

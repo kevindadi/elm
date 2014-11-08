@@ -94,8 +94,8 @@ public:
 
 #	ifndef NDEBUG
 		void __dump(io::Output& out) const;
-		inline int __size(void) const { return sizeof(WAHVector) + _size *sizeof(word_t); }
 #	endif
+	inline int __size(void) const { return sizeof(WAHVector) + _size * sizeof(word_t); }
 
 private:
 	static void doAnd(WAHVector& r, const WAHVector& v1, const WAHVector& v2);
