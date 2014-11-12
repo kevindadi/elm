@@ -27,8 +27,12 @@ namespace elm { namespace avl {
 
 template <class T, class C = elm::Comparator<T> >
 class Set: public GenTree<T, genstruct::Id<T>, C> {
+public:
 	static const Set<T, C> null;
 };
+template <class T, class C> const Set<T, C> Set<T, C>::null;
+template <class K, class C> inline Set<K, C>& operator+=(Set<K, C> &t, const K& h) { t.add(h); return t; }
+template <class K, class C> inline Set<K, C>& operator+=(Set<K, C> &t, const Set<K, C>& s) { t.addAll(s); return t; }
 
 } }	// elm::avl
 
