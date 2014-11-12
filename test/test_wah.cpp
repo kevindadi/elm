@@ -303,6 +303,34 @@ TEST_BEGIN(wah)
 		CHECK(!v.includes(w));
 		CHECK(!v.includesStrictly(w));
 	}
+	{
+		WAHVector v(4, true), w(4);
+		w.set(0);
+		w.set(1);
+		w.set(2);
+		w.set(3);
+		CHECK(v == w);
+	}
+	{
+		WAHVector v(4), w(4, true);
+		w.clear(0);
+		w.clear(1);
+		w.clear(2);
+		w.clear(3);
+		CHECK(v == w);
+	}
+	{
+		WAHVector v(35, true), w(35);
+		for(int i = 0; i < 35; i++)
+			w.set(i);
+		CHECK(v == w);
+	}
+	{
+		WAHVector v(35), w(35, true);
+		for(int i = 0; i < 35; i++)
+			w.clear(i);
+		CHECK(v == w);
+	}
 
 #	ifdef INTENSIVE
 	// massive testing

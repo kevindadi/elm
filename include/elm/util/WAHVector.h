@@ -50,6 +50,8 @@ public:
 	void set(int index);
 	void clear(int index);
 
+	void set(void);
+	void clear(void);
 	void copy(const WAHVector& v);
 	inline void applyAnd(const WAHVector& v) { doAnd(*this, *this, v); }
 	inline WAHVector makeAnd(const WAHVector& v) const { WAHVector r; r.doAnd(r, *this, v); return r; }

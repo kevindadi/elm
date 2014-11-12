@@ -115,7 +115,7 @@ public:
 	inline bool operator>(const BitVector& vec) const;
 	inline bool operator>=(const BitVector& vec) const;
 
-	inline t::size __size(void) { return sizeof(*this) + bytes(); }
+	inline t::size __size(void) const { return sizeof(*this) + bytes(); }
 
 private:
 	word_t *bits;

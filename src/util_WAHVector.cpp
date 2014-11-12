@@ -119,8 +119,25 @@ public:
 		delete [] w;
 		w = words;
 		s = size;
-		if(rem)
-			words[size - 1] &= ~(1 << rem);
+		if(rem && isLite(words[size - 1])) {
+			words[size - 1] &= mask(rem);
+			if(words[size - 1] == lite(0)) {
+				if(size >= 2 && isZeroes(words[size - 2])) {
+					words[size - 2]++;
+					s--;
+				}
+				else
+					words[size - 1] = fill(1, false);
+			}
+			else if(words[size - 1] == lite(mask(rem))) {
+				if(size >= 2 && isOnes(words[size - 2])) {
+					words[size - 2]++;
+					s--;
+				}
+				else
+					words[size - 1] = fill(1, true);
+			}
+		}
 	}
 
 private:
@@ -487,6 +504,22 @@ void WAHVector::clear(int index) {
 		}
 	}
 	ASSERTP(false, "index out of bounds");
+}
+
+
+/**
+ * Set all vector bits to 0.
+ */
+void WAHVector::clear(void) {
+	words[0] = fill(div(_size) + (rem ? 1 : 0), false);
+}
+
+
+/**
+ * Set all vector bits to 1.
+ */
+void WAHVector::set(void) {
+	words[0] = fill(div(_size) + (rem ? 1 : 0), true);
 }
 
 
