@@ -89,7 +89,7 @@ public:
 
 
 	// KeyIterator class
-	class Iterator: public PreIterator<KeyIterator, T> {
+	class Iterator: public PreIterator<Iterator, T> {
 	public:
 		inline Iterator(const Map<K, T, C>& map): it(map.tree) { }
 		inline Iterator(const Iterator& iter): it(iter.it) { }

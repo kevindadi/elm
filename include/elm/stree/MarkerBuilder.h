@@ -42,7 +42,7 @@ public:
 
 		// insert the bounds
 		int i = 0;
-		typename avl::Map<K, T, C>::Iterator iter(marks);
+		typename avl::Map<K, T, C>::PairIterator iter(marks);
 		Pair<K, T> l = *iter;
 		for(iter++; iter; iter++) {
 			Pair<K, T> u = *iter;

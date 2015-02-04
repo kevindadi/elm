@@ -119,6 +119,12 @@ public:
 		if(!iter.prev) removeFirst(); else iter.prev->removeNext();
 		if(iter.prev) iter.node = iter.prev->next(); else iter.node = static_cast<Node *>(list.first());
 	}
+
+	void remove(MutableIterator &iter) {
+		ASSERT(iter.node);
+		if(!iter.prev) removeFirst(); else iter.prev->removeNext();
+		if(iter.prev) iter.node = iter.prev->next(); else iter.node = static_cast<Node *>(list.first());
+	}
 	
 	// List concept
 	inline T& first(void) { return static_cast<Node *>(list.first())->val; }

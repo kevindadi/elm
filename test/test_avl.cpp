@@ -171,7 +171,7 @@ TEST_BEGIN(avl)
 		map.put(3, 3);
 		map.put(4, 4);
 		bool equals = true;
-		for(avl::Map<int, int>::Iterator i(map); i; i++)
+		for(avl::Map<int, int>::PairIterator i(map); i; i++)
 			if((*i).fst != (*i).snd)
 				equals = false;
 		CHECK(equals);
