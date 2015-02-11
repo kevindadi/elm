@@ -57,7 +57,7 @@ public:
 		inline KeyIterator& operator=(const KeyIterator& iter) { it = iter; return *this; }
 		inline bool ended(void) const { return it.ended(); }
 		inline void next(void) { it.next(); }
-		inline typename ti<K>::out item(void) const { return it.item().fst; }
+		inline key_t item(void) const { return it.item().fst; }
 	private:
 		typename tree_t::Iterator it;
 	};
@@ -80,12 +80,27 @@ public:
 	};
 
 	// Iterator class
-	class Iterator: public PairIterator {
+	/*class Iterator: public PairIterator {
 	public:
 		inline Iterator(const Map<K, T, C>& map): PairIterator(map) { }
 		inline Iterator(const Iterator& iter): PairIterator(iter) { }
 		inline typename ti<T>::val_t item(void) const { return ti<T>::get(PairIterator::item().snd); }
+	};*/
+
+
+	// KeyIterator class
+	class Iterator: public PreIterator<Iterator, T> {
+	public:
+		inline Iterator(const Map<K, T, C>& map): it(map.tree) { }
+		inline Iterator(const Iterator& iter): it(iter.it) { }
+		inline Iterator& operator=(const Iterator& iter) { it = iter; return *this; }
+		inline bool ended(void) const { return it.ended(); }
+		inline void next(void) { it.next(); }
+		inline val_t item(void) const { return it.item().snd; }
+	private:
+		typename tree_t::Iterator it;
 	};
+
 
 	// MutableMap concept
 	inline Option<T> get(key_t key)
