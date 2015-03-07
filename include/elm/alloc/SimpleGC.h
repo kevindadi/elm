@@ -21,14 +21,14 @@
 #ifndef ELM_ALLOC_SIMPLEGC_H_
 #define ELM_ALLOC_SIMPLEGC_H_
 
-#include <elm/alloc/StackAllocator.h>
 #include <elm/util/BitVector.h>
 #include <elm/stree/Tree.h>
 #include <elm/genstruct/SLList.h>
+#include <elm/alloc/DefaultAllocator.h>
 
 namespace elm {
 
-class SimpleGC: private StackAllocator {
+class SimpleGC {
 public:
 	SimpleGC(t::size size = 4096);
 	virtual ~SimpleGC(void);
@@ -45,24 +45,26 @@ protected:
 	virtual void collect(void) = 0;
 	virtual void endGC(void);
 
-	virtual void *chunkFilled(t::size size) throw(BadAlloc);
-
 private:
+	void newChunk(void);
 	void *allocFromFreeList(t::size size);
 
 	typedef struct block_t {
 		block_t *next;
 		t::intptr size;
 	} block_t;
+	typedef struct chunk_t {
+		BitVector *bits;
+		t::uint8 buffer[0];
+	} chunk_t;
+
+	genstruct::SLList<chunk_t *> chunks;
+	t::size csize;
 	block_t *free_list;
-	typedef struct gc_chunk_t {
-		inline gc_chunk_t(StackAllocator::chunk_t *c, t::size s): chunk(c), bits(s / sizeof(block_t)) { }
-		StackAllocator::chunk_t *chunk;
-		BitVector bits;
-	} gc_chunk_t;
-	typedef stree::Tree<void *, gc_chunk_t *> tree_t;
+
+	typedef stree::Tree<void *, chunk_t *> tree_t;
 	tree_t *st;
-	genstruct::SLList<gc_chunk_t *> chunks;
+
 	static inline t::size round(t::size size) { return (size + sizeof(block_t) - 1) & ~(sizeof(block_t) - 1); }
 };
 

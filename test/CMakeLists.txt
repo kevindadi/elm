@@ -50,7 +50,7 @@ set(TEST_SOURCES
 	"test_plugin.cpp"
 	"test_process.cpp"
 	"test_ref.cpp"
-#	"test_simplegc.cpp"
+	"test_simplegc.cpp"
 	"test_sllist.cpp"
 	"test_stack_alloc.cpp"
 	"test_stopwatch.cpp"

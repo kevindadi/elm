@@ -88,6 +88,28 @@ BitVector::BitVector(const BitVector& vec, int new_size): _size(new_size) {
 
 
 /**
+ * Same as copy().
+ */
+BitVector& BitVector::operator=(const BitVector& vec) {
+	if(bytes() && bytes() == vec.bytes())
+		copy(vec);
+	else {
+		if(bits)
+			delete bits;
+		if(!vec.bits)
+			bits = 0;
+		else {
+			_size = vec._size;
+			bits = new unsigned char[bytes()];
+			copy(vec);
+		}
+	}
+	return *this;
+}
+
+
+
+/**
  * @fn int BitVector::size(void) const;
  * Get the size in bits of the vector.
  * @return	Vector size.
@@ -271,12 +293,6 @@ BitVector::BitVector(const BitVector& vec, int new_size): _size(new_size) {
 /**
  * @fn BitVector BitVector::operator-(const BitVector& vec) const;
  * Same as makeReset().
- */
-
-
-/**
- * @fn BitVector& BitVector::operator=(const BitVector& vec);
- * Same as copy().
  */
 
 

@@ -24,6 +24,7 @@
 
 #include <elm/assert.h>
 #include <elm/genstruct/Table.h>
+#include <elm/genstruct/Vector.h>
 #include <elm/PreIterator.h>
 
 namespace elm { namespace genstruct {

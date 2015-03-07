@@ -4,16 +4,18 @@
 
 using namespace elm;
 
-const int ACTION_COUNT = 1000;
+const int ACTION_COUNT = 10000;
 const int MAX_SIZE = 1024;
 const int MAX_BLOCKS = 512;
 const int MAX_REDUNDANTS = 256;
 
-static struct {
+typedef struct block_t {
+	inline block_t(void): base(0), size(0) { }
+	inline block_t(char *b, int s): base(b), size(s) { }
 	char *base;
 	int size;
-} blocks[MAX_BLOCKS];
-static int count = 0;
+} block_t;
+genstruct::Vector<block_t> blocks;
 static int allocated_size = 0;
 
 class MyGC: public SimpleGC {
@@ -24,13 +26,13 @@ protected:
 		cerr << "DEBUG: collecting!\n";
 
 		// basic collection
-		for(int i = 0; i < count; i++)
+		for(int i = 0; i < blocks.count(); i++)
 			mark(blocks[i].base, blocks[i].size);
 
 		// redundant
-		if(count)
+		if(blocks.count())
 			for(int i = 0; i < MAX_REDUNDANTS; i++) {
-				int j = sys::System::random(count);
+				int j = sys::System::random(blocks.count());
 				mark(blocks[j].base, blocks[j].size);
 			}
 	}
@@ -44,37 +46,34 @@ TEST_BEGIN(simplegc)
 		int a = sys::System::random(100);
 
 		// allocation
-		if((!count || a < 50) && count < MAX_BLOCKS) {
+		if((!blocks.count() || a < 50) && blocks.count() < MAX_BLOCKS) {
 
 			// perform allocation
-			blocks[count].size = sys::System::random(MAX_SIZE);
-			allocated_size += blocks[count].size;
-			blocks[count].base = static_cast<char *>(gc.allocate(blocks[count].size));
-			cerr << "DEBUG: allocate(0x" << io::hex(blocks[count].size) << ") = "
-				 << static_cast<void *>(blocks[count].base) << "-" << static_cast<void *>(blocks[count].base + blocks[count].size - 1)
+			int size = sys::System::random(MAX_SIZE - 1) + 1;
+			allocated_size += size;
+			char *base = static_cast<char *>(gc.allocate(size));
+			blocks.push(block_t(base, size));
+			cerr << "DEBUG: allocate(0x" << io::hex(size) << ") = "
+				 << (void *)base << "-" << static_cast<void *>(base + size - 1)
 				 << " [" << io::hex(allocated_size) << "]\n";
 
 			// check overlapping
-			for(int i = 0; i < count; i++)
-				if((blocks[i].base <= blocks[count].base && blocks[count].base < blocks[i].base + blocks[i].size)
-				|| (blocks[i].base <= blocks[count].base + blocks[count].size - 1 && blocks[count].base  + blocks[count].size - 1 < blocks[i].base + blocks[i].size)) {
+			for(int i = 0; i < blocks.count() - 1; i++)
+				if((blocks[i].base <= base && base < blocks[i].base + blocks[i].size)
+				|| (blocks[i].base <= base + size - 1 && base  + size < blocks[i].base + blocks[i].size)) {
 					cerr << "DEBUG: conflict with " << static_cast<void *>(blocks[i].base) << "-" << static_cast<void *>(blocks[i].base + blocks[i].size - 1) << io::endl;
 					success = false;
 					break;
 				}
-
-			// increment count
-			count++;
 		}
 
 		// free
 		else {
-			int p = sys::System::random(count);
+			int p = sys::System::random(blocks.count());
 			allocated_size -= blocks[p].size;
 			cerr << "DEBUG: free(0x" << static_cast<void *>(blocks[p].base) << ":" << io::hex(blocks[p].size)
 				 << " [" << io::hex(allocated_size) << "]\n";
-			count--;
-			blocks[p] = blocks[count];
+			blocks.removeAt(p);
 		}
 
 	}

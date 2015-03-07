@@ -38,8 +38,21 @@ namespace elm {
  * @param size	Size of chunks.
  */
 SimpleGC::SimpleGC(t::size size)
-: StackAllocator(round(size)), free_list(0), st(0) {
-	newChunk();
+: csize(round(size)), free_list(0), st(0) {
+}
+
+
+/**
+ * Add a new chunk.
+ */
+void SimpleGC::newChunk(void) {
+	chunk_t *c = (chunk_t *)(new char[sizeof(chunk_t) + csize]);
+	chunks.add(c);
+	c->bits = 0;
+	block_t *b = (block_t *)c->buffer;
+	b->next = free_list;
+	b->size = csize;
+	free_list = b;
 }
 
 
@@ -53,7 +66,9 @@ SimpleGC::~SimpleGC(void) {
  * Reset the allocator.
  */
 void SimpleGC::clear(void) {
-	StackAllocator::clear();
+	for(genstruct::SLList<chunk_t *>::Iterator c(chunks); c; c++)
+		delete *c;
+	free_list = 0;
 }
 
 
@@ -75,7 +90,8 @@ void *SimpleGC::allocFromFreeList(t::size size) {
 	for(block_t *block = free_list, **prev = &free_list; block; prev = &block->next, block = block->next)
 		if(block->size >= size) {
 			void *res = (t::uint8 *)block + block->size - size;
-			if(res == block)
+			block->size -= size;
+			if(!block->size)
 				*prev = block->next;
 			return res;
 		}
@@ -88,6 +104,7 @@ void *SimpleGC::allocFromFreeList(t::size size) {
  * @param size	Size of allocated memory.
  */
 void *SimpleGC::allocate(t::size size) throw(BadAlloc) {
+	ASSERTP(size < csize, "block too big for SimpleGC");
 
 	// round the size
 	size = round(size);
@@ -97,24 +114,15 @@ void *SimpleGC::allocate(t::size size) throw(BadAlloc) {
 	if(res)
 		return res;
 
-	// else allocate from stack
-	return StackAllocator::allocate(size);
-}
-
-
-/**
- */
-void *SimpleGC::chunkFilled(t::size size) throw(BadAlloc) {
-
-	// collect garbage and try to allocate in free blocks
+	// else perform a GC
 	doGC();
-	void *res = allocFromFreeList(size);
+	res = allocFromFreeList(size);
 	if(res)
 		return res;
 
-	// allocate a new chunk
+	// finally, allocate a new chunk
 	newChunk();
-	return StackAllocator::allocate(size);
+	return allocFromFreeList(size);
 }
 
 
@@ -128,18 +136,18 @@ void *SimpleGC::chunkFilled(t::size size) throw(BadAlloc) {
 bool SimpleGC::mark(void *data, t::size size) {
 
 	// find the chunk
-	gc_chunk_t *gcc = st->get(data);
+	chunk_t *gcc = st->get(data);
 	ASSERTP(gcc, _ << "during GC, block out of chunks: " << (void *)data << ":" << io::hex(size) << "!");
-	int p = (static_cast<char *>(data) - gcc->chunk->buffer) / sizeof(block_t);
-	int s = size / sizeof(block_t);
+	int p = (static_cast<t::uint8 *>(data) - gcc->buffer) / sizeof(block_t);
+	int s = (size + sizeof(block_t) - 1) / sizeof(block_t);
 
 	// mark it and make result
 	bool res = true;
 	int i;
 	for(i = p; i < p + s; i++)
-		if(!gcc->bits[i]) {
+		if(!(*gcc->bits)[i]) {
 			res = false;
-			gcc->bits.set(i);
+			gcc->bits->set(i);
 		}
 	return res;
 }
@@ -151,11 +159,10 @@ bool SimpleGC::mark(void *data, t::size size) {
 void SimpleGC::beginGC(void) {
 
 	// build the data structure
-	stree::SegmentBuilder<void *, gc_chunk_t *> builder(0);
-	for(ChunkIter c(*this); c; c++) {
-		gc_chunk_t *gcc = new gc_chunk_t(*c, chunkSize());
-		chunks.add(gcc);
-		builder.add(c->buffer, c->buffer + chunkSize(), gcc);
+	stree::SegmentBuilder<void *, chunk_t *> builder(0);
+	for(genstruct::SLList<chunk_t *>::Iterator c(chunks); c; c++) {
+		builder.add(c->buffer, c->buffer + csize, c);
+		c->bits = new BitVector(csize / sizeof(block_t));
 	}
 
 	// finalize the tree
@@ -177,15 +184,18 @@ void SimpleGC::beginGC(void) {
  */
 void SimpleGC::endGC(void) {
 
+	// reset free list
+	free_list = 0;
+
 	// build the list of free blocks
-	for(genstruct::SLList<gc_chunk_t *>::Iterator gcc(chunks); gcc; gcc++) {
+	for(genstruct::SLList<chunk_t *>::Iterator c(chunks); c; c++) {
 
 		// traverse the bits
-		int i = 0, b = -1, cs = chunkSize() / sizeof(block_t);
+		int i = 0, b = -1, cs = csize / sizeof(block_t);
 		while(i < cs) {
 
 			// skip ones
-			while(i < cs && gcc->bits[i])
+			while(i < cs && (*c->bits)[i])
 				i++;
 
 			// if zero found
@@ -194,12 +204,12 @@ void SimpleGC::endGC(void) {
 				i++;
 
 				// skip zeroes
-				while(i < cs && gcc->bits[i])
+				while(i < cs && !(*c->bits)[i])
 					i++;
 
 				// create the free block
 				// if b == 0, we could remove the block (if facility was available)
-				block_t *blk = static_cast<block_t *>(static_cast<void *>(gcc->chunk->buffer + i * sizeof(block_t)));
+				block_t *blk = static_cast<block_t *>(static_cast<void *>(c->buffer + b * sizeof(block_t)));
 				blk->size = (i - b) * sizeof(block_t);
 				blk->next = free_list;
 				free_list = blk;
@@ -208,9 +218,10 @@ void SimpleGC::endGC(void) {
 	}
 
 	// free the GC resources
-	for(genstruct::SLList<gc_chunk_t *>::Iterator c(chunks); c; c++)
-		delete *c;
-	chunks.clear();
+	for(genstruct::SLList<chunk_t *>::Iterator c(chunks); c; c++) {
+		delete c->bits;
+		c->bits = 0;
+	}
 	delete st;
 }
 

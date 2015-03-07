@@ -103,7 +103,7 @@ public:
 	inline BitVector operator&(const BitVector& vec) const;
 	inline BitVector operator+(const BitVector& vec) const;
 	inline BitVector operator-(const BitVector& vec) const;
-	inline BitVector& operator=(const BitVector& vec);
+	BitVector& operator=(const BitVector& vec);
 	inline BitVector& operator|=(const BitVector& vec);
 	inline BitVector& operator&=(const BitVector& vec);
 	inline BitVector& operator+=(const BitVector& vec);
@@ -325,16 +325,6 @@ inline BitVector BitVector::operator+(const BitVector& vec) const {
 
 inline BitVector BitVector::operator-(const BitVector& vec) const {
 	return makeReset(vec);
-}
-
-inline BitVector& BitVector::operator=(const BitVector& vec) {
-	if(bytes() != vec.bytes()) {
-		delete bits;
-		_size = vec._size;
-		bits = new unsigned char[bytes()];
-	}
-	copy(vec);
-	return *this;
 }
 
 inline BitVector& BitVector::operator|=(const BitVector& vec) {
