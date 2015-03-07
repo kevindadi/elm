@@ -1,18 +1,26 @@
-Elm Developper Information
-
+====== Elm Developper Information ======
+ 
 Directories:
-	include/		ELM headers
-	src/			ELM sources
-	test/			Test programs
-	tools/			Tool to work with ELM.
+  * include/		ELM headers.
+  * src/			ELM sources.
+  * test/			Test programs.
+  * perf/			Performances test programs and data.
+  * tools/			Tool to work with ELM.
 
 Bootstrap:
+<code sh>
 	cmake .
-Under Windows:
+</code>
+
+Under Windows (MINGW required):
+<code sh>
 	cmake . -G "MSYS Makefiles"
+</code>
 
 Auto-documentation:
+<code>
 	xdg-open autodoc/index.html
+</code>
 
 Re-generating the autodocumentation:
 	cmake . -DAUTODOC=ON

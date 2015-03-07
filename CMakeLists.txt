@@ -26,6 +26,28 @@ if(UNIX)
 	set(SET_PTRACER ${SET_PTRACER} CACHE BOOL "prctrl/SET_PTRACER available")
 endif()
 
+
+# installation level
+set(INSTALL_TYPE "all" CACHE STRING "Type of installation (one of all, dev-only, dev, lib, com).")
+if(INSTALL_TYPE MATCHES "all")
+    set(INSTALL_DEV "yes")
+    set(INSTALL_LIB "yes")
+    set(INSTALL_BIN "yes")
+elseif(INSTALL_TYPE MATCHES "dev")
+    set(INSTALL_DEV "yes")
+    set(INSTALL_LIB "yes")
+elseif(INSTALL_TYPE MATCHES "dev-only")
+    set(INSTALL_DEV "yes")
+elseif(INSTALL_TYPE MATCHES "lib")
+    set(INSTALL_LIB "yes")
+elseif(INSTALL_TYPE MATCHES "bin")
+    set(INSTALL_LIB "yes")
+    set(INSTALL_BIN "yes")
+else()
+    message(ERROR ": unknown INSTALL_TYPE: ${INSTALL_TYPE}")
+endif()
+
+
 # GCC flags
 if(CMAKE_COMPILER_IS_GNUCXX AND (CMAKE_BUILD_TYPE MATCHES Release))
 	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
@@ -79,7 +101,10 @@ if(ELM_TEST)
 	add_subdirectory(test)
 endif()
 
-add_subdirectory(tools)
+if(INSTALL_BIN)
+    add_subdirectory(tools)
+endif()
+
 
 # build configuration file
 configure_file (
@@ -89,7 +114,7 @@ configure_file (
 
 
 # header installation
-if(NOT ONLY_RUNTIME)
+if(INSTALL_DEV)
 	set(EXCLUDES PATTERN "CVS" EXCLUDE)
 	if(UNIX OR APPLE)
 		set(EXCLUDES ${EXCLUDES} PATTERN "Win*Stream.h" EXCLUDE)
@@ -111,7 +136,7 @@ endif()
 
 
 # handle autodoc
-if(DOXYGEN AND NOT ONLY_RUNTIME)
+if(INSTALL_DEV)
 	add_custom_target("make-autodoc" ALL DEPENDS "autodoc")
 	add_custom_command(
 		OUTPUT "autodoc"

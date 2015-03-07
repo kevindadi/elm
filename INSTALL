@@ -15,3 +15,17 @@ to install in directory DIR:
 > cmake . -DCMAKE_INSTALL_PREFIX=DIR
 > make install
 </code>
+
+The type of installation may be selected from the ''cmake''
+using ''INSTALL_TYPE'' definition:
+<code sh>
+> cmake . -DINSTALL_TYPE=type
+</code>
+
+With //type// one of:
+  * all -- install all,
+  * dev-only -- to install header files and documentation,
+  * dev -- same as above with library installation,
+  * lib -- install libraries themselves,
+  * bin -- install libraries and commands.
+ 

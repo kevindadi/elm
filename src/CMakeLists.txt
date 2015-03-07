@@ -208,4 +208,6 @@ if(UNIX)
 endif()
 
 # installation
-install(TARGETS elm RUNTIME DESTINATION bin LIBRARY DESTINATION lib)
+if(INSTALL_LIB)
+    install(TARGETS elm RUNTIME DESTINATION bin LIBRARY DESTINATION lib)
+endif()
