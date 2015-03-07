@@ -121,7 +121,6 @@ TEST_BEGIN(list)
 			}
 			else if(action < 90) {
 				int l = ((r >> 8) & 0xff) % lists.count();
-				int v = r & 0xff;
 				if(lists[l]) {
 					LOG("removing from list " << l);
 					lists[l] = lists[l].tl();
@@ -129,7 +128,6 @@ TEST_BEGIN(list)
 				}
 			}
 			else if(lists.count() > 1) {
-				int l = ((r >> 8) & 0xff) % lists.count();
 				LOG("deleting list " << (lists.count() - 1));
 				lists.pop();
 				vecs.pop();

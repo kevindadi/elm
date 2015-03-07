@@ -418,6 +418,10 @@ TEST_BEGIN(wah)
 				wvs[v]->applyReset(*wvs[w]);
 				bvs[v]->applyReset(*bvs[w]);
 				break;
+
+			default:
+				ASSERT(false);
+				break;
 			}
 
 			// check

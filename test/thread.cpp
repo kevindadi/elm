@@ -34,6 +34,7 @@ int int_comp(int x) {
 	for(int i = 0; i < x; i++)
 		for(int j = i; j < x; j++)
 			s += i * j;
+	return s;
 }
 
 void work(long long m, long long n, int step) {

@@ -39,7 +39,6 @@ TEST_BEGIN(int)
 	// test max
 	{
 		int x = 10, y = 20;
-		const int& v = max(x, y);
 		CHECK_EQUAL(elm::max(x, y), 20);
 		CHECK_EQUAL(max(x, 5), 10);
 	}

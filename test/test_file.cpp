@@ -21,7 +21,7 @@ int found = 0;
 
 static bool lookup(FileItem *item) {
 	string name = item->path().namePart();
-	for(int i = 0; i < sizeof(files) / sizeof(cstring); i++)
+	for(t::uint i = 0; i < sizeof(files) / sizeof(cstring); i++)
 		if(name == files[i]) {
 			if(found & (1 << i)) {
 				cerr << name << " found several times\n";
@@ -35,7 +35,7 @@ static bool lookup(FileItem *item) {
 }
 
 static bool look_all(void) {
-	for(int i = 0; i < sizeof(files) / sizeof(cstring); i++)
+	for(t::uint i = 0; i < sizeof(files) / sizeof(cstring); i++)
 	if(!(found & (1 << i))) {
 		cerr << files[i] << " has not been found !\n";
 		return false;

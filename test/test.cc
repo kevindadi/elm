@@ -25,10 +25,8 @@ int main(int argc, char *argv[]) {
 	
 	// process the tests
 	genstruct::Vector<TestCase *> tests;
-	bool one = false;
 	for(int i = 1; i < argc; i++) {
 		bool found = false;
-		one = true;
 
 		// look in the structure
 		for(TestSet::Iterator test(TestSet::def); test; test++)
