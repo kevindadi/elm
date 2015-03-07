@@ -64,7 +64,7 @@ set(TEST_SOURCES
 	"test_vector_queue.cpp"
 	"test_sorted_bintree.cpp"
 	"test_type_info.cpp"
-#	"test_thread.cpp"
+	"test_thread.cpp"
     "test_wah"
 )
 
@@ -90,5 +90,5 @@ target_link_libraries(test_sw elm)
 add_executable(test_bgc "test_bgc.cpp")
 target_link_libraries(test_bgc elm)
 
-add_executable(test_thread "test_thread.cpp")
+add_executable(test_thread "thread.cpp")
 target_link_libraries(test_thread elm)

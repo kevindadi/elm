@@ -4,6 +4,8 @@
 
 using namespace elm;
 
+#define SAY(x)	//x
+
 const int ACTION_COUNT = 10000;
 const int MAX_SIZE = 1024;
 const int MAX_BLOCKS = 512;
@@ -23,7 +25,7 @@ public:
 	MyGC(void): SimpleGC(2048) { }
 protected:
 	virtual void collect(void) {
-		cerr << "DEBUG: collecting!\n";
+		SAY(cerr << "DEBUG: collecting!\n");
 
 		// basic collection
 		for(int i = 0; i < blocks.count(); i++)
@@ -53,15 +55,15 @@ TEST_BEGIN(simplegc)
 			allocated_size += size;
 			char *base = static_cast<char *>(gc.allocate(size));
 			blocks.push(block_t(base, size));
-			cerr << "DEBUG: allocate(0x" << io::hex(size) << ") = "
+			SAY(cerr << "DEBUG: allocate(0x" << io::hex(size) << ") = "
 				 << (void *)base << "-" << static_cast<void *>(base + size - 1)
-				 << " [" << io::hex(allocated_size) << "]\n";
+				 << " [" << io::hex(allocated_size) << "]\n");
 
 			// check overlapping
 			for(int i = 0; i < blocks.count() - 1; i++)
 				if((blocks[i].base <= base && base < blocks[i].base + blocks[i].size)
 				|| (blocks[i].base <= base + size - 1 && base  + size < blocks[i].base + blocks[i].size)) {
-					cerr << "DEBUG: conflict with " << static_cast<void *>(blocks[i].base) << "-" << static_cast<void *>(blocks[i].base + blocks[i].size - 1) << io::endl;
+					SAY(cerr << "DEBUG: conflict with " << static_cast<void *>(blocks[i].base) << "-" << static_cast<void *>(blocks[i].base + blocks[i].size - 1) << io::endl);
 					success = false;
 					break;
 				}
@@ -71,8 +73,8 @@ TEST_BEGIN(simplegc)
 		else {
 			int p = sys::System::random(blocks.count());
 			allocated_size -= blocks[p].size;
-			cerr << "DEBUG: free(0x" << static_cast<void *>(blocks[p].base) << ":" << io::hex(blocks[p].size)
-				 << " [" << io::hex(allocated_size) << "]\n";
+			SAY(cerr << "DEBUG: free(0x" << static_cast<void *>(blocks[p].base) << ":" << io::hex(blocks[p].size)
+				 << " [" << io::hex(allocated_size) << "]\n");
 			blocks.removeAt(p);
 		}
 

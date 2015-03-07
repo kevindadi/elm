@@ -7,6 +7,7 @@
 
 #include <elm/io.h>
 #include <elm/util/test.h>
+#include <elm/genstruct/Vector.h>
 
 using namespace elm;
 
@@ -23,6 +24,7 @@ int main(int argc, char *argv[]) {
 	}
 	
 	// process the tests
+	genstruct::Vector<TestCase *> tests;
 	bool one = false;
 	for(int i = 1; i < argc; i++) {
 		bool found = false;
@@ -30,10 +32,8 @@ int main(int argc, char *argv[]) {
 
 		// look in the structure
 		for(TestSet::Iterator test(TestSet::def); test; test++)
-			if(test->name() == argv[i]) {
-				found = true;
-				test->perform();
-			}
+			if(test->name() == argv[i])
+				tests.add(test);
 
 		// not found: error
 		if(!found)
@@ -41,14 +41,29 @@ int main(int argc, char *argv[]) {
 	}
 
 	// if none selected, test all
-	if(!one) {
-		for(TestSet::Iterator test(TestSet::def); test; test++) {
-			test->perform();
-			if(test->hasFailed()) {
-				cerr << "ERROR: " << test->name() << " failed!\n";
-				return 1;
-			}
-		}
+	if(!tests)
+		for(TestSet::Iterator test(TestSet::def); test; test++)
+			tests.add(test);
+
+	// perform tests
+	bool failed = false;
+	for(genstruct::Vector<TestCase *>::Iterator test(tests); test; test++) {
+		test->perform();
+		if(test->hasFailed())
+			failed = true;
+	}
+
+	// display summary
+	if(!failed) {
+		cerr << "SUCCESS: all tests successfully passed!\n";
+		return 0;
+	}
+	else {
+		cerr << "ERROR: some tests failed:\n";
+		for(genstruct::Vector<TestCase *>::Iterator test(tests); test; test++)
+			if(test->hasFailed())
+				cerr << "  * " << test->name() << io::endl;
+		return 1;
 	}
 
 	// success

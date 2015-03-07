@@ -38,6 +38,7 @@ public:
 // Runnable class
 class Runnable {
 public:
+	virtual ~Runnable(void);
 	virtual void run(void) = 0;
 protected:
 	void stop(void);

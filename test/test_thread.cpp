@@ -1,85 +1,55 @@
 /*
- * test_thread.cpp
+ * $Id$
+ * Copyright (c) 2005, IRIT-UPS.
  *
- *  Created on: 24 janv. 2011
- *      Author: casse
+ * test_plugin.cpp -- test the plugin feature.
  */
 
-#include <elm/io.h>
+#include <elm/util/test.h>
 #include <elm/sys/Thread.h>
-#include <elm/system/StopWatch.h>
-#include <math.h>
 
 using namespace elm;
-using namespace elm::system;
+using namespace elm::sys;
 
-double my_cos(double x) {
-    double t , s ;
-    static const double prec = 1e-10;
-    int p;
-    p = 0;
-    s = 1.0;
-    t = 1.0;
-    while(fabs(t/s) > prec)
-    {
-        p++;
-        t = (-t * x * x) / ((2 * p - 1) * (2 * p));
-        s += t;
-    }
-    return s;
-}
+const t::int64 N = 1000000;
+t::int64 t[N];
+t::int64 s1, s2;
 
-int int_comp(int x) {
-	int s = 0;
-	for(int i = 0; i < x; i++)
-		for(int j = i; j < x; j++)
-			s += i * j;
-}
-
-void work(long long m, long long n, int step) {
-	float x = 0;
-	cerr << "WORK from " << m << " to " << n << io::endl;
-	for(long long i = m; i < n; i += step)
-		//x += my_cos(i);
-		x += int_comp(i);
-}
-
-class MyRunnable: public Runnable {
+class Sum: public Runnable {
 public:
-	long long n, m;
-	int step;
-
-	MyRunnable(long long _n, long long _m, int s):
-		n(_n), m(_m), step(s) { }
+	Sum(t::int64& _r, t::int64 _s, t::int64 _n): r(_r), s(_s), n(_n) { }
 
 	virtual void run(void) {
-		work(n, m, step);
+		t::int64 sum = 0;
+		for(t::int64 i = 0; i < n; i++)
+			sum += ::t[i + s];
+		r = sum;
 	}
+
+private:
+	t::int64& r;
+	t::int64 s, n;
 };
 
-void test_thread(void) {
-	static const long long N = 3000;
+// test routine
+TEST_BEGIN(thread)
 
-	// alone
-	StopWatch sw;
-	sw.start();
-	work(0, N, 1);
-	sw.stop();
-	cerr << "alone: " << sw.delay() << io::endl;
+	// fill the array
+	for(t::int64 i = 0; i < N; i++)
+		::t[i] = i;
 
-	// at two
-	StopWatch sw2;
-	sw2.start();
-	MyRunnable run(0, N, 2);
-	Thread *thread = Thread::make(run);
-	thread->start();
-	work(1, N, 2);
-	thread->join();
-	sw2.stop();
-	cerr << "two: " << sw2.delay() << io::endl;
-}
+	// launch both threads
+	Sum sum1(s1, 0, N / 2);
+	Sum sum2(s2, N / 2, N / 2);
+	Thread *t1 = Thread::make(sum1);
+	CHECK(t1);
+	Thread *t2 = Thread::make(sum2);
+	CHECK(t2);
+	t1->start();
+	t2->start();
+	t1->join();
+	t2->join();
+	CHECK_EQUAL(s1 + s2, (N * (N - 1) / 2));
 
-int main(void) {
-	test_thread();
-	return 0;
-}
+TEST_END
+

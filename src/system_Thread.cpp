@@ -54,6 +54,12 @@ namespace elm { namespace sys {
 
 
 /**
+ */
+Runnable::~Runnable(void) {
+}
+
+
+/**
  * Cause the thread to stop immediatelly.
  */
 void Runnable::stop(void) {
@@ -75,7 +81,9 @@ Thread::Thread(Runnable& runnable): _runnable(runnable) {
 	class PThread: public Thread {
 	public:
 
-		PThread(Runnable& runnable): Thread(runnable), running(false) { }
+		PThread(Runnable& runnable): Thread(runnable), pt(0), running(false) { }
+
+		virtual ~PThread(void) { }
 
 		// Thread overload
 		virtual void start(void) throw(ThreadException) {
