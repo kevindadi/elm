@@ -21,28 +21,15 @@
 #ifndef ELM_SYS_PROCESS_H
 #define ELM_SYS_PROCESS_H
 
-
 namespace elm { namespace sys {
 
 // Process class
 class Process {
-	friend class ProcessBuilder;
-#if defined(__unix) || defined(__APPLE__)
-	int pid, rcode;
-	Process(int _pid);
-#elif defined(__WIN32) || defined(__WIN64)
-	void* pi;
-	unsigned long  rcode;
-	Process(void const* _pi);
-#else
-#	error "System not supported"
-#endif
-
 public:
-	bool isAlive(void);
-	int returnCode(void);
-	void kill(void);
-	void wait(void);
+	virtual bool isAlive(void) = 0;
+	virtual int returnCode(void) = 0;
+	virtual void kill(void) = 0;
+	virtual void wait(void) = 0;
 };
 
 } } // elm::system

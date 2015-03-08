@@ -27,12 +27,21 @@
 #include <elm/sys/ProcessBuilder.h>
 #include <elm/sys/SystemException.h>
 #if defined(__WIN32) || defined(WIN64)
-#include <windows.h>
+#	include <windows.h>
 #endif
 
 extern char **environ;
 
 namespace elm { namespace sys {
+
+#if defined(__unix) || defined(__APPLE__)
+	Process *makeProcess(int pid);
+#elif defined(__WIN32) || defined(__WIN64)
+	Process *makeProcess(const PROCESS_INFORMATION& pi);
+#else
+#	error "Unsupported System"
+#endif
+
 
 /**
  * @class ProcessBuilder
@@ -133,7 +142,7 @@ Process *ProcessBuilder::run(void) {
 			error = errno;
 		// father
 		else if(pid != 0)
-			process = new Process(pid);
+			process = makeProcess(pid);
 		// son
 		else {
 
@@ -172,27 +181,44 @@ Process *ProcessBuilder::run(void) {
 
 	int error = 0;
 	Process *process;
-	PROCESS_INFORMATION *pi = new PROCESS_INFORMATION;
-	STARTUPINFO si = {sizeof(si)};
 
 	if (!error) {
-		// Build arguments
+		
+		// build arguments
 		StringBuffer tab;
 		for(int i = 0; i < args.count() ; i++)
-		{
-					tab << args[i];
-					tab << " ";
-		}
+			tab << args[i] << " ";
 		char tabtemp[tab.length() +1];
-		strcpy(tabtemp,tab.toString().chars());
-		cout << tabtemp << " error1 = "<< GetLastError() << io::endl;
-		// Launch process
-		if(CreateProcess(NULL,tabtemp,0,0,TRUE,0,0,0,&si,pi) == 0)
-			error = GetLastError();
-		cout << "error2 = " << GetLastError() << "error value = " << error << io::endl;
-		process = new Process(pi);
-		cout << "erro3r = " << GetLastError() << io::endl;
+		strcpy(tabtemp, tab.toString().chars());
 
+		// process information
+		PROCESS_INFORMATION proc_info;
+		ZeroMemory(&proc_info, sizeof(PROCESS_INFORMATION));
+		
+		// startup information
+		STARTUPINFO start_info;
+		ZeroMemory(&start_info, sizeof(STARTUPINFO));
+		start_info.cb = sizeof(STARTUPINFO);
+		start_info.hStdError = err->fd();
+		start_info.hStdOutput = out->fd();
+		start_info.hStdInput = in->fd();
+		start_info.dwFlags |= STARTF_USESTDHANDLES;
+
+		// launch process
+		if(CreateProcess(
+			NULL,
+			tabtemp,
+			NULL,
+			NULL,
+			TRUE,
+			0,
+			NULL,
+			NULL,
+			&start_info,
+			&proc_info
+		) == 0)
+			error = GetLastError();
+		process = makeProcess(proc_info);
 	}
 
 	// Return the result

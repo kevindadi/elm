@@ -34,34 +34,6 @@ namespace elm { namespace io {
 
 namespace elm { namespace sys {
 
-/* weirdly, while a HANDLE is just a typedef for void*
- * PipeInStream(HANDLE fd) doesn't meet compiler expectations
- */
-
-// PipeInStream class
-class PipeInStream: public SystemInStream {
-	friend class System;
-#if defined(__unix) || defined(__APPLE__)
-	PipeInStream(int fd);
-#elif defined(__WIN32) || defined(__WIN64)
-	PipeInStream(void* fd);
-#endif
-public:
-	~PipeInStream(void);
-};
-
-// PipeOutStream class
-class PipeOutStream: public SystemOutStream {
-	friend class System;
-#if defined(__unix) || defined(__APPLE__)
-	PipeOutStream(int fd);
-#elif defined(__WIN32) || defined(__WIN64)
-	PipeOutStream(void* fd);
-#endif
-public:
-	~PipeOutStream(void);
-};
-
 // System class
 class System {
 public:
@@ -70,7 +42,7 @@ public:
 	static const int WRITE = 2;
 	static const int READ_WRITE = READ | WRITE;
 
-	static Pair<PipeInStream *, PipeOutStream *> pipe(void) throw(SystemException);
+	static Pair<SystemInStream *, SystemOutStream *> pipe(void) throw(SystemException);
 	static unsigned int random(unsigned int top);
 	static io::OutStream *createFile(const Path& path) throw(SystemException);
 	static io::OutStream *appendFile(const Path& path) throw(SystemException);

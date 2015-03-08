@@ -46,7 +46,13 @@ int main(int argc, char *argv[]) {
 	// perform tests
 	bool failed = false;
 	for(genstruct::Vector<TestCase *>::Iterator test(tests); test; test++) {
-		test->perform();
+		try {
+			test->perform();
+		}
+		catch(Exception& e) {
+			cerr << "FATAL: " << e.message() << io::endl;
+			return 2;
+		}
 		if(test->hasFailed())
 			failed = true;
 	}

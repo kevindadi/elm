@@ -13,9 +13,9 @@ using namespace elm;
 
 TEST_BEGIN(int)
 	for(int i = 0; i < 32; i++)
-		CHECK_EQUAL(msb(1UL << i), i);
+		CHECK_EQUAL(msb(t::uint32(1) << i), i);
 	for(int i = 1; i < 32; i++)
-		CHECK_EQUAL(msb((1UL << i) | (1UL << (i - 1))), i);
+		CHECK_EQUAL(msb((t::uint(1) << i) | (t::uint32(1) << (i - 1))), i);
 	
 	CHECK_EQUAL(type_info<int8_t>::max,	 int8_t(0x7f));
 	CHECK_EQUAL(type_info<int16_t>::max, int16_t(0x7fff));

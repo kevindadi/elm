@@ -49,130 +49,167 @@ namespace elm { namespace sys {
 
 
 /**
- * Build a new process.
- * @param _pid	Process identifier.
- */
-#if defined(__unix) || defined(__APPLE__)
-Process::Process(int _pid): pid(_pid) {
-	ASSERTP(pid >= 0, "negative PID");
-}
-#elif defined(__WIN32) || defined(__WIN64)
-Process::Process(void const* _pi){
-	//Cr�ation de la structure membre
-	PROCESS_INFORMATION * ppi = new PROCESS_INFORMATION;
-	pi = ppi;
-
-	//Copie du contenu
-	PROCESS_INFORMATION const *pcpi = static_cast< PROCESS_INFORMATION const * >(_pi);
-	*ppi = *pcpi;
-}
-#else
-#error "Unsupported platform"
-#endif
-
-
-/**
+ * @fn bool Process::isAlive(void);
  * Test if the current process is still alive.
  * @return	True if it is alive, false else.
  * @throws SystemException	On process system error.
  */
-bool Process::isAlive(void) {
-#if defined(__unix) || defined(__APPLE__)
-	if(pid < 0)
-		return false;
-	int result = waitpid(pid, &rcode, WNOHANG);
-	if(result == 0)
-		return true;
-	else if(result > 0) {
-		pid = -1;
-		rcode = WEXITSTATUS(rcode);
-		return false; 
-	}
-	else
-		throw SystemException(errno, "process information");
-#elif defined(__WIN32) || defined(__WIN64)
-	if(GetExitCodeProcess( reinterpret_cast<PROCESS_INFORMATION&>(pi).hProcess, &rcode ) != 0){
-		if(rcode != STILL_ACTIVE)
-			return false;
-		else
-			return true;
-	}
-	else
-		throw SystemException(errno, "process information");
-#else
-#error "Unsupported platform"
-#endif
-
-}
 
 
 /**
+ * @fn int Process::returnCode(void);
  * If the process is terminated, get the return code.
  * @return	Process termination return code.
  * @throws SystemException	On process system error.
  */
-int Process::returnCode(void) {
-#if defined(__unix) || defined(__APPLE__)
-	if(pid >= 0)
-		wait();
-	return rcode;
-#elif defined(__WIN32) || defined(__WIN64)
-	if(GetExitCodeProcess( reinterpret_cast<PROCESS_INFORMATION&>(pi).hProcess, &rcode) != 0){
-		wait();
-		return rcode;
-	}
-	else
-		throw SystemException(errno, "process get code");
-#else
-#error "Unsupported platform"
-#endif
-}
 
 
 /**
+ * @fn void Process::kill(void);
  * Kill the given thread.
  * @throws SystemException	On process system error.
  */
-void Process::kill(void) {
-#if defined(__unix) || defined(__APPLE__)
-	ASSERT(pid >= 0);
-	if(::kill(pid, SIGKILL) < 0)
-		throw SystemException(errno, "process kill");
-#elif defined(__WIN32) || defined(__WIN64)
-	if(::TerminateProcess(reinterpret_cast<PROCESS_INFORMATION&>(pi).hProcess, 0) == 0)
-		throw SystemException(errno, "process kill");
-#else
-#error "Unsupported System"
-#endif
-}
 
 
 /**
+ * @fn void Process::wait(void);
  * Wait the termination of the process.
  */
-void Process::wait(void) {
+
+
+/*** Unix Process Implementation ***/
 #if defined(__unix) || defined(__APPLE__)
-	if(pid < 0)
-		return;
-	if(waitpid(pid, &rcode, 0) >= 0) {
-		rcode = WEXITSTATUS(rcode);
-		pid = -1;
-		return;
-	}
-	else
-		throw new SystemException(errno, "process wait");	
+
+	class ActualProcess: public Process {
+	public:
+		ActualProcess(int _pid): pid(_pid) {
+			ASSERTP(pid >= 0, "negative PID");
+		}
+
+		virtual bool isAlive(void) {
+			if(pid < 0)
+				return false;
+			int result = waitpid(pid, &rcode, WNOHANG);
+			if(result == 0)
+				return true;
+			else if(result > 0) {
+				pid = -1;
+				rcode = WEXITSTATUS(rcode);
+				return false; 
+			}
+			else
+				throw SystemException(errno, "process information");
+		}
+		
+		virtual int returnCode(void) {
+			if(pid >= 0)
+				wait();
+			return rcode;
+		}
+		
+		virtual void kill(void) {
+			ASSERT(pid >= 0);
+			if(::kill(pid, SIGKILL) < 0)
+				throw SystemException(errno, "process kill");
+		}
+		
+		virtual void wait(void) {
+			if(pid < 0)
+				return;
+			if(waitpid(pid, &rcode, 0) >= 0) {
+				rcode = WEXITSTATUS(rcode);
+				pid = -1;
+				return;
+			}
+			else
+				throw new SystemException(errno, "process wait");	
+		}
+
+	private:
+		int pid, rcode;
+	};
+	
+	Process *makeProcess(int pid) { return new ActualProcess(pid); }
+
+
+/*** Windows Process Implementation ***/
 #elif defined(__WIN32) || defined(__WIN64)
-	if(GetExitCodeProcess(reinterpret_cast<PROCESS_INFORMATION&>(pi).hProcess, &rcode) != STILL_ACTIVE)
-		return;
-	if(WaitForSingleObject(reinterpret_cast<PROCESS_INFORMATION&>(pi).hProcess, INFINITE) != WAIT_FAILED ){
-		GetExitCodeProcess(reinterpret_cast<PROCESS_INFORMATION&>(pi).hProcess, &rcode);
-		return;
 	}
-	else
-		throw new SystemException(errno, "process wait");
+	
+	namespace win {
+		void setError(int code);
+		int getError(void);
+		string getErrorMessage(void);
+	}
+	
+	namespace sys {	
+	
+
+	class ActualProcess: public Process {
+	public:
+		ActualProcess(const PROCESS_INFORMATION& _pi): ended(false), rcode(0) {
+			pi = _pi;
+		}
+
+		virtual bool isAlive(void) {
+			if(GetExitCodeProcess(pi.hProcess, &rcode ) != 0){
+				if(rcode != STILL_ACTIVE)
+					return false;
+				else
+					return true;
+			}
+			else {
+				win::setError(GetLastError());
+				throw SystemException(win::getError(), win::getErrorMessage());
+			}
+		}
+		
+		int returnCode(void) {
+			if(ended)
+				return rcode;
+			else if(GetExitCodeProcess(pi.hProcess, &rcode) != 0){
+				wait();
+				return rcode;
+			}
+			else {
+				win::setError(GetLastError());
+				throw SystemException(win::getError(), win::getErrorMessage());
+			}
+		}
+		
+		void kill(void) {
+			if(::TerminateProcess(pi.hProcess, 0) == 0) {
+				win::setError(GetLastError());
+				throw SystemException(win::getError(), win::getErrorMessage());
+			}
+		}
+		
+		void wait(void) {
+			if(GetExitCodeProcess(pi.hProcess, &rcode) == 0 && rcode != STILL_ACTIVE) {
+				ended = true;
+				return;
+			}
+			else if(WaitForSingleObject(pi.hProcess, INFINITE) != WAIT_FAILED){
+				GetExitCodeProcess(pi.hProcess, &rcode);
+				ended = true;
+				return;
+			}
+			else {
+				win::setError(GetLastError());
+				throw new SystemException(win::getError(), win::getErrorMessage());
+			}
+		}
+
+	private:
+		PROCESS_INFORMATION pi;
+		bool ended;
+		unsigned long  rcode;
+	};
+
+	Process *makeProcess(const PROCESS_INFORMATION& pi) { return new ActualProcess(pi); }
+
 #else
-#error "Unsupported System"
+#	error "Unsupported System"
 #endif
-}
 
 } } // elm::sys

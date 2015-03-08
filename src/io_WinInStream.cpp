@@ -29,9 +29,14 @@
 #include <elm/io.h>
 #include <elm/string.h>
 
-#include <stdio.h>
+namespace elm {
 
-namespace elm { namespace io {
+namespace win {
+	void setError(int);
+	string getErrorMessage(void);
+}	
+
+namespace io {
 
 /**
  * @class WinInStream
@@ -63,6 +68,7 @@ int WinInStream::read(void *buffer, int size) {
 	else if(GetLastError() == ERROR_HANDLE_EOF)
 		return 0;
 	else {
+		win::setError(GetLastError());
 		return -1;
 	}
 }
@@ -72,7 +78,7 @@ int WinInStream::read(void *buffer, int size) {
  */
 CString WinInStream::lastErrorMessage(void) {
 	static string buf;
-	buf = _ << "error " << GetLastError();
+	buf = win::getErrorMessage();
 	return buf.toCString();
 }
 

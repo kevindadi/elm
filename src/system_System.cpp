@@ -43,7 +43,36 @@
 #include <elm/sys/System.h>
 #include <elm/sys/SystemException.h>
 
-namespace elm { namespace sys {
+namespace elm {
+
+#if defined(__WIN32) || defined(__WIN64)
+	namespace win {
+		static int last_error;
+		
+		int getError(void) {
+			return last_error;
+		}
+		
+		void setError(int code) {
+			last_error = code;
+		}
+		
+		string getErrorMessage(void) {
+			char buf[256];
+			FormatMessage( 
+				FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+				NULL,
+				last_error,
+				0,
+				buf,
+				sizeof(buf),
+				NULL);
+			return _ << buf << " (" << last_error << ")";
+		}
+	}
+#endif	
+	
+namespace sys {
 
 /**
  * @defgroup system_inter System Interface
@@ -97,65 +126,57 @@ namespace elm { namespace sys {
  * @li @ref System::pipe() -- to create piped streams.
  */
 
-/**
- * @class  PipeInStream
- * A system stream implementing the input end of a pipe.
- */
-
-/**
- * Create a pipe stream.
- * @param fd	Unix file descriptor.
- */
+// PipeInStream class
 #if defined(__unix) || defined(__APPLE__)
-PipeInStream::PipeInStream(int fd): SystemInStream(fd) {
-}
-#elif defined(_WIN32_WINNT)
-PipeInStream::PipeInStream(HANDLE fd): SystemInStream(fd) {
-}
-#endif
+	class PipeInStream: public SystemInStream {
+		friend class System;
+		PipeInStream(int fd): SystemInStream(fd) { }
+	public:
+		virtual ~PipeInStream(void) { close(fd()); }
+	};
 
-/**
- * Delete the pipe stream.
- */
-PipeInStream::~PipeInStream(void) {
-#if defined(__unix) || defined(__APPLE__)
-	close(fd());
-#elif defined(_WIN32_WINNT)
-	TerminateProcess(fd(),1);
-#else
-#error "System Unsupported"
-#endif
-}
-
-/**
- * @class  PipeOutStream
- * A system stream implementing the output end of a pipe.
- */
-
-/**
- * Build a pipe output stream.
- * @param fd	Unix file descriptor.
- */
-#if defined(__unix) || defined(__APPLE__)
-PipeOutStream::PipeOutStream(int fd): SystemOutStream(fd) {
-}
 #elif defined(__WIN32) || defined(__WIN64)
-PipeOutStream::PipeOutStream(HANDLE fd): SystemOutStream(fd) {
-}
+	class PipeInStream: public SystemInStream {
+		friend class System;
+		PipeInStream(HANDLE fd): SystemInStream(fd) { }
+	public:
+		virtual ~PipeInStream(void) { CloseHandle(fd()); }
+
+		virtual int read(void *buffer, int size) {
+			int r = SystemInStream::read(buffer, size);
+			if(r < 0 && win::getError() == ERROR_BROKEN_PIPE)
+				return 0;
+			else
+				return r;
+		}
+	};
+
+#else
+#	error "pipe unsupported"
 #endif
 
-/**
- * Delete the pipe stream.
- */
-PipeOutStream::~PipeOutStream(void) {
+
+// PipeOutStream class
 #if defined(__unix) || defined(__APPLE__)
-	close(fd());
-#elif defined(__WIN32)
-	TerminateProcess(fd(),1);
+	class PipeOutStream: public SystemOutStream {
+		friend class System;                           }
+		PipeOutStream(int fd): SystemOutStream(fd) { }
+	public:
+		~PipeOutStream(void) { close(fd()); }
+	};
+
+#elif defined(__WIN32) || defined(__WIN64)
+	class PipeOutStream: public SystemOutStream {
+		friend class System;
+		PipeOutStream(HANDLE fd): SystemOutStream(fd) { }
+	public:
+		~PipeOutStream(void) { CloseHandle(fd()); }
+	};
+
 #else
-#error "System Unsupported"
+#	error "pipe unsupported"
 #endif
-}
+
 
 /**
  * @class System
@@ -163,12 +184,13 @@ PipeOutStream::~PipeOutStream(void) {
  * @ingroup system_inter
  */
 
+
 /**
  * Create a  pipe with input / output end streams.
  * @return	Linked streams.
  * @throws	System exception.
  */
-Pair<PipeInStream *, PipeOutStream *> System::pipe(void)
+Pair<SystemInStream *, SystemOutStream *> System::pipe(void)
 throw (SystemException) {
 #if defined(__unix) || defined(__APPLE__)
 	int fds[2];
@@ -188,18 +210,30 @@ throw (SystemException) {
 	return pair(
 			new PipeInStream(fds[0]),
 			new PipeOutStream(fds[1]));
+
 #elif defined(__WIN32) || defined(__WIN64)
 	HANDLE fdsread = NULL;
 	HANDLE fdswrite = NULL;
+	
+	// prepare security
+	SECURITY_ATTRIBUTES saAttr;
+	saAttr.nLength = sizeof(SECURITY_ATTRIBUTES); 
+	saAttr.bInheritHandle = TRUE; 
+	saAttr.lpSecurityDescriptor = NULL; 
+   
+	// build the pipe
+	if(CreatePipe(&fdsread, &fdswrite, &saAttr, 0) == 0)
+		throw SystemException(errno, win::getErrorMessage());
 
-	if(CreatePipe(&fdsread,&fdswrite,NULL,0) == 0)
-		throw SystemException(errno, "pipe creation");
-
-	/* Apparently under windows the FD_CLOXEXC is useless */
-
+	// redundant settings?
+	if(!SetHandleInformation(fdsread, HANDLE_FLAG_INHERIT, HANDLE_FLAG_INHERIT))
+		throw SystemException(errno, win::getErrorMessage());
+	if(!SetHandleInformation(fdswrite, HANDLE_FLAG_INHERIT, HANDLE_FLAG_INHERIT))
+		throw SystemException(errno, win::getErrorMessage());
+	
 	return pair(
-			new PipeInStream(fdsread),
-			new PipeOutStream(fdswrite));
+			static_cast<SystemInStream *>(new PipeInStream(fdsread)),
+			static_cast<SystemOutStream *>(new PipeOutStream(fdswrite)));
 #else
 #error "Unsupported System"
 #endif
@@ -228,11 +262,13 @@ unsigned int System::random(unsigned int top) {
  * @throws		SystemException	Thrown if there is an error.
  */
 io::OutStream *System::createFile(const Path& path) throw (SystemException) {
+
 #if defined(__unix) || defined(__APPLE__)
 	int fd = ::open(&path.toString(), O_CREAT | O_TRUNC | O_WRONLY, 0777);
 	if(fd == -1)
 		throw SystemException(errno, "file creation");
 	return new SystemOutStream(fd);
+
 #elif defined(__WIN32) || defined(__WIN64)
 	HANDLE fd;
 	fd=CreateFile(&path.toString(),
@@ -245,6 +281,7 @@ io::OutStream *System::createFile(const Path& path) throw (SystemException) {
 	if(fd == INVALID_HANDLE_VALUE)
 		throw SystemException(errno, "file creation");
 	return new SystemOutStream(fd);
+
 #else
 #error "System Unsupported"
 #endif
@@ -258,13 +295,15 @@ io::OutStream *System::createFile(const Path& path) throw (SystemException) {
  * @throws		SystemException	Thrown if there is an error.
  */
 io::InStream *System::readFile(const Path& path) throw(SystemException) {
-#if defined(__unix) || defined(__APPLE__)
-	int fd = ::open(&path.toString(), O_RDONLY);
-	if(fd == -1)
-		throw SystemException(errno, "file reading");
-	return new SystemInStream(fd);
-#elif defined(__WIN32) || defined(__WIN64)
-	HANDLE fd;
+
+#	if defined(__unix) || defined(__APPLE__)
+		int fd = ::open(&path.toString(), O_RDONLY);
+		if(fd == -1)
+			throw SystemException(errno, "file reading");
+		return new SystemInStream(fd);
+
+#	elif defined(__WIN32) || defined(__WIN64)
+		HANDLE fd;
 		fd = CreateFile(
 			&path.toString(),
 			GENERIC_READ,
@@ -276,10 +315,12 @@ io::InStream *System::readFile(const Path& path) throw(SystemException) {
 		if(fd == INVALID_HANDLE_VALUE)
 			throw SystemException(errno, "file creation");
 		return new io::WinInStream(fd);
-#else
-#error "System Unsupported"
-#endif
+
+#	else
+#		error "System Unsupported"
+#	endif
 }
+
 
 /**
  * Open a file for appending write.
@@ -310,6 +351,7 @@ io::OutStream *System::appendFile(const Path& path) throw(SystemException) {
 #error "System Unsupported"
 #endif
 }
+
 
 #if defined(__unix) || defined(__APPLE__)
 // UnixRandomAccessStream class

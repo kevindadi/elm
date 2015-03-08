@@ -21,29 +21,28 @@
 using namespace elm;
 using namespace elm::sys;
 
-// test_process()
 TEST_BEGIN(process)
 
-#if defined (__unix)
-	ProcessBuilder builder("ls");
-#elif defined(__WIN32) || defined(__WIN64)
-	ProcessBuilder builder("C:\\Win16App\\MinGW\\bin\\gcc.exe");
-#endif
-	Pair<PipeInStream *, PipeOutStream *> pipes = System::pipe();
+	ProcessBuilder builder("ps");
+	Pair<SystemInStream *, SystemOutStream *> pipes = System::pipe();
 	builder.setOutput(pipes.snd);
 	io::OutFileStream err_file("error.txt");
 	builder.setError(&err_file);
+	//builder.setError(pipes.snd);
 	Process *process = builder.run();
 	delete pipes.snd;
 	CHECK(process);
 	io::Input input(*pipes.fst);
 	String line;
+	cerr << "Waiting input ...\n";
 	input >> line;
 	while(line) {
 		cout << "> " << line;
 		input >> line;
 	}
+	cerr << "Waiting process end ...\n";
 	process->wait();
+	cerr << "Process ended!\n";
 	CHECK_EQUAL(process->returnCode(), 0);
 	delete process;
 	delete pipes.fst;
