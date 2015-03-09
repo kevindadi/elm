@@ -23,11 +23,11 @@
 #	include <dlfcn.h>
 #elif defined(__WIN32)
 #	include <windows.h>
-#	include <elm/io/io.h>
-#	include <elm/io/WinInStream.h>
 #	undef min
 #	undef max
 #endif
+#include <elm/io/io.h>
+#include <elm/io/WinInStream.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -159,7 +159,7 @@ namespace sys {
 // PipeOutStream class
 #if defined(__unix) || defined(__APPLE__)
 	class PipeOutStream: public SystemOutStream {
-		friend class System;                           }
+		friend class System;
 		PipeOutStream(int fd): SystemOutStream(fd) { }
 	public:
 		~PipeOutStream(void) { close(fd()); }
@@ -208,8 +208,8 @@ throw (SystemException) {
 
 	// Return result
 	return pair(
-			new PipeInStream(fds[0]),
-			new PipeOutStream(fds[1]));
+			static_cast<SystemInStream *>(new PipeInStream(fds[0])),
+			static_cast<SystemOutStream *>(new PipeOutStream(fds[1])));
 
 #elif defined(__WIN32) || defined(__WIN64)
 	HANDLE fdsread = NULL;
