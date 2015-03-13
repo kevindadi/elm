@@ -135,12 +135,14 @@ endif()
 
 # handle autodoc
 if(INSTALL_DEV)
-	add_custom_target("make-autodoc" ALL DEPENDS "autodoc")
-	add_custom_command(
-		OUTPUT "autodoc"
-		DEPENDS "Doxyfile"
-		COMMAND "${DOXYGEN}"	
-	)
-	install(DIRECTORY autodoc DESTINATION "${CMAKE_INSTALL_PREFIX}/share/Elm/")
+	find_program(DOXYGEN doxygen)
+	if(DOXYGEN)
+		add_custom_target("make-autodoc" ALL DEPENDS "autodoc")
+		add_custom_command(
+			OUTPUT "autodoc"
+			DEPENDS "Doxyfile"
+			COMMAND "${DOXYGEN}"	
+		)
+		install(DIRECTORY autodoc DESTINATION "${CMAKE_INSTALL_PREFIX}/share/Elm/")
+	endif()
 endif()
-
