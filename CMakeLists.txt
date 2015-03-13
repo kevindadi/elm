@@ -44,7 +44,10 @@ elseif(INSTALL_TYPE MATCHES "bin")
     set(INSTALL_LIB "yes")
     set(INSTALL_BIN "yes")
 else()
-    message(ERROR ": unknown INSTALL_TYPE: ${INSTALL_TYPE}")
+    set(INSTALL_DEV "yes")
+    set(INSTALL_LIB "yes")
+    set(INSTALL_BIN "yes")
+    message(ERROR ": unknown INSTALL_TYPE: ${INSTALL_TYPE}. Falling back to all.")
 endif()
 
 
