@@ -350,5 +350,19 @@ TEST_BEGIN(string)
 		CHECK_EQUAL(s, string("34"));
 	}
 
+	// trim test
+	{
+		string s = "  123  ", e = "   ", t = "  1 2 3  ";
+		CHECK_EQUAL(s.ltrim(), string("123  "));
+		CHECK_EQUAL(s.rtrim(), string("  123"));
+		CHECK_EQUAL(s.trim(), string("123"));
+		CHECK_EQUAL(e.ltrim(), string(""));
+		CHECK_EQUAL(e.rtrim(), string(""));
+		CHECK_EQUAL(e.trim(), string(""));
+		CHECK_EQUAL(t.ltrim(), string("1 2 3  "));
+		CHECK_EQUAL(t.rtrim(), string("  1 2 3"));
+		CHECK_EQUAL(t.trim(), string("1 2 3"));
+	}
+
 TEST_END
 

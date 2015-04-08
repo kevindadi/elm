@@ -20,6 +20,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <ctype.h>
 #include <elm/string.h>
 #include <elm/assert.h>
  
@@ -493,7 +494,41 @@ int String::lastIndexOf(const String& string, int pos) {
 
 
 /**
+ * Remove blanks at left and right of the current string.
+ * @return	Trimmed string.
+ */
+string String::trim(void) const {
+	return ltrim().rtrim();
+}
+
+
+/**
+ * Remove blanks at left of the current string.
+ * @return	Left-trimmed string.
+ */
+string String::ltrim(void) const {
+	int i = 0;
+	while(i < length() && isblank(charAt(i)))
+		i++;
+	return substring(i);
+}
+
+
+/**
+ * Remove blanks at right of the current string.
+ * @return	Right-trimmed string.
+ */
+string String::rtrim(void) const {
+	int i = length() - 1;
+	while(i >= 0 && isblank(charAt(i)))
+		i--;
+	return substring(0, i + 1);
+}
+
+
+/**
  * @class CString
+ * Wrapper around C usual string.
  * @ingroup string
  */
 }	// elm

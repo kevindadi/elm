@@ -41,6 +41,7 @@ public:
 	// Iterator
 	class Iterator: public PreIterator<Iterator, T> {
 	public:
+		friend class Vector;
 		inline Iterator(const Vector& vec): _vec(vec), i(0) { }
 		inline Iterator(const Iterator& iter): _vec(iter._vec), i(iter.i) { }
 		inline bool ended(void) const { return i >= _vec.length(); }

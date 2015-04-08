@@ -112,6 +112,10 @@ public:
 	inline bool endsWith(const char *str) const;
 	inline bool endsWith(const CString str) const;
 	inline bool endsWith(const String& str) const;
+
+	String trim(void) const;
+	String ltrim(void) const;
+	String rtrim(void) const;
 };
 
 // Type shortcut

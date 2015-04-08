@@ -128,6 +128,20 @@ TEST_BEGIN(vector)
 			CHECK(v2[i] == i);
 	}
 	
+	// remove from iterator
+	{
+		genstruct::Vector<int> v;
+		v.add(0);
+		v.add(1);
+		v.add(2);
+		v.add(3);
+		genstruct::Vector<int>::Iterator i(v);
+		i++;
+		v.remove(i);
+		CHECK_EQUAL(v.length(), 3);
+		CHECK(v[0] == 0 && v[1] == 2 && v[2] == 3);
+	}
+
 TEST_END
 
 
