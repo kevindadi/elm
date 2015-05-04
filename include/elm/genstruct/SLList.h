@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2004-08, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_GENSTRUCT_SLLIST_H
@@ -33,13 +33,14 @@ namespace elm { namespace genstruct {
 template <class T, class E = Equiv<T> >
 class SLList {
 	inhstruct::SLList list;
-	
+
 	// Node class
 	class Node: public inhstruct::SLNode {
 	public:
 		T val;
 		inline Node(const T value): val(value) { }
 		inline Node *next(void) const { return static_cast<Node *>(SLNode::next()); }
+		inline void removeNext(void) { Node *n = next(); SLNode::removeNext(); delete n; }
 	};
 
 public:
@@ -47,11 +48,11 @@ public:
 	inline SLList(const SLList& list) { copy(list); }
 	inline SLList& operator=(const SLList& list) { copy(list); return *this; }
 	inline ~SLList(void) { clear(); }
-	
+
 	inline void copy(const SLList<T>& list) {
 		clear(); if(list) {
 			Iterator item(list); addFirst(*item);
-			Node *cur = static_cast<Node *>(this->list.first());
+			Node *cur = firstNode();
 			for(item++; item; item++) { cur->insertAfter(new Node(*item)); cur = cur->next(); }
 		}
 	}
@@ -72,7 +73,7 @@ public:
 		inline Iterator(const SLList& _list): node(static_cast<Node *>(_list.list.first())), prev(0) { }
 		inline Iterator(const Iterator& source): node(source.node), prev(source.prev) { }
 		inline Iterator& operator=(const Iterator& i) { node = i.node; prev = i.prev; return *this; }
-		
+
 		inline bool ended(void) const { return !node; }
 		inline const T& item(void) const { ASSERT(node); return node->val; }
 		inline void next(void)
@@ -89,7 +90,7 @@ public:
 		inline MutableIterator(const SLList& _list): node(static_cast<Node *>(_list.list.first())), prev(0) { }
 		inline MutableIterator(const MutableIterator& source): node(source.node), prev(source.prev) { }
 		inline MutableIterator& operator=(const MutableIterator& i) { node = i.node; prev = i.prev; return *this; }
-		
+
 		inline bool ended(void) const { return !node; }
 		inline T& item(void) const { ASSERT(node); return node->val; }
 		inline void next(void)
@@ -114,18 +115,9 @@ public:
 				{ if(!prv) list.removeFirst(); else prv->removeNext(); }
 	}
 
-	void remove(Iterator &iter) {
-		ASSERT(iter.node);
-		if(!iter.prev) removeFirst(); else iter.prev->removeNext();
-		if(iter.prev) iter.node = iter.prev->next(); else iter.node = static_cast<Node *>(list.first());
-	}
+	inline void remove(Iterator &iter) { remove(iter.prev, iter.node); }
+	inline void remove(MutableIterator &iter) { remove(iter.prev, iter.node); }
 
-	void remove(MutableIterator &iter) {
-		ASSERT(iter.node);
-		if(!iter.prev) removeFirst(); else iter.prev->removeNext();
-		if(iter.prev) iter.node = iter.prev->next(); else iter.node = static_cast<Node *>(list.first());
-	}
-	
 	// List concept
 	inline T& first(void) { return static_cast<Node *>(list.first())->val; }
 	inline const T& first(void) const { return static_cast<Node *>(list.first())->val; }
@@ -135,7 +127,7 @@ public:
 		{ Iterator iter(*this); for(; iter; iter++) if(E::equals(item, iter)) break; return iter;  }
 	Iterator find(const T& item, const Iterator& pos) const
 		{ Iterator iter(pos); for(iter++; iter; iter++) if(E::equals(item, iter)) break; return iter; }
-	
+
 	// MutableList concept
 	inline void addFirst(const T& value) { list.addFirst(new Node(value)); }
 	inline void addLast(const T& value) { list.addLast(new Node(value)); }
@@ -152,6 +144,14 @@ public:
 	// operators
 	inline SLList<T>& operator+=(const T& h) { addFirst(h); return *this; }
 	inline SLList<T>& operator+=(const SLList<T>& l) { addAll(l); return *this; }
+
+private:
+	inline Node *firstNode(void) const { return static_cast<Node *>(list.first()); }
+	void remove(Node* prev, Node*& cur) {
+		ASSERT(cur);
+		if(!prev) { removeFirst(); cur = firstNode(); }
+		else { prev->removeNext(); cur = prev->next(); }
+	}
 };
 
 template <class T, class E> SLList<T, E> SLList<T, E>::null;

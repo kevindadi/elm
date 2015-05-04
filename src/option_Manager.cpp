@@ -448,7 +448,7 @@ void Manager::removeOption(Option *option) {
  */
 void Manager::addShort(char cmd, Option *option) throw(OptionException) {
 	string str = _ << '-' << cmd;
-	ASSERTP(!cmds.contains(str), _ << "command '" << cmd << "' already used");
+	ASSERTP(!cmds.contains(str), "command '" << cmd << "' already used");
 	cmds.put(str, option);
 	shorts.put(cmd, option);
 }

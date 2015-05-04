@@ -36,6 +36,8 @@ public:
 		{ VARARG_BEGIN(args, tag) init(man, tag, args); VARARG_END }
 	ListOption(Manager& man, int tag, VarArg& args)
 		: AbstractValueOption(man, tag, args) { }
+	ListOption(const Make& make)
+		: AbstractValueOption(make) { }
 
 	inline const T& get(int index) const { return vals[index]; };
 	inline void set(int index, const T& value) { vals[index] = value; };
