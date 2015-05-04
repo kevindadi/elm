@@ -32,15 +32,15 @@ namespace elm { namespace genstruct {
 // SLList class
 template <class T, class E = Equiv<T> >
 class SLList {
-	inhstruct::SLList list;
 
 	// Node class
 	class Node: public inhstruct::SLNode {
 	public:
 		T val;
 		inline Node(const T value): val(value) { }
-		inline Node *next(void) const { return static_cast<Node *>(SLNode::next()); }
-		inline void removeNext(void) { Node *n = next(); SLNode::removeNext(); delete n; }
+		inline Node *next(void) const { return nextNode(); }
+		inline Node *nextNode(void) const { return static_cast<Node *>(SLNode::next()); }
+		inline void removeNext(void) { Node *n = nextNode(); SLNode::removeNext(); delete n; }
 	};
 
 public:
@@ -49,28 +49,25 @@ public:
 	inline SLList& operator=(const SLList& list) { copy(list); return *this; }
 	inline ~SLList(void) { clear(); }
 
-	inline void copy(const SLList<T>& list) {
-		clear(); if(list) {
-			Iterator item(list); addFirst(*item);
-			Node *cur = firstNode();
-			for(item++; item; item++) { cur->insertAfter(new Node(*item)); cur = cur->next(); }
-		}
+	void copy(const SLList<T>& list) {
+		clear(); Iterator item(list); if(!item) return; addFirst(*item); Node *cur = firstNode();
+		for(item++; item; item++) { cur->insertAfter(new Node(*item)); cur = cur->next(); }
 	}
 
 	static SLList<T, E> null;
 
 	// Collection concept
-	inline int count(void) const { return list.count(); }
+	inline int count(void) const { return _list.count(); }
 	inline bool contains (const T &item) const
 		{ for(Iterator iter(*this); iter; iter++) if(E::equals(item, iter)) return true; return false; }
-	inline bool isEmpty(void) const { return list.isEmpty(); };
+	inline bool isEmpty(void) const { return _list.isEmpty(); };
 	inline operator bool(void) const { return !isEmpty(); }
 
 	// Iterator class
 	class Iterator: public PreIterator<Iterator, const T&> {
 	public:
 		inline Iterator(void): node(0), prev(0) { }
-		inline Iterator(const SLList& _list): node(static_cast<Node *>(_list.list.first())), prev(0) { }
+		inline Iterator(const SLList& _list): node(_list.firstNode()), prev(0) { }
 		inline Iterator(const Iterator& source): node(source.node), prev(source.prev) { }
 		inline Iterator& operator=(const Iterator& i) { node = i.node; prev = i.prev; return *this; }
 
@@ -87,7 +84,7 @@ public:
 	class MutableIterator: public PreIterator<Iterator, T&> {
 	public:
 		inline MutableIterator(void): node(0), prev(0) { }
-		inline MutableIterator(const SLList& _list): node(static_cast<Node *>(_list.list.first())), prev(0) { }
+		inline MutableIterator(const SLList& _list): node(_list.firstNode()), prev(0) { }
 		inline MutableIterator(const MutableIterator& source): node(source.node), prev(source.prev) { }
 		inline MutableIterator& operator=(const MutableIterator& i) { node = i.node; prev = i.prev; return *this; }
 
@@ -102,7 +99,7 @@ public:
 
 	// MutableCollection concept
 	inline void clear(void)
-		{ while(!list.isEmpty()) { Node *node = static_cast<Node *>(list.first()); list.removeFirst(); delete node; } }
+		{ while(!_list.isEmpty()) { Node *node = firstNode(); _list.removeFirst(); delete node; } }
 	inline void add(const T& value) { addFirst(value); }
 	template <class C> inline void addAll(const C& items)
 		{ for(typename C::Iterator iter(items); iter; iter++) add(iter); }
@@ -110,35 +107,33 @@ public:
 		{ for(typename C::Iterator iter(items); iter; iter++) remove(iter);	}
 
 	void remove(const T& value) {
-		for(Node *prv = 0, *cur = static_cast<Node *>(list.first()); cur; prv = cur, cur = cur->next())
-			if(E::equals(cur->val, value))
-				{ if(!prv) list.removeFirst(); else prv->removeNext(); }
+		if(E::equals(first(), value)) removeFirst(); else
+		for(Node *prev = firstNode(), *cur = prev->nextNode(); cur; prev = cur, cur = cur->nextNode())
+		if(E::equals(cur->val, value)) { prev->removeNext(); return; }
 	}
 
 	inline void remove(Iterator &iter) { remove(iter.prev, iter.node); }
 	inline void remove(MutableIterator &iter) { remove(iter.prev, iter.node); }
 
 	// List concept
-	inline T& first(void) { return static_cast<Node *>(list.first())->val; }
-	inline const T& first(void) const { return static_cast<Node *>(list.first())->val; }
-	inline T& last(void) { return (static_cast<Node *>(list.last()))->val; }
-	inline const T& last(void) const { return (static_cast<Node *>(list.last()))->val; }
+	inline T& first(void) { return firstNode()->val; }
+	inline const T& first(void) const { return firstNode()->val; }
+	inline T& last(void) { return lastNode()->val; }
+	inline const T& last(void) const { return lastNode()->val; }
 	Iterator find(const T& item) const
 		{ Iterator iter(*this); for(; iter; iter++) if(E::equals(item, iter)) break; return iter;  }
 	Iterator find(const T& item, const Iterator& pos) const
 		{ Iterator iter(pos); for(iter++; iter; iter++) if(E::equals(item, iter)) break; return iter; }
 
 	// MutableList concept
-	inline void addFirst(const T& value) { list.addFirst(new Node(value)); }
-	inline void addLast(const T& value) { list.addLast(new Node(value)); }
+	inline void addFirst(const T& value) { _list.addFirst(new Node(value)); }
+	inline void addLast(const T& value) { _list.addLast(new Node(value)); }
 	inline void addAfter(const Iterator& pos, const T& value)
 		{ ASSERT(pos.node); pos.node->insertAfter(new Node(value)); }
 	inline void addBefore(const Iterator& pos, const T& value)
 		{ if(!pos.prev) addFirst(value); else pos.prev->insertAfter(new Node(value)); }
-	inline void removeFirst(void)
-		{ Node *node = static_cast<Node *>(list.first()); list.removeFirst(); delete node; }
-	inline void removeLast(void)
-		{ Node *node = static_cast<Node *>(list.last()); list.removeLast(); delete node; }
+	inline void removeFirst(void) { Node *node = firstNode(); _list.removeFirst(); delete node; }
+	inline void removeLast(void) { Node *node = lastNode(); _list.removeLast(); delete node; }
 	inline void set(const Iterator &pos, const T &item) { ASSERT(pos.node); pos.node->val = item; }
 
 	// operators
@@ -146,7 +141,10 @@ public:
 	inline SLList<T>& operator+=(const SLList<T>& l) { addAll(l); return *this; }
 
 private:
-	inline Node *firstNode(void) const { return static_cast<Node *>(list.first()); }
+	inhstruct::SLList _list;
+
+	inline Node *firstNode(void) const { return static_cast<Node *>(_list.first()); }
+	inline Node *lastNode(void) const { return static_cast<Node *>(_list.last()); }
 	void remove(Node* prev, Node*& cur) {
 		ASSERT(cur);
 		if(!prev) { removeFirst(); cur = firstNode(); }

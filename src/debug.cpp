@@ -36,6 +36,14 @@ namespace elm {
  *
  * The @ref GDBCrashHandler invokes the GDB debugger on the current process when a crash arises.
  *
+ * @p debug_helper	Debug Helper Macros
+ *
+ * These macros help obtaining log during debugging phase. They are all de-activated as soon as the macro
+ * NDEBUG is defined (as for standard C assert macro).
+ * @li TRACE -- print current source file, line and container function.
+ * @li HERE -- put an empty instruction making easier for the debugger to mark break lines.
+ * @li BREAK(c) -- if condition c evaluates to false, executes the following code (HERE for example to get conditional breakpoint).
+ * @li SPY(c, v) -- displays string comment followed by the given value and returns this one. Useful to spy values in an expression.
  */
 
 /**
