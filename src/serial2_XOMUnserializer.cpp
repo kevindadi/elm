@@ -111,7 +111,7 @@ void XOMUnserializer::flush(void) {
 				// look for the element
 				xom::Element *elem = elems.get(pair.fst, 0);
 				if(!elem)
-					throw MessageException(_ << "unresolved reference \"" << pair.fst << "\"");
+					throw io::IOException(_ << "unresolved reference \"" << pair.fst << "\"");
 				ctx.elem = elem;
 
 				// unserialize the object
