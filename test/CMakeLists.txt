@@ -43,6 +43,7 @@ set(TEST_SOURCES
 	"test_ini.cpp"
 	"test_int.cpp"
 	"test_io_format.cpp"
+	"test_jsched.cpp"
 	"test_list.cpp"
 	"test_lock.cpp"
 	"test_md5.cpp"

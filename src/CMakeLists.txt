@@ -90,6 +90,7 @@ set(LIBELM_LA_SOURCES
 	"string_AutoString.cpp"
 	"string_String.cpp"
 	"string_StringBuffer.cpp"
+	"sys_JobScheduler.cpp"
 	"system_File.cpp"
 	"system_FileItem.cpp"
 	"system_Directory.cpp"
@@ -172,7 +173,7 @@ if(LIBXSLT_FOUND)
 endif()
 
 
-# system IO selection	
+# system IO selection
 if(MINGW_LINUX OR WIN32)
 	list(REMOVE_ITEM LIBELM_LA_SOURCES io_UnixInStream.cpp)
 	list(REMOVE_ITEM LIBELM_LA_SOURCES io_UnixOutStream.cpp)
