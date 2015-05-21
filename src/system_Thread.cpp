@@ -22,6 +22,7 @@
 
 #include <elm/assert.h>
 #include <elm/sys/Thread.h>
+#include <elm/sys/SystemException.h>
 #include <elm/string.h>
 #ifdef __unix
 #	include <pthread.h>
@@ -72,6 +73,46 @@ void Runnable::stop(void) {
 Thread::Thread(Runnable& runnable): _runnable(runnable) {
 
 }
+
+
+/**
+ */
+Thread::~Thread(void) {
+}
+
+
+/**
+ * @class Mutex
+ * System-independent implementation of a mutex.
+ */
+
+
+/**
+ */
+Mutex::~Mutex(void) { }
+
+
+/**
+ * @fn void Mutex::lock(void);
+ * Acquire the mutex. If mutex is not available, block until it becomes available.
+ * @throw SystemException	No more place in waiting queue.
+ */
+
+
+/**
+ * @fn void Mutex::unlock(void);
+ * Release a mutex acquired by the current thread.
+ * @throw SystemException	Mutex not owned by the current thread.
+ */
+
+
+/**
+ * bool Mutex::tryLock(void);
+ * If the mutex is free, acquire it. Else return immediately without blocking.
+ * @return	True if the mutex has been acquired, false else.
+ * @throw SystemException	No more place in waiting queue.
+ */
+
 
 #ifdef __unix
 
@@ -135,6 +176,58 @@ Thread::Thread(Runnable& runnable): _runnable(runnable) {
 
 	};
 
+	class PMutex: public Mutex {
+	public:
+
+		PMutex(void) throw(SystemException) {
+			int r = pthread_mutex_init(&h, 0);
+			if(r != 0)
+				throw SystemException(errno, "elm::Mutex");
+		}
+
+		~PMutex(void) {
+			pthread_mutex_destroy(&h);
+		}
+
+		virtual void lock(void) throw(SystemException) {
+			int r = pthread_mutex_lock(&h);
+			if(r)
+				switch(errno) {
+				case EAGAIN:	throw SystemException(SystemException::NO_MORE_RESOURCE, "no more place in queue");
+				case EDEADLK:
+				case EINVAL:
+				default:		ASSERT(false); break;
+				}
+		}
+
+		virtual void unlock(void) throw(SystemException) {
+			int r = pthread_mutex_unlock(&h);
+			if(r != 0)
+				switch(errno) {
+				case EPERM:		throw SystemException(SystemException::NO_ACCESS, "elm::Mutex: illegal unlock");
+				case EINVAL:
+				default:		ASSERT(false); break;
+				}
+
+		}
+
+		virtual bool tryLock(void) throw(SystemException) {
+			int r = pthread_mutex_trylock(&h);
+			if(r == 0)
+				return true;
+			else
+				switch(errno) {
+				case EBUSY:		return false;
+				case EAGAIN:	throw SystemException(SystemException::NO_MORE_RESOURCE, "no more place in queue");
+				case EINVAL:
+				default:		ASSERT(false); return false;
+				}
+		}
+
+	private:
+		pthread_mutex_t h;
+	};
+
 #elif defined(__WIN32) || defined(__WIN64)
 
 	/**
@@ -189,6 +282,36 @@ Thread::Thread(Runnable& runnable): _runnable(runnable) {
 		HANDLE handle;
 	};
 
+	// TODO test it!
+	class WinMutex: public Mutex {
+	public:
+
+		PMutex(void) throw(SystemException) {
+			h = CreateMutex(NULL, FALSE, NULL);
+			ASSERT(h != NULL);
+		}
+
+		~PMutex(void) {
+			CloseHandle(h);
+		}
+
+		virtual void lock(void) throw(SystemException) {
+			WaitForSingleObject(h, INFINITE);
+		}
+
+		virtual void unlock(void) throw(SystemException) {
+			ReleaseMutex(h);
+		}
+
+		virtual bool tryLock(void) throw(SystemException) {
+			int r = WaitForSingleObject(h, 0);
+			return r != WAIT_TIMEOUT;
+		}
+
+	private:
+		HANDLE h;
+	};
+
 #endif
 
 
@@ -205,6 +328,20 @@ Thread *Thread::make(Runnable& runnable) {
 #	endif
 }
 
-//static Thread *current(void);
 
+/**
+ * Build a new mutex.
+ * @return	Created mutex.
+ * @throw SystemException	If the mutex cannot be created.
+ */
+Mutex *Mutex::make(void) throw(SystemException) {
+#	ifdef __unix
+		return new PMutex();
+#	elif defined(__WIN32) || defined(__WIN64)
+		return new WinMutex();
+#	else
+#		error "Mutex unsupported."
+#	endif
+
+}
 } }	// elm::sys

@@ -17,12 +17,12 @@ int main(int argc, char *argv[]) {
 	// process the help
 	for(int i = 1; i < argc; i++)
 		if(string("-h") == argv[i] || string("--help") == argv[i]) {
-		cerr << "Modules:\n";
-		for(TestSet::Iterator test(TestSet::def); test; test++)
-			cerr << "\t" << test->name() << io::endl;
-		return 0;
-	}
-	
+			cerr << "Modules:\n";
+			for(TestSet::Iterator test(TestSet::def); test; test++)
+				cerr << "\t" << test->name() << io::endl;
+			return 0;
+		}
+
 	// process the tests
 	genstruct::Vector<TestCase *> tests;
 	for(int i = 1; i < argc; i++) {
@@ -30,12 +30,17 @@ int main(int argc, char *argv[]) {
 
 		// look in the structure
 		for(TestSet::Iterator test(TestSet::def); test; test++)
-			if(test->name() == argv[i])
+			if(test->name() == argv[i]) {
 				tests.add(test);
+				found = true;
+				break;
+			}
 
 		// not found: error
-		if(!found)
+		if(!found) {
 			cerr << "ERROR: no test called \"" << argv[i] << "\"\n";
+			return 1;
+		}
 	}
 
 	// if none selected, test all

@@ -4,7 +4,7 @@ SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 
 # when building, don't use the install RPATH already
 # (but later on when installing)
-SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
@@ -19,7 +19,7 @@ IF("${isSystemDir}" STREQUAL "-1")
    SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 ENDIF("${isSystemDir}" STREQUAL "-1")
 
-	
+
 include_directories("../include")
 include_directories(".")
 
@@ -46,6 +46,7 @@ set(TEST_SOURCES
 	"test_list.cpp"
 	"test_lock.cpp"
 	"test_md5.cpp"
+	"test_mutex.cpp"
 	"test_option.cpp"
 	"test_plugin.cpp"
 	"test_process.cpp"

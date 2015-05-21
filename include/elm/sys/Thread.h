@@ -22,6 +22,7 @@
 #ifndef ELM_SYSTEM_THREAD_H_
 #define ELM_SYSTEM_THREAD_H_
 
+#include <elm/sys/SystemException.h>
 #include <elm/util/MessageException.h>
 
 namespace elm { namespace sys {
@@ -34,6 +35,7 @@ class ThreadException: public MessageException {
 public:
 	inline ThreadException(const string& message): MessageException(message) { }
 };
+
 
 // Runnable class
 class Runnable {
@@ -51,6 +53,7 @@ private:
 class Thread {
 	friend class Runnable;
 public:
+	virtual ~Thread(void);
 	static Thread *make(Runnable& runnable);
 	virtual void start(void) throw(ThreadException) = 0;
 	virtual void join(void) throw(ThreadException) = 0;
@@ -63,7 +66,16 @@ protected:
 	virtual void stop(void) = 0;
 };
 
-} }	// elm::sys
 
+class Mutex {
+public:
+	static Mutex *make(void) throw(SystemException);
+	virtual ~Mutex(void);
+	virtual void lock(void) throw(SystemException) = 0;
+	virtual void unlock(void) throw(SystemException) = 0;
+	virtual bool tryLock(void) throw(SystemException) = 0;
+};
+
+} }	// elm::sys
 
 #endif /* ELM_SYSTEM_THREAD_H_ */
