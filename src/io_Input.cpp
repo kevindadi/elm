@@ -103,7 +103,7 @@ void Input::back(int chr) {
 
 
 /**
- * Read a boolean value, that is, 'true' or 'false'.
+ * Read a boolean value, that is, 'true'/'false' or '1'/'0'.
  * @return	Read boolean value.
  */
 bool Input::scanBool(void) {
@@ -112,7 +112,15 @@ bool Input::scanBool(void) {
 
 	// Look first character
 	int chr = get();
-	if(chr == 't') {
+	if (chr == '1') {
+		pattern = "1";
+		res = true;
+	}
+	else if (chr == '0') {
+		pattern = "0";
+		res = false;
+	}
+	else if(chr == 't') {
 		pattern = "true";
 		res = true;
 	}
