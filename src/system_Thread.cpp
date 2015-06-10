@@ -24,7 +24,7 @@
 #include <elm/sys/Thread.h>
 #include <elm/sys/SystemException.h>
 #include <elm/string.h>
-#ifdef __unix
+#if defined(__unix) || defined(__APPLE__)
 #	include <pthread.h>
 #	include <errno.h>
 #	include <string.h>
@@ -114,7 +114,7 @@ Mutex::~Mutex(void) { }
  */
 
 
-#ifdef __unix
+#if defined(__unix) || defined(__APPLE__)
 
 	/**
 	 * PThread: implementation on Linux of threads
@@ -319,7 +319,7 @@ Mutex::~Mutex(void) { }
  * Build a new thread for the given runnable.
  */
 Thread *Thread::make(Runnable& runnable) {
-#	ifdef __unix
+#	if defined(__unix) || defined(__APPLE__)
 		return new PThread(runnable);
 #	elif defined(__WIN32) || defined(__WIN64)
 		return new WinThread(runnable);
@@ -335,7 +335,7 @@ Thread *Thread::make(Runnable& runnable) {
  * @throw SystemException	If the mutex cannot be created.
  */
 Mutex *Mutex::make(void) throw(SystemException) {
-#	ifdef __unix
+#	if defined(__unix) || defined(__APPLE__)
 		return new PMutex();
 #	elif defined(__WIN32) || defined(__WIN64)
 		return new WinMutex();

@@ -81,7 +81,7 @@ endif()
 
 
 # check for thread and socket
-if(NOT(WIN32) AND NOT(WIN64) AND NOT(APPLE))
+if(NOT(WIN32) AND NOT(WIN64))
 	find_package(Threads)
 	set(HAS_SOCKET ON CACHE BOOL "sockets are supported")
 endif()
