@@ -90,7 +90,6 @@ set(LIBELM_LA_SOURCES
 	"string_AutoString.cpp"
 	"string_String.cpp"
 	"string_StringBuffer.cpp"
-	"sys_JobScheduler.cpp"
 	"system_File.cpp"
 	"system_FileItem.cpp"
 	"system_Directory.cpp"
@@ -136,7 +135,7 @@ endif()
 
 # optional socket
 if(CMAKE_THREAD_LIBS_INIT OR WIN32 OR WIN64 OR CMAKE_USE_PTHREADS_INIT)
-	list(APPEND LIBELM_LA_SOURCES "system_Thread.cpp")
+	list(APPEND LIBELM_LA_SOURCES "system_Thread.cpp" 	"sys_JobScheduler.cpp")
 endif()
 if(HAS_SOCKET)
 	list(APPEND LIBELM_LA_SOURCES  "net_ClientSocket.cpp" "net_ServerSocket.cpp")

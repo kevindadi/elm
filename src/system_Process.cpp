@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2006-07, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
@@ -46,6 +46,12 @@ namespace elm { namespace sys {
  * An interface with the processes of the OS.
  * @ingroup system_inter
  */
+
+
+/**
+ */
+Process::~Process(void) {
+}
 
 
 /**
@@ -95,24 +101,24 @@ namespace elm { namespace sys {
 			else if(result > 0) {
 				pid = -1;
 				rcode = WEXITSTATUS(rcode);
-				return false; 
+				return false;
 			}
 			else
 				throw SystemException(errno, "process information");
 		}
-		
+
 		virtual int returnCode(void) {
 			if(pid >= 0)
 				wait();
 			return rcode;
 		}
-		
+
 		virtual void kill(void) {
 			ASSERT(pid >= 0);
 			if(::kill(pid, SIGKILL) < 0)
 				throw SystemException(errno, "process kill");
 		}
-		
+
 		virtual void wait(void) {
 			if(pid < 0)
 				return;
@@ -122,28 +128,28 @@ namespace elm { namespace sys {
 				return;
 			}
 			else
-				throw new SystemException(errno, "process wait");	
+				throw new SystemException(errno, "process wait");
 		}
 
 	private:
 		int pid, rcode;
 	};
-	
+
 	Process *makeProcess(int pid) { return new ActualProcess(pid); }
 
 
 /*** Windows Process Implementation ***/
 #elif defined(__WIN32) || defined(__WIN64)
 	}
-	
+
 	namespace win {
 		void setError(int code);
 		int getError(void);
 		string getErrorMessage(void);
 	}
-	
-	namespace sys {	
-	
+
+	namespace sys {
+
 
 	class ActualProcess: public Process {
 	public:
@@ -163,7 +169,7 @@ namespace elm { namespace sys {
 				throw SystemException(win::getError(), win::getErrorMessage());
 			}
 		}
-		
+
 		int returnCode(void) {
 			if(ended)
 				return rcode;
@@ -176,14 +182,14 @@ namespace elm { namespace sys {
 				throw SystemException(win::getError(), win::getErrorMessage());
 			}
 		}
-		
+
 		void kill(void) {
 			if(::TerminateProcess(pi.hProcess, 0) == 0) {
 				win::setError(GetLastError());
 				throw SystemException(win::getError(), win::getErrorMessage());
 			}
 		}
-		
+
 		void wait(void) {
 			if(GetExitCodeProcess(pi.hProcess, &rcode) == 0 && rcode != STILL_ACTIVE) {
 				ended = true;

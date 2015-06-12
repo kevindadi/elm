@@ -26,6 +26,7 @@ namespace elm { namespace sys {
 // Process class
 class Process {
 public:
+	virtual ~Process(void);
 	virtual bool isAlive(void) = 0;
 	virtual int returnCode(void) = 0;
 	virtual void kill(void) = 0;
