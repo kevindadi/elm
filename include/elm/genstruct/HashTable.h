@@ -142,7 +142,7 @@ public:
 	};
 
 	// PairIterator class
-	class PairIterator: public InternIterator, public PreIterator<PairIterator, Pair<K, T> > {
+	class PairIterator: public InternIterator, public VolatilePreIterator<PairIterator, Pair<K, T> > {
 	public:
 		inline PairIterator(const HashTable<K, T, H>& htab): InternIterator(htab) { };
 		inline PairIterator(const PairIterator& it): InternIterator(it) { }

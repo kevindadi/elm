@@ -36,9 +36,9 @@ public:
 		{ ((I *)this)->next(); return *(I *)this; }
 	inline I& operator++(int)
 		{ ((I *)this)->next(); return *(I *)this; }
-	inline T operator*(void) const
+	inline const T& operator*(void) const
 		{ return ((I *)this)->item(); }
-	inline T operator->(void) const
+	inline const T& operator->(void) const
 		{ return ((I *)this)->item(); }
 };
 
