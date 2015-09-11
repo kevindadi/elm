@@ -21,7 +21,7 @@
 #ifndef ELM_SYS_DIRECTORY_H
 #define ELM_SYS_DIRECTORY_H
 
-#include <elm/PreIterator.h>
+#include <elm/VolatilePreIterator.h>
 #include <elm/sys/FileItem.h>
 
 namespace elm { namespace sys {
@@ -36,7 +36,7 @@ public:
 	static Directory *make(Path path);
 
 	// Children iterator
-	class Iterator: public PreIterator<Iterator, FileItem *> {
+	class Iterator: public VolatilePreIterator<Iterator, FileItem *> {
 		Path path;
 		void *dir;
 		FileItem *file;

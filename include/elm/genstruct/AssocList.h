@@ -22,6 +22,7 @@
 #ifndef ELM_GENSTRUCT_ASSOCLIST_H_
 #define ELM_GENSTRUCT_ASSOCLIST_H_
 
+#include <elm/VolatilePreIterator.h>
 #include <elm/type_info.h>
 #include <elm/util/Option.h>
 #include <elm/util/Comparator.h>
@@ -57,7 +58,7 @@ public:
 	inline bool isEmpty(void) const { return list.isEmpty(); }
 	inline operator bool (void) const { return !list.isEmpty(); }
 
-	class Iterator: public PreIterator<Iterator, T> {
+	class Iterator: public VolatilePreIterator<Iterator, T> {
 	public:
 		inline Iterator(const AssocList& list): iter(list) { }
 		inline Iterator(const Iterator& iterator): iter(iterator.iter) { }

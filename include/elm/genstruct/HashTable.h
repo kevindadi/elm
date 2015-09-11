@@ -24,6 +24,7 @@
 
 #include <elm/util/Pair.h>
 #include <elm/PreIterator.h>
+#include <elm/VolatilePreIterator.h>
 #include <elm/util/HashKey.h>
 #include <elm/type_info.h>
 
@@ -130,7 +131,7 @@ public:
 	};
 
 	// Iterator class
-	class Iterator: public InternIterator, public PreIterator<Iterator, T> {
+	class Iterator: public InternIterator, public VolatilePreIterator<Iterator, T> {
 	public:
 		inline Iterator(const HashTable<K, T, H>& htab): InternIterator(htab) { };
 		inline Iterator(const Iterator& it): InternIterator(it) { }
@@ -150,7 +151,7 @@ public:
 	};
 
 	// SameKeyIterator
-	class SameKeyIterator: public PreIterator<SameKeyIterator, T> {
+	class SameKeyIterator: public VolatilePreIterator<SameKeyIterator, T> {
 		const HashTable<K, T, H>& htab;
 		embed_k key;
 		node_t *node;	

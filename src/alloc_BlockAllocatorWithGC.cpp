@@ -110,7 +110,7 @@ void AbstractBlockAllocatorWithGC::free(void *block) {
 
 
 /**
- * Perform a gabage collection.
+ * Perform a garbage collection.
  */
 void AbstractBlockAllocatorWithGC::collectGarbage(void) {
 

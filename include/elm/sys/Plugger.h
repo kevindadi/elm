@@ -61,7 +61,7 @@ public:
 	String lastErrorMessage(void);
 
 	// Iterator class
-	class Iterator: public PreIterator<Iterator, String> {
+	class Iterator: public VolatilePreIterator<Iterator, String> {
 		Plugger& plugger;
 		genstruct::Vector<Plugin *>& statics;
 		int i;

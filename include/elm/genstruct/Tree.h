@@ -22,6 +22,7 @@
 #ifndef ELM_GENSTRUCT_TREE_H
 #define ELM_GENSTRUCT_TREE_H
 
+#include <elm/PreIterator.h>
 #include <elm/inhstruct/Tree.h>
 
 namespace elm { namespace genstruct {

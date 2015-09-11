@@ -23,7 +23,7 @@
 #define ELM_GENSTRUCT_DAGNODE_H
 
 #include <elm/assert.h>
-#include <elm/PreIterator.h>
+#include <elm/VolatilePreIterator.h>
 #include <elm/genstruct/SLList.h>
 #include <elm/genstruct/HashTable.h>
 
@@ -51,7 +51,7 @@ public:
 	inline T& useValue(void);
 
 	// Iterator class
-	class Iterator: public PreIterator<Iterator, DAGNode*> {
+	class Iterator: public VolatilePreIterator<Iterator, DAGNode*> {
 		friend class DAGNode;
 		
 		typename SLList<DAGNode*>::Iterator iter;

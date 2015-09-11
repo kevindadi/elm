@@ -23,6 +23,7 @@
 #define ELM_GENSTRUCT_AVLMAP_CPP_
 
 #include <elm/type_info.h>
+#include <elm/VolatilePreIterator.h>
 #include <elm/genstruct/AVLTree.h>
 
 namespace elm { namespace genstruct {
@@ -57,7 +58,7 @@ public:
 	};
 
 	// PairIterator class
-	class PairIterator: public PreIterator<PairIterator, pair_t> {
+	class PairIterator: public VolatilePreIterator<PairIterator, pair_t> {
 	public:
 		inline PairIterator(const AVLMap<K, T, C>& map): it(map.tree) { }
 		inline PairIterator(const PairIterator& iter): it(iter) { }

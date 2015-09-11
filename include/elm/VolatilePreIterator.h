@@ -19,18 +19,18 @@
  *	along with OTAWA; if not, write to the Free Software 
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_PREITERATOR_H
-#define ELM_PREITERATOR_H
+#ifndef ELM_VOLATILEPREITERATOR_H
+#define ELM_VOLATILEPREITERATOR_H
 
 namespace elm {
 
-// PreIterator class
+// VolatilePreIterator class
 template <class I, class T>
-class PreIterator {
+class VolatilePreIterator {
 public:
 	inline operator bool(void) const
 		{ return !((I *)this)->ended(); }
-	inline operator const T&(void) const
+	inline operator T(void) const
 		{ return ((I *)this)->item(); }
 	inline I& operator++(void)
 		{ ((I *)this)->next(); return *(I *)this; }
@@ -44,4 +44,4 @@ public:
 
 } // elm
 
-#endif	// ELM_PREITERATOR_H
+#endif	// ELM_VOLATILEPREITERATOR_H
