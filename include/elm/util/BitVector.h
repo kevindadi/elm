@@ -25,7 +25,7 @@
 #include <elm/assert.h>
 #include <memory.h>
 #include <elm/io.h>
-#include <elm/VolatilePreIterator.h>
+#include <elm/PreIterator.h>
 
 namespace elm {
 
@@ -74,7 +74,7 @@ public:
 	inline int countZeroes(void) const { return countBits() - countOnes(); }
 
 	// OneIterator iter
-	class OneIterator: public VolatilePreIterator<OneIterator, int> {
+	class OneIterator: public PreIterator<OneIterator, int> {
 		const BitVector& bvec;
 		int i;
 	public:
@@ -85,7 +85,7 @@ public:
 	};
 
 	// ZeroIterator iter
-	class ZeroIterator: public VolatilePreIterator<ZeroIterator, int> {
+	class ZeroIterator: public PreIterator<ZeroIterator, int> {
 		const BitVector& bvec;
 		int i;
 	public:

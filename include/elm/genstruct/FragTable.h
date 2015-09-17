@@ -44,7 +44,7 @@ public:
 		{ for(int i = 0; i < length(); i++)
 			if(get(i) == item) return true; return false; } 
 
-	class Iterator: public PreIterator<Iterator, T> {
+	class Iterator: public PreIterator<Iterator, const T&> {
 	public:
 		inline Iterator(const FragTable<T>& array, int pos = 0);
 		inline Iterator(const Iterator& iter)

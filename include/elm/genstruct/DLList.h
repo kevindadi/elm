@@ -64,7 +64,7 @@ public:
 	inline bool isEmpty(void) const;
 	inline operator bool(void) const { return !isEmpty(); }
 	
-	class Iterator: public PreIterator<Iterator, T>, public AbstractIterator {
+	class Iterator: public PreIterator<Iterator, const T&>, public AbstractIterator {
 	public:
 		inline Iterator(const DLList& _list)
 			: AbstractIterator(_list, (DLNode *)_list.list.first()) { }
@@ -115,7 +115,7 @@ public:
 		pos.cur->val = item; }
 
 	// BiDiList concept
-	class BackIterator: public PreIterator<Iterator, T>, public AbstractIterator {
+	class BackIterator: public PreIterator<Iterator, const T&>, public AbstractIterator {
 	public:
 		inline BackIterator(const DLList& _list)
 			: AbstractIterator(_list,	(DLNode *)_list.list.last()) { }

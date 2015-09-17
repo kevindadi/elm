@@ -39,7 +39,7 @@ public:
 	inline ~Vector(void) { if(tab) delete [] tab; }
 	
 	// Iterator
-	class Iterator: public PreIterator<Iterator, T> {
+	class Iterator: public PreIterator<Iterator, const T&> {
 	public:
 		friend class Vector;
 		inline Iterator(const Vector& vec): _vec(vec), i(0) { }

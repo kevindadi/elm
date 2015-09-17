@@ -56,7 +56,7 @@ public:
  	inline operator bool(void) const { return !isEmpty(); }
 
 	// Iterator class
-	class Iterator: public PreIterator<Iterator, T> {
+	class Iterator: public PreIterator<Iterator, const T&> {
 	public:
 		inline Iterator(const GenSortedBinTree& tree)
 			{ stack.push((Node *)tree.root.root()); }

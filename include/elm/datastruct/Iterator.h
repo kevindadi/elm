@@ -22,7 +22,7 @@
 #ifndef ELM_DATASTRUCT_ITERATOR_H
 #define ELM_DATASTRUCT_ITERATOR_H
 
-#include <elm/VolatilePreIterator.h>
+#include <elm/PreIterator.h>
 
 namespace elm { namespace datastruct {
 
@@ -39,7 +39,7 @@ public:
 
 // Iterator class
 template <class T>
-class Iterator: public VolatilePreIterator<Iterator<T>, T> {
+class Iterator: public PreIterator<Iterator<T>, T> {
 public:
 	inline Iterator(IteratorInst<T> *_iter): iter(_iter) { }
 	inline IteratorInst<T> *instance(void) const { return iter; }

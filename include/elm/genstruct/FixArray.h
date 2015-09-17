@@ -33,7 +33,7 @@ public:
 	inline FixArray(const FixArray& array) { }
 
 	// Iterator class
-	class Iterator: public PreIterator<Iterator, T> {
+	class Iterator: public PreIterator<Iterator, const T&> {
 	public:
 		inline Iterator(const FixArray<T, S, E>& array): a(&array), i(0) { }
 		inline Iterator(const Iterator& it): a(it.a), i(it.i) { }

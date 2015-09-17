@@ -56,7 +56,7 @@ public:
 		{ return inhstruct::Tree::isEmpty(); }
 
 	// Iterator class
-	class Iterator: public PreIterator<Iterator, T> {
+	class Iterator: public PreIterator<Iterator, const T&> {
 	public:
 		inline Iterator(const Iterator& iter): it(iter.it) { }
 		inline Iterator(const Tree *tree): it(tree) { }

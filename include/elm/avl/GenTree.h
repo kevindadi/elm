@@ -111,7 +111,7 @@ public:
 			if(!contains(iter)) return false; return true; }
 
 	// Iterator class	
-	class Iterator: public PreIterator<Iterator, T> {
+	class Iterator: public PreIterator<Iterator, const T&> {
 	public:
 		inline Iterator(const GenTree<T, K, C>& tree): sp(stack)
 			{ if(tree.root) visit((Node *)tree.root); }

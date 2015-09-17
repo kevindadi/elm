@@ -28,7 +28,7 @@ namespace elm {
 
 // IndexedIterator class
 template <class I, class T, class C>
-class IndexedIterator: public PreIterator<I, T> {
+class IndexedIterator: public PreIterator<I, const T&> {
 	typedef IndexedIterator<I, T, C> this_t;
 public:
 	

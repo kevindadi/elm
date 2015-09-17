@@ -30,15 +30,15 @@ class PreIterator {
 public:
 	inline operator bool(void) const
 		{ return !((I *)this)->ended(); }
-	inline operator const T&(void) const
+	inline operator T(void) const
 		{ return ((I *)this)->item(); }
 	inline I& operator++(void)
 		{ ((I *)this)->next(); return *(I *)this; }
 	inline I& operator++(int)
 		{ ((I *)this)->next(); return *(I *)this; }
-	inline const T& operator*(void) const
+	inline T operator*(void) const
 		{ return ((I *)this)->item(); }
-	inline const T& operator->(void) const
+	inline T operator->(void) const
 		{ return ((I *)this)->item(); }
 };
 

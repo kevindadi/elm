@@ -22,7 +22,7 @@
 #ifndef ELM_INHSTRUCT_TREE_H
 #define ELM_INHSTRUCT_TREE_H
 
-#include <elm/VolatilePreIterator.h>
+#include <elm/PreIterator.h>
 #include <elm/assert.h>
 
 namespace elm { namespace inhstruct {
@@ -43,7 +43,7 @@ public:
 	inline operator bool(void) const { return !isEmpty(); }
 	
 	// Iterator class
-	class Iterator: public VolatilePreIterator<Iterator, Tree *> {
+	class Iterator: public PreIterator<Iterator, Tree *> {
 	public:
 		inline Iterator(const Iterator& iter): cur(iter.cur) { }
 		inline Iterator(const Tree *tree): cur(tree->children()) { }
