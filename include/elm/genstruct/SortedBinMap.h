@@ -44,7 +44,7 @@ public:
  	inline operator bool(void) const { return !isEmpty(); }
 
 	// Iterator class
-	class Iterator: public PreIterator<Iterator, T> {
+	class Iterator: public PreIterator<Iterator, const T&> {
 	public:
 		inline Iterator(const SortedBinMap& map): iter(map.tree) { }
 		inline Iterator(const Iterator& _): iter(_) { }
@@ -67,19 +67,19 @@ public:
 	inline bool hasKey(const K &key) const { return tree.look(key); }
 
 	// KeyIterator class
-	class KeyIterator: public PreIterator<KeyIterator, K> {
+	class KeyIterator: public PreIterator<KeyIterator, const K&> {
 	public:
 		inline KeyIterator(const SortedBinMap& map): iter(map.tree) { }
 		inline KeyIterator(const KeyIterator& _): iter(_) { }
 		inline bool ended(void) const { return iter.ended(); }
 		inline void next(void) { iter.next(); }
-		const T &item(void) const { return iter.item().fst; }
+		const K &item(void) const { return iter.item().fst; }
 	private:
 		typename tree_t::Iterator iter;
 	};
 	
 	// PairIterator class
-	class PairIterator: public PreIterator<PairIterator, value_t> {
+	class PairIterator: public PreIterator<PairIterator, const value_t&> {
 	public:
 		inline PairIterator(const SortedBinMap& map): iter(map.tree) { }
 		inline PairIterator(const PairIterator& _): iter(_) { }
