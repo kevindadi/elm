@@ -84,7 +84,7 @@ public:
 	class MutableIterator: public PreIterator<Iterator, T&> {
 	public:
 		inline MutableIterator(void): node(0), prev(0) { }
-		inline MutableIterator(const SLList& _list): node(_list.firstNode()), prev(0) { }
+		inline MutableIterator(SLList& _list): node(_list.firstNode()), prev(0) { }
 		inline MutableIterator(const MutableIterator& source): node(source.node), prev(source.prev) { }
 		inline MutableIterator& operator=(const MutableIterator& i) { node = i.node; prev = i.prev; return *this; }
 
