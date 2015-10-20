@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2008, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
@@ -81,6 +81,30 @@ namespace elm {
  *	};
  * @endcode
  *
+ *
+ * @par Type Selection Helper
+ *
+ * A big issue in C++ is the selection of type for parameters and functions results.
+ * A common practice is to pass a simple type as is as parameter and to use const
+ * references for bigger types. This policy is easy to apply when the type is known
+ * but what to do when the parameter method is in a template class. Here, a conservative
+ * approach advise to use const reference in any case in the hope that the compiler will
+ * optimize the code and use only straight type for scalar types.
+ *
+ * ELM proposes an alternative to this approach that works with template. Using the
+ * type_info<T> class (that is aware of the actual type of the generic parameter),
+ * one can obtain the type declaration that fits the best its use:
+ * @li type_info<T>::in_t -- for input parameter,
+ * @li type_info<T>::out_t -- for output parameter,
+ * @li type_info<T>::val_t -- for returning a value,
+ * @li type_info<T>::ref_t -- for returning a reference,
+ * @li type_info<T>::embed_t -- for storing internally the type.
+ *
+ * Notice type_info<T>::embed_t that allows storing references: in fact, when T is
+ * a reference, it is stored automatically as a pointer. type_info<T>::put() and
+ * type_info<T>::get() can then be used to store the generic value or to get it.
+ *
+ *
  * @par Enumeration Information
  *
  * Users may also benefit from whole facilities of input/output, serialization and like for
@@ -143,7 +167,7 @@ namespace elm {
  * is provided for usual types of C++, the type_info may be specialized
  * for user types in order to let ELM classes -- like containers -- to adapt
  * to the custom types.
- * 
+ *
  * According the type T, one of the following information may also be available:
  * @li const T null: null value for the types supporting one.
  * @li const T min: minimum value for the types supporting a total order.

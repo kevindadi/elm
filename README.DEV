@@ -1,11 +1,15 @@
 ====== Elm Developper Information ======
- 
+
+===== Organization =====
+
 Directories:
   * include/		ELM headers.
   * src/			ELM sources.
   * test/			Test programs.
   * perf/			Performances test programs and data.
   * tools/			Tool to work with ELM.
+
+===== Working with sources =====
 
 Bootstrap:
 <code sh>
@@ -34,5 +38,8 @@ Testing:
 
 Under Windows:
 	move src/libelm.dll to test/
+
+
+===== Development Directives =====
 
 

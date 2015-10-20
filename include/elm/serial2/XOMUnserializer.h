@@ -9,6 +9,7 @@
 
 #include <elm/genstruct/HashTable.h>
 #include <elm/genstruct/Vector.h>
+#include <elm/serial2/serial.h>
 #include <elm/serial2/Unserializer.h>
 #include <elm/util/Pair.h>
 
@@ -40,7 +41,7 @@ public:
 	virtual int countItems(void);
 	virtual bool nextItem(void);
 	virtual void endCompound(void*);
-	virtual int onEnum(AbstractEnum& clazz); 
+	virtual int onEnum(AbstractEnum& clazz);
 	virtual void onValue(bool& v);
 	virtual void onValue(signed int& v);
 	virtual void onValue(unsigned int& v);
@@ -86,9 +87,9 @@ private:
 	elm::genstruct::HashTable<CString,  ref_t *> refs;
 	elm::genstruct::Vector<context_t> stack;
 	elm::genstruct::Vector<Pair<cstring, ref_t *> > pending;
-	
+
 	void embed(AbstractType& clazz, void **ptr);
-}; 
+};
 
 } } // elm::serial2
 
