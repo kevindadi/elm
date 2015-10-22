@@ -9,7 +9,7 @@ endif()
 # support for prctrl/SET_PTRACER
 if(UNIX)
 	execute_process(COMMAND uname -v OUTPUT_VARIABLE kernel_version OUTPUT_STRIP_TRAILING_WHITESPACE)
-	string(REGEX MATCH "^#[0-9]+-Ubuntu " version "${kernel_version}")
+	string(REGEX MATCH "^#[0-9]+.*-Ubuntu " version "${kernel_version}")
 	if("${version}" STREQUAL "")
 		set(SET_PTRACER no)
 	else()
@@ -144,7 +144,7 @@ if(INSTALL_DEV)
 		add_custom_command(
 			OUTPUT "autodoc"
 			DEPENDS "Doxyfile"
-			COMMAND "${DOXYGEN}"	
+			COMMAND "${DOXYGEN}"
 		)
 		install(DIRECTORY autodoc DESTINATION "${CMAKE_INSTALL_PREFIX}/share/Elm/")
 	endif()

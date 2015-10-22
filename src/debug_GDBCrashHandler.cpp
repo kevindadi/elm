@@ -20,14 +20,14 @@
 #include "../config.h"
 
 namespace elm {
-	
+
 /**
  * @class GDBCrashHandler
  * This crash handler calls GDB to debug the current program.
- * 
+ *
  * This handler performs only if the ELM_DEBUG environment variable is
  * set to yes.
- * 
+ *
  * @warning It is only compiled  if GDB is available and if /proc
  * filesystem is available.
  */
@@ -45,7 +45,7 @@ void GDBCrashHandler::handle(void) {
 
 	// Clean all
 	cleanup();
-	
+
 	// Test for a tty?
 	FILE *out = 0;
 	if(isatty(0))
@@ -54,13 +54,13 @@ void GDBCrashHandler::handle(void) {
 		out = stderr;
 	else
 		fatal("no TTY available.");
-	
+
 	// Ask use to use GDB ?
 	fprintf(out, "Do you want to start GDB ? [n]\b\b");
 	char chr = getchar();
 	if(chr != 'y' && chr != 'Y')
 		fatal("Aborting...");
-	
+
 	// Make wait process
 	int main_pid = getpid();
 	int wait_pid = fork();
@@ -79,17 +79,17 @@ void GDBCrashHandler::handle(void) {
 		while(waitpid(wait_pid, 0, 0) != wait_pid) ;
 		abort();
 	}
-	
+
 	// Make GDB proces
 	wait_pid = getpid();
 	int gdb_pid = fork();
 	if(gdb_pid == -1)
 		fatal("no fork");
-		
+
 	// Wait process
 	if(gdb_pid != 0)
 		pause();
-	
+
 	// GDB process
 	else {
 		char number[16], buf[256], command[64];
@@ -112,11 +112,11 @@ void GDBCrashHandler::handle(void) {
 		snprintf(number, 16, "%d", main_pid);
 		snprintf(buf, 256, "/proc/%d/exe", main_pid);
 		snprintf(command, 64, "shell kill -SIGTERM %d", wait_pid);
-	
+
 		// launch the command
 		if(execvp("gdb", args) == -1)
 			fatal("no gdb");
-	} 
+	}
 }
 
 
