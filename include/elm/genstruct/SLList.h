@@ -136,6 +136,12 @@ public:
 	inline void removeLast(void) { Node *node = lastNode(); _list.removeLast(); delete node; }
 	inline void set(const Iterator &pos, const T &item) { ASSERT(pos.node); pos.node->val = item; }
 
+	// Stack concept
+	inline const T& top(void) const { return first(); }
+	inline T pop(void) { T r = first(); removeFirst(); return r; }
+	inline void push(const T& i) { addFirst(i); }
+	inline void reset(void) { clear(); }
+
 	// operators
 	inline SLList<T>& operator+=(const T& h) { addFirst(h); return *this; }
 	inline SLList<T>& operator+=(const SLList<T>& l) { addAll(l); return *this; }
