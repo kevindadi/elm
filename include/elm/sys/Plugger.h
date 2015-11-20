@@ -33,6 +33,7 @@ namespace elm { namespace sys {
 // Plugger class
 class Plugger: public ErrorBase {
 	friend class Plugin;
+	friend class PluginManager;
 public:
 	typedef enum error_t {
 		OK = 0,
@@ -40,7 +41,8 @@ public:
 		NO_HOOK,
 		BAD_VERSION,
 		NO_MAGIC,
-		BAD_PLUGIN
+		BAD_PLUGIN,
+		MISSING_DEP
 	} error_t;
 
 public:
@@ -98,9 +100,14 @@ private:
 	Plugin *plug(Plugin *plugin, void *handle);
 	inline genstruct::Vector<Plugin *>& statics(void);
 	void onError(error_level_t level, const string& message);
-	void *link(sys::Path lib);
-	void *lookSymbol(void *handle, cstring hook);
-	void *lookLibrary(sys::Path lib, genstruct::Vector<string> rpath);
+	Plugin *lookELD(const Path& path, error_t& err);
+
+	// portability functions
+	static void *link(sys::Path lib);
+	static void unlink(void *handle);
+	static void *lookSymbol(void *handle, cstring hook);
+	static void *lookLibrary(sys::Path lib, genstruct::Vector<string> rpath);
+	static string error(void);
 };
 
 // Inlines

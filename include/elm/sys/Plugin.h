@@ -31,13 +31,34 @@
 namespace elm { namespace sys {
 
 #define ELM_PLUGIN_ID_PREFIX		"@@ELM-PLUGIN-ID@@:"
-#define ELM_PLUGIN_ID(hook, info)	static const char __plugin_id[] = ELM_PLUGIN_ID_PREFIX hook ":" info;
+#define ELM_PLUGIN_ID(hook, info)	const char __plugin_id[] = ELM_PLUGIN_ID_PREFIX hook ":" info;
+#define ELM_PLUGIN(Clazz, hook) 	extern "C" { \
+	ELM_PLUGIN_ID(#hook, ""); \
+	elm::sys::Plugin *hook##_fun(void) { static Clazz plugin; return static_cast<Plugin *>(&plugin); } }
 
 // Plugin class
 class Plugin {
 public:
 	static const t::uint32 MAGIC = 0xCAFEBABE;
 	typedef genstruct::Table<string> aliases_t;
+
+	class make {
+		friend class Plugin;
+	public:
+		inline make(string name, const Version& plugger_version)
+			: _name(name), _plugger_version(plugger_version) { }
+		inline make& description(cstring d) { _description = d; return *this; }
+		inline make& license(cstring l) { _license = l; return *this; }
+		inline make& version(const Version& v) { _plugin_version = v; return *this; }
+		inline make& alias(string a) { aliases.add(a); return *this; }
+		inline make& hook(cstring h) { _hook = h; return *this; }
+	private:
+		string _name;
+		cstring _description, _license, _hook;
+		Version _plugin_version, _plugger_version;
+		genstruct::Vector<string> aliases;
+	};
+
 private:
 	friend class Plugger;
 	static genstruct::Vector<Plugin *> static_plugins;
@@ -47,7 +68,7 @@ private:
 	Version per_vers;
 	void *_handle;
 	int state;
-	const aliases_t& _aliases;
+	genstruct::DeletableTable<string> _aliases;
 	t::uint32 magic;
 	Path _path;
 
@@ -64,8 +85,8 @@ protected:
 	virtual void cleanup(void);
 
 public:
-	Plugin(string name, const Version& plugger_version, CString hook = "",
-		const aliases_t& aliases = aliases_t::EMPTY);
+	Plugin(string name, const Version& plugger_version, CString hook = "", const aliases_t& aliases = aliases_t::EMPTY);
+	Plugin(const make& maker);
 	virtual ~Plugin(void);
 	inline string name(void) const { return _name; }
 	inline CString description(void) const;

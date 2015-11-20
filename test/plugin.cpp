@@ -25,8 +25,6 @@
 using namespace elm;
 using namespace elm::sys;
 
-ELM_PLUGIN_ID("", "myplugin");
-
 #if !defined(__WIN32) && !defined(__WIN64)
 extern bool startup_flag;
 extern bool cleanup_flag;
@@ -53,12 +51,18 @@ elm::String MyPlugin::get(void) {
 	return "hello";
 }
 
-MyPlugin::MyPlugin(void): Plugin("myplugin", elm::Version(0, 0, 0)) {
+/*MyPlugin::MyPlugin(void): Plugin("myplugin", elm::Version(0, 0, 0)) {
 	_description = "myplugin description";
 	_licence = "myplugin licence";
 	_plugin_version = Version(1, 2, 3);
-}
+}*/
+MyPlugin::MyPlugin(void): Plugin(
+	make("myplugin", Version(0, 0, 0))
+	.description("myplugin description")
+	.license("myplugin licence")
+	.version(Version(1, 2, 3))) { }
 
 // Plugin hook
-MyPlugin my_plugin;
+//MyPlugin my_plugin;
+ELM_PLUGIN(MyPlugin, my_plugin);
 

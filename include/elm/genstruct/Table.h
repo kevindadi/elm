@@ -3,7 +3,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2004-08, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -15,7 +15,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_GENSTRUCT_TABLE_H
@@ -24,6 +24,7 @@
 #include <elm/assert.h>
 #include <elm/deprecated.h>
 #include <elm/util/IndexedIterator.h>
+#include <elm/util/array.h>
 
 namespace elm { namespace genstruct {
 
@@ -37,7 +38,7 @@ public:
 	inline Table(T *table, int count): tab(table), cnt(count)
 		{ ASSERTP(count == 0 || (count > 0 && table), "null pointer for table"); }
 	inline Table(const Table<T>& table): tab(table.tab), cnt(table.cnt) { }
-	
+
 	// Accessors
 	inline int size(void) const { return cnt; }
 	inline const T& get(int index) const
@@ -47,10 +48,10 @@ public:
 	inline void set(int index, const T& value)
 		{ ASSERTP(index >= 0 && index < cnt, "index out of bounds"); tab[index] = value; }
 	inline bool isEmpty(void) const { return cnt == 0; }
-	
+
 	// Mutators
 	inline void copy(const Table<T>& table) { tab = table.tab; cnt = table.cnt; }
-	
+
 	// Operators
 	inline const T& operator[](int index) const { return get(index); }
 	inline T& operator[](int index) { return get(index); }
@@ -78,11 +79,13 @@ protected:
 template <class T>
 class DeletableTable: public Table<T> {
 public:
-	inline DeletableTable(void) { cerr << "DEBUG: " << (void *)this << "created\n"; }
+	inline DeletableTable(void) { }
 	inline DeletableTable(T *table, int count): Table<T>(table, count) { }
-	inline DeletableTable(const Table<T>& table): Table<T>(table) { cerr << "DEBUG: " << (void *)this << " get " << (void *)*table << " to " << (void *)**this << io::endl; }
-	inline ~DeletableTable(void) { cerr << "DEBUG: " << (void *)this << " -> " << (void *)Table<T>::tab << io::endl;  if(Table<T>::tab) delete [] Table<T>::tab; }
-	inline DeletableTable<T>& operator=(const DeletableTable<T>& table) { cerr << "DEBUG: " << (void *)this << " copy of " << (void *)&table << io::endl; copy(table); return *this; }
+	inline DeletableTable(const Table<T>& table): Table<T>(table) { }
+	inline ~DeletableTable(void) { if(Table<T>::tab) delete [] Table<T>::tab; }
+	inline DeletableTable<T>& operator=(const Table<T>& table) { Table<T>::copy(table); return *this; }
+	inline DeletableTable<T>& operator=(const DeletableTable<T>& table)
+		{ Table<T>::copy(new T[table.count()], table.count()); array::copy(this->table(), table.table(), table.count()); return *this; }
 };
 
 // AllocatedTable class

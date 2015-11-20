@@ -51,16 +51,16 @@ static cstring
 	DEPS_ATT = "deps";
 
 static cstring PLUG_EXT =
-#ifdef WITH_LIBTOOL
+#	ifdef WITH_LIBTOOL
 		"la";
-#elif defined(__WIN32) || defined(__WIN64)
+#	elif defined(__WIN32) || defined(__WIN64)
 		"dll";
-#elif defined(__APPLE__)
+#	elif defined(__APPLE__)
 		"dylib";
-#else
+#	else
 		"so";
-#endif
-
+#	endif
+static cstring fun_suffix = "_fun";
 
 /**
  * @class Plugger
@@ -291,22 +291,27 @@ void *Plugger::lookSymbol(void *handle, cstring name) {
 
 
 /**
- * Plug the given file in the plugger.
- * @param path	Path of file to plug.
- * @return		Plugin or null if there is an error.
+ * Look for an ELD file and process it.
+ * @param path	Path to plugin.
+ * @param err	To return error.
+ * @return		Opened plugin if any.
  */
-Plugin *Plugger::plugFile(sys::Path path) {
-	err = OK;
+Plugin *Plugger::lookELD(const Path& path, error_t& err) {
 
-	// look for ELD file
+	// compute ELD path
 	sys::Path ppath = path;
 	if(ppath.extension() == PLUG_EXT)
 		ppath = ppath.setExtension(ELD_EXT);
 	else if(ppath.extension() != ELD_EXT)
 		ppath = _ << ppath << "." << ELD_EXT;
+
 	try {
+
+		// open the ELD file
 		AutoDestructor<ini::File> file(ini::File::load(ppath));
 		ini::Section *sect = file->get(SECTION_NAME);
+
+		// if section is provided
 		if(sect) {
 
 			// just renaming
@@ -320,6 +325,7 @@ Plugin *Plugger::plugFile(sys::Path path) {
 			for(int i = 0; i < deps.count(); i++) {
 				if(!plug(deps[i])) {
 					onError(level_error, _ << "cannot plug " << deps[i]);
+					err = MISSING_DEP;
 					return 0;
 				}
 			}
@@ -339,6 +345,7 @@ Plugin *Plugger::plugFile(sys::Path path) {
 				for(int i = 0; i < libs.count(); i++)
 					if(!lookLibrary(evaluate(ppath, libs[i]), rpaths)) {
 						onError(level_error, _ << "cannot link " << libs[i]);
+						err = MISSING_DEP;
 						return 0;
 					}
 			}
@@ -346,6 +353,24 @@ Plugin *Plugger::plugFile(sys::Path path) {
 	}
 	catch(ini::Exception& e) {
 	}
+	return 0;
+}
+
+
+/**
+ * Plug the given file in the plugger.
+ * @param path	Path of file to plug.
+ * @return		Plugin or null if there is an error.
+ */
+Plugin *Plugger::plugFile(sys::Path path) {
+	err = OK;
+
+	// look for ELD file
+	Plugin *res = lookELD(path, err);
+	if(err != OK)
+		return 0;
+	if(res)
+		return res;
 
 	// Check existence of the file
 	sys::FileItem *file = 0;
@@ -376,7 +401,7 @@ Plugin *Plugger::plugFile(sys::Path path) {
 					if(in)
 						delete in;
 				}
-				
+
 			}
 		}
 #	endif
@@ -387,36 +412,31 @@ Plugin *Plugger::plugFile(sys::Path path) {
 	file->release();
 
 	// Open shared library
-	/*#if defined(__WIN32) || defined(__WIN64)
-		void *handle = LoadLibrary(&path);
-	#elif defined(WITH_LIBTOOL)
-		void *handle = lt_dlopen(&path);
-	#else
-		void *handle = dlopen(&path, RTLD_LAZY);
-	#endif*/
 	void *handle = link(path);
 	if(!handle) {
 		err = BAD_PLUGIN;
-		onError(level_warning, _ << "invalid plugin found at \"" << path << "\" (no handle): "
-#			if defined(__WIN32) || defined(__WIN64)
-				<< GetLastError());
-#			elif defined(WITH_LIBTOOL)
-				<< lt_dlerror());
-#			else
-				<< dlerror());
-#			endif
+		onError(level_warning, _ << "invalid plugin found at \"" << path << "\" (no handle): " << error());
 		return 0;
 	}
 
-	// Look for the plugin symbol
-	/*#if defined(__WIN32) || defined(__WIN64)
-		Plugin *plugin = (Plugin *)GetProcAddress(reinterpret_cast<HINSTANCE&>(handle),&_hook);
-	#elif defined(WITH_LIBTOOL)
-		Plugin *plugin = (Plugin *)lt_dlsym((lt_dlhandle)handle, &_hook);
-	#else
-		Plugin *plugin = (Plugin *)dlsym(handle, &_hook);
-	#endif*/
-	Plugin *plugin = static_cast<Plugin *>(lookSymbol(handle, &_hook));
+	// new version: look for builder function
+	Plugin *plugin = 0;
+	string fun_name = _ << _hook << fun_suffix;
+	void *sym = lookSymbol(handle, &fun_name);
+	if(sym) {
+		typedef Plugin *(*fun_t)(void);
+		fun_t fun = (fun_t)sym;
+		plugin = fun();
+	}
+
+	// old version: look for the static object
+	else {
+		void *sym = lookSymbol(handle, &_hook);
+		if(sym)
+			plugin = static_cast<Plugin *>(sym);
+	}
+
+	// plugin found?
 	if(!plugin) {
 		err = NO_HOOK;
 		onError(level_warning, _ << "invalid plugin found at \"" << path << "\" (no hook)");
@@ -439,6 +459,7 @@ Plugin *Plugger::plugFile(sys::Path path) {
 
 	// Plug it
 	plugin->setPath(path);
+	cerr << "PLUGGED: " << plugin->name() << " (" << plugin->path() << ")\n";
 	return plug(plugin, handle);
 }
 
@@ -675,6 +696,37 @@ Plugin *Plugger::Iterator::plug(void) const {
 		return plugger.plug(statics[i], 0);
 	else
 		return plugger.plugFile(file->item()->path().toString());
+}
+
+
+/**
+ * Get error message from the last library operation.
+ * @return	Last error message.
+ */
+string Plugger::error(void) {
+#			if defined(__WIN32) || defined(__WIN64)
+				return GetLastError();
+#			elif defined(WITH_LIBTOOL)
+				return lt_dlerror();
+#			else
+				return dlerror();
+#			endif
+}
+
+
+/**
+ * Unlink a library (OS level).
+ * @param handle	Library handle.
+ */
+void Plugger::unlink(void *handle) {
+#	ifdef WITH_LIBTOOL
+		lt_dlclose((lt_dlhandle)_handle);
+#	elif defined(__WIN32) || defined(__WIN64)
+		if(FreeLibrary(reinterpret_cast<HINSTANCE&>(_handle)) == 0 )
+			throw SystemException(errno,"error freeing library");
+#	else
+		dlclose(handle);
+#	endif
 }
 
 } }	// elm::sys

@@ -20,6 +20,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <stdio.h>
 #if defined(__unix) || defined(__APPLE__)
 #	include "../config.h"
 #elif defined(__WIN32) || defined(__WIN64)
@@ -86,7 +87,7 @@ namespace elm { namespace sys {
  * 	cout << "ERROR: " << plugger.lastErrorMessage() << io::endl;
  * @endcode
  *
- * Having just a plugin pointer does not provide any service. To do it, we have
+ * Having just a plugin pointer does not provide any service. To do this, we have
  * usually to define an interface that is implemented by the plugin instance.
  * Let's call it "NetPlugin": it must be derived from the elm::system::Plugin class.
  * Notice that the interface pass the right name of the service but should not
@@ -95,9 +96,8 @@ namespace elm { namespace sys {
  * @code
  * class NetPlugin: public Plugin {
  * public:
- *	NetPlugin(String name, const Version& version)
- *		: Plugin(name, version, "net_plugin") {
- *  	};
+ *	NetPlugin(const make& maker): Plugin(make(name, version))
+ *		{ }
  * 	virtual void performService(void) = 0;
  * };
  * @endcode
@@ -132,7 +132,7 @@ namespace elm { namespace sys {
  * of the service to be hooked to the right plugger with the service version
  * supported by the plugin.
  * @code
- * MyNetPlugin::MyNetPlugin(void): NetPlugin("my_net_plugin", Version(1, 0, 0)) {
+ * MyNetPlugin::MyNetPlugin(void): NetPlugin(make("my_net_plugin", Version(1, 0, 0))) {
  * }
  * @endcode
  * Notice how the version is encoded in the plugin code. If this plugin is then
@@ -141,11 +141,9 @@ namespace elm { namespace sys {
  * 1.2.0 (from the plugger) and will detect possible binary incompatibility and
  * prevent the invalid linkage.
  *
- * Then we need to declare the plugin instance, a global variable with the
- * name of the service.
+ * Then we need to provide a hook to let the plugger found the plugin object.
  * @code
- * MyNetPlugin my_net_plugin;
- * Plugin *NET_HOOK = &my_net_plugin;
+ * ELM_PLUGIN(MyNetPlugin, NET_HOOK);
  * @endcode
  * The result source must then be compiled to produce a shared code with
  * your preferred compiler For example, with GCC on a Unix OS.
@@ -202,6 +200,30 @@ namespace elm { namespace sys {
  * [elm-plugin]
  * libs=libxml2
  * @endcode
+ *
+ * @section plugin_old_style Old-Style Plugin Creation
+ *
+ * The old-style plugin creation remains supported but is marked as deprecated.
+ *
+ * Here, the plugin of the example must be declared with:
+ * @code
+ * class MyNetPlugin: public NetPlugin {
+ * public:
+ *		MyNetPlugin(void): NetPlugin("my_net_plugin", Version(1, 0, 0)) {
+ *			_description = "my plugin";
+ *			_licence = "my licence";
+ *		}
+ * 		virtual void performService(void);
+ * };
+ * @endcode
+ * Notice how description and license were passed in the constructor.
+ *
+ * The second difference stands in the way to declare the hook (it has proven to
+ * no robust enough):
+ * @code
+ * MyNetPlugin NET_HOOK;
+ * MyNetPlugin& my_net_plugin = NET_HOOK;
+ * @endcode
  */
 
 /**
@@ -243,19 +265,41 @@ Plugin::Plugin(
 	per_vers(plugger_version),
 	_handle(0),
 	state(0),
-	_aliases(aliases),
 	magic(MAGIC)
 {
 	if(hook)
 		static_plugins.add(this);
-	//cout << "Construct " << this << io::endl;
+	_aliases = aliases;
 }
 
 
 /**
+ * New-style builder for plugin using @ref Plugin::Maker.
+ * @param maker	Maker for plugin.
+ */
+Plugin::Plugin(const Plugin::make& maker)
+:	_hook(maker._hook),
+ 	_name(maker._name),
+ 	per_vers(maker._plugger_version),
+ 	_handle(0),
+ 	state(0),
+ 	magic(MAGIC),
+ 	_description(maker._description),
+ 	_licence(maker._license),
+ 	_plugin_version(maker._plugin_version)
+{
+	if(_hook)
+		static_plugins.add(this);
+	if(maker.aliases) {
+		genstruct::Vector<string> as;
+		as.addAll(maker.aliases);
+		_aliases = as.detach();
+	}
+}
+
+/**
  */
 Plugin::~Plugin(void) {
-	//cout << "Destruct " << this << io::endl;
 }
 
 
@@ -314,14 +358,7 @@ void Plugin::unplug(void) {
 		cleanup();
 		unused_plugins.remove(this);
 		if(_handle)
-			#ifdef WITH_LIBTOOL
-				lt_dlclose((lt_dlhandle)_handle);
-			#elif defined(__WIN32) || defined(__WIN64)
-				if(FreeLibrary(reinterpret_cast<HINSTANCE&>(_handle)) == 0 )
-					throw SystemException(errno,"error freeing library");
-			#else
-				dlclose(_handle);
-			#endif
+			Plugger::unlink(_handle);
 	}
 }
 

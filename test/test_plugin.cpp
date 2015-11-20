@@ -56,14 +56,14 @@ TEST_BEGIN(plugin)
 	});
 	CHECK(startup_flag);
 	CHECK(!cleanup_flag);
-	
+
 	// Check content
 	CHECK(plugin->name() == "myplugin");
 	CHECK(plugin->pluggerVersion() == Version(0, 0, 0));
-	CHECK(plugin->description() == "myplugin description");
-	CHECK(plugin->licence() == "myplugin licence");
-	CHECK(plugin->pluginVersion() == Version(1, 2, 3));
-	
+	CHECK_EQUAL(plugin->description(), cstring("myplugin description"));
+	CHECK_EQUAL(plugin->licence(), cstring("myplugin licence"));
+	CHECK_EQUAL(plugin->pluginVersion(), Version(1, 2, 3));
+
 	// Check reopen
 	startup_flag = false;
 	Plugin *plugin2 = plugger.plug("myplugin");
@@ -74,7 +74,7 @@ TEST_BEGIN(plugin)
 	plugin2->unplug();
 	CHECK(!startup_flag);
 	CHECK(!cleanup_flag);
-	
+
 	// Check release
 	int cnt = 0;
 #if defined(__unix)
