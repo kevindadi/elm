@@ -83,9 +83,12 @@ public:
 	inline DeletableTable(T *table, int count): Table<T>(table, count) { }
 	inline DeletableTable(const Table<T>& table): Table<T>(table) { }
 	inline ~DeletableTable(void) { if(Table<T>::tab) delete [] Table<T>::tab; }
-	inline DeletableTable<T>& operator=(const Table<T>& table) { Table<T>::copy(table); return *this; }
+	inline DeletableTable<T>& operator=(const Table<T>& table)
+		{ Table<T>::copy(table); return *this; }
 	inline DeletableTable<T>& operator=(const DeletableTable<T>& table)
-		{ Table<T>::copy(new T[table.count()], table.count()); array::copy(this->table(), table.table(), table.count()); return *this; }
+		{ copy(table); return *this; }
+	inline void copy(const Table<T>& t)
+		{ Table<T>::copy(Table<T>(new T[t.count()], t.count())); array::copy(this->table(), t.table(), t.count()); }
 };
 
 // AllocatedTable class

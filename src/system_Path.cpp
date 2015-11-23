@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2005-07, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #include <unistd.h>
@@ -90,13 +90,13 @@ int Path::lastSeparator(void) const {
  */
 Path Path::canonical(void) const {
 	TRACE
-	
+
 	// Make it absolute
 	Path path = *this;
 	if(isRelative())
 		path = absolute();
 	TRACE
-	
+
 	// Select kept components
 	genstruct::Vector<String> comps;
 	int stop = path.nextSeparator(), start = 0;
@@ -106,7 +106,7 @@ Path Path::canonical(void) const {
 		String comp = path.buf.substring(start, stop - start);
 		if(!comp || comp == ".")
 			;
-		
+
 		// Select the component
 		if(comp == "..") {
 			if(comps.count() > 0)
@@ -122,7 +122,7 @@ Path Path::canonical(void) const {
 	comps.add(path.buf.substring(start));
 	TRACE
 
-	
+
 	// Rebuild path
 	StringBuffer buffer;
 	for(int i = 0; i < comps.length(); i++) {
@@ -147,7 +147,7 @@ Path Path::canonical(void) const {
 Path Path::absolute(void) const {
 	if(isAbsolute())
 		return *this;
-	else if(isHomeRelative()) 
+	else if(isHomeRelative())
 		return home() / Path(buf.substring(1));
 	else
 		return current() / *this;
@@ -258,7 +258,7 @@ bool Path::isHomeRelative(void) const {
 #	if defined(__WIN32) || defined(__WIN64)
 		return false;
 #	else
-		return buf.length() > 0 && buf[0] == '~';	
+		return buf.length() > 0 && buf[0] == '~';
 #	endif
 }
 
@@ -358,7 +358,7 @@ Path Path::basePart(void) const {
 
 /**
  * Get the extension of the referenced file name.
- * @return	Extension or an empty string if there is no extension.
+ * @return	Extension  (without ".") or an empty string if there is no extension.
  */
 String Path::extension(void) const {
 	int lsep = lastSeparator();
@@ -420,7 +420,7 @@ bool Path::isDir(void) const {
 	int res = stat(&toString(), &buf);
 	if(res != 0)
 		return false;
-	return S_ISDIR(buf.st_mode);	
+	return S_ISDIR(buf.st_mode);
 }
 
 

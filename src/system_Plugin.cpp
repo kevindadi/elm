@@ -269,7 +269,7 @@ Plugin::Plugin(
 {
 	if(hook)
 		static_plugins.add(this);
-	_aliases = aliases;
+	_aliases.copy(aliases);
 }
 
 
