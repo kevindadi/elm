@@ -63,6 +63,7 @@ MyPlugin::MyPlugin(void): Plugin(
 	.version(Version(1, 2, 3))) { }
 
 // Plugin hook
-//MyPlugin my_plugin;
-ELM_PLUGIN(MyPlugin, my_plugin);
+MyPlugin my_plugin;
+#define HOOK	my_plugin
+ELM_PLUGIN(my_plugin, HOOK);
 

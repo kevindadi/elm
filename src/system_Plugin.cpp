@@ -270,6 +270,7 @@ Plugin::Plugin(
 	if(hook)
 		static_plugins.add(this);
 	_aliases.copy(aliases);
+	//cerr << "DEBUG: Plugin::Plugin(" << (void *)this << ", " << name << ")\n";
 }
 
 
@@ -295,6 +296,7 @@ Plugin::Plugin(const Plugin::make& maker)
 		as.addAll(maker.aliases);
 		_aliases = as.detach();
 	}
+	//cerr << "DEBUG: Plugin::Plugin(" << (void *)this << ", " << _name << ")\n";
 }
 
 /**

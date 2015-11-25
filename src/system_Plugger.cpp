@@ -459,7 +459,6 @@ Plugin *Plugger::plugFile(sys::Path path) {
 
 	// Plug it
 	plugin->setPath(path);
-	cerr << "PLUGGED: " << plugin->name() << " (" << plugin->path() << ")\n";
 	return plug(plugin, handle);
 }
 

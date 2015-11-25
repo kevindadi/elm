@@ -58,6 +58,7 @@ public:
 	inline Table<T>& operator=(const Table& table) { copy(table); return *this; }
 	inline operator bool(void) const { return !isEmpty(); }
 	inline const T *operator*(void) const { return tab; }
+	inline T *operator*(void) { return tab; }
 
 	// Iterator class
 	class Iterator: public IndexedIterator<Iterator, T, Table<T> > {
@@ -88,7 +89,8 @@ public:
 	inline DeletableTable<T>& operator=(const DeletableTable<T>& table)
 		{ copy(table); return *this; }
 	inline void copy(const Table<T>& t)
-		{ Table<T>::copy(Table<T>(new T[t.count()], t.count())); array::copy(this->table(), t.table(), t.count()); }
+		{ clear(); if(t.size()) { Table<T>::copy(Table<T>(new T[t.count()], t.count())); array::copy(**this, *t, t.count()); } }
+	inline void clear(void) { if(Table<T>::tab) { delete [] Table<T>::tab; copy(Table<T>::EMPTY); } }
 };
 
 // AllocatedTable class

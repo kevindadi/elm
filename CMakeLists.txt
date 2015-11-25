@@ -28,26 +28,24 @@ endif()
 
 
 # installation level
-set(INSTALL_TYPE "all" CACHE STRING "Type of installation (one of all, dev-only, dev, lib, com).")
-if(INSTALL_TYPE MATCHES "all")
-    set(INSTALL_DEV "yes")
-    set(INSTALL_LIB "yes")
-    set(INSTALL_BIN "yes")
-elseif(INSTALL_TYPE MATCHES "dev")
-    set(INSTALL_DEV "yes")
-    set(INSTALL_LIB "yes")
-elseif(INSTALL_TYPE MATCHES "dev-only")
-    set(INSTALL_DEV "yes")
-elseif(INSTALL_TYPE MATCHES "lib")
-    set(INSTALL_LIB "yes")
-elseif(INSTALL_TYPE MATCHES "bin")
-    set(INSTALL_LIB "yes")
-    set(INSTALL_BIN "yes")
-else()
-    set(INSTALL_DEV "yes")
-    set(INSTALL_LIB "yes")
-    set(INSTALL_BIN "yes")
-    message(ERROR ": unknown INSTALL_TYPE: ${INSTALL_TYPE}. Falling back to all.")
+set(INSTALL_TYPE "bin,lib,inc,doc" CACHE STRING "Type of installation (a ',' separated combination of bin, lib, inc, doc).")
+if(NOT INSTALL_TYPE OR INSTALL_TYPE MATCHES "all")
+	set(INSTALL_BIN yes)
+	set(INSTALL_LIB yes)
+	set(INSTALL_INC yes)
+	set(INSTALL_DOC yes)
+endif()
+if(INSTALL_TYPE MATCHES ".*bin.*")
+	set(INSTALL_BIN yes)
+endif()
+if(INSTALL_TYPE MATCHES ".*lib.*")
+	set(INSTALL_LIB yes)
+endif()
+if(INSTALL_TYPE MATCHES ".*inc.*")
+	set(INSTALL_INC yes)
+endif()
+if(INSTALL_TYPE MATCHES ".*doc.*")
+	set(INSTALL_BIN yes)
 endif()
 
 
@@ -115,7 +113,7 @@ configure_file (
 
 
 # header installation
-if(INSTALL_DEV)
+if(INSTALL_INC)
 	set(EXCLUDES PATTERN "CVS" EXCLUDE)
 	if(UNIX OR APPLE)
 		set(EXCLUDES ${EXCLUDES} PATTERN "Win*Stream.h" EXCLUDE)
@@ -137,7 +135,7 @@ endif()
 
 
 # handle autodoc
-if(INSTALL_DEV)
+if(INSTALL_DOC)
 	find_program(DOXYGEN doxygen)
 	if(DOXYGEN)
 		add_custom_target("make-autodoc" ALL DEPENDS "autodoc")
