@@ -165,7 +165,8 @@ template <> inline string ValueOption<string>::get(VarArg& args) { return args.n
 
 
 // read specializations
-template <> inline string read<string>(string arg) { return arg; }
+template <> string read<string>(string arg);
+template <> cstring read<cstring>(string arg);
 
 } }	// elm::option
 

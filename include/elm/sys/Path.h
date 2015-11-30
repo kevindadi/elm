@@ -3,7 +3,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2005-8, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -15,7 +15,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_SYS_PATH_H
@@ -40,7 +40,7 @@ public:
 		static const char PATH_SEPARATOR = ':';
 		static inline bool isSeparator(char c) { return c == SEPARATOR; }
 #	endif
-	
+
 	// Constructors
 	inline Path(void) { }
 	inline Path(const char *path): buf(path) { }
@@ -53,7 +53,7 @@ public:
 	Path append(Path path) const;
 	Path parent(void) const;
 	Path setExtension(CString new_extension) const;
-	
+
 	// Accessors
 	inline const String& toString(void) const { return buf; }
 	String namePart(void) const;
@@ -75,12 +75,12 @@ public:
 	bool isReadable(void) const;
 	bool isWritable(void) const;
 	bool isExecutable(void) const;
-	
+
 	// Operator
 	inline Path& operator=(const char *str) { buf = str; return *this; }
 	inline Path& operator=(CString str) { buf = str; return *this; }
 	inline Path& operator=(const String& str) { buf = str; return *this; }
-	inline Path& operator=(Path& path) { buf = path.buf; return *this; }
+	inline Path& operator=(const Path& path) { buf = path.buf; return *this; }
 
 	inline bool operator==(Path path) const { return equals(path); }
 	inline bool operator!=(Path path) const { return !equals(path); }

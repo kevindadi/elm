@@ -219,4 +219,17 @@ void AbstractValueOption::configure(Manager& manager, int tag, VarArg& args) {
 	}
 }
 
+/**
+ */
+template <> string read<string>(string arg) {
+		return arg;
+}
+
+/**
+ */
+template <> cstring read<cstring>(string arg) {
+	ASSERTP(false, "CString cannot be used as abstract argument of options because they are not able to manage memory allocation.");
+	return "";
+}
+
 } } // elm::option

@@ -55,6 +55,11 @@ public:
 
 // options
 MyCommand man;
+
+// new style options
+ValueOption<string> ns(ValueOption<string>::Make(man).cmd("--ns"));
+
+// old style options
 BoolOption b(man, 'b', "boolean", "boolean test", false);
 EnumOption<int> enum_opt(man, 'e', "enum", "", vals);
 StringOption s(man, 's', "string", "string test", "", "");
@@ -93,6 +98,13 @@ TEST_BEGIN(option)
 			CHECK_EQUAL(man.getCopyright(), ::copyright);
 			CHECK_EQUAL(man.getVersion(), ::version);
 			CHECK_EQUAL(man.getFreeArgumentDescription(), ::arg_free);
+		}
+
+		// new style value option
+		{
+			const char *argv[] = { "command", "--ns", "ok", 0 };
+			man.parse(3, argv);
+			CHECK_EQUAL(*ns,string("ok"));
 		}
 
 		// boolean option
