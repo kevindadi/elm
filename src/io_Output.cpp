@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2004-12, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
@@ -26,14 +26,14 @@
 #include <stdio.h>
 #include <math.h>
 #include <elm/io/io.h>
-#include <elm/util/Comparator.h>
+#include <elm/compare.h>
 
 namespace elm { namespace io {
 
 /**
  * @class Output
  * Formatted output class.
- * 
+ *
  * @par Formatting Integers
  *
  * Formatting integers is maded using the class @ref IntFormat that embeds
@@ -45,7 +45,7 @@ namespace elm { namespace io {
  * 	void *p;
  * 	cout << io::right(io::pad('0', io::width(32, io::hex(o)))) << io::endl;
  * @endcode
- * 
+ *
  *
  *
  * @ingroup ios
@@ -60,26 +60,26 @@ namespace elm { namespace io {
  * @return				First character.
  */
 char *Output::horner(char *p, t::uint64 val, int base, char enc) {
-	
+
 	// Special case of 0
 	if(!val)
 		*--p = '0';
-	
+
 	// Horner method
 	else
 		while(val) {
-			
+
 			// Compute the digit
 			int digit = val % base;
 			val /= base;
-			
+
 			// Put the character
 			if(digit < 10)
 				*--p = '0' + digit;
 			else
 				*--p = enc + digit - 10;
 		}
-	
+
 	// Return the first character position
 	return p;
 }
@@ -127,7 +127,7 @@ void Output::print(t::int32 value) {
 	char buffer[16];
 	bool neg = false;
 	t::uint32 uval;
-	
+
 	// Process sign
 	if(value < 0) {
 		neg = true;
@@ -135,14 +135,14 @@ void Output::print(t::int32 value) {
 	}
 	else
 		uval = value;
-	
+
 	// Write the digits
 	char *p = horner(buffer + sizeof(buffer), uval, 10);
-	
+
 	// Add the sign
 	if(neg)
 		*--p = '-';
-	
+
 	// Write it
 	if(strm->write(p, buffer + sizeof(buffer) - p) < 0)
 		throw IOException(strm->lastErrorMessage());
@@ -158,7 +158,7 @@ void Output::print(t::int64 value) {
 	char buffer[64];
 	bool neg = false;
 	t::uint64 uval;
-	
+
 	// Process sign
 	if(value < 0) {
 		neg = true;
@@ -166,14 +166,14 @@ void Output::print(t::int64 value) {
 	}
 	else
 		uval = value;
-	
+
 	// Write the digits
 	char *p = horner(buffer + sizeof(buffer), uval, 10);
-	
+
 	// Add the sign
 	if(neg)
 		*--p = '-';
-	
+
 	// Write it
 	if(strm->write(p, buffer + sizeof(buffer) - p) < 0)
 		throw IOException(strm->lastErrorMessage());
@@ -187,10 +187,10 @@ void Output::print(t::int64 value) {
  */
 void Output::print(t::uint32 value) {
 	char buffer[16];
-	
+
 	// Write the digits
 	char *p = horner(buffer + sizeof(buffer), value, 10);
-	
+
 	// Write it
 	if(strm->write(p, buffer + sizeof(buffer) - p) < 0)
 		throw IOException(strm->lastErrorMessage());
@@ -204,10 +204,10 @@ void Output::print(t::uint32 value) {
  */
 void Output::print(t::uint64 value) {
 	char buffer[32];
-	
+
 	// Write the digits
 	char *p = horner(buffer + sizeof(buffer), value, 10);
-	
+
 	// Write it
 	if(strm->write(p, buffer + sizeof(buffer) - p) < 0)
 		throw IOException(strm->lastErrorMessage());
@@ -290,14 +290,14 @@ void Output::format(CString fmt, ...) {
  */
 void Output::format(CString fmt, VarArg& args) {
 	char buf[256];
-	
+
 	// Allocate remaining memory
 	int size = vsnprintf(buf, sizeof(buf), &fmt, args.args());
-	
+
 	// It's ok
 	if(size <= (int)sizeof(buf))
 		strm->write(buf, size);
-	
+
 	// Else use a bigger one
 	else {
 		char newbuf[size + 1];
@@ -313,7 +313,7 @@ void Output::format(CString fmt, VarArg& args) {
  * @param fmt	Formatted value to display.
  */
 void Output::print(const IntFormat& fmt) {
-	
+
 	// To horner
 	t::uint64 uval;
 	if(fmt._sign && fmt._val < 0)
@@ -327,9 +327,9 @@ void Output::print(const IntFormat& fmt) {
 	if(fmt._sign && fmt._val < 0)
 		*(--res) = '-';
         if (fmt._displaySign && fmt._val > 0)
-                *(--res) = '+';                
+                *(--res) = '+';
 	int size = buffer + 32 - res;
-	
+
 	// Compute pads
 	int lpad = 0, rpad = 0;
 	if(fmt._width)
@@ -349,7 +349,7 @@ void Output::print(const IntFormat& fmt) {
 			ASSERTP(0, "unknown alignment constant");
 			break;
 		}
-	
+
 	// Perform the display
 	for(int i = 0; i < lpad; i++)
 		strm->write(fmt._pad);
@@ -569,14 +569,14 @@ void Output::print(const FloatFormat& fmt) {
  * @class IntFormat
  * This class is used to perform formatting on integer passed to the @ref Output
  * class.
- * 
+ *
  * It is rarely used as-is but with some inlines functions performing formatting:
  * @ref io::base, @ref io::bin, @ref io::hex, @ref op::width, @ref io::align,
  * @ref io::left, @ref io::center, @ref io::right, @ref io::pad,
  * @ref io::uppercase, @ref io::lowercase.
  * @ingroup ios
  */
- 
+
 /**
  * @var IntFormat IntFormat::_base;
  * Numeric base used to display the integer (default to 10).
@@ -590,7 +590,7 @@ void Output::print(const FloatFormat& fmt) {
  * and padded according the @ref IntFormat::pad attribute.
  */
 
-/** 
+/**
  * @var unsigned IntFormat::_align;
  * Alignment of integer in the field. One of LEFT, CENTER or RIGHT.
  */

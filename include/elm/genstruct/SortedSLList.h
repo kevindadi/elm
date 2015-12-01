@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2005-08, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,14 +16,14 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_GENSTRUCT_SORTEDSLLIST_H
 #define ELM_GENSTRUCT_SORTEDSLLIST_H
 
 #include <elm/genstruct/SLList.h>
-#include <elm/util/Comparator.h>
+#include <elm/compare.h>
 
 namespace elm { namespace genstruct {
 
@@ -56,7 +56,7 @@ public:
 		inline Iterator(const typename list_t::Iterator& iter)
 			: list_t::Iterator(iter) { }
 	};
-	
+
 	// MutableCollection concept
 	inline void clear(void) { list.clear(); }
 	void add (const T &item);
@@ -75,7 +75,7 @@ public:
 		{ return Iterator(list.find(item)); }
 	inline Iterator find(const T& item, const Iterator& iter) const
 		{ return list.find(item, iter); }
-	
+
 private:
 	list_t list;
 };
@@ -84,9 +84,9 @@ private:
 // SortedSLList inlines
 template <class T, class R>
 void SortedSLList<T,R>::add(const T& value) {
-	for(Iterator current(*this); current; current++)					
+	for(Iterator current(*this); current; current++)
 		if(R::compare(value,  *current) < 0) {
-			list.addBefore(current, value); 
+			list.addBefore(current, value);
 			return;
 		}
 	list.addLast(value);

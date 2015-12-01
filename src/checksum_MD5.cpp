@@ -28,7 +28,7 @@
 #include <elm/checksum/MD5.h>
 #include <elm/util/MessageException.h>
 #include <elm/io/BlockInStream.h>
-#include <elm/util/Comparator.h>
+#include <elm/compare.h>
 
 #define MD5_BUFFER 1024
 

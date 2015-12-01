@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2008, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_GENSTRUCT_ASSOCLIST_H_
@@ -25,7 +25,7 @@
 #include <elm/PreIterator.h>
 #include <elm/type_info.h>
 #include <elm/util/Option.h>
-#include <elm/util/Comparator.h>
+#include <elm/compare.h>
 #include <elm/genstruct/SortedSLList.h>
 
 namespace elm { namespace genstruct {
@@ -39,7 +39,7 @@ class AssocList {
 public:
 	inline AssocList(void) { }
 	inline AssocList(const AssocList& alist): list(alist.list) { }
-	
+
 	class PairIterator: public list_t::Iterator {
 	public:
 		PairIterator(const AssocList& list): list_t::Iterator(list.list) { }
@@ -47,7 +47,7 @@ public:
 		PairIterator& operator=(const PairIterator& iter)
 			{ list_t::Iterator::operator=(iter); return *this; }
 	};
-	
+
 	// Collection concept
 	inline int count(void) const { return list.count(); }
 	inline bool contains(const T& item) const {
@@ -64,14 +64,14 @@ public:
 		inline Iterator(const Iterator& iterator): iter(iterator.iter) { }
 		inline Iterator& operator=(const Iterator& iterator)
 			{ iter = iterator.iter; return *this; }
-		
+
 		inline bool ended(void) const { return iter.ended(); }
 		inline void next(void) { iter.next(); }
 		inline T item(void) const { return iter.item().snd; }
 	private:
 		PairIterator iter;
 	};
-	
+
 	// List concept
 	inline const T& first(void) const { return list.first().snd; }
 	inline const T& last (void) const { return list.last().snd; }
@@ -82,9 +82,9 @@ public:
 	}
 	inline Iterator find (const T& item, const Iterator &iter) {
 		for(iter++; iter; iter++) if(E::equals(iter, item)) break;
-		return iter;		
+		return iter;
 	}
-	
+
 	// Map concept
 	Option<T> get(const K &key) const
 		{ typename list_t::Iterator item = list.find(pair(key, N::null));
@@ -101,14 +101,14 @@ public:
 		inline KeyIterator(const KeyIterator& iterator): iter(iterator.iter) { }
 		inline KeyIterator& operator=(const KeyIterator& iterator)
 			{ iter = iterator.iter; return *this; }
-		
+
 		inline bool ended(void) const { return iter.ended(); }
 		inline void next(void) { iter.next(); }
 		inline const K& item(void) const { return iter.item().fst; }
 	private:
 		PairIterator iter;
 	};
-	
+
 	// MutableMap class
 	inline void put(const K& key, const T& value)
 		{ list.add(pair(key, value)); }

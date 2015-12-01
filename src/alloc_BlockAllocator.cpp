@@ -22,7 +22,7 @@
 
 #include <elm/types.h>
 #include <elm/alloc/BlockAllocator.h>
-#include <elm/util/Comparator.h>
+#include <elm/compare.h>
 
 namespace elm {
 

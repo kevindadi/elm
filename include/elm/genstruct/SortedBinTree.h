@@ -27,7 +27,7 @@
 #include <elm/genstruct/Vector.h>
 #include <elm/genstruct/VectorQueue.h>
 #include <elm/inhstruct/BinTree.h>
-#include <elm/util/Comparator.h>
+#include <elm/compare.h>
 #include <elm/adapter.h>
 
 

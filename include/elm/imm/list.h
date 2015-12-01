@@ -24,7 +24,7 @@
 #include <elm/assert.h>
 #include <elm/alloc/DefaultAllocator.h>
 #include <elm/alloc/BlockAllocatorWithGC.h>
-#include <elm/util/Comparator.h>
+#include <elm/compare.h>
 #include <elm/genstruct/SLList.h>
 
 namespace elm { namespace imm {

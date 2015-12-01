@@ -21,7 +21,7 @@
 #ifndef ELM_IMM_SORTED_LIST_H_
 #define ELM_IMM_SORTED_LIST_H_
 
-#include <elm/util/Comparator.h>
+#include <elm/compare.h>
 #include <elm/imm/list.h>
 #include <elm/adapter.h>
 
