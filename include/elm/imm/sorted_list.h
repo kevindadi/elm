@@ -23,11 +23,11 @@
 
 #include <elm/util/Comparator.h>
 #include <elm/imm/list.h>
-#include <elm/genstruct/adapter.h>
+#include <elm/adapter.h>
 
 namespace elm { namespace imm {
 
-template <class T, class K = genstruct::Id<T>, class C = Comparator<K> >
+template <class T, class K = IdAdapter<T>, class C = Comparator<K> >
 class sorted_list: public list<T> {
 public:
 

@@ -22,26 +22,17 @@
 #ifndef ELM_GENSTRUCT_ADAPTER_H_
 #define ELM_GENSTRUCT_ADAPTER_H_
 
+#include <elm/adapter.h>
+#warning "Deprecated header: include elm/adapter.h!"
+
 namespace elm { namespace genstruct {
 
-// Id adapter
 template <class T>
-class Id {
-public:
-	typedef T t;
-	static inline const T& key(const T& v) { return v; }
-};
+class Id: public elm::IdAdapter<T> { };
 
-
-// Pair adapter
 template <class K, class T>
-class PairAdapter {
-public:
-	typedef K t;
-	typedef Pair<K, T> d;
-	static inline const K& key(const d& v) { return v.fst; }
-};
+class PairAdapter: public elm::PairAdapter<K, T> {  };
 
-} }		// elm::genstruct
+} }	// elm::genstruct
 
 #endif /* ELM_GENSTRUCT_ADAPTER_H_ */

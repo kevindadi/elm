@@ -30,7 +30,7 @@ namespace elm { namespace avl {
 template <class K, class T, class C = Comparator<K> >
 class Map {
 	typedef Pair<typename ti<K>::embed_t, typename ti<T>::embed_t> pair_t;
-	typedef GenTree<pair_t, genstruct::PairAdapter<K, T>, C > tree_t;
+	typedef GenTree<pair_t, PairAdapter<K, T>, C > tree_t;
 	typedef typename ti<K>::in_t key_t;
 	typedef typename ti<T>::in_t val_t;
 	typedef typename ti<T>::out_t out_t;

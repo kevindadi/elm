@@ -3,7 +3,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2008, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -15,7 +15,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_AVL_GENTREE_H
@@ -23,7 +23,7 @@
 
 #include <elm/utility.h>
 #include <elm/PreIterator.h>
-#include <elm/genstruct/adapter.h>
+#include <elm/adapter.h>
 #include <elm/util/array.h>
 #include <elm/genstruct/Vector.h>
 
@@ -50,7 +50,7 @@ protected:
 };
 
 // GenAVLTree class
-template <class T, class K = genstruct::Id<T>, class C = elm::Comparator<typename K::t> >
+template <class T, class K = IdAdapter<T>, class C = elm::Comparator<typename K::t> >
 class GenTree: public AbstractTree {
 	static const int MAX_HEIGHT = 32;
 protected:
@@ -110,7 +110,7 @@ public:
 		{ for(typename Co<T>::Iterator iter(coll); iter; iter++)
 			if(!contains(iter)) return false; return true; }
 
-	// Iterator class	
+	// Iterator class
 	class Iterator: public PreIterator<Iterator, const T&> {
 	public:
 		inline Iterator(const GenTree<T, K, C>& tree): sp(stack)
@@ -142,8 +142,8 @@ public:
 			push(top());
 		}
 		Node *stack[MAX_HEIGHT + 1], **sp;
-	};	
-	
+	};
+
 	// MutableCollection concept
 	void clear(void) {
 		Node *stack[MAX_HEIGHT + 1];
@@ -159,7 +159,7 @@ public:
 		root = 0;
 		cnt = 0;
 	}
-	
+
 	void copy(const GenTree<T, K, C>& tree) {
 		clear();
 		Pair<Node *, AbstractTree::Node **> stack[MAX_HEIGHT + 1], *sp = stack;
@@ -194,12 +194,12 @@ public:
 			dir = cmp > 0;
 			da[k++] = dir;
 		}
-		
+
 		// node creation
 		Node *node = new Node(item);
 		AbstractTree::insert(da, dir, node, q, y, z);
 	}
-	
+
 	void set(const T& item) {
 		unsigned char da[MAX_HEIGHT];
 		int k = 0;
@@ -245,13 +245,13 @@ public:
 			p = p->succ(dir);
 			ASSERTP(!p, "removed item not in the tree");
 		}
-		
+
 		// remove the item
 		AbstractTree::remove(pa, da, k, p);
 		delete p;
 		cnt--;
 	}
-	
+
 	inline void remove(const Iterator& iter) { remove(iter.item()); }
 	template <class CC> inline void addAll(const CC& coll)
 		{ for(typename CC::Iterator iter(coll); iter; iter++) add(iter); }

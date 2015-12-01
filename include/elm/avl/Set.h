@@ -26,12 +26,12 @@
 namespace elm { namespace avl {
 
 template <class T, class C = elm::Comparator<T> >
-class Set: public GenTree<T, genstruct::Id<T>, C> {
+class Set: public GenTree<T, IdAdapter<T>, C> {
 public:
 	static const Set<T, C> null;
-	inline void add(const T& value) { GenTree<T, genstruct::Id<T>, C>::set(value); }
+	inline void add(const T& value) { GenTree<T, IdAdapter<T>, C>::set(value); }
 	template <class CC> inline void addAll(const CC& coll)
-		{ for(typename CC::Iterator iter(coll); iter; iter++) GenTree<T, genstruct::Id<T>, C>::set(iter); }
+		{ for(typename CC::Iterator iter(coll); iter; iter++) GenTree<T, IdAdapter<T>, C>::set(iter); }
 };
 template <class T, class C> const Set<T, C> Set<T, C>::null;
 template <class K, class C> inline Set<K, C>& operator+=(Set<K, C> &t, const K& h) { t.add(h); return t; }

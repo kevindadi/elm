@@ -1,8 +1,8 @@
 /*
- *	Deprecated header.
+ *	adapter module interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2008-13, IRIT UPS.
+ *	Copyright (c) 2008, IRIT UPS.
  *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,26 +18,33 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_GENSTRUCT_AVLTREE_H
-#define ELM_GENSTRUCT_AVLTREE_H
+#ifndef ELM_ADAPTER_H_
+#define ELM_ADAPTER_H_
 
-#include <elm/avl/Set.h>
+namespace elm {
 
-namespace elm { namespace genstruct {
-
-class AbstractAVLTree: public avl::AbstractTree {
-protected:
-	inline AbstractAVLTree(void) { }
+// Id adapter
+template <class T>
+class IdAdapter {
+public:
+	typedef T t;
+	static inline const T& key(const T& v) { return v; }
+	static inline const T& value(const T& v) { return v; }
+	static inline T& ref(T& v) { return v; }
 };
 
-template <class T, class K = IdAdapter<T>, class C = elm::Comparator<typename K::t> >
-class GenAVLTree: public avl::GenTree<T, K, C> {
+
+// Pair adapter
+template <class K, class T>
+class PairAdapter {
+public:
+	typedef K t;
+	typedef Pair<K, T> d;
+	static inline const K& key(const d& v) { return v.fst; }
+	static inline const T& value(const d& v) { return v.snd; }
+	static inline T& ref(d& v) { return v.snd; }
 };
 
-template <class T, class C = elm::Comparator<T> >
-class AVLTree: public avl::Set<T, C> {
-};
+}	// elm
 
-} }	// elm::genstruct
-
-#endif	// ELM_AVLTREE_AVLTREE_H
+#endif /* ELM_ADAPTER_H_ */
