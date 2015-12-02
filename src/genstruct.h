@@ -34,7 +34,7 @@ namespace elm { namespace genstruct {
  *
  * To make ELM container more flexibility, utility classes allow tuning finely
  * the behavior of the containers. Utility classes (and mainly concepts)includes:
- * @li elm::Adapter -- separation between key and value concerns.
+ * @li elm::concept::Adapter -- separation between key and value concerns.
  * @li elm::Comparator -- comparison of keys for sorted containers.
  *
  * @section array Array
@@ -85,6 +85,7 @@ namespace elm { namespace genstruct {
  * @li @ref HashTable -- map implemented as a hashing table
  * @li @ref SortedBinMap -- map implemented by a binary tree
  * @li @ref SLList -- single link list (unidirectionnal traversal)
+ * @li @ref SortedList -- sorted single-link list
  * @li @ref Table -- ELM wrapper around C++ table
  * @li @ref Vector -- extensible array
  * @li @ref VectorQueue -- extensible array manageable as a queue
@@ -107,6 +108,12 @@ namespace elm { namespace genstruct {
  * @section graph Graph Structure
  *
  * @li @ref DAGNode -- Directed Acyclic Graph implementation
+ *
+ * @section deprec_data Deprecated Data Structure
+ * ELM is currently moving to a more powerful and easier to use data structure model.
+ * Whatever, old data structure are maintained for ascending compatibility but
+ * are classified as deprecated:
+ * @li @ref elm::genstruct::SortedSLList
  */
 
 
@@ -127,6 +134,8 @@ namespace elm { namespace genstruct {
 
 } // genstruct
 
+namespace concept {
+
 /**
  * For sorted data, adapter classes (elm/adapter.h) allows to separate
  * in the stored object the key part from the value part. This allows sorted container
@@ -137,30 +146,46 @@ namespace elm { namespace genstruct {
  * @li @ref elm::PairAdapter -- stored data is made of pair associating a key and a value.
  * @ingroup gen_datastruct
  */
-template <class K, class V, class T>
 class Adapter {
 public:
+
+	/**
+	 * Type of the part of data used as a key.
+	 */
+	typedef void key_t;
+
+	/**
+	 * Type of the part of data used as a value.
+	 */
+	typedef void val_t;
+
+	/**
+	 * Data type itself.
+	 */
+	typedef void data_t;
 
 	/**
 	 * Get the key of corresponding data.
 	 * @param data	Concerned data.
 	 * @return		Matching key.
 	 */
-	const K& key(const T& data);
+	const key_t& key(const data_t& data);
 
 	/**
 	 * Get the value of the corresponding data.
 	 * @param data	Concerned data.
 	 * @return		Matching value.
 	 */
-	const T& value(const T& data);
+	const val_t& value(const data_t& data);
 
 	/**
 	 * Get a reference on the value part of data.
 	 * @param data	Concerned data.
 	 * @return		Matching value reference.
 	 */
-	T& ref(T& data);
+	val_t& ref(data_t& data);
 };
+
+} // concept
 
 } // elm

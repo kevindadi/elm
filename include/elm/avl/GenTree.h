@@ -50,7 +50,7 @@ protected:
 };
 
 // GenAVLTree class
-template <class T, class K = IdAdapter<T>, class C = elm::Comparator<typename K::t> >
+template <class T, class K = IdAdapter<T>, class C = elm::Comparator<typename K::key_t> >
 class GenTree: public AbstractTree {
 	static const int MAX_HEIGHT = 32;
 protected:
@@ -72,7 +72,7 @@ protected:
 #		endif
 	};
 
-	Node *find(const typename K::t& key) const {
+	Node *find(const typename K::key_t& key) const {
 		for(Node *p = (Node *)root; p;) {
 			int cmp = C::compare(key, K::key(p->data));
 			if(cmp < 0)
@@ -94,14 +94,14 @@ public:
 #	ifdef ELM_DEBUG_AVL
 		void dump(io::Output& out) { if(root) static_cast<Node *>(root)->dump(out, 0); else out << "<empty>"; }
 #	endif
-	inline T *get(const typename K::t& key)
+	inline T *get(const typename K::key_t& key)
 		{ Node *node = find(key); if(!node) return 0; else return &node->data; }
-	inline const T *get(const typename K::t& key) const
+	inline const T *get(const typename K::key_t& key) const
 		{ const Node *node = find(key); if(!node) return 0; else return &node->data; }
 
 	// Collection concept
 	inline int count(void) const { return cnt; }
-	inline bool contains(const typename K::t& item) const { return find(item) != 0; }
+	inline bool contains(const typename K::key_t& item) const { return find(item) != 0; }
 	inline bool isEmpty(void) const { return cnt == 0; }
 	inline operator bool(void) const { return !isEmpty(); }
 
@@ -228,7 +228,7 @@ public:
 		AbstractTree::insert(da, dir, node, q, y, z);
 	}
 
-	void remove(const typename K::t& item) {
+	void remove(const typename K::key_t& item) {
 		AbstractTree::Node *pa[MAX_HEIGHT];
 		unsigned char da[MAX_HEIGHT];
 		int k;

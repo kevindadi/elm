@@ -158,15 +158,15 @@ public:
 	}
 
 	// MutableLookable<K> implementation
-	inline const T *look(const typename K::t& key) const
+	inline const T *look(const typename K::key_t& key) const
 		{ Node * node = find(key); return node ? &node->val : 0; }
-	inline T *look(const typename K::t& key)
+	inline T *look(const typename K::key_t& key)
 		{ Node * node = find(key); return node ? (T *)&node->val : 0; }
 
 private:
 	inhstruct::BinTree root;
 
-	Node *find(const typename K::t& key) const {
+	Node *find(const typename K::key_t& key) const {
 		Node *node = (Node *)root.root();
 		while(node) {
 			int cmp = C::compare(key, K::key(node->val));

@@ -27,10 +27,12 @@ namespace elm {
 template <class T>
 class IdAdapter {
 public:
-	typedef T t;
-	static inline const T& key(const T& v) { return v; }
-	static inline const T& value(const T& v) { return v; }
-	static inline T& ref(T& v) { return v; }
+	typedef T key_t;
+	typedef T val_t;
+	typedef T data_t;
+	static inline const T& key(const data_t& v) { return v; }
+	static inline const T& value(const data_t& v) { return v; }
+	static inline T& ref(data_t& v) { return v; }
 };
 
 
@@ -38,11 +40,12 @@ public:
 template <class K, class T>
 class PairAdapter {
 public:
-	typedef K t;
-	typedef Pair<K, T> d;
-	static inline const K& key(const d& v) { return v.fst; }
-	static inline const T& value(const d& v) { return v.snd; }
-	static inline T& ref(d& v) { return v.snd; }
+	typedef K key_t;
+	typedef T val_t;
+	typedef Pair<K, T> data_t;
+	static inline const key_t& key(const data_t& v) { return v.fst; }
+	static inline const val_t& value(const data_t& v) { return v.snd; }
+	static inline val_t& ref(data_t& v) { return v.snd; }
 };
 
 }	// elm

@@ -38,6 +38,14 @@ public:
 	int doCompare(const T& v1, const T& v2) const { return compare(v1, v2); }
 };
 
+// DelegateComparator class
+template <class T, class C>
+class DelegateComparator {
+public:
+	static inline int compare(const T& v1, const T& v2) { return C::compare(v1, v2); }
+	inline int doCompare(const T& v1, const T& v2) const { return compare(v1, v2); }
+};
+
 // CompareComparator class
 template <class T>
 class CompareComparator {
