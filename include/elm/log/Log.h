@@ -84,6 +84,7 @@ namespace elm
 	} // color namespace
 	namespace log
 	{
+		extern elm::color::Color prefix_color;
 		class Debug {
 		public:
 			static elm::String debugPrefix(const char* file, int line);

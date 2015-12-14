@@ -39,6 +39,7 @@ namespace elm { namespace log {
  * @brief Provide necessary static methods for the use of ELM_DBG* macros.
  */
 
+
 /**
  * @ingroup log
  * @var int flags;
@@ -65,6 +66,14 @@ int verbose_level = 0xffff; // default to activate everything
  * @warning: must be > 3
  */
 int srcpath_length = 20; // default to 20 characters
+
+/**
+ * @ingroup log
+ * @var elm::color::Color prefix_color;
+ * @brief Color used for printing the prefix message.
+ * The default value is elm::color::Yel
+ */
+elm::color::Color prefix_color = elm::color::Yel;
 
 /**
  * @ingroup log
@@ -104,14 +113,14 @@ elm::String Debug::debugPrefix(const char* file, int line)
 			rtn = _ << file << ":" << line;
 			if(rtn.length() > srcpath_length)
 			{ 	// Source path too long, cut it: "longpath/src/main.cpp" becomes [...ath/src/main.cpp])
-				rtn = _ << color::Yel() << "[" << "..." << rtn.substring(rtn.length() + 3 - srcpath_length);
+				rtn = _ << prefix_color << "[" << "..." << rtn.substring(rtn.length() + 3 - srcpath_length);
 			}
 			else
 			{	// Source path too short, align it with whitespaces: "src/main.cpp" becomes [       src/main.cpp]
 				elm::String whitespaces;
 				for(unsigned int i = 0, len = rtn.length(); i < srcpath_length - len; i++)
 					whitespaces = whitespaces.concat(elm::CString(" "));
-				rtn = _ << color::Yel() << "[" << whitespaces << rtn;
+				rtn = _ << prefix_color << "[" << whitespaces << rtn;
 			}
 		}
 		if(flags&NUMBERING) // output line numbers
