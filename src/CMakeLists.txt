@@ -68,6 +68,7 @@ set(LIBELM_LA_SOURCES
 	"io_WinInStream.cpp"
 	"io_WinOutStream.cpp"
 	"Iterator.cpp"
+	"log_Log.cpp"
 	"option_Option.cpp"
 	"option_BoolOption.cpp"
 	"option_ActionOption.cpp"
