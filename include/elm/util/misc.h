@@ -1,9 +1,8 @@
 /*
- *	$Id$
- *	SortedSLList class interface
+ *	Misc. useful functions.
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2005-08, IRIT UPS.
+ *	Copyright (c) 2015, IRIT UPS.
  *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -19,21 +18,14 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_GENSTRUCT_SORTEDSLLIST_H
-#define ELM_GENSTRUCT_SORTEDSLLIST_H
+#ifndef ELM_COMMON_H_
+#define ELM_COMMON_H_
 
-#include <elm/data/SortedList.h>
+namespace elm {
 
-namespace elm { namespace genstruct {
+template <class T>
+void swap(T& x, T& y) { T t = x; x = y; y = t; }
 
-// SortedSLList class
-template <class T, class C = Comparator<T> >
-class SortedSLList: public SortedList<T, DelegateComparator<T, C> > {
-public:
-	inline SortedSLList(void) { }
-	SortedSLList(SortedSLList &source): SortedList<T, C>(source) { }
-};
+}	// elm
 
-} } // elm::genstruct
-
-#endif
+#endif /* ELM_COMMON_H_ */
