@@ -71,6 +71,7 @@ namespace elm { namespace genstruct {
  * A queue implements the usual First-In-First-Out usage (@ref Queue).
  *
  * @li @ref DLList -- double link list (bidirectionnal traversal)
+ * @li @ref ListQueue -- single-link list implementation of queue.
  * @li @ref VectorQueue -- extensible array manageable as a queue
  *
  * @section list List
