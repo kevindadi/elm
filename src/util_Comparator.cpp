@@ -1,10 +1,9 @@
 /*
- *	$Id$
- *	Comparator class implementation
+ *	comparator module implementation
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2008, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,27 +15,47 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <elm/util/Comparator.h>
+#include <elm/compare.h>
 
 namespace elm {
 
 /**
  * @class Comparator
- * Default implementation of the concept @ref elm::concept::Comparator.
- * @param T	Type of compared values.
+ * Comparator concept (elm/compare.h) allows comparing two data. Comparator may be used
+ * statically with the @ref compare() method but also as in instance with @ref doCompare() method.
+ * As a default, @ref doCompare() performs a call to @ref compare().
+ *
+ * Several implementation of Comparator concept exists:
+ * @li @ref Comparator -- default implementation based on == and < operators.
+ * @li @ref CompareComparator -- assumes that data has a compare() method.
+ * @li @ref AssocComparator -- works on pairs assuming order in based on the first component.
+ * @li @ref ReverseComparator -- invert direction of another comparator.
  */
-
 
 /**
  * @fn int Comparator::compare(const T& v1, const T& v2);
- * Compare two values.
+ * Compare v1 and v2 and returns:
+ * @li > 0 if v1 > v2
+ * @li = 0 if v1 = v2
+ * @li < 0 if v1 < v2
  * @param v1	First value.
- * @param v2	Second value.
- * @return		0 if both values are equal, >0 if v1 > v2, -1 else.
+ * @param v2	Second value
+ * @return	See above.
+ */
+
+/**
+ * @fn int Comparator::doCompare(const T& v1, const T& v2);
+ * Compare v1 and v2 and returns:
+ * @li > 0 if v1 > v2
+ * @li = 0 if v1 = v2
+ * @li < 0 if v1 < v2
+ * @param v1	First value.
+ * @param v2	Second value
+ * @return	See above.
  */
 
 
@@ -59,14 +78,6 @@ namespace elm {
 
 
 /**
- * @class SubstractComparator
- * Implementation of the @ref elm::concept::Comparator for values supporting
- * a substraction operator returning an integer.
- * @param T	Type of the values.
- */
-
-
-/**
  * @class CompareComparator
  * Implementation of the @ref elm::concept::Comparator for values providing
  * a compare() method.
@@ -80,7 +91,7 @@ namespace elm {
  * into a map. If the items of ordered data structure are represented as pair
  * of (key, values), this comparator provides comparison of items based on
  * the key member.
- * 
+ *
  * This class is also the default comparator of pairs.
  * @param K		Key type.
  * @param T		Value type.

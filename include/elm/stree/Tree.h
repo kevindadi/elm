@@ -21,7 +21,7 @@
 #ifndef ELM_STREE_TREE_H_
 #define ELM_STREE_TREE_H_
 
-#include <elm/util/Comparator.h>
+#include <elm/compare.h>
 #include <elm/genstruct/AVLTree.h>
 
 namespace elm { namespace stree {

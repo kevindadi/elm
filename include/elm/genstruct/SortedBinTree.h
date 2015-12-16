@@ -4,7 +4,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2004-07, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_GENSTRUCT_SORTEDBINTREE_H
@@ -27,24 +27,24 @@
 #include <elm/genstruct/Vector.h>
 #include <elm/genstruct/VectorQueue.h>
 #include <elm/inhstruct/BinTree.h>
-#include <elm/util/Comparator.h>
-#include <elm/genstruct/adapter.h>
+#include <elm/compare.h>
+#include <elm/adapter.h>
 
 
 namespace elm { namespace genstruct {
 
 // GenSortedBinTree class implements MutableCollection
-template <class T, class K = Id<T>, class C = Comparator<typename K::t> >
+template <class T, class K = IdAdapter<T>, class C = Comparator<typename K::t> >
 class GenSortedBinTree {
 private:
 	class Node: public inhstruct::BinTree::Node {
 	public:
-		inline Node(const T& value): val(value) { } 
+		inline Node(const T& value): val(value) { }
 		T val;
 	};
-	
+
 public:
-	
+
 	// Methods
 	inline GenSortedBinTree(void) { }
 	inline ~GenSortedBinTree(void) { clear(); }
@@ -72,7 +72,7 @@ public:
 	private:
 		Vector<Node *> stack;
 	};
-	
+
 	// MutableCollection concept
 	void clear(void)  {
 		if(isEmpty())
@@ -158,15 +158,15 @@ public:
 	}
 
 	// MutableLookable<K> implementation
-	inline const T *look(const typename K::t& key) const
+	inline const T *look(const typename K::key_t& key) const
 		{ Node * node = find(key); return node ? &node->val : 0; }
-	inline T *look(const typename K::t& key)
+	inline T *look(const typename K::key_t& key)
 		{ Node * node = find(key); return node ? (T *)&node->val : 0; }
 
 private:
 	inhstruct::BinTree root;
 
-	Node *find(const typename K::t& key) const {
+	Node *find(const typename K::key_t& key) const {
 		Node *node = (Node *)root.root();
 		while(node) {
 			int cmp = C::compare(key, K::key(node->val));
@@ -191,7 +191,7 @@ private:
 };
 
 template <class T, class C = Comparator<T> >
-class SortedBinTree: public GenSortedBinTree<T, Id<T>, C> {
+class SortedBinTree: public GenSortedBinTree<T, IdAdapter<T>, C> {
 };
 
 } } // elm::genstruct

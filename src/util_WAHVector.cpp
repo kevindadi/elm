@@ -3,7 +3,7 @@
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2013, IRIT UPS.
- * 
+ *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
@@ -15,13 +15,13 @@
  *	GNU General Public License for more details.
  *
  *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software 
+ *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <elm/assert.h>
 #include <elm/util/array.h>
-#include <elm/util/Comparator.h>
+#include <elm/compare.h>
 #include "elm/util/WAHVector.h"
 
 namespace elm {
@@ -60,7 +60,7 @@ inline int mod(int v) { return v - times(div(v)); }
 class builder {
 public:
 	inline builder(t::uint32 capacity): size(0), cap(capacity), words(new word_t[capacity]) { }
-	
+
 	inline void pushLite(word_t w) {
 		//cerr << "DEBUG: pushLite(" << io::hex(w) << ")\n";
 		if(!w)
@@ -70,7 +70,7 @@ public:
 		else
 			pushRaw(w);
 	}
-	
+
 	inline void pushFill(word_t w) {
 		//cerr << "DEBUG: pushFill(" << io::hex(w) << ")\n";
 		if(size != 0 && (w & (FILL | ONES)) == (words[size - 1] & (FILL | ONES)))
@@ -78,7 +78,7 @@ public:
 		else
 			pushRaw(w);
 	}
-	
+
 	inline void push(word_t w) {
 		//cerr << "DEBUG: push(" << io::hex(w) << ")\n";
 		if(w & FILL)
@@ -86,7 +86,7 @@ public:
 		else
 			pushLite(w);
 	}
-	
+
 	inline void pushRaw(word_t w) {
 		//cerr << "DEBUG: pushRaw(" << io::hex(w) << ")\n";
 		if(size == cap)
@@ -98,20 +98,20 @@ public:
 			cerr << io::hex(words[i]) << ' ';
 		cerr << io::endl;*/
 	}
-	
+
 	inline void copy(word_t w) {
 		if(size == cap)
 			allocate(cap * 2);
 		words[size++] = w;
 	}
-	
+
 	void copy(word_t *wwords, int wsize) {
 		if(size + wsize > cap)
 			allocate(size + wsize);
 		array::copy(words + size, wwords, wsize);
 		size += wsize;
 	}
-	
+
 	inline t::uint32 getSize(void) const { return size; }
 	inline word_t *getWords(void) const { return words; }
 
@@ -157,14 +157,14 @@ private:
 class iter {
 public:
 	inline iter(word_t *current, t::uint32 size): ii(0), cur(current), end(current + size) { step(); }
-	inline word_t value(void) const { return val; } 
+	inline word_t value(void) const { return val; }
 	inline bool ended(void) const { return cur == end; }
 	inline void next(void) { cur++; if(cur != end) step(); }
 	inline operator bool(void) const { return !ended(); }
 	inline iter& operator++(int) { next(); return *this; }
 	inline iter& operator++(void) { next(); return *this; }
 	inline int index(void) const { return i; }
-	inline int top(void) const { return ii; } 
+	inline int top(void) const { return ii; }
 	inline bool isFill(void) const { return is_fill; }
 	inline void consume(word_t c = 1) { ASSERT(c <= cnt); cnt -= c; i += times(c); if(!cnt) next(); }
 	inline int count(void) const { return cnt; }
@@ -212,7 +212,7 @@ private:
  * WAHVector is an implementation of bit vector (like @ref elm::BitVector)
  * whose tradeoff has been moved towards a more compact internal representation.
  * Algorithms of WAHVector are a C++ adaptation of:
- * 
+ *
  * Wu, K., Otoo, E. J., & Shoshani, A. (2002). Compressing bitmap indexes for faster search operations.
  * Proceedings. 14th International Conference on Scientific and Statistical Database Management (pp. 99-108), IEEE, 2002.
  */
@@ -407,7 +407,7 @@ int WAHVector::countOnes(void) const {
  */
 void WAHVector::set(int index) {
 	builder b(_size + 2);	// worst-case
-	
+
 	// copy to the position
 	for(iter i(words, _size); i; i++) {
 		//cerr << "DEBUG: " << i.index() << " < " << index << " < " << i.top() << " (" << value << ")\n";

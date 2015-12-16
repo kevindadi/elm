@@ -12,7 +12,7 @@ using namespace elm;
 
 // test_hashtable()
 TEST_BEGIN(hashtable)
-	
+
 	// Simple key
 	{
 		genstruct::HashTable<int, int> htab;
@@ -34,7 +34,7 @@ TEST_BEGIN(hashtable)
 		CHECK(htab.get(666, 0) == 0);
 		CHECK(htab.get(777, 0) == 222);
 	}
-	
+
 	// Complex key
 	{
 		genstruct::HashTable<String, int> htab;
@@ -57,7 +57,7 @@ TEST_BEGIN(hashtable)
 		CHECK(htab.get(k1, 0) == 0);
 		CHECK(htab.get(k2, 0) == 222);
 	}
-	
+
 	// Iterator test
 	{
 		genstruct::HashTable<int, int> tab;
@@ -76,7 +76,14 @@ TEST_BEGIN(hashtable)
 		}
 		CHECK(!mask);
 	}
-	
+
+	// operator[] test
+	{
+		genstruct::HashTable<cstring, int> tab;
+		tab["ok"] = 111;
+		tab["ko"] = 666;
+		CHECK_EQUAL(*(tab["ok"]), 111);
+		CHECK_EQUAL(*(tab["ko"]), 666);
+	}
+
 TEST_END
-
-

@@ -45,6 +45,7 @@ set(TEST_SOURCES
 	"test_io_format.cpp"
 	"test_jsched.cpp"
 	"test_list.cpp"
+	"test_listqueue.cpp"
 	"test_lock.cpp"
 	"test_md5.cpp"
 	"test_mutex.cpp"
