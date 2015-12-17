@@ -52,7 +52,7 @@ namespace elm
 			static inline int getSourcePathLength() { return _srcpath_length; }
 			static inline void setSourcePathLength(int srcpath_length) { if(srcpath_length > 3) _srcpath_length = srcpath_length; }
 			static color::Color getPrefixColor();
-			static void setPrefixColor(color::Color prefix_color);
+			static void setPrefixColor(const color::Color& prefix_color);
 
 		private:
 			static int _flags;

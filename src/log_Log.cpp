@@ -218,7 +218,7 @@ elm::String Debug::debugPrefix(const char* file, int line)
 color::Color Debug::getPrefixColor()
 	{ return _prefix_color; }
 
-void Debug::setPrefixColor(elm::color::Color prefix_color)
+void Debug::setPrefixColor(const elm::color::Color& prefix_color)
 	{ _prefix_color = prefix_color; }
 
 } // log
