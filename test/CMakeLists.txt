@@ -52,6 +52,7 @@ set(TEST_SOURCES
 	"test_option.cpp"
 	"test_plugin.cpp"
 	"test_process.cpp"
+	"test_ptr.cpp"
 	"test_ref.cpp"
 	"test_simplegc.cpp"
 	"test_sllist.cpp"
