@@ -21,7 +21,7 @@
 #include <elm/log/Log.h>
 
 /** @defgroup log Logging and pretty-printing
- *  Module for parametrized pretty-printing logs on the console, with colors, automatically prefixed by source path and such.
+ *  Module for parameTrized pretty-printing logs on the console, with colors, automatically prefixed by source path and such.
  */
 
 namespace elm { namespace color {
@@ -36,57 +36,135 @@ namespace elm { namespace log {
 /**
  * @class Debug
  * @ingroup log
- * @brief Provide necessary static methods for the use of ELM_DBG* macros.
+ * @brief Provide necessary static methods to configure debugging for the use of the ELM_DBG* macros.
  */
 
 
 /**
  * @ingroup log
- * @var int flags;
+ * @var int Debug::_flags;
  * @brief Flags to set for the debugging macros.
  * * DEBUG: Enable debugging\n
  * * SOURCE_INFO: Display the source path (with line numbers)\n
  * * NUMBERING: Number the log lines\n
  * * COLOR/COLORS: Use colors
  */
-int flags = DEBUG |	COLOR | SOURCE_INFO | NUMBERING; // default to enabled debugging with colors, prefixed by source path and log line numbers
+int Debug::_flags = DEBUG | COLOR | SOURCE_INFO | NUMBERING; // default to enabled debugging with colors, prefixed by source path and log line numbers
 
 /**
  * @ingroup log
- * @var int verbose_level;
+ * @var int Debug::_verbose_level;
  * @brief Verbose bit mask.
- * ELM_DBGV will only be enabled if the provided parameter level & verbose_level is non-null  
+ * ELM_DBGV will only be enabled if the provided parameTer level & verbose_level is non-null  
  */
-int verbose_level = 0xffff; // default to activate everything 
+int Debug::_verbose_level = 0xffff; // default to activate everything 
 
 /**
  * @ingroup log
- * @var int srcpath_length;
+ * @var int Debug::_srcpath_length;
  * @brief Numeric value that defines the constant length of the source path in the prefix.
  * @warning: must be > 3
  */
-int srcpath_length = 20; // default to 20 characters
+int Debug::_srcpath_length = 20; // default to 20 characters
 
 /**
  * @ingroup log
- * @var elm::color::Color prefix_color;
+ * @var elm::color::Color _prefix_color;
  * @brief Color used for printing the prefix message.
  * The default value is elm::color::Yel
  */
-elm::color::Color prefix_color = elm::color::Yel;
+elm::color::Color Debug::_prefix_color = elm::color::Yel;
+
+/**
+ * @fn static bool Debug::getDebugFlag();
+ * @brief Check if debugging messages are enabled
+ * @return True if the flag is enabled
+ */
+/**
+ * @ingroup log
+ * @fn static void Debug::setDebugFlag(bool set);
+ * @brief Enable/Disable debugging messages
+ * @param Boolean to set the flag to
+ */
+/**
+ * @fn static bool Debug::getSourceInfoFlag();
+ * @brief Check if printing source info in the prefix of logs is enabled
+ * @return True if the flag is enabled
+ */
+/**
+ * @ingroup log
+ * @fn static void Debug::setSourceInfoFlag(bool set);
+ * @brief Enable/Disable printing source info in the prefix of logs
+ * @param Boolean to set the flag to
+ */
+/**
+ * @fn static bool Debug::getNumberingFlag();
+ * @brief Check if the numbering of the logs is enabled
+ * @return True if the flag is enabled
+ */
+/**
+ * @ingroup log
+ * @fn static void Debug::setNumberingFlag(bool set);
+ * @brief Enable/Disable numbering of the logs
+ * @param Boolean to set the flag to
+ */
+/**
+ * @fn static bool Debug::getColorFlag();
+ * @brief Check if colors are enabled for the logs
+ * @return True if the flag is enabled
+ */
+/**
+ * @ingroup log
+ * @fn static void Debug::setColorFlag(bool set);
+ * @brief Enable/Disable the use of colors in logs
+ * @param Boolean to set the flag to
+ */
+/**
+ * @fn static int Debug::getVerboseLevel();
+ * @brief Retrieve the current verbose level 
+ * @return The current verbose level
+ */
+/**
+ * @ingroup log
+ * @fn static void Debug::setVerboseLevel(int verbose_level);
+ * @brief Set the verbose level to use
+ * @param The new verbose level to be set
+ */
+/**
+ * @fn static int Debug::getSourcePathLength();
+ * @brief Retrieve the current length set for the source path in the prefix of logs
+ * @return The current source path length in the prefix
+ */
+/**
+ * @ingroup log
+ * @fn static void Debug::setSourcePathLength(int srcpath_length);
+ * @brief Set a new source path length to use in the prefix of logs
+ * @param The new source path length to use for the prefix
+ */
+/**
+ * @fn static color::Color Debug::getPrefixColor();
+ * @brief Get the current color of the prefix of logs
+ * @return The current color of the prefix of logs
+ */
+/**
+ * @ingroup log
+ * @fn static void Debug::setPrefixColor(color::Color prefix_color)
+ * @brief Set a new  color for the prefix of logs
+ * @param The new color to use for the prefix of logs
+ */
 
 /**
  * @ingroup log
  * @def ELM_DBG(str);
- * @param str the string to print
- * @brief Format and output the string str on the log, depending on the global parameters set in flags and srcpath_length.\n
+ * @param Str the string to print
+ * @brief Format and output the string str on the log, depending on the global parameTers set in flags and srcpath_length.\n
  * If ELM_NO_DBG is not defined, the alias DBG is available.
  */
 
 /**
  * @ingroup log
  * @def ELM_DBGLN(str);
- * @param str the string to print
+ * @param Str the string to print
  * @brief The same as ELM_DBG, except it adds a new line character at the end.\n
  * If ELM_NO_DBG is not defined, the alias DBG is available.
  */
@@ -94,39 +172,40 @@ elm::color::Color prefix_color = elm::color::Yel;
 /**
  * @ingroup log
  * @def ELM_DBGV(level, str);
- * @param str the string to print
- * @param level bitmask to select the levels of verbose that should enable this debug. If level=0, it will never be printed.
+ * @param Str the string to print
+ * @param Level bitmask to select the levels of verbose that should enable this debug. If level=0, it will never be printed.
  * @brief Will only output the string str if (level & verbose_level) is non-null, that is, if one of the bits in the bit mask level is set to 1 in the global variable verbose_level.
  */
 
 /**
- * Display prefix of log line, which may include the source path and line number of file, the line number of the log, both or neither
- * @return the string to display
+ * @ingroup log
+ * @brief Display prefix of log line, which may include the source path and line number of file, the line number of the log, both or neither
+ * @return The string to display
  */
 elm::String Debug::debugPrefix(const char* file, int line)
 {
-	if(flags&(SOURCE_INFO|NUMBERING))
+	if(getSourceInfoFlag() || getNumberingFlag())
 	{
-		elm::String rtn = _ << color::Yel() << "["; // opening bracket and setting up color if we are in color mode
-		if(flags&SOURCE_INFO) // path of the source that called DBG
+		elm::String rtn = _ << _prefix_color << "["; // opening bracket and setting up color if we are in color mode
+		if(getSourceInfoFlag()) // path of the source that called DBG
 		{
 			rtn = _ << file << ":" << line;
-			if(rtn.length() > srcpath_length)
+			if(rtn.length() > getSourcePathLength())
 			{ 	// Source path too long, cut it: "longpath/src/main.cpp" becomes [...ath/src/main.cpp])
-				rtn = _ << prefix_color << "[" << "..." << rtn.substring(rtn.length() + 3 - srcpath_length);
+				rtn = _ << _prefix_color << "[" << "..." << rtn.substring(rtn.length() + 3 - getSourcePathLength());
 			}
 			else
 			{	// Source path too short, align it with whitespaces: "src/main.cpp" becomes [       src/main.cpp]
 				elm::String whitespaces;
-				for(unsigned int i = 0, len = rtn.length(); i < srcpath_length - len; i++)
+				for(unsigned int i = 0, len = rtn.length(); i < getSourcePathLength() - len; i++)
 					whitespaces = whitespaces.concat(elm::CString(" "));
-				rtn = _ << prefix_color << "[" << whitespaces << rtn;
+				rtn = _ << _prefix_color << "[" << whitespaces << rtn;
 			}
 		}
-		if(flags&NUMBERING) // output line numbers
+		if(getNumberingFlag()) // output line numbers
 		{
 			static int line_nb = 0;
-			if(flags&SOURCE_INFO) // if we printed the source info before
+			if(getSourceInfoFlag()) // if we printed the source info before
 				rtn = _ << rtn << "|"; // add a | separator
 			rtn = _ << rtn << io::align(io::RIGHT, io::width(6, ++line_nb)); // this auto-adds the necessary whitespaces to have a 6-characters number. 45 becomes "    45" and so on
 		}
@@ -135,5 +214,12 @@ elm::String Debug::debugPrefix(const char* file, int line)
 	else // no prefix
 		return "";
 }
+
+color::Color Debug::getPrefixColor()
+	{ return _prefix_color; }
+
+void Debug::setPrefixColor(const elm::color::Color& prefix_color)
+	{ _prefix_color = prefix_color; }
+
 } // log
 } // elm

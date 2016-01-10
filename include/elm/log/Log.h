@@ -29,20 +29,46 @@
 
 namespace elm
 {
+	namespace color{
+		class Color;
+	}
 	namespace log
 	{
-		extern int flags;
-		extern int verbose_level;
-		extern int srcpath_length; // should be > 3
-		enum // debug flags
-		{
-			DEBUG=		  1 << 0, // print any debugs at all
-			SOURCE_INFO=  1 << 1, // show source file and line info prefix
-			NUMBERING=	  1 << 2, // number debug outputs
-			COLOR=		  1 << 3, // use colors
-			COLORS=COLOR,
-			ALL=		  0b11111111, // everything
-		};
+		class Debug {
+		public: 
+			static elm::String debugPrefix(const char* file, int line);
+
+			static inline bool getDebugFlag() { return _flags&DEBUG; }
+			static inline void setDebugFlag(bool set = true) { _flags = _flags-(_flags&DEBUG)+(set*DEBUG); } 
+			static inline bool getSourceInfoFlag() { return _flags&SOURCE_INFO; }
+			static inline void setSourceInfoFlag(bool set = true) { _flags = _flags-(_flags&SOURCE_INFO)+(set*SOURCE_INFO); } 
+			static inline bool getNumberingFlag() { return _flags&NUMBERING; }
+			static inline void setNumberingFlag(bool set = true) { _flags = _flags-(_flags&NUMBERING)+(set*NUMBERING); } 
+			static inline bool getColorFlag() { return _flags&COLOR; }
+			static inline void setColorFlag(bool set = true) { _flags = _flags-(_flags&COLOR)+(set*COLOR); } 
+
+			static inline int getVerboseLevel() { return _verbose_level; }
+			static inline void setVerboseLevel(int verbose_level) { _verbose_level = verbose_level; } 
+			static inline int getSourcePathLength() { return _srcpath_length; }
+			static inline void setSourcePathLength(int srcpath_length) { if(srcpath_length > 3) _srcpath_length = srcpath_length; }
+			static color::Color getPrefixColor();
+			static void setPrefixColor(const color::Color& prefix_color);
+
+		private:
+			static int _flags;
+			static int _verbose_level;
+			static int _srcpath_length; // should be > 3
+			static color::Color _prefix_color;
+
+			enum // debug flags
+			{
+				DEBUG=		  1 << 0, // print any debugs at all
+				SOURCE_INFO=  1 << 1, // show source file and line info prefix
+				NUMBERING=	  1 << 2, // number debug outputs
+				COLOR=		  1 << 3, // use colors
+				// ALL=		  0b11111111, // everything
+			}; // enum
+		}; // Debug class
 	} // log namespace
 
 	namespace color
@@ -52,7 +78,7 @@ namespace elm
 		public:
 			Color(const elm::CString& str) : _str(str) { }
 			inline elm::CString operator()() const // Red()
-				{ return (log::flags&log::COLOR) ? _str : ""; }
+				{ return log::Debug::getColorFlag() ? _str : ""; }
 			inline operator elm::CString() const // (CString)Red
 				{ return (*this)(); }
 			inline operator const char*() const // (const char*)Red
@@ -82,19 +108,11 @@ namespace elm
 		const Color NoDim("\e[22m");  // Switch darker text OFF
 		// No support for Blink (\e[5m) as it is deprecated
 	} // color namespace
-	namespace log
-	{
-		extern elm::color::Color prefix_color;
-		class Debug {
-		public:
-			static elm::String debugPrefix(const char* file, int line);
-		}; // Debug class
-	} // log namespace
 } // elm namespace
 
-#define ELM_DBG(str)   { if(elm::log::flags&elm::log::DEBUG) elm::cout << elm::log::Debug::debugPrefix(__FILE__, __LINE__) << str << elm::color::RCol(); } // standard debug
-#define ELM_DBGLN(str) { if(elm::log::flags&elm::log::DEBUG) elm::cout << elm::log::Debug::debugPrefix(__FILE__, __LINE__) << str << elm::color::RCol() << elm::io::endl; } // debug with new line
-#define ELM_DBGV(level, str) { if(level & elm::log::verbose_level) ELM_DBG(str); } // verbose debug
+#define ELM_DBG(str)   { if(elm::log::Debug::getDebugFlag()) elm::cout << elm::log::Debug::debugPrefix(__FILE__, __LINE__) << str << elm::color::RCol(); } // standard debug
+#define ELM_DBGLN(str) { if(elm::log::Debug::getDebugFlag()) elm::cout << elm::log::Debug::debugPrefix(__FILE__, __LINE__) << str << elm::color::RCol() << elm::io::endl; } // debug with new line
+#define ELM_DBGV(level, str) { if(level & elm::log::Debug::getVerboseLevel()) ELM_DBG(str); } // verbose debug
 
 // aliases
 #ifndef ELM_NO_DBG
