@@ -37,7 +37,7 @@ class SharedPtr {
 public:
 	inline SharedPtr(void): c(&null) { lock(); }
 	inline SharedPtr(T *p): c(new cell_t(p)) { }
-	inline SharedPtr(const SharedPtr& p): c(p.c) { lock(); }
+	inline SharedPtr(const SharedPtr<T>& p): c(p.c) { lock(); }
 	inline ~SharedPtr(void) { unlock(); }
 
 	inline operator bool(void) const { return c->ptr; }

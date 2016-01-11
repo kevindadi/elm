@@ -22,6 +22,7 @@
 #define ELM_DATA_LISTQUEUE_H_
 
 #include <elm/assert.h>
+#include <elm/compare.h>
 #include <elm/inhstruct/SLList.h>
 
 namespace elm {
@@ -49,6 +50,7 @@ public:
 	inline void reset(void)
 		{ for(node_t *n = h, *nn; n; n = nn) { nn = n->next; delete n; } }
 
+	inline operator bool(void) const { return !isEmpty(); }
 	inline ListQueue& operator<<(const T& v) { put(v); return *this; }
 	inline ListQueue& operator>>(T& v) { v = get(); return *this; }
 
