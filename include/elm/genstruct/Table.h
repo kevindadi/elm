@@ -63,6 +63,7 @@ public:
 	// Iterator class
 	class Iterator: public IndexedIterator<Iterator, T, Table<T> > {
 	public:
+		inline Iterator(void) { }
 		inline Iterator(const Table<T>& table): IndexedIterator<Iterator, T, Table<T> >(table) { }
 		inline Iterator(const Iterator &iter): IndexedIterator<Iterator, T, Table<T> >(iter) { }
 	};

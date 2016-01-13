@@ -32,11 +32,12 @@ class IndexedIterator: public PreIterator<I, const T&> {
 	typedef IndexedIterator<I, T, C> this_t;
 public:
 
+	inline IndexedIterator(void): c(0), i(0) { }
 	inline IndexedIterator(const C& collection): c(&collection), i(0) { }
 	inline IndexedIterator(const this_t& iter): c(iter.c), i(iter.i) { }
 	inline this_t& operator=(const this_t& iter) { c = iter.c; i = iter.i; return *this; }
 
-	inline bool ended(void) const { return i >= c->size(); }
+	inline bool ended(void) const { return !c || i >= c->size(); }
 	inline const T& item(void) const { return (*c)[i]; }
 	inline void next(void) { i++; }
 
