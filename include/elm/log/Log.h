@@ -36,7 +36,9 @@ namespace elm
 	{
 		class Debug {
 		public: 
-			static elm::String debugPrefix(const char* file, int line);
+			static elm::String debugPrefixWrapped(const char* file, int line);
+			static elm::String debugPrefix(const char* file, int line, const char* functionName="");
+			static elm::String debugPrefixFunction(const char* functionName);
 
 			static inline bool getDebugFlag() { return _flags&DEBUG; }
 			static inline void setDebugFlag(bool set = true) { _flags = _flags-(_flags&DEBUG)+(set*DEBUG); } 
@@ -51,6 +53,8 @@ namespace elm
 			static inline void setVerboseLevel(int verbose_level) { _verbose_level = verbose_level; } 
 			static inline int getSourcePathLength() { return _srcpath_length; }
 			static inline void setSourcePathLength(int srcpath_length) { if(srcpath_length > 3) _srcpath_length = srcpath_length; }
+			static inline int getFunctionNameLength() { return _function_name_length; }
+			static inline void setFunctionNameLength(int function_name_length) { if(function_name_length > 3) _function_name_length = function_name_length; }
 			static color::Color getPrefixColor();
 			static void setPrefixColor(const color::Color& prefix_color);
 
@@ -58,6 +62,7 @@ namespace elm
 			static int _flags;
 			static int _verbose_level;
 			static int _srcpath_length; // should be > 3
+			static int _function_name_length; // should be > 3
 			static color::Color _prefix_color;
 
 			enum // debug flags
