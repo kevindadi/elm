@@ -23,7 +23,7 @@
 namespace elm { namespace genstruct {
 
 /**
- * @defgroup gen_datastruct Data Structures
+ * @defgroup gen_datastruct Old Data Structures
  *
  * ELM provides a collection of generic/template based data structures.
  * All data structure implements the @ref elm::concept::Collection concept.
