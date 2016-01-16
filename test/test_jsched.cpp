@@ -54,7 +54,7 @@ private:
 
 // test routine
 TEST_BEGIN(jsched)
-	FiboProducer prod(10, 48);
+	FiboProducer prod(10, 40);
 	JobScheduler sched(prod);
 	sched.start();
 TEST_END

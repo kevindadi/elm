@@ -1,149 +1,144 @@
 /*
- * test_list.cpp
+ * $Id$
+ * Copyright (c) 2005, IRIT UPS.
  *
- *  Created on: 26 juin 2013
- *      Author: casse
+ * test/test_SLList/test_SLList.cpp -- test program for SLList class.
  */
 
 #include <elm/util/test.h>
-#include <elm/imm/list.h>
+#include <elm/data/List.h>
 #include <elm/genstruct/Vector.h>
 
 using namespace elm;
-using namespace elm::imm;
-
-#define NUM		10000
-#define LOG(x)	//cerr << x << io::endl
-
-class MultiplyWithCarryGenerator {
-public:
-	inline MultiplyWithCarryGenerator(t::uint32 seed) { setSeed(seed); }
-	t::uint32 next(void) {
-		m_z = 36969 * (m_z & 0xffff) + (m_z >> 16);
-		m_w = 18000 * (m_w & 0xffff) + (m_w >> 16);
-		return (m_z << 16) + m_w;
-	}
-	inline t::uint32 seed(void) const { return (m_z << 16) + m_w; }
-	inline void setSeed(t::uint32 seed) { m_z = seed >> 16; m_w = seed & 0xffff; }
-
-private:
-	t::uint32 m_z, m_w;
-};
-
-
-static list<int> l, l2;
-static genstruct::Vector<list<int> > lists;
-static genstruct::Vector<genstruct::Vector<int> > vecs;
-class MyCollector: public list<int>::Collector {
-public:
-	virtual void collect(void) {
-		LOG("INFO: collecting garbage !");
-		mark(l);
-		mark(l2);
-		for(int i = 0; i < lists.count(); i++)
-			mark(lists[i]);
-	}
-};
 
 TEST_BEGIN(list)
 
-	// simple test
+	// Test initial
 	{
-		CHECK(l.isEmpty());
-		CHECK(l.length() == 0);
-		l = cons(100, l);
-		cout << "INFO: l = " << l << io::endl;
-		CHECK(!l.isEmpty());
-		CHECK(l.contains(100));
-		CHECK(l.length() == 1);
-		l = cons(0, l);
-		cout << "INFO: l = " << l << io::endl;
-		CHECK(!l.isEmpty());
-		CHECK(l.contains(0));
-		CHECK(l.contains(100));
-		CHECK(l.length() == 2);
-		l = l.tl();
-		CHECK(!l.isEmpty());
-		CHECK(l.contains(100));
-		CHECK(!l.contains(0));
-		CHECK(l.length() == 1);
-		l = l.tl();
-		CHECK(l.isEmpty());
-		CHECK(!l.contains(100));
-		CHECK(!l.contains(0));
-		CHECK(l.length() == 0);
+		List<int> list;
+		CHECK(list.count() == 0);
 	}
 
-	// complex construction check
+	// Test addFirst
 	{
-		// make, remove and equals
-		int t[] = { 1, 2, 3, 4 };
-		l = make(t, 4);
-		CHECK(l.length() == 4);
-		CHECK(l.contains(1) && l.contains(2) && l.contains(3) && l.contains(4));
-		CHECK(l.equals(l));
-		l2 = make(t, 4);
-		CHECK(l.equals(l2));
-		CHECK(l2.equals(l));
-		l = l.remove(3);
-		CHECK(l.length() == 3);
-		CHECK(l.contains(1) && l.contains(2) && l.contains(4));
-		CHECK(!l.equals(l2));
-		CHECK(!l2.equals(l));
-
-		// concat
-		l2 = cons(3, list<int>::null);
-		l = l.concat(l2);
-		CHECK(l.length() == 4);
-		CHECK(l.contains(1) && l.contains(2) && l.contains(3) && l.contains(4));
+		List<int> list;
+		for(int i = 0; i < 10; i++)
+			list.addFirst(i);
+		CHECK(list.count() == 10);
+		int i = 9;
+		bool good = true;
+		for(List<int>::iter iter(list); iter; iter++, i--)
+			if(iter.item() != i) {
+				good = false;
+				break;
+			}
+		CHECK(good);
 	}
 
-	// robustness test
+
+	// List copy test
 	{
-		MultiplyWithCarryGenerator rand(0xfe003b09);
-		bool robust = true;
-		for(int i = 0; robust && i < NUM; i++) {
+		List<int> list1, list2;
+		list1.add(1);
+		list1.add(2);
+		list1.add(3);
+		CHECK(list2.isEmpty());
+		list2 = list1;
+		CHECK(!list2.isEmpty());
+		CHECK(list2 & 1);
+		CHECK(list2.contains(2));
+		CHECK(list2.contains(3));
+		CHECK(!list1.isEmpty());
+		CHECK(list1.contains(1));
+		CHECK(list1.contains(2));
+		CHECK(list1.contains(3));
+		list2.remove(2);
+		CHECK(!list2.contains(2));
+		CHECK(list1.contains(2));
+		list2.remove(3);
+		CHECK(!list2.contains(3));
+		CHECK(list1.contains(3));
+		list2.remove(1);
+		CHECK(!list2.contains(1));
+		CHECK(list1.contains(1));
+	}
 
-			// perform the action
-			t::uint32 r = rand.next();
-			t::uint32 action = (r >> 16) % 100;
-			if(!lists || action < 20) {
-				LOG("creating list " << lists.count());
-				lists.add(list<int>::null);
-				vecs.add(genstruct::Vector<int>());
-			}
-			else if(action < 60) {
-				int l = ((r >> 8) & 0xff) % lists.count();
-				int v = r & 0xff;
-				LOG("adding " << v << " to list " << l);
-				lists[l] = cons(v, lists[l]);
-				vecs[l].push(v);
-			}
-			else if(action < 90) {
-				int l = ((r >> 8) & 0xff) % lists.count();
-				if(lists[l]) {
-					LOG("removing from list " << l);
-					lists[l] = lists[l].tl();
-					vecs[l].pop();
-				}
-			}
-			else if(lists.count() > 1) {
-				LOG("deleting list " << (lists.count() - 1));
-				lists.pop();
-				vecs.pop();
-			}
+	// test addAll, removeAll
+	{
+		genstruct::Vector<int> v;
+		v.add(1);
+		v.add(2);
+		v.add(3);
+		genstruct::SLList<int> l;
+		l.addAll(v);
+		CHECK(l.contains(1));
+		CHECK(l.contains(2));
+		CHECK(l.contains(3));
+	}
 
-			// check the consistency
-			for(int j = 0; j < lists.count(); j++) {
-				int k = vecs[j].count() - 1;
-				list<int> l = lists[j];
-				while(k >= 0 && l && vecs[j][k] == l.hd()) {
-					k--;
-					l = l.tl();
-				}
-			}
+	// test remove with iterator
+	{
+		List<int> l;
+		for(int i = 0; i < 10; i++)
+			l += i;
+		for(List<int>::prec_iter i(l); i;) {
+			if(*i % 2 == 0)
+				i.remove();
+			else
+				i++;
 		}
-		CHECK(robust);
+		int pairs = 0;
+		for(List<int>::iter i(l); i; i++)
+			if(*i % 2 == 0)
+				pairs++;
+		CHECK_EQUAL(pairs, 0);
 	}
+
+	// test for null
+	{
+		CHECK(genstruct::SLList<int>::null.isEmpty());
+	}
+
+	// sub-list iterator
+	{
+		List<int> l;
+		for(int i = 9; i >= 0; i--)
+			l += i;
+		List<int>::iter b, e;
+		for(List<int>::iter i = l.begin();
+		i != l.end();
+		i++) {
+			if(i == 3)
+				b = i;
+			else if(i == 8)
+				e = i;
+		}
+		CHECK(b);
+		CHECK(e);
+		List<int>::sub_iter s(b, e);
+		for(int i = 3; i < 8; i++) {
+			CHECK(s);
+			CHECK(*s == i);
+			s++;
+		}
+		CHECK(!s);
+	}
+
+	// equality and inclusion test
+	{
+		List<int> l1, l2;
+		for(int i = 0; i < 10; i++) {
+			l1 += i;
+			if(i % 2 == 0 || i == 6)
+				l2 += i;
+		}
+		CHECK(l1 == l1);
+		CHECK(l1 != l2);
+		CHECK(l1 >= l1);
+		CHECK(!(l1 > l1));
+		CHECK(l1 >= l2);
+		CHECK(l1 > l2);
+	}
+
 TEST_END
 
