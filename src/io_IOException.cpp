@@ -49,13 +49,29 @@ namespace elm { namespace io {
  * Some constants are provided for special output:
  * @li @ref elm::io::endl -- new line.
  * 
- * Unlike the C++ standard library, the output format is managed thrugh special
+ * Unlike the C++ standard library, the output format is managed through special
  * formatting objects. For integer, the work is performed by @ref IntFormat
  * that provides display features like representation base, field width,
  * alignment, uppercase letters for base greater than 10, signess, padding.
- * For float values, it exists the class @ref FloatFormat.
+ * For float values, it exists the class @ref FloatFormat and for strings,
+ * @ref StringFormat can be used.
  *
- * The errors are managed here using exception objects derivated from the
+ * This format objects may easily be built using @ref io::fmt() primitives
+ * and using internal constructors as in the example below:
+ * @code
+ * t::uint32 x;
+ * cout << fmt(x).width(8).hex().right().width(8).pad('0');
+ * @endcode
+ *
+ * A format can be built and used latter:
+ * @code
+ * IntFormat address_fmt = IntFormat().width(8).hex().right().width(8).pad('0');
+ *
+ * cout << address_fmt(x);
+ * @endcode
+ *
+ *
+ * The errors are managed here using exception objects derived from the
  * @ref IOException class.
  *
  *

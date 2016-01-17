@@ -75,5 +75,14 @@ TEST_BEGIN(io_format)
 	FAIL_ON_EXCEPTION(IOException, in >> x);
 	CHECK_EQUAL(x, 666);
 
+	{
+		string r = _ << fmt(666);
+		CHECK_EQUAL(r, string("666"));
+		string rr = _ << fmt(1.2);
+		CHECK_EQUAL(rr, string("1.2"));
+		string rrr = _ << fmt("ok");
+		CHECK_EQUAL(rrr, string("ok"));
+	}
+
 TEST_END
 

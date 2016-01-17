@@ -566,6 +566,47 @@ void Output::print(const FloatFormat& fmt) {
 
 
 /**
+ * Print a formatted string.
+ * @param fmt	Format to print.
+ */
+void Output::print(const StringFormat& fmt) {
+	if(!fmt._width)
+		*this << fmt.s;
+	else if(fmt.s.length() >= fmt._width)
+		*this << fmt.s.substring(0, fmt._width);
+	else {
+
+		// compute padding size
+		int b, a;
+		switch(fmt._align) {
+		case LEFT:
+			b = 0;
+			a = fmt._width - fmt.s.length();
+			break;
+		case CENTER:
+			b = (fmt._width - fmt.s.length()) / 2;
+			a = fmt._width - b - fmt.s.length();
+			break;
+		case RIGHT:
+			b = fmt._width - fmt.s.length();
+			a = 0;
+			break;
+		default:
+			ASSERT(false);
+			break;
+		}
+
+		// perform the display
+		for(int i = 0; i < b; i++)
+			*this << fmt._pad;
+		*this << fmt.s;
+		for(int i = 0; i < a; i++)
+			*this << fmt._pad;
+	}
+}
+
+
+/**
  * @class IntFormat
  * This class is used to perform formatting on integer passed to the @ref Output
  * class.
@@ -873,6 +914,49 @@ IntFormat pointer(const void *p) {
 IntFormat byte(t::uint8 b) {
 	return f(b).hex().width(2).pad('0').right();
 }
+
+/**
+ * @class StringFormat
+ * Store formatting information for character string.
+ * To automatically build a string format, uses the @ref fmt() function.
+ * @ingroup ios
+ */
+
+/**
+ * @fn StringFormat StringFormat::width(int w);
+ * Select width of the display. As a default, there is o width
+ * and the full string is displayed.
+ * @param w		Width in character.
+ */
+
+/**
+ * @fn StringFormat StringFormat::align(alignment_t a);
+ * Select alignment position when string is bigger than the selected width.
+ * Default alignment value is left.
+ * @param a		One of LEFT, CENTER or RIGHT.
+ */
+
+/**
+ * @fn StringFormat StringFormat::left(void);
+ * Align string display to left.
+ */
+
+/**
+ * @fn StringFormat StringFormat::right(void);
+ * Align string display to right.
+ */
+
+/**
+ * @fn StringFormat StringFormat::center(void);
+ * center string display.
+ */
+
+/**
+ * @fn StringFormat StringFormat::pad(char p);
+ * Select the padding character when a width is selected.
+ * As a default, it is a space.
+ * @param p		Padding character.
+ */
 
 } // io
 

@@ -157,6 +157,33 @@ private:
 };
 
 
+// StringFormat class
+class StringFormat {
+public:
+	StringFormat(void) { init(); }
+	StringFormat(string str): s(str) { init(); }
+
+	inline StringFormat& operator()(string str)	{ s = str; return *this; }
+	inline StringFormat width(int w) 			{ _width = w; return *this; }
+	inline StringFormat align(alignment_t a)	{ _align = a; return *this; }
+	inline StringFormat left(void) 				{ _align = LEFT; return *this; }
+	inline StringFormat center(void) 			{ _align = CENTER; return *this; }
+	inline StringFormat right(void) 			{ _align = RIGHT; return *this; }
+	inline StringFormat pad(char p) 			{ _pad = p; return *this; }
+
+	string s;
+	unsigned char _width;
+	unsigned char _align: 2;
+	unsigned char _pad;
+
+private:
+	void init(void) {
+		_width = 0;
+		_align = LEFT;
+		_pad = ' ';
+	}
+};
+
 // Output class
 class Output {
 	OutStream *strm;
@@ -177,6 +204,7 @@ public:
 	void print(const String& str);
 	void print(const IntFormat& fmt);
 	void print(const FloatFormat& fmt);
+	void print(const StringFormat& fmt);
 	void format(CString fmt, ...);
 	void format(CString fmt, VarArg& args);
 
@@ -215,6 +243,7 @@ inline Output& operator<<(Output& out, const CString value) { out.print(value); 
 inline Output& operator<<(Output& out, const string& value) { out.print(value); return out; };
 inline Output& operator<<(Output& out, const IntFormat& value) { out.print(value); return out; };
 inline Output& operator<<(Output& out, const FloatFormat& value) { out.print(value); return out; }
+inline Output& operator<<(Output& out, const StringFormat& value) { out.print(value); return out; }
 
 
 // End-of-line
@@ -252,6 +281,19 @@ inline IntFormat center(IntFormat fmt) { return fmt.center(); }
 inline IntFormat pad(char pad, IntFormat fmt) { return fmt.pad(pad); }
 inline IntFormat uppercase(IntFormat fmt) { return fmt.upper(); }
 inline IntFormat lowercase(IntFormat fmt) { return fmt.lower(); }
+
+// fmt macro
+inline IntFormat 	fmt(t::int8   	i)	{ return IntFormat(i); }
+inline IntFormat 	fmt(t::uint8  	i) 	{ return IntFormat(i); }
+inline IntFormat 	fmt(t::int16  	i)	{ return IntFormat(i); }
+inline IntFormat 	fmt(t::uint16 	i) 	{ return IntFormat(i); }
+inline IntFormat 	fmt(t::int32  	i)	{ return IntFormat(i); }
+inline IntFormat	fmt(t::uint32 	i) 	{ return IntFormat(i); }
+inline IntFormat 	fmt(t::int64  	i)	{ return IntFormat(i); }
+inline IntFormat 	fmt(t::uint64 	i) 	{ return IntFormat(i); }
+inline FloatFormat	fmt(float 		f)	{ return FloatFormat(f); }
+inline FloatFormat 	fmt(double 		f)	{ return FloatFormat(f); }
+inline StringFormat fmt(string 		s)	{ return StringFormat(s); }
 
 } } // elm::io
 
