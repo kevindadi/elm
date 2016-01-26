@@ -22,7 +22,7 @@
 #ifndef ELM_GENSTRUCT_QUICKSORT_H_
 #define ELM_GENSTRUCT_QUICKSORT_H_
 
-#include <elm/util/Comparator.h>
+#include <elm/compare.h>
 
 namespace elm { namespace genstruct {
 

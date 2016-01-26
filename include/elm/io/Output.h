@@ -294,6 +294,8 @@ inline IntFormat 	fmt(t::uint64 	i) 	{ return IntFormat(i); }
 inline FloatFormat	fmt(float 		f)	{ return FloatFormat(f); }
 inline FloatFormat 	fmt(double 		f)	{ return FloatFormat(f); }
 inline StringFormat fmt(string 		s)	{ return StringFormat(s); }
+inline StringFormat fmt(cstring 	s)	{ return StringFormat(s); }
+inline StringFormat fmt(const char *s)	{ return StringFormat(s); }
 
 } } // elm::io
 

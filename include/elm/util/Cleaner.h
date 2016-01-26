@@ -22,7 +22,7 @@
 #ifndef ELM_UTIL_CLEANER_H
 #define ELM_UTIL_CLEANER_H
 
-#include <elm/util/AutoPtr.h>
+#include <elm/util/LockPtr.h>
 #include <elm/genstruct/SLList.h>
 
 namespace elm {
@@ -49,10 +49,10 @@ private:
 
 // AutoCleaner class 
 template <class T>
-class AutoCleaner: public AutoPtr<T>, public Cleaner {
+class AutoCleaner: public LockPtr<T>, public Cleaner {
 public:
-	inline AutoCleaner(T *p = 0): AutoPtr<T>(p) { }
-	inline AutoCleaner(const AutoPtr<T>& locked): AutoPtr<T>(locked) { }
+	inline AutoCleaner(T *p = 0): LockPtr<T>(p) { }
+	inline AutoCleaner(const LockPtr<T>& locked): LockPtr<T>(locked) { }
 };
 
 
@@ -64,7 +64,7 @@ public:
 	void clean(void);
 	
 	inline Cleaner *operator()(Cleaner *cleaner) { add(cleaner); return cleaner; }
-	template <class T> inline const AutoPtr<T>& operator()(const AutoPtr<T>& object)
+	template <class T> inline const LockPtr<T>& operator()(const LockPtr<T>& object)
 		{ add(new AutoCleaner<T>(object)); return object; } 
 	template <class T> inline T *operator()(T *object)
 		{ add(new Deletor<T>(object)); return object; } 

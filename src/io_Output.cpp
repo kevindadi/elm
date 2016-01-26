@@ -598,10 +598,10 @@ void Output::print(const StringFormat& fmt) {
 
 		// perform the display
 		for(int i = 0; i < b; i++)
-			*this << fmt._pad;
+			*this << char(fmt._pad);
 		*this << fmt.s;
 		for(int i = 0; i < a; i++)
-			*this << fmt._pad;
+			*this << char(fmt._pad);
 	}
 }
 

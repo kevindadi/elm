@@ -7,7 +7,7 @@
 
 #include <elm/util/test.h>
 #include <elm/utility.h>
-#include <elm/util/AutoPtr.h>
+#include <elm/util/LockPtr.h>
 
 using namespace elm;
 
@@ -28,7 +28,7 @@ TEST_BEGIN(lock)
 	{
 		bool alloc = false;
 		{
-			AutoPtr<LockTest> p = new LockTest(&alloc);
+			LockPtr<LockTest> p = new LockTest(&alloc);
 			CHECK(alloc);
 		}
 		CHECK(!alloc);
@@ -38,7 +38,7 @@ TEST_BEGIN(lock)
 	{
 		bool alloc = false;
 		{
-			AutoPtr<LockTest> p;
+			LockPtr<LockTest> p;
 			CHECK(!alloc);
 			p = new LockTest(&alloc);
 			CHECK(alloc);
@@ -50,9 +50,9 @@ TEST_BEGIN(lock)
 	{
 		bool alloc = false;
 		{
-			AutoPtr<LockTest> p1;
+			LockPtr<LockTest> p1;
 			{
-				AutoPtr<LockTest> p2 = new LockTest(&alloc);
+				LockPtr<LockTest> p2 = new LockTest(&alloc);
 				CHECK(alloc);
 				p1 = p2;
 				CHECK(alloc);
@@ -65,7 +65,7 @@ TEST_BEGIN(lock)
 	// Passing null
 	{
 		bool alloc = false;
-		AutoPtr<LockTest> p = new LockTest(&alloc);
+		LockPtr<LockTest> p = new LockTest(&alloc);
 		CHECK(alloc);
 		p = 0;
 		CHECK(!alloc);
@@ -74,11 +74,11 @@ TEST_BEGIN(lock)
 	// Transitivity
 	{
 		bool alloc = false;
-		AutoPtr<LockTest> p1 = new LockTest(&alloc);
+		LockPtr<LockTest> p1 = new LockTest(&alloc);
 		CHECK(alloc);
-		AutoPtr<LockTest> p2 = p1;
+		LockPtr<LockTest> p2 = p1;
 		CHECK(alloc);
-		AutoPtr<LockTest> p3 = p2;
+		LockPtr<LockTest> p3 = p2;
 		CHECK(alloc);
 		p1 = 0;
 		CHECK(alloc);
@@ -91,7 +91,7 @@ TEST_BEGIN(lock)
 	// Usage test
 	{
 		bool alloc = false;
-		AutoPtr<LockTest> p = new LockTest(&alloc);
+		LockPtr<LockTest> p = new LockTest(&alloc);
 		CHECK(p->getAlloc() == alloc);
 	}
 	
