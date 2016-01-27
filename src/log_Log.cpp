@@ -223,46 +223,46 @@ elm::String Debug::debugPrefixWrapped(const char* file, int line)
 		return "";
 }
 
- elm::String Debug::debugPrefix(const char* file, int line, const char* functionName) {
-	 if(getSourceInfoFlag())
-	 {
-		 elm::String rtn = _ << debugPrefixWrapped(file, line);
-		 if(String(functionName).length() == 0)
-			 rtn = _ << rtn << " ";
-		 else
-			 rtn = _ << rtn << debugPrefixFunction(functionName);
+elm::String Debug::debugPrefix(const char* file, int line, const char* functionName) {
+	if(getSourceInfoFlag() || getNumberingFlag())
+	{
+		elm::String rtn = _ << debugPrefixWrapped(file, line);
+		if(elm::String(functionName).length() == 0)
+			rtn = _ << rtn << " ";
+		else
+			rtn = _ << rtn << debugPrefixFunction(functionName);
 
-		 return elm::String(rtn);
-	 }
-	 else
-		 return "";
- }
+		return elm::String(rtn);
+	}
+	else
+		return "";
+}
 
- elm::String Debug::debugPrefixFunction(const char* functionName)
- {
- 	if(getSourceInfoFlag())
- 	{
- 		elm::String rtn = _ << _prefix_color << "["; // opening bracket and setting up color if we are in color mode
- 		if(getSourceInfoFlag()) // path of the source that called DBG
- 		{
- 			rtn = _ << functionName;
- 			if(rtn.length() > getFunctionNameLength())
- 			{ 	// Source path too long, cut it: "longpath/src/main.cpp" becomes [...ath/src/main.cpp])
- 				rtn = _ << _prefix_color << "[" << "..." << rtn.substring(rtn.length() + 3 - getFunctionNameLength());
- 			}
- 			else
- 			{	// Source path too short, align it with whitespaces: "src/main.cpp" becomes [       src/main.cpp]
- 				elm::String whitespaces;
- 				for(unsigned int i = 0, len = rtn.length(); i < getFunctionNameLength() - len; i++)
- 					whitespaces = whitespaces.concat(elm::CString(" "));
- 				rtn = _ << _prefix_color << "[" << whitespaces << rtn;
- 			}
- 		}
- 		return elm::String(_ << rtn << "] " << color::RCol()); // closing bracket of the prefix, and resetting color if need be
- 	}
- 	else // no prefix
- 		return "";
- }
+elm::String Debug::debugPrefixFunction(const char* functionName)
+{
+	if(getSourceInfoFlag())
+	{
+		elm::String rtn = _ << _prefix_color << "["; // opening bracket and setting up color if we are in color mode
+		if(getSourceInfoFlag()) // path of the source that called DBG
+		{
+			rtn = _ << functionName;
+			if(rtn.length() > getFunctionNameLength())
+			{ 	// Source path too long, cut it: "longpath/src/main.cpp" becomes [...ath/src/main.cpp])
+				rtn = _ << _prefix_color << "[" << "..." << rtn.substring(rtn.length() + 3 - getFunctionNameLength());
+			}
+			else
+			{	// Source path too short, align it with whitespaces: "src/main.cpp" becomes [       src/main.cpp]
+				elm::String whitespaces;
+				for(unsigned int i = 0, len = rtn.length(); i < getFunctionNameLength() - len; i++)
+					whitespaces = whitespaces.concat(elm::CString(" "));
+				rtn = _ << _prefix_color << "[" << whitespaces << rtn;
+			}
+		}
+		return elm::String(_ << rtn << "] " << color::RCol()); // closing bracket of the prefix, and resetting color if need be
+	}
+	else // no prefix
+		return " ";
+}
 
 color::Color Debug::getPrefixColor()
 	{ return _prefix_color; }
