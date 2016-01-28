@@ -16,7 +16,7 @@ namespace elm {
 template <class T>
 class AutoPtr: public LockPtr<T> {
 public:
-	inline AutoPtr(T *p): LockPtr<T>(p) { }
+	inline AutoPtr(T *p = 0): LockPtr<T>(p) { }
 	inline AutoPtr(const AutoPtr<T>& p): LockPtr<T>(p) { }
 	inline AutoPtr(const LockPtr<T>& p): LockPtr<T>(p) { }
 };

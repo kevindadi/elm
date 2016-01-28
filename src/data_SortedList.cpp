@@ -31,17 +31,23 @@ namespace elm { namespace genstruct {
  * @deprecated 	Use @ref SortedList in place.
  */
 
+}	// genstruct
+
 /**
  * @class SortedList
  *
- * This class provides a generic implementation of single-link lists.
- * To traverse, you can use its @ref Iterator.
+ * This class provides a sorted list implementation using single-link lists
+ * (@ref List). Elements are sorted in increasing order of the used comparator.
  *
- * The operation complexity is:
+ * Its performances are not very good but the memory footprint
+ * is very low. Use it only for small collection of elements.
+ *
+ * @par Performances
  * @li adding an item: O(n) worst, O(n/2) average.
  * @li looking/removing an item: O(n) worst, O(n/2) average.
+ * @li memory footprint: same as @ref List.
  *
- * @par Implemented concepts:
+ * @par Implemented concepts
  * @ref elm::concept::Collection
  * @ref elm::concept::MutableCollection
  * @ref elm::concept::List
@@ -52,7 +58,7 @@ namespace elm { namespace genstruct {
  *
  * @author C. Ballabriga
  * @author H. Cassé <casse@irit.fr>
- * @ingroup gen_datastruct
+ * @ingroup data
  */
 
 
@@ -156,4 +162,4 @@ namespace elm { namespace genstruct {
  * Go to the next item.
  */
 
-} } // elm::genstruct
+} // elm
