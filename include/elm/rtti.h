@@ -84,7 +84,7 @@ inline DefaultField<T> field(CString name, T& value, const T& def) {
 	}
 #define ELM_ENUM_BEGIN(type) \
 	namespace elm { \
-		struct value_t type_info<type>::__vals[] = {
+		value_t type_info<type>::__vals[] = {
 #define ELM_ENUM_END \
 			, value("", 0) \
 		}; \
