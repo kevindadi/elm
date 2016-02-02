@@ -125,7 +125,7 @@ void StackAllocator::newChunk(void) throw(BadAlloc) {
 		cur = chunk;
 		top = chunk->buffer;
 		max = chunk->buffer + _size;
-		cerr << "DEBUG: new chunk: " << (void *)cur->buffer << io::endl;
+		//cerr << "DEBUG: new chunk: " << (void *)cur->buffer << io::endl;
 	}
 	catch(std::bad_alloc&) {
 		throw BadAlloc();
