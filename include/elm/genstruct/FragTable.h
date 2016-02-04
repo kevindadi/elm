@@ -201,7 +201,7 @@ void FragTable<T>::insert(int index, const T &item) {
 template <class T>
 void FragTable<T>::removeAt(int index) {
 	int len = length();
-	for(int i = index + 1; i <= len; i++)
+	for(int i = index + 1; i < len; i++)
 		set(i - 1, get(i));
 	used--;
 	if(!used) {

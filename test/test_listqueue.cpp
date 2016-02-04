@@ -21,6 +21,7 @@ TEST_BEGIN(listqueue)
 			q >> x;
 			CHECK_EQUAL(x, i);
 		}
+		CHECK(q.isEmpty());
 	}
 
 TEST_END
