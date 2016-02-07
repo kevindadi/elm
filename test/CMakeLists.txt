@@ -44,6 +44,7 @@ set(TEST_SOURCES
 	"test_int.cpp"
 	"test_io_format.cpp"
 	"test_jsched.cpp"
+	"test_json.cpp"
 	"test_ilist.cpp"
 	"test_list.cpp"
 	"test_listqueue.cpp"
@@ -69,6 +70,7 @@ set(TEST_SOURCES
 	"test_sorted_bintree.cpp"
 	"test_type_info.cpp"
 	"test_thread.cpp"
+	"test_utf8.cpp"
     "test_wah"
 )
 

@@ -35,7 +35,7 @@ namespace elm { namespace io {
  * @param size		Size of the buffeR.
  */
 BufferedOutStream::BufferedOutStream(OutStream& output, size_t size)
-: out(output), top(0), buf_size(size) {
+: out(&output), top(0), buf_size(size) {
 	ASSERTP(size != 0, "invalid null buffer size");
 	buf = new char[buf_size];
 }
@@ -57,7 +57,7 @@ int BufferedOutStream::write(const char *buffer, int size) {
 		if(top > 0)
 			flush();
 		while((size_t)size > buf_size) {
-			if(out.write(buffer, buf_size) < 0)
+			if(out->write(buffer, buf_size) < 0)
 				return -1;
 			buffer += buf_size;
 			size -= buf_size;
@@ -75,7 +75,7 @@ int BufferedOutStream::flush(void) {
 	 if(top == 0)
 		 return 0;
 	 else {
-		 int res = out.write(buf, top);
+		 int res = out->write(buf, top);
 		 top = 0;
 		 return res;
 	 }
@@ -85,7 +85,7 @@ int BufferedOutStream::flush(void) {
 /**
  */
 CString BufferedOutStream::lastErrorMessage(void) {
-	return out.lastErrorMessage();
+	return out->lastErrorMessage();
 }
 
 

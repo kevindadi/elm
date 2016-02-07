@@ -33,6 +33,7 @@ public:
 
 	BufferedOutStream(OutStream& output, size_t size = default_size);
 	virtual ~BufferedOutStream(void);
+	inline void setStream(OutStream& output) { out = &output; }
 
 	// OutStream override
 	virtual int write(const char *buffer, int size);
@@ -40,7 +41,7 @@ public:
 	virtual CString lastErrorMessage(void);
 
 private:
-	OutStream& out;
+	OutStream *out;
 	char *buf;
 	size_t top, buf_size;
 };
