@@ -99,11 +99,12 @@ void Saver::close(void) {
 /**
  * Display indentation corresponding to the readibility activation
  * using the current indentation.
+ * @param close		Set to true to close an object or an array.
  */
-void Saver::doIndent(void) throw(io::IOException) {
-	if(state == IN_ARRAY || state == IN_OBJECT)
+void Saver::doIndent(bool close) throw(io::IOException) {
+	if(!close && (state == IN_ARRAY || state == IN_OBJECT))
 		_out << ",";
-	if(readable) {
+	if(readable && state != FIELD) {
 		_out << io::endl;
 		for(int i = 0; i < stack.length(); i++)
 			_out << indent;
@@ -165,7 +166,7 @@ void Saver::endObject(void) throw(io::IOException) {
 		state = END;
 	else
 		state = next(stack.pop());
-	doIndent();
+	doIndent(true);
 	_out << "}";
 }
 
@@ -189,7 +190,7 @@ void Saver::endArray(void) throw(io::IOException) {
 	ASSERTP(isArray(state), "json: not inside an array!");
 	state_t new_state = next(stack.pop());
 	state = ARRAY;
-	doIndent();
+	doIndent(true);
 	_out << "]";
 	state = new_state;
 }

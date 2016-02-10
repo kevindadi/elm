@@ -78,7 +78,7 @@ private:
 		END
 	} state_t;
 
-	void doIndent(void) throw(io::IOException);
+	void doIndent(bool close = false) throw(io::IOException);
 	static state_t next(state_t s);
 	static bool isObject(state_t s);
 	static bool isArray(state_t s);
