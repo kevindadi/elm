@@ -22,7 +22,7 @@ public:
 	inline int capacity(void) const { return cap; }
 	inline int increment(void) const { return inc; }
 	inline void setSize(int new_size) { _size = new_size; }
-	inline void reset(void) { _size = 0; }
+	inline void reset(void) { _size = 0; if(!buf) buf = new char[cap]; }
 	inline const char *base(void) const { return buf; }
 	inline char *detach(void)
 		{ char *result = buf; buf = 0; return result; }
