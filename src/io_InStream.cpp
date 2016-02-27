@@ -56,7 +56,7 @@ namespace elm { namespace io {
 
 /**
  * Read one byte from the stream.
- * @return	Read byte, ERROR for an error, END for end of stream.
+ * @return	Read byte, FAILED for an error, ENDED for end of stream.
   */
 int InStream::read(void) {
 	char buf;

@@ -1,5 +1,5 @@
 /*
- *	json module interface
+ *	json common ressources
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2016, IRIT UPS.
@@ -18,10 +18,18 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_JSON_H_
-#define ELM_JSON_H_
+#ifndef ELM_JSON_COMMON_H_
+#define ELM_JSON_COMMON_H_
 
-#include <elm/json/Parser.h>
-#include <elm/json/Saver.h>
+#include <elm/util/MessageException.h>
 
-#endif /* ELM_JSON_H_ */
+namespace elm { namespace json {
+
+class Exception: public elm::MessageException {
+public:
+	inline Exception(string message): elm::MessageException(message) { }
+};
+
+} }		// elm::json
+
+#endif /* ELM_JSON_COMMON_H_ */

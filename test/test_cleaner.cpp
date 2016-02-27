@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	cleaner module test
  *
  *	This file is part of OTAWA

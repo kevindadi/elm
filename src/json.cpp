@@ -45,21 +45,35 @@ namespace elm { namespace json {
 /**
  */
 Saver::Saver(io::OutStream& out)
-: state(BEGIN), _stream(0), buf(out), _out(buf), readable(false), indent("\t") {
+: state(BEGIN), readable(false), indent("\t"), buf(0), str(0) {
+	buf = new io::BufferedOutStream(out);
+	_out.setStream(*buf);
+}
+
+/**
+ */
+Saver::Saver(StringBuffer& sbuf)
+: state(BEGIN), readable(false), indent("\t"), buf(0), str(0) {
+	_out.setStream(sbuf.stream());
 }
 
 /**
  */
 Saver::Saver(sys::Path& path) throw(io::IOException)
-: state(BEGIN), _stream(0), buf(io::out), _out(buf), readable(false), indent("\t") {
-	_stream = sys::System::createFile(path);
-	buf.setStream(*_stream);
+: state(BEGIN), readable(false), indent("\t"), buf(0), str(0) {
+	str = sys::System::createFile(path);
+	buf = new io::BufferedOutStream(*str);
+	_out.setStream(*buf);
 }
 
 /**
  */
 Saver::~Saver(void) throw(io::IOException, Exception) {
 	close();
+	if(buf)
+		delete buf;
+	if(str)
+		delete str;
 }
 
 /**
@@ -67,9 +81,7 @@ Saver::~Saver(void) throw(io::IOException, Exception) {
  */
 void Saver::close(void) {
 	ASSERTP(state == END, "json: unended output!");
-	buf.flush();
-	if(_stream)
-		delete _stream;
+	_out.flush();
 }
 
 /**

@@ -8,6 +8,7 @@
 #define ELM_STRING_H
 
 #include <string.h>
+#include <elm/string/Char.h>
 #include <elm/string/CString.h>
 #include <elm/string/String.h>
 #include <elm/string/StringBuffer.h>
