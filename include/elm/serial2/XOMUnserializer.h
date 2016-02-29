@@ -1,8 +1,22 @@
 /*
- * $Id$
- * Copyright (c) 2006, IRIT - UPS.
+ *	XOMUnserializer class interface
  *
- * XOMUnserializer class interface.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2006, IRIT UPS.
+ *
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_SERIAL2_XOM_UNSERIALIZER_H
 #define ELM_SERIAL2_XOM_UNSERIALIZER_H
@@ -29,6 +43,8 @@ public:
 	XOMUnserializer(xom::Element *element);
 	XOMUnserializer(elm::CString path);
 	~XOMUnserializer(void);
+	inline ExternalSolver& solver(void) const { return *_solver; }
+	inline void setSolver(ExternalSolver& solver) { _solver = &solver; }
 
 	// XOMUnserializer overload
 	virtual void flush(void);
@@ -64,7 +80,7 @@ private:
 	typedef struct patch_t {
 		struct patch_t *next;
 		void **ptr;
-		inline patch_t(void **_ptr): ptr(_ptr) { };
+		inline patch_t(void **_ptr): next(0), ptr(_ptr) { };
 	} patch_t;
 
 	typedef struct ref_t {
@@ -87,6 +103,7 @@ private:
 	elm::genstruct::HashTable<CString,  ref_t *> refs;
 	elm::genstruct::Vector<context_t> stack;
 	elm::genstruct::Vector<Pair<cstring, ref_t *> > pending;
+	ExternalSolver *_solver;
 
 	void embed(AbstractType& clazz, void **ptr);
 };

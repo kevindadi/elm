@@ -1,10 +1,23 @@
 /*
- * $Id$
- * Copyright (c) 2006, IRIT UPS.
+ *	serial module implementation
  *
- * serialization implementation.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2006, IRIT UPS.
+ *
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
 #include <elm/serial2/serial.h>
 #include <elm/genstruct/HashTable.h>
 #include <elm/util/Initializer.h>
@@ -378,5 +391,53 @@ static VoidType void_type;
  */
 AbstractType& AbstractType::T_VOID = void_type;
 
+
+/**
+ * @class ExternalSolver
+ * The external solver is used by @ref Serializer and @ref Unserializer classes
+ * to solve reference to object out of the scope the currently serialized / unserialized
+ * object.
+ *
+ * For serializing, the solver provides references to object that does not need to be
+ * serialized but a reference is obtained and stored instead.
+ *
+ * For unserializing, this solver provide pointer to object internal to the user application
+ * and that are linked with unserialized objects. When a reference cannot be solved, it is
+ * considered as being provided by the application and the solver is called for solving it.
+ *
+ * Its default implementation considers there is not external object.
+ * @ingroup serial
+ */
+
+
+/**
+ * Null external solver.
+ */
+ExternalSolver ExternalSolver::null;
+
+/**
+ */
+ExternalSolver::~ExternalSolver(void) {
+}
+
+/**
+ * Try to resolve an external reference.
+ * @param ref	Reference to resolve.
+ * @return		Reference to matching object or null.
+ */
+void *ExternalSolver::solve(string ref) {
+	return 0;
+}
+
+
+/**
+ * Test if the given object is an external object
+ * and return its reference.
+ * @param object	Object to test for.
+ * @return			External reference of the object or an empty string.
+ */
+string ExternalSolver::ref(void *object) {
+	return "";
+}
 	
 } } // elm::serial2

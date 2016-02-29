@@ -78,14 +78,10 @@ set(LIBELM_LA_SOURCES
 	"option_IntOption.cpp"
 	"option_ListOption.cpp"
 	"option_Manager.cpp"
-	"serial_Serializer.cpp"
-	"serial_SerialClass.cpp"
 	"option_StandardOption.cpp"
 	"option_StringList.cpp"
 	"option_StringOption.cpp"
 	"option_SwitchOption.cpp"
-	"serial_TextSerializer.cpp"
-	"serial_Unserializer.cpp"
 	"option_ValueOption.cpp"
 	"serial2_serial.cpp"
 	"serial2_TextSerializer.cpp"
@@ -151,7 +147,6 @@ endif()
 # optional xom module
 if(LIBXML2_FOUND)
 	list(APPEND LIBELM_LA_SOURCES
-		"serial_XOMUnserializer.cpp"
 		"serial2_XOMUnserializer.cpp"
 		"serial2_XOMSerializer.cpp"
 		"xom_Attribute.cpp"

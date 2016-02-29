@@ -1,8 +1,22 @@
 /*
- * $Id$
- * Copyright (c) 2006, IRIT - UPS.
+ *	XOMUnserializer class implementation
  *
- * src/serial_XOMUnserializer.cpp -- XOMUnserializer class implementation.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2006, IRIT UPS.
+ *
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #include <elm/assert.h>
 #include <elm/xom.h>
@@ -14,7 +28,39 @@ namespace elm { namespace serial2 {
 
 /**
  * @class XOMUnserializer
- * Unserializer from XML using XOM API.
+ * This class an unserializer for XML files using XOM module.
+ *
+ * The XML file / node must meet the following rules:
+ *
+ * @li An object is serialized by an XML element. XML element name
+ * is not important as the deserialization is led by the C++ types.
+ *
+ * @li An element representing an object supports the "id" attribute
+ * to implemenet pointer or references to it.
+ *
+ * @li unserializing of an object is led by the reference or
+ * the pointer of access but the actual type, if different,
+ * is given by a "class" providing the fully qualified C++ path
+ * of the class.
+ *
+ * @li A pointer or a reference field are implemented either by
+ * included the pointed or referenced object inside the element,
+ * or by providing a "ref" attribute with the identifier of the object.
+ *
+ * @li Null pointers have a special "ref" attribute with value "NULL".
+ *
+ * @li Field are implemented as sub-element of the object element
+ * whose name is the field name.
+ *
+ * @li Compound object is implemented with a sub-element for each
+ * item of the compound.
+ *
+ * @li Enumeration are serialized using their non-qualified identifier
+ * string.
+ *
+ * @li Other values must be serialized as human readable text nodes.
+ *
+ *
  * @ingroup serial
  */
 
@@ -52,7 +98,7 @@ void XOMUnserializer::ref_t::record(void *_ptr) {
  * @param element	XOM element to use.
  */
 XOMUnserializer::XOMUnserializer(xom::Element *element)
-: doc(0) {
+: doc(0), _solver(&ExternalSolver::null) {
 	ctx.elem = element;
 }
 
@@ -62,7 +108,7 @@ XOMUnserializer::XOMUnserializer(xom::Element *element)
  * @param path	Path document to unserialize from.
  */
 XOMUnserializer::XOMUnserializer(elm::CString path)
-: doc(0) {
+: doc(0), _solver(&ExternalSolver::null) {
 	ctx.elem = 0;
 	xom::Builder builder;
 	doc = builder.build(path);
@@ -80,6 +126,21 @@ XOMUnserializer::~XOMUnserializer(void) {
 	if(doc)
 		delete doc;
 }
+
+
+/**
+ * @fn ExternalSolver& XOMUnserializer::solver(void) const;
+ * Get the current solver of external entities. External entities are
+ * objects provided by the application with which serialized objects ma be linked.
+ * @return	Current external solver.
+ */
+
+
+/**
+ * @fn void XOMUnserializer::setSolver(ExternalSolver& solver);
+ * Set the current external solver.
+ * @param solver	New solver to use.
+ */
 
 
 /**
@@ -110,8 +171,14 @@ void XOMUnserializer::flush(void) {
 
 				// look for the element
 				xom::Element *elem = elems.get(pair.fst, 0);
-				if(!elem)
-					throw io::IOException(_ << "unresolved reference \"" << pair.fst << "\"");
+				if(!elem) {
+					void *obj = _solver->solve(pair.fst);
+					if(!obj)
+						throw io::IOException(_ << "unresolved reference \"" << pair.fst << "\"");
+					else
+						// TODO	Add type checking.
+						pair.snd->record(obj);
+				}
 				ctx.elem = elem;
 
 				// unserialize the object
@@ -158,9 +225,9 @@ void XOMUnserializer::onPointer(AbstractType& clazz, void **ptr) {
 	Option<xom::String> id = ctx.elem->getAttributeValue("ref");
 
 	if(id) {
-		if (id == "NULL") {
+		if (id == "NULL")
 			*ptr = NULL;
-		} else {
+		else {
 			ref_t *ref = refs.get(id, 0);
 			if(!ref) {
 				ref = new ref_t(clazz);
