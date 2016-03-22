@@ -370,11 +370,11 @@ double Input::scanDouble(void) {
 			chr = get();
 		if(chr < '0' || chr > '9')
 			throw IOException("bad formatted float value");
-		while(chr >= '0' || chr <= '9') {
+		while(chr >= '0' && chr <= '9') {
 			exp = exp * 10 + (chr - '0');
 			chr = get();
 		}
-		value = value + pow(10, exp);
+		value = value * pow(10, exp);
 	}
 
 	// Return result

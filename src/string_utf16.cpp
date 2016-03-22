@@ -1,5 +1,5 @@
 /*
- *	json module interface
+ *	utf16 module implementation
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2016, IRIT UPS.
@@ -18,10 +18,32 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_JSON_H_
-#define ELM_JSON_H_
 
-#include <elm/json/Parser.h>
-#include <elm/json/Saver.h>
+#include <elm/string/utf16.h>
 
-#endif /* ELM_JSON_H_ */
+namespace elm { namespace utf16 {
+
+/**
+ * @class Char
+ * Wrapper class around UTF-16 16 bits characters.
+ * @ingroup string
+ */
+
+
+/**
+ * Convert UTF-16 to UTF-8, to be embedded in a string.
+ * @param buf	Buffer to convert to.
+ */
+void Char::toUTF8(StringBuffer& buf) {
+	if(c <= 0x7F)
+		buf << char(c);
+	else if(c <= 0x7FF)
+		buf << char(0b11000000 | (c >> 6))
+			<< char(0b10000000 | (c & 0x3f));
+	else
+		buf << char(0b11100000 | (c >> 12))
+			<< char(0b10000000 | ((c >> 6) & 0x3f))
+			<< char(0b10000000 | (c & 0x3f));
+}
+
+} }		// elm::utf16
