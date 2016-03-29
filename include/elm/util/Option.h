@@ -37,8 +37,8 @@ public:
 		{ one = opt.one; if(one) val = opt.val; return *this; }
 	inline Option<T>& operator=(T value)
 		{ one = true; type_info<T>::put(val, value); return *this; }
-	inline bool operator==(const OptionalNone& none) const { return isNone(); }
-	inline bool operator==(const Option<T> &opt) const
+	inline bool equals(const OptionalNone& none) const { return isNone(); }
+	inline bool equals(const Option<T> &opt) const
 		{ return (this->isNone() && opt.isNone()) || (this->isOne() && opt.isOne() && val == opt.val); }
 
 private:
