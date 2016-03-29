@@ -42,7 +42,8 @@ namespace serial2 {
 class XOMUnserializer: public Unserializer {
 public:
 	XOMUnserializer(xom::Element *element);
-	XOMUnserializer(elm::CString path);
+	XOMUnserializer(const char *path);
+	XOMUnserializer(cstring path);
 	XOMUnserializer(sys::Path path);
 	~XOMUnserializer(void);
 	inline ExternalSolver& solver(void) const { return *_solver; }
@@ -107,8 +108,9 @@ private:
 	elm::genstruct::Vector<Pair<cstring, ref_t *> > pending;
 	ExternalSolver *_solver;
 
+	void init(cstring path);
 	void embed(AbstractType& clazz, void **ptr);
-	string xline(xom::Node *element);
+	string xline(xom::Element *element);
 };
 
 } } // elm::serial2

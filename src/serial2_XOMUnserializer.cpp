@@ -107,15 +107,19 @@ XOMUnserializer::XOMUnserializer(xom::Element *element)
  * Build an unserializer from the given XOM document.
  * @param path	Path document to unserialize from.
  */
-XOMUnserializer::XOMUnserializer(elm::CString path)
+XOMUnserializer::XOMUnserializer(const char *path)
 : doc(0), _solver(&ExternalSolver::null) {
-	ctx.elem = 0;
-	xom::Builder builder;
-	doc = builder.build(path);
-	if(!doc)
-		throw io::IOException(_ << "cannot open \"" << path << "\"");
-	ctx.elem = doc->getRootElement();
-	ASSERT(ctx.elem);
+	init(path);
+}
+
+
+/**
+ * Build an unserializer from the given XOM document.
+ * @param path	Path document to unserialize from.
+ */
+XOMUnserializer::XOMUnserializer(cstring path)
+: doc(0), _solver(&ExternalSolver::null) {
+	init(path);
 }
 
 
@@ -125,9 +129,18 @@ XOMUnserializer::XOMUnserializer(elm::CString path)
  */
 XOMUnserializer::XOMUnserializer(sys::Path path)
 : doc(0), _solver(&ExternalSolver::null) {
+	init(path.toString().toCString());
+}
+
+
+/**
+ * Initialization from a named path.
+ * @param path	Path name.
+ */
+void XOMUnserializer::init(cstring path) {
 	ctx.elem = 0;
 	xom::Builder builder;
-	doc = builder.build(path.toString().toCString());
+	doc = builder.build(path);
 	if(!doc)
 		throw io::IOException(_ << "cannot open \"" << path << "\"");
 	ctx.elem = doc->getRootElement();
@@ -238,7 +251,7 @@ void XOMUnserializer::embed(AbstractType& clazz, void **ptr) {
  * @param element	Element to get line information.
  * @return			File and line information of the element.
  */
-string XOMUnserializer::xline(xom::Node *element) {
+string XOMUnserializer::xline(xom::Element *element) {
 	return _ << doc->getBaseURI() << ":" << element->line();
 }
 
