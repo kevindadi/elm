@@ -25,6 +25,7 @@
 #include <elm/genstruct/Vector.h>
 #include <elm/serial2/serial.h>
 #include <elm/serial2/Unserializer.h>
+#include <elm/sys/Path.h>
 #include <elm/util/Pair.h>
 
 namespace elm {
@@ -42,6 +43,7 @@ class XOMUnserializer: public Unserializer {
 public:
 	XOMUnserializer(xom::Element *element);
 	XOMUnserializer(elm::CString path);
+	XOMUnserializer(sys::Path path);
 	~XOMUnserializer(void);
 	inline ExternalSolver& solver(void) const { return *_solver; }
 	inline void setSolver(ExternalSolver& solver) { _solver = &solver; }
@@ -106,6 +108,7 @@ private:
 	ExternalSolver *_solver;
 
 	void embed(AbstractType& clazz, void **ptr);
+	string xline(xom::Node *element);
 };
 
 } } // elm::serial2

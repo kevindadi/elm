@@ -120,6 +120,22 @@ XOMUnserializer::XOMUnserializer(elm::CString path)
 
 
 /**
+ * Build an unserializer from the given XOM document.
+ * @param path	Path document to unserialize from.
+ */
+XOMUnserializer::XOMUnserializer(sys::Path path)
+: doc(0), _solver(&ExternalSolver::null) {
+	ctx.elem = 0;
+	xom::Builder builder;
+	doc = builder.build(path.toString().toCString());
+	if(!doc)
+		throw io::IOException(_ << "cannot open \"" << path << "\"");
+	ctx.elem = doc->getRootElement();
+	ASSERT(ctx.elem);
+}
+
+
+/**
  */
 XOMUnserializer::~XOMUnserializer(void) {
 	flush();
@@ -214,6 +230,16 @@ void XOMUnserializer::embed(AbstractType& clazz, void **ptr) {
 	beginObject(*uclass, *ptr);
 	uclass->unserialize(*this, *ptr);
 	endObject(clazz, ptr);
+}
+
+
+/**
+ * Produce a line information to output error.
+ * @param element	Element to get line information.
+ * @return			File and line information of the element.
+ */
+string XOMUnserializer::xline(xom::Node *element) {
+	return _ << doc->getBaseURI() << ":" << element->line();
 }
 
 
@@ -360,7 +386,12 @@ void XOMUnserializer::onValue(bool& val) {
 	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
-	in >> val;
+	try {
+		in >> val;
+	}
+	catch(io::IOException& e) {
+		throw io::IOException(_ << xline(ctx.elem) << ": malformed integer");
+	}
 	text.free();
 }
 
@@ -408,7 +439,12 @@ void XOMUnserializer::onValue(signed short& val) {
 	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
-	in >> val;
+	try {
+		in >> val;
+	}
+	catch(io::IOException& e) {
+		throw io::IOException(_ << xline(ctx.elem) << ": malformed integer");
+	}
 	text.free();
 }
 
@@ -419,7 +455,12 @@ void XOMUnserializer::onValue(unsigned short& val) {
 	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
-	in >> val;
+	try {
+		in >> val;
+	}
+	catch(io::IOException& e) {
+		throw io::IOException(_ << xline(ctx.elem) << ": malformed integer");
+	}
 	text.free();
 }
 
@@ -430,7 +471,12 @@ void XOMUnserializer::onValue(signed long& val) {
 	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
-	in >> val;
+	try {
+		in >> val;
+	}
+	catch(io::IOException& e) {
+		throw io::IOException(_ << xline(ctx.elem) << ": malformed integer");
+	}
 	text.free();
 }
 
@@ -441,7 +487,12 @@ void XOMUnserializer::onValue(unsigned long& val) {
 	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
-	in >> val;
+	try {
+		in >> val;
+	}
+	catch(io::IOException& e) {
+		throw io::IOException(_ << xline(ctx.elem) << ": malformed integer");
+	}
 	text.free();
 }
 
@@ -452,7 +503,12 @@ void XOMUnserializer::onValue(signed int& val) {
 	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
-	in >> val;
+	try {
+		in >> val;
+	}
+	catch(io::IOException& e) {
+		throw io::IOException(_ << xline(ctx.elem) << ": malformed integer");
+	}
 	text.free();
 }
 
@@ -463,7 +519,12 @@ void XOMUnserializer::onValue(unsigned int& val) {
 	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
-	in >> val;
+	try {
+		in >> val;
+	}
+	catch(io::IOException& e) {
+		throw io::IOException(_ << xline(ctx.elem) << ": malformed integer");
+	}
 	text.free();
 }
 
@@ -474,7 +535,12 @@ void XOMUnserializer::onValue(signed long long& val) {
 	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
-	in >> val;
+	try {
+		in >> val;
+	}
+	catch(io::IOException& e) {
+		throw io::IOException(_ << xline(ctx.elem) << ": malformed integer");
+	}
 	text.free();
 }
 
@@ -485,7 +551,12 @@ void XOMUnserializer::onValue(unsigned long long& val) {
 	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
-	in >> val;
+	try {
+		in >> val;
+	}
+	catch(io::IOException& e) {
+		throw io::IOException(_ << xline(ctx.elem) << ": malformed integer");
+	}
 	text.free();
 }
 
@@ -496,7 +567,12 @@ void XOMUnserializer::onValue(float& val) {
 	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
-	in >> val;
+	try {
+		in >> val;
+	}
+	catch(io::IOException& e) {
+		throw io::IOException(_ << xline(ctx.elem) << ": malformed float value");
+	}
 	text.free();
 }
 
@@ -507,7 +583,12 @@ void XOMUnserializer::onValue(double& val) {
 	xom::String text = ctx.elem->getValue();
 	io::BlockInStream block(text);
 	in.setStream(block);
-	in >> val;
+	try {
+		in >> val;
+	}
+	catch(io::IOException& e) {
+		throw io::IOException(_ << xline(ctx.elem) << ": malformed float value");
+	}
 	text.free();
 }
 
@@ -519,7 +600,12 @@ void XOMUnserializer::onValue(long double& v) {
 	io::BlockInStream block(text);
 	in.setStream(block);
 	double aux;
-	in >> aux;
+	try {
+		in >> aux;
+	}
+	catch(io::IOException& e) {
+		throw io::IOException(_ << xline(ctx.elem) << ": malformed float value");
+	}
 	v = aux;
 	text.free();
 }
