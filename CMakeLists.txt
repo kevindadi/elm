@@ -90,8 +90,10 @@ find_program(GDB_PATH gdb)
 message(STATUS "GDB_PATH = " ${GDB_PATH})
 if(GDB_PATH)
 	set(CRASH_HANDLER "GDBCrashHandler::DEFAULT")
-	message(STATUS "crash handler is " ${CRASH_HANDLER})
+else()
+	set(CRASH_HANDLER "CrashHandler::DEFAULT")
 endif(GDB_PATH)
+message(STATUS "crash handler is " ${CRASH_HANDLER})
 
 
 #process subdirectories

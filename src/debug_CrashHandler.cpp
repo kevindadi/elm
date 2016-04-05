@@ -192,6 +192,7 @@ t::uint32 CrashHandler::_mode = 0;
 
 
 /* Initialize / finalize */
+
 class CrashMonitor {
 public:
 	CrashMonitor(void): mode(0) {

@@ -131,8 +131,9 @@ set(LIBELM_LA_SOURCES
 # optional crash handler
 if(GDB_PATH AND UNIX AND NOT WIN32 AND NOT WIN64)
 	# be careful: the order of these sources matters for static object initialization
-	list(APPEND LIBELM_LA_SOURCES "debug_GDBCrashHandler.cpp" "debug_CrashHandler.cpp")
+	list(APPEND LIBELM_LA_SOURCES "debug_GDBCrashHandler.cpp")
 endif()
+list(APPEND LIBELM_LA_SOURCES "debug_CrashHandler.cpp")
 
 
 # optional socket
