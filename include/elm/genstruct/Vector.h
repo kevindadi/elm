@@ -53,6 +53,22 @@ public:
 		const Vector<T>& _vec;
 		int i;
 	};
+	
+	// MutableIterator
+	class MutableIterator: public PreIterator<MutableIterator, T&> {
+	public:
+		friend class Vector;
+		inline MutableIterator(Vector& vec): _vec(vec), i(0) { }
+		inline MutableIterator(const MutableIterator& iter): _vec(iter._vec), i(iter.i) { }
+		inline bool ended(void) const { return i >= _vec.length(); }
+		inline T& item(void) const { return _vec[i]; }
+		inline void next(void) { i++; }
+		inline int index(void) { return i; }
+		Vector<T>& vector(void) { return _vec; }
+	private:
+		Vector<T>& _vec;
+		int i;
+	};
 
 	// Accessors
 	int count(void) const { return cnt; }
@@ -93,6 +109,7 @@ public:
 	void removeAt(int index);
 	inline void remove(const T& value) { int i = indexOf(value); if(i >= 0) removeAt(i); }
 	inline void remove(const Iterator& iter) { removeAt(iter.i); }
+	inline void remove(const MutableIterator& iter) { removeAt(iter.i); }
 	template <template <class _> class C> inline void removeAll(const C<T>& items)
 		{ for(typename C<T>::Iterator item(items); item; item++) remove(item); }
 	void insert(int index, const T& value);
