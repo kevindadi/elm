@@ -47,16 +47,15 @@ public:
 	static io::OutStream *createFile(const Path& path) throw(SystemException);
 	static io::OutStream *appendFile(const Path& path) throw(SystemException);
 	static io::InStream *readFile(const Path& path) throw(SystemException);
-	static io::RandomAccessStream *openRandomFile(const Path& path, access_t access = READ)
-		throw(SystemException);
-	static io::RandomAccessStream *createRandomFile(const Path& path, access_t access = READ)
-		throw(SystemException);
+	static io::RandomAccessStream *openRandomFile(const Path& path, access_t access = READ) throw(SystemException);
+	static io::RandomAccessStream *createRandomFile(const Path& path, access_t access = READ) throw(SystemException);
 	static Path getUnitPath(void *address);
 	static cstring getEnv(cstring key);
 	static bool hasEnv(cstring key);
 	static cstring library_prefix, library_suffix, exec_suffix;
 	static string getLibraryFileName(const string& name);
 	static string getPluginFileName(const string& name);
+	static void makeDir(const sys::Path& path) throw(SystemException);
 };
 
 } } // elm::system

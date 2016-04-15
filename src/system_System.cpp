@@ -507,13 +507,8 @@ Path System::getUnitPath(void *address) {
 	Dl_info info;
 	if(!dladdr(address, &info))
 		return "";
-	else {
-		/*cerr << "dli_fname = " << info.dli_fname << io::endl;
-	 cerr << "dli_fbase = " << info.dli_fbase << io::endl;
-	 cerr << "dli_sname = " << info.dli_sname << io::endl;
-	 cerr << "dli_saddr = " << info.dli_saddr << io::endl;*/
+	else
 		return Path(info.dli_fname).canonical();
-	}
 #elif defined(__WIN32) || defined(__WIN64)
 	MEMORY_BASIC_INFORMATION mbi;
 	if(VirtualQuery(address,&mbi,sizeof(mbi)) == 0)
@@ -604,6 +599,22 @@ cstring System::getEnv(cstring key) {
  */
 bool System::hasEnv(cstring key) {
 	return getenv(&key);
+}
+
+/**
+ * Build the directory matching the given path.
+ * @param path	Path of the directory to build.
+ * @throw SystemException	If the directory cannot be built.
+ */
+void System::makeDir(const sys::Path& path) throw(SystemException) {
+#	if defined(__WIN32) || defined(__WIN64)
+		if(!CreateDirectory(&path.toString().toCString(), NULL))
+			throw SystemException(0, _ << "cannot create " << path << ": " << win::getErrorMessage()));
+#	else
+		int r = mkdir(&path.toString().toCString(), 0777);
+		if(r)
+			throw SystemException(r, _ << "cannot create " << path << ": " << strerror(errno));
+#	endif
 }
 
 } } // elm::sys
