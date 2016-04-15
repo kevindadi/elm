@@ -22,10 +22,8 @@
 #ifndef ELM_XOM_STRING_H
 #define ELM_XOM_STRING_H
 
-#include <string.h>
 #include <elm/string.h>
 #include <elm/io.h>
-#include <stdlib.h>
 
 namespace elm { namespace xom {
 
@@ -46,8 +44,13 @@ public:
 	inline String(const String& str): CString(str) { }
 
 	// Buffer management
-	inline void copy(void) { buf = strdup(chars()); }
-	inline void free(void) { ::free((void *)buf); buf = ""; }
+	void copy(void);
+	void free(void);
+
+	// Other operations
+	void escape(io::OutStream& out) const;
+	inline void escape(io::Output& out) const { escape(out.stream()); }
+	inline elm::string escape(void) const { StringBuffer buf; escape(buf.stream()); return buf.toString(); }
 
 	// Operators
 	inline String& operator=(const String& str) { buf = str.buf; return *this; }

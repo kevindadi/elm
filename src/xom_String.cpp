@@ -1,6 +1,5 @@
 /*
- *	$Id$
- *	string inclusion file
+ *	xom::String class implementation
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2006-07, IRIT UPS.
@@ -22,7 +21,46 @@
 
 #include <elm/xom/String.h>
 #include "xom_macros.h"
+#include <string.h>
+#include <stdlib.h>
 
 namespace elm { namespace xom {
+
+/**
+ * @class String
+ * String class used in XOM XML extension.
+ */
+
+/**
+ * Copy the string (ensuring independence from the initialization string).
+ */
+void String::copy(void) {
+	buf = strdup(chars());
+}
+
+/**
+ * Free the string contained in this object.
+ * Usually only used if a call to @ref copy() has been performed.
+ */
+void String::free(void) {
+	::free((void *)buf);
+	buf = "";
+}
+
+/**
+ * The string is output and XML special characters are escaped
+ * (mainly <, > and &).
+ * @param out	Stream to output to.
+ */
+void String::escape(io::OutStream& out) const {
+	const char *p = buf;
+	while(*p)
+		switch(*p) {
+		case '<':	out.write("&lt;", 4); break;
+		case '>':	out.write("&gt;", 4); break;
+		case '&':	out.write("&amp;", 5); break;
+		default:	out.write(*p); break;
+		}
+}
 
 } } // xelm::xom
