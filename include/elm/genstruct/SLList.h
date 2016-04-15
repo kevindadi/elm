@@ -145,6 +145,8 @@ public:
 	// operators
 	inline SLList<T>& operator+=(const T& h) { addFirst(h); return *this; }
 	inline SLList<T>& operator+=(const SLList<T>& l) { addAll(l); return *this; }
+	inline bool operator==(const SLList<T>& l) const 
+		{ Iterator i(*this),j(l); for(; i&&j; i++,j++) if(! E::equals(i,j)) return false; return !i&&!j; }
 
 private:
 	inhstruct::SLList _list;
