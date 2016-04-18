@@ -22,8 +22,8 @@
 namespace elm {
 
 /**
- * @defgroup array		Array
- * This group provides optimized to work with C native array (whatever the running OS).
+ * @namespace array
+ * This namespace provides optimized to work with C native array (whatever the running OS).
  *
  * Most of these functions uses information of the type provided by the type_info<T> structure
  * to optimize or not the array operations. Particularly, they uses the is_deep definition
@@ -36,6 +36,8 @@ namespace elm {
  *	enum { is_deep = true };
  * }
  * @endcode
+ *
+ * @ingroup types
  */
 
 
