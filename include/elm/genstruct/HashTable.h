@@ -37,6 +37,7 @@ class HashTable {
 		node_t *next;
 		K key;
 		T value;
+		node_t(const K& key) : key(key) { }
 	} node_t;
 
 	int size;
@@ -53,8 +54,8 @@ class HashTable {
 	}
 
 	node_t *make(const K& key, const T& value)
-		{ int i = H::hash(key) % size; node_t *node = new node_t; node->next = tab[i];
-		tab[i] = node; node->key = key; node->value = value; return node; }
+		{ int i = H::hash(key) % size; node_t *node = new node_t(key); node->next = tab[i];
+		tab[i] = node; node->value = value; return node; }
 
 	// InternIterator
 	class InternIterator {
