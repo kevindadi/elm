@@ -29,13 +29,14 @@ TEST_BEGIN(hashkey)
 
 	// generic hash
 	{
-		typedef int t[3];
-		t t1 = { 0, 1, 2 };
-		t t2 = { 0, 1, 2 };
-		t t3 = { 2, 1, 0 };
+		typedef string t;
+		t t1 = "012";
+		t t2 = "012";
+		t t3 = "210";
 		typedef HashKey<t> ht;
 		CHECK_EQUAL(ht::hash(t1), ht::hash(t1));
 		CHECK_EQUAL(ht::hash(t1), ht::hash(t2));
+		cerr << "DEBUG: " << (t1 == t2) << io::endl;
 		CHECK(ht::equals(t1, t1));
 		CHECK(ht::equals(t1, t2));
 		CHECK(!ht::equals(t1, t3));

@@ -9,6 +9,7 @@
 
 #include <elm/types.h>
 #include <elm/string.h>
+#include <elm/util/Equiv.h>
 #include <elm/util/Option.h>
 
 namespace elm {
@@ -25,56 +26,19 @@ bool hash_equals(const void *p1, const void *p2, int size);
 template <class T> class HashKey {
 public:
 	static t::hash hash(const T& key) { return hash_jenkins(&key, sizeof(T)); };
-	static inline bool equals(const T& key1, const T& key2) { return &key1 == &key2 || hash_equals(&key1, &key2, sizeof(T)); }
+	static inline bool equals(const T& key1, const T& key2) { return &key1 == &key2 || Equiv<T>::equals(key1, key2); }
 };
 
 template <class T> class HashKey<const T&> {
 public:
 	static t::hash hash(const T& key) { return hash_jenkins(&key, sizeof(T)); };
-	static inline bool equals(const T& key1, const T& key2) { return &key1 == &key2 || hash_equals(&key1, &key2, sizeof(T)); }
+	static inline bool equals(const T& key1, const T& key2) { return &key1 == &key2 || Equiv<T>::equals(key1, key2); }
 };
 
 template <class T> class HashKey<T&> {
 public:
 	static t::hash hash(const T& key) { return hash_jenkins(&key, sizeof(T)); };
-	static inline bool equals(const T& key1, const T& key2) { return &key1 == &key2 || hash_equals(&key1, &key2, sizeof(T)); }
-};
-
-
-// Predefined hash keys
-template <> class HashKey<int> {
-public:
-	static inline t::hash hash(int key) { return (unsigned long)key; }
-	static inline bool equals(int key1, int key2) { return key1 == key2; }
-};
-
-template <> class HashKey<void *> {
-public:
-	static inline t::hash hash(void *key) { return t::hash(key); }
-	static inline bool equals(void *key1, void *key2) { return key1 == key2; } 
-};
-
-template <> class HashKey<const void *> {
-public:
-	static inline t::hash hash(const void *key) { return t::hash(key); }
-	static inline bool equals(const void *key1, const void *key2)
-		{ return key1 == key2; }
-};
-
-template <> class HashKey<CString> {
-public:
-	static t::hash hash(CString key)
-		{ return hash_cstring(&key); }
-	static inline bool equals(CString key1, CString key2)
-		{ return key1 == key2; }
-};
-
-template <> class HashKey<String> {
-public:
-	static t::hash hash(const String& key)
-		{ return hash_string(key.chars(), key.length()); };
-	static inline bool equals(const String& key1, const String& key2)
-		{ return key1 == key2; };
+	static inline bool equals(const T& key1, const T& key2) { return &key1 == &key2 || Equiv<T>::equals(key1, key2); }
 };
 
 };	// elm
