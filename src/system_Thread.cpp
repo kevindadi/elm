@@ -61,7 +61,7 @@ Runnable::~Runnable(void) {
 
 
 /**
- * Cause the thread to stop immediatelly.
+ * Cause the thread to stop immediately.
  */
 void Runnable::stop(void) {
 	thr->stop();

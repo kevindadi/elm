@@ -297,7 +297,7 @@ Exception::Exception(const string& message): elm::MessageException(message) {
 
 
 /**
- * Build a server without specifiying a precise port.
+ * Build a server without specifying a precise port.
  * @return	Built server socket.
  */
 ServerSocket *ServerSocket::make(void) {

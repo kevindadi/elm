@@ -23,7 +23,7 @@ namespace elm { namespace util {
  * escape sequence).</li>
  * </ul>
  * @par
- * Note that two times the escape character is replaced by one occurence of the
+ * Note that two times the escape character is replaced by one occurrence of the
  * escape character.
  */
 

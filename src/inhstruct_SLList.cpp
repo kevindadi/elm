@@ -13,7 +13,7 @@ namespace elm { namespace inhstruct {
 /**
  * @class SLNode <elm/inhstruct/SLList.h>
  * Single link node for SLList. It represents the nodes of the SLList
- * implementation. It is usally extended for getting real user nodes.
+ * implementation. It is usually extended for getting real user nodes.
  */
 
 /**

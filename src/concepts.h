@@ -296,7 +296,7 @@ public:
 	int indexOf(const T& value, int start = 0) const;
 
 	/**
-	 * Get the index of the last occurence of a value.
+	 * Get the index of the last occurrence of a value.
 	 * @param value	Value to find the last index of.
 	 * @param start	Index to start from.
 	 * @return		Index of the item or -1 if not found.

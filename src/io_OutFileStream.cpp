@@ -67,7 +67,7 @@ OutFileStream::OutFileStream(const char *path)
 
 /**
  * Build an output file stream by creating a new file or deleting an old one.
- * @param path Path of the file to wriet to.
+ * @param path Path of the file to write to.
  */
 #if defined(__unix) || defined(__APPLE__)
 OutFileStream::OutFileStream(const Path& path)

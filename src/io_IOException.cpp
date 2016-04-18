@@ -140,7 +140,7 @@ namespace elm { namespace io {
  * following functions:
  * @li write(buffer) -- write some bytes from the given buffer,
  * @li write() -- write one byte,
- * @li @ref flush() -- ensures that all written btes have been transfered to
+ * @li @ref flush() -- ensures that all written btes have been transferred to
  * the media.
  * ELM provides byte output streams for files (@ref OutFileStream), for memory
  * blocks (@ref BlockOutStream) or system pipes (@ref PipeOutStream).

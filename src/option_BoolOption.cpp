@@ -36,8 +36,8 @@ namespace elm { namespace option {
  * !!TODO!!
  * Very sad side effect not detected by compiler BoolOption(_, _, str, str) is viewed as first cast,
  * last string being converted to boolean.
- * Too bad for user. Perhaps change the order of constructors. Else either the default intialization
- * must be mandatory or onyl one complete form of option building muste exists.
+ * Too bad for user. Perhaps change the order of constructors. Else either the default initialization
+ * must be mandatory or only one complete form of option building muste exists.
  * Same problem arises with strings and there is no solution.
  */
 

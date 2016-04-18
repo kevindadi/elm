@@ -80,7 +80,7 @@ void GDBCrashHandler::handle(void) {
 		abort();
 	}
 
-	// Make GDB proces
+	// Make GDB process
 	wait_pid = getpid();
 	int gdb_pid = fork();
 	if(gdb_pid == -1)

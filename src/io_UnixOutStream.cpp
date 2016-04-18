@@ -51,7 +51,7 @@ UnixOutStream::UnixOutStream(int fd): _fd(fd) {
 
 
 /**
- * Return the last occured error message.
+ * Return the last occurred error message.
  * @return	Last error message.
  */
 CString UnixOutStream::lastErrorMessage(void) {

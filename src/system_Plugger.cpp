@@ -255,7 +255,7 @@ void *Plugger::link(sys::Path lib) {
 /**
  * Look and load a library.
  * @param lib	Library path (OS extension automatically added).
- * @param rpath	List of paths to look in (if empty, look in OS pathes).
+ * @param rpath	List of paths to look in (if empty, look in OS paths).
  * @return		Hook on the library.
  */
 void *Plugger::lookLibrary(sys::Path lib, genstruct::Vector<string> rpath) {

@@ -458,7 +458,7 @@ void String::toc(void) const {
 
 
 /**
- * Find the first occurence of a substring.
+ * Find the first occurrence of a substring.
  * @param string	String to look for.
  * @param pos		Start position.
  */
@@ -478,7 +478,7 @@ int String::indexOf(const String& string, int pos) {
 
 
 /**
- * Find the last occurence of a substring.
+ * Find the last occurrence of a substring.
  * @param string	String to look for.
  * @param pos		Position to start to look before.
  */

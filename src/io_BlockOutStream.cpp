@@ -105,7 +105,7 @@ int BlockOutStream::flush(void) {
 
 /**
  * Convert the buffer to a CString object.
- * (this object must not be used after this call and the caller is reponsible
+ * (this object must not be used after this call and the caller is responsible
  * for freeing the C string buffer).
  * @return	Buffer converted to C string.
  */
