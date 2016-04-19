@@ -78,9 +78,20 @@ class Hasher {
 public:
 	inline Hasher(void): h(0) { }
 	template <class T> void add(const T& value) { h = h ^ HashKey<T>::hash(value); }
+	template <class T> Hasher& operator+=(const T& value) { add<T>(value); return *this; }
+	template <class T> Hasher& operator<<(const T& value) { add<T>(value); return *this; }
 	inline t::hash hash(void) const { return h; }
+	inline operator t::hash(void) const { return h; }
 private:
 	t::hash h;
+};
+
+// SelfHashKey class
+template <class T>
+class SelfHashKey {
+public:
+	static t::hash hash(const T& v) { return v.hash(); }
+	static bool equals(const T& v1, const T& v2) { return v1 == v2; }
 };
 
 };	// elm

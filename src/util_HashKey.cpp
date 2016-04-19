@@ -63,22 +63,30 @@ namespace elm {
  * 	template class<> class HashKey<MyClass> {
  * 	public:
  * 		static bool equals(const MyClass& o1, const MyClass& o2) { return o1 == o2; }
- * 		static t::hash hash(const MyClass& o) {
- * 			Hasher hasher;
- * 			hasher.add(f1);
- * 			hasher.add(f2);
- * 			hasher.add(f3);
- * 			return hasher.hash();
- * 		}
+ * 		static t::hash hash(const MyClass& o) { return Hasher() << f1 << f2 << f3; }
  * 	};
  * 	}	// elm
  * @endcode
+ *
+ *  @ingroup utility
  */
 
 
 /**
+ * @class SelfHashKey
+ * Simple hash key that looks in the object itself for the hash function
+ * and for the quality operator. The T must have the following methods:
+ * @li t::hash hash(void);
+ * @li bool operator==(const T& v);
+ *
+ * @param T		Type of hashed objects.
+ * @ingroup utility
+ */
+
+/**
  * Perform hashing according Jenkins approach
- * ().
+ * (https://en.wikipedia.org/wiki/Jenkins_hash_function).
+ * @ingroup utility
  */
 t::hash hash_jenkins(const void *block, int size) {
 	t::hash hash = 0;
@@ -98,6 +106,7 @@ t::hash hash_jenkins(const void *block, int size) {
 /**
  * Use a classical compiler string hashing algorithm (see "The Compilers"
  * by Aho, Sethi, Ullman).
+ * @ingroup utility
  */
 t::hash hash_string(const char *chars, int length) {
 	t::hash h = 0, g;
@@ -115,6 +124,7 @@ t::hash hash_string(const char *chars, int length) {
 /**
  * Use a classical compiler string hashing algorithm (see "The Compilers"
  * by Aho, Sethi, Ullman).
+ * @ingroup utility
  */
 t::hash hash_cstring(const char *chars) {
 	t::hash h = 0, g;
@@ -135,6 +145,7 @@ t::hash hash_cstring(const char *chars) {
  * @param p2	Second memory block.
  * @param size	Block size.
  * @return		True if they equals, byte to byte, false else.
+ * @ingroup utility
  */
 bool hash_equals(const void *p1, const void *p2, int size) {
 	return !memcmp(p1, p2, size);
