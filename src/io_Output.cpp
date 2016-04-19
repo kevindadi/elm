@@ -958,6 +958,24 @@ IntFormat byte(t::uint8 b) {
  * @param p		Padding character.
  */
 
+/**
+ * @class Tag
+ * This convenient class allow controlling the way an object
+ * is displayed, usually when the display must not conform to
+ * the default display method.
+ *
+ * Its template parameter P must be a class defining a type t,
+ * the type of the object to display and static function, print,
+ * that will be called to display the object of type t.
+ *
+ * What does @ref Tag class is just to record an instance of t
+ * and call P::print method on it at display time. This let
+ * the user to specialize the way the oibject is displayed at this
+ * point of the program.
+ *
+ * @ingroup ios
+ */
+
 } // io
 
 /**

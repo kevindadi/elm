@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 2.6)
 
 project("elm")
 
+if(ELM_STAT)
+	message(STATUS "ELM_STAT enabled")
+else()
+	message(STATUS "ELM_STAT disabled")
+endif()
+
 if(WIN32 OR WIN64 OR MINGW_LINUX)
 	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -shared-libgcc")
 endif()

@@ -73,6 +73,16 @@ public:
 	static inline bool equals(const String& key1, const String& key2) { return key1 == key2; };
 };
 
+// Hasher class
+class Hasher {
+public:
+	inline Hasher(void): h(0) { }
+	template <class T> void add(const T& value) { h = h ^ HashKey<T>::hash(value); }
+	inline t::hash hash(void) const { return h; }
+private:
+	t::hash h;
+};
+
 };	// elm
 
 #endif	// ELM_UTIL_HASH_KEY_H

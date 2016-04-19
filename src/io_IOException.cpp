@@ -119,6 +119,30 @@ namespace elm { namespace io {
  * 	IntFormat pointer = IntFormat().width(16).pad('0').right().hex();
  * @endcode
  *
+ * A last facility to specialize the way a data is formatted is the use of @ref Tag
+ * class. This template class takes a class as parameter that will be called
+ * to perform the actual display. Using tags, it is possible to specialize
+ * the display of particular object inside the usual flow of "<<" operators.
+ * The example below displays a string escaping the special characters "<", ">"
+ * and "&" in order, for example, to output HTML text:
+ * <code c++>
+ * class Escape {
+ * public:
+ * 		typedef string t;
+ * 		static void print(io::Output& out, t s) {
+ * 			for(int i = 0; i < s.length(); i++)
+ * 				switch(s[i]) {
+ * 				case '>':	out << "&gt;"; break;
+ * 				case '<':	out << "&lt;"; break;
+ * 				case '&':	out << "&amp;"; break;
+ * 				default:	out << s[i]; break;
+ * 				}
+ * 		}
+ * };
+ *
+ * string my_string;
+ * cout << Tag<Escape>(my_string) << io::endl;
+ * </code>
  * 
  * @section low_level Byte Streams
  * 

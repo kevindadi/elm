@@ -38,8 +38,47 @@ namespace elm {
 
 
 /**
+ * @class JenkinsHasher
+ * Perform compositional hashing of data (for hash table for example) combining hash
+ * of simple data using the XOR operation.
+ *
+ * Although the function @ref hash_jenkins() does the same, it is not recommended
+ * to use it as is on custom classes. Depending on the type of attributes,
+ * padding bytes may be inserted and not initialized. When the @ref hash_jenkins
+ * is called on such an object, this padding bytes will be involved in the hash
+ * and therefore, two equal objects (from the logicial point of view of the application)
+ * may produce a different hash values.
+ *
+ * Instead, the best approach is to propose your own hash function and to use this
+ * object as an accumulator of the field hash as below:
+ *
+ * @code
+ * 	class MyClass {
+ * 		bool f1;
+ * 		int f2;
+ * 		string f3;
+ * 	};
+ *
+ *	namespace elm {
+ * 	template class<> class HashKey<MyClass> {
+ * 	public:
+ * 		static bool equals(const MyClass& o1, const MyClass& o2) { return o1 == o2; }
+ * 		static t::hash hash(const MyClass& o) {
+ * 			Hasher hasher;
+ * 			hasher.add(f1);
+ * 			hasher.add(f2);
+ * 			hasher.add(f3);
+ * 			return hasher.hash();
+ * 		}
+ * 	};
+ * 	}	// elm
+ * @endcode
+ */
+
+
+/**
  * Perform hashing according Jenkins approach
- * (http://www.burtleburtle.net/bob/hash/doobs.html).
+ * ().
  */
 t::hash hash_jenkins(const void *block, int size) {
 	t::hash hash = 0;

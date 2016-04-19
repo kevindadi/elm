@@ -267,6 +267,19 @@ inline FloatFormat f(double value)				{ return FloatFormat(value); }
 IntFormat pointer(const void *p);
 IntFormat byte(t::uint8 b);
 
+// Tag tool
+template <class P>
+class Tag {
+public:
+	inline Tag(const typename P::t& val): v(val) { }
+	inline void print(io::Output& out) const { P::print(out, v); }
+private:
+	const typename P::t& v;
+};
+template <class P>
+io::Output& operator<<(io::Output& out, const Tag<P>& t) { t.print(out); return out; }
+
+
 // set style macros (deprecated)
 inline IntFormat base(int base, IntFormat fmt) { return fmt.base(base); }
 inline IntFormat bin(IntFormat fmt) { return fmt.bin(); }
