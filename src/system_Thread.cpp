@@ -286,12 +286,12 @@ Mutex::~Mutex(void) { }
 	class WinMutex: public Mutex {
 	public:
 
-		PMutex(void) throw(SystemException) {
+		WinMutex(void) throw(SystemException) {
 			h = CreateMutex(NULL, FALSE, NULL);
 			ASSERT(h != NULL);
 		}
 
-		~PMutex(void) {
+		~WinMutex(void) {
 			CloseHandle(h);
 		}
 
