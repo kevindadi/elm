@@ -11,7 +11,6 @@
 
 using namespace elm;
 using namespace elm::util;
-using namespace elm::io;
 
 class MyFormatter: public Formatter {
 	int index;
@@ -35,15 +34,43 @@ public:
 	}
 };
 
+class Escape {
+public:
+	typedef string t;
+	static void print(io::Output& out, string s) {
+		for(int i = 0; i < s.length(); i++)
+			switch(s[i]) {
+			case '<':	out << "&lt;"; break;
+			case '>':	out << "&gt;"; break;
+			default:	out << s[i]; break;
+			}
+	}
+};
+
 TEST_BEGIN(formatter)
 	
-	MyFormatter format(3);
-	BlockInStream temp("r%d = %%%a");
-	BlockOutStream buf;
-	format.format(temp, buf);
-	String result = buf.toString();
-	CString res = buf.toCString();
-	CHECK_EQUAL(res, CString("r3 = %d"));
-	delete [] res.chars();
+	{
+		MyFormatter format(3);
+		io::BlockInStream temp("r%d = %%%a");
+		io::BlockOutStream buf;
+		format.format(temp, buf);
+		String result = buf.toString();
+		CString res = buf.toCString();
+		CHECK_EQUAL(res, CString("r3 = %d"));
+		delete [] res.chars();
+	}
+
+	{
+		StringBuffer out;
+		out << io::Tag<Escape>("ok <b> ko");
+		CHECK_EQUAL(out.toString(), string("ok &lt;b&gt; ko"));
+	}
 	
-TEST_END
+	{
+		int x = 3;
+		StringBuffer out;
+		out << io::Tag<Escape>(_ << "ok <b> ko " << x);
+		CHECK_EQUAL(out.toString(), string("ok &lt;b&gt; ko 3"));
+	}
+
+	TEST_END

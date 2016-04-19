@@ -36,11 +36,54 @@ TEST_BEGIN(hashkey)
 		typedef HashKey<t> ht;
 		CHECK_EQUAL(ht::hash(t1), ht::hash(t1));
 		CHECK_EQUAL(ht::hash(t1), ht::hash(t2));
-		cerr << "DEBUG: " << (t1 == t2) << io::endl;
 		CHECK(ht::equals(t1, t1));
 		CHECK(ht::equals(t1, t2));
 		CHECK(!ht::equals(t1, t3));
 	}
 
-TEST_END
+	// hasher test (equality)
+	{
+		t::hash h1, h2;
+		{
+			Hasher h;
+			h.add(10);
+			h.add("coucou");
+			h.add(true);
+			h.add(&h1);
+			h1 = h.hash();
+		}
+		{
+			Hasher h;
+			h.add(10);
+			h.add("coucou");
+			h.add(true);
+			h.add(&h1);
+			h2 = h.hash();
+		}
+		CHECK_EQUAL(h1, h2);
+	}
+
+	// hasher test (inequality)
+	{
+		t::hash h1, h2;
+		{
+			Hasher h;
+			h.add(10);
+			h.add("coucou");
+			h.add(true);
+			h.add(&h1);
+			h1 = h.hash();
+		}
+		{
+			Hasher h;
+			h.add(10);
+			h.add("coucou");
+			h.add(false);
+			h.add(&h1);
+			h2 = h.hash();
+		}
+		CHECK(h1 != h2);
+	}
+
+	TEST_END
 

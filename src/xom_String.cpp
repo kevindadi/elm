@@ -53,8 +53,7 @@ void String::free(void) {
  * @param out	Stream to output to.
  */
 void String::escape(io::OutStream& out) const {
-	const char *p = buf;
-	while(*p)
+	for(const char *p = buf; *p; p++)
 		switch(*p) {
 		case '<':	out.write("&lt;", 4); break;
 		case '>':	out.write("&gt;", 4); break;

@@ -25,94 +25,75 @@
 namespace elm {
 
 /**
- * @defgroup int	Integer Operations
- *
- * This module provides several facilities to work with integers.
- * To use, one has to include <elm/int.h>.
- *
- * This module provides reliable and OS-independent types to represent integers
- * together with a list of efficiently-implemented functions to process them.
- * These types are stored in the @c elm::t sub-namespace and, if you are
- * using the @c elm namespace, are quickly accessed by syntax @c t::type .
- * 
- * @code
- * #include <elm/int.h>
- * using namespace elm;
- * ...
- * t::uint32 my_variable;
- * @endcode
- */
-
-/**
  * @typedef t::int8
  * Signed 8-bit integer type.
- * @ingroup int
+ * @ingroup types
  */
 
 /**
  * @typedef t::uint8
  * Unsigned 8-bit integer type.
- * @ingroup int
+ * @ingroup types
  */
 
 /**
  * @typedef t::int16
  * Signed 16-bit integer type.
- * @ingroup int
+ * @ingroup types
  */
 
 /**
  * @typedef t::uint16
  * Unsigned 16-bit integer type.
- * @ingroup int
+ * @ingroup types
  */
 
 /**
  * @typedef t::int32
  * Signed 32-bit integer type.
- * @ingroup int
+ * @ingroup types
  */
 
 /**
  * @typedef t::uint32
  * Unsigned 32-bit integer type.
- * @ingroup int
+ * @ingroup types
  */
 
 /**
  * @typedef t::int64
  * Signed 64-bit integer type.
- * @ingroup int
+ * @ingroup types
  */
 
 /**
  * @typedef t::uint64
  * Unsigned 64-bit integer type.
- * @ingroup int
+ * @ingroup types
  */
 
 /**
  * @typedef t::size
  * Integer type to represent memory size (according to the system configuration).
- * @ingroup int
+ * @ingroup types
  */
 
 /**
  * @typedef t::offset
  * Integer type to represent memory offset (according to the system configuration).
- * @ingroup int
+ * @ingroup types
  */
 
 /**
  * @typedef t::uint
  * Default size unsigned integer type.
- * @ingroup int
+ * @ingroup types
  */
 
 /**
  * @typedef t::intptr
  * Integer sufficiently big to store a pointer (according to the system configuration).
- * @ingroup int
+ * @ingroup types
  */
 
 
@@ -122,7 +103,7 @@ namespace elm {
  * @param v		Value to round.
  * @param m		Multiple to round with.
  * @return		Value round upto the upper multiple integer.
- * @ingroup int
+ * @ingroup types
  */
 
 
@@ -132,14 +113,14 @@ namespace elm {
  * @param v		Value to round.
  * @param m		Multiple to round with.
  * @return		Value round upto the upper multiple integer.
- * @ingroup int
+ * @ingroup types
  */
 
 /**
  * Compute the position of the left-most bit to one.
  * @param i		Integer to test.
  * @return		Position of left-most bit to one or -1 if the integer is 0.
- * @ingroup int
+ * @ingroup types
  */
 int msb(t::uint32 i) {
 	#define LT(n) n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n
@@ -167,7 +148,7 @@ int msb(t::uint32 i) {
  * Compute the position of the left-most bit to one.
  * @param i		Integer to test.
  * @return		Position of left-most bit to one or -1 if the integer is 0.
- * @ingroup int
+ * @ingroup types
  */
 int msb(t::uint64 i) {
 	t::uint32 uw = (i >> 32);
@@ -182,7 +163,7 @@ int msb(t::uint64 i) {
  * Count the number of ones in the given byte.
  * @param i		Byte to count ones in.
  * @return		Number of ones in the byte.
- * @ingroup int
+ * @ingroup types
  */
 int ones(t::uint8 i) {
 	static int t[] = {
@@ -212,7 +193,7 @@ int ones(t::uint8 i) {
  * Count the number of ones in the given half-word.
  * @param i		Half-word to count ones in.
  * @return		Number of ones in the half-word.
- * @ingroup int
+ * @ingroup types
  */
 
 /**
@@ -220,6 +201,7 @@ int ones(t::uint8 i) {
  * Count the number of ones in the given word.
  * @param i		Word to count ones in.
  * @return		Number of ones in the word.
+ * @ingroup types
  */
 
 /**
@@ -227,7 +209,7 @@ int ones(t::uint8 i) {
  * Count the number of ones in the given double-word.
  * @param i		Double-word to count ones in.
  * @return		Number of ones in the double-word.
- * @ingroup int
+ * @ingroup types
  */
 
 
@@ -237,7 +219,7 @@ int ones(t::uint8 i) {
  * the least greater power.
  * @param v		Value to process.
  * @return		Least upper power of two.
- * @ingroup int
+ * @ingroup types
  */
 t::uint32 leastUpperPowerOf2(t::uint32 v) {
 	int m = msb(v);
@@ -255,7 +237,7 @@ t::uint32 leastUpperPowerOf2(t::uint32 v) {
  * the least greater power.
  * @param v		Value to process.
  * @return		Least upper power of two.
- * @ingroup int
+ * @ingroup types
  */
 t::uint64 leastUpperPowerOf2(t::uint64 v) {
 	int m = msb(v);
@@ -274,7 +256,7 @@ t::uint64 leastUpperPowerOf2(t::uint64 v) {
  * @param	b		Second number to multiply.
  * @param	over	Set to true if overflow occurs.
  * @return			Result of multiplication (only valide if over is false).
- * @ingroup int
+ * @ingroup types
  */
 t::uint32 mult(t::uint32 a, t::uint32 b, bool& over) {
 	t::uint32 r = a * b;
@@ -289,7 +271,7 @@ t::uint32 mult(t::uint32 a, t::uint32 b, bool& over) {
  * @param	b		Second number to multiply.
  * @param	over	Set to true if overflow occurs.
  * @return			Result of multiplication (only valide if over is false).
- * @ingroup int
+ * @ingroup types
  */
 t::uint64 mult(t::uint64 a, t::uint64 b, bool& over) {
 	t::uint64 r = a * b;

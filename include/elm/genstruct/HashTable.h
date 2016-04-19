@@ -22,10 +22,11 @@
 #ifndef ELM_GENSTRUCT_HASHTABLE_H
 #define ELM_GENSTRUCT_HASHTABLE_H
 
-#include <elm/util/Pair.h>
 #include <elm/PreIterator.h>
-#include <elm/util/HashKey.h>
 #include <elm/type_info.h>
+#include <elm/types.h>
+#include <elm/util/HashKey.h>
+#include <elm/util/Pair.h>
 
 namespace elm { namespace genstruct {
 
@@ -34,14 +35,11 @@ template <class K, class T, class H = HashKey<K> >
 class HashTable {
 
 	typedef struct node_t {
+		inline node_t(const K& k): next(0), key(k)  { }
 		node_t *next;
 		K key;
 		T value;
-		node_t(const K& key) : key(key) { }
 	} node_t;
-
-	int size;
-	node_t **tab;
 
 	node_t *find(const K& key) {
 		int i = H::hash(key) % size;
@@ -57,12 +55,9 @@ class HashTable {
 		{ int i = H::hash(key) % size; node_t *node = new node_t(key); node->next = tab[i];
 		tab[i] = node; node->value = value; return node; }
 
-	// InternIterator
 	class InternIterator {
 	public:
 		inline InternIterator(const HashTable<K, T, H>& _htab): htab(&_htab) { i = 0; step(); }
-		inline InternIterator(const InternIterator& it): node(it.node), htab(it.htab), i(it.i) { }
-		inline InternIterator& operator=(const InternIterator& it) { htab = it.htab; i = it.i; node = it.node; }
 		inline bool ended(void) const { return i >= htab->size; }
 		inline void next(void) { node = node->next; if(!node) { i++; step(); }  }
 	protected:
@@ -141,8 +136,6 @@ public:
 	class KeyIterator: public InternIterator, public PreIterator<KeyIterator, K> {
 	public:
 		inline KeyIterator(const HashTable<K, T, H>& htab): InternIterator(htab) { };
-		inline KeyIterator(const KeyIterator& it): InternIterator(it) { }
-		inline KeyIterator& operator=(const KeyIterator& it) { InternIterator::operator==(it); return *this; }
 		inline const K& item(void) const { return type_info<K>::get(this->node->key); }
 	};
 
@@ -150,8 +143,6 @@ public:
 	class Iterator: public InternIterator, public PreIterator<Iterator, T> {
 	public:
 		inline Iterator(const HashTable<K, T, H>& htab): InternIterator(htab) { };
-		inline Iterator(const Iterator& it): InternIterator(it) { }
-		inline Iterator& operator=(const Iterator& it) { InternIterator::operator=(it); return *this; }
 		inline const T& item(void) const { return type_info<T>::get(this->node->value); }
 		inline const T& useItem(void) const { return type_info<T>::get(this->node->value); }
 		inline const K& key(void) const { return type_info<K>::get(this->node->key); };
@@ -161,8 +152,6 @@ public:
 	class PairIterator: public InternIterator, public PreIterator<PairIterator, Pair<K, T> > {
 	public:
 		inline PairIterator(const HashTable<K, T, H>& htab): InternIterator(htab) { };
-		inline PairIterator(const PairIterator& it): InternIterator(it) { }
-		inline PairIterator& operator=(const PairIterator& it) { InternIterator::operator=(it); return *this; }
 		inline Pair<K, T> item(void) const { return pair(type_info<K>::get(this->node->key), this->node->value); }
 	};
 
@@ -184,6 +173,32 @@ public:
 			{ node = node->next; for (node = htab.tab[i]; node && (type_info<K>::get(node->key) != type_info<K>::get(key)); node = node->next); }
 		inline const T& item(void) const { return this->node->value; }
 	};
+
+#	ifdef ELM_STAT
+		inline t::size elm_size(void) const
+			{ t::size s = sizeof(*this) + sizeof(node_t *) * size;
+			for(int i = 0; i < size; i++) for(node_t *n = tab[i]; n; n = n->next) s += sizeof(s); return s; }
+		inline int elm_node_count(void) const
+			{ int s = 0; for(int i = 0; i < size; i++) s += elm_count(i); return s; }
+		inline int elm_entry_max(void) const
+			{ int m = elm_count(0); for(int i = 1; i < size; i++) m = max(m, elm_count(i)); return m; }
+		inline int elm_entry_min(void) const
+			{ int m = elm_count(0); for(int i = 1; i < size; i++) m = min(m, elm_count(i)); return m; }
+		inline void elm_print(io::Output& out) {
+			out << "entry count = " << size << io::endl;
+			out << "node count = " << elm_node_count() << io::endl;
+			out << "max node / entry = " << elm_entry_max() << io::endl;
+			out << "min node / entry = " << elm_entry_min() << io::endl;
+			out << "best use = " << (double(elm_node_count()) / size) << io::endl;
+		}
+#	endif
+
+private:
+#	ifdef ELM_STAT
+		inline int elm_count(int i) const { int c = 0; for(node_t *n = tab[i]; n; n = n->next) c++; return c; }
+#	endif
+	int size;
+	node_t **tab;
 
 };
 

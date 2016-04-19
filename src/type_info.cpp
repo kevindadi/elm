@@ -38,8 +38,22 @@ namespace elm {
  * using namespace elm;
  * @endcode
  *
- * This include provides alternative non-ambiguous names for integer types (@ref int)
- * and associated basic operations.
+ * This definitions provide several facilities to work with integers.
+ * To use, one has to include <elm/int.h>.
+ *
+ * This module provides reliable and OS-independent types to represent integers
+ * together with a list of efficiently-implemented functions to process them.
+ * These types are stored in the @c elm::t sub-namespace and, if you are
+ * using the @c elm namespace, are quickly accessed by syntax @c t::type .
+ *
+ * @code
+ * #include <elm/int.h>
+ * using namespace elm;
+ * ...
+ * t::uint32 my_variable;
+ * @endcode
+ *
+ * You can also use the @ref null<T>() function to build easily typed null pointer.
  *
  * @par Type Information
  *
@@ -232,6 +246,15 @@ const string type_info<string>::null = "";
 
 
 /**
+ * @class AbstractClass
+ *
+ * Abstract class to represent classes in RTTI. It is mainly used
+ * for serialization / deserialization.
+ *
+ * @ingroup types
+ */
+
+/**
  * Test if the current class is base class of the given one.
  * Notice that this class is a base class of clazz even if this
  * class equals the class clazz.
@@ -283,6 +306,18 @@ cstring type_info<long double>::name(void) { return "long double"; }
 // type_info<string types>
 cstring type_info<cstring>::name(void) { return "cstring"; }
 cstring type_info<string>::name(void) { return "string"; }
+
+
+/**
+ * @fn  T *null(void) const;
+ * Build a typed null pointer from the template type.
+ *
+ * @param T	Pointed object type.
+ *
+ * @ingroup types
+ */
+
+
 
 }  // elm
 

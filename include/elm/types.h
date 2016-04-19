@@ -1,9 +1,8 @@
 /*
- *	$Id$
  *	type_info class shortcut
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2007-10, IRIT UPS.
+ *	Copyright (c) 2007-16, IRIT UPS.
  *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -23,5 +22,8 @@
 #define ELM_TYPES_H
 
 #include <elm/int.h>
+
+template <class T>
+inline T *null(void) { return static_cast<T *>(0); }
 
 #endif // ELM_TYPES_H

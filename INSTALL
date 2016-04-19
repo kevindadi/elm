@@ -28,4 +28,16 @@ With //type// one of:
   * dev -- same as above with library installation,
   * lib -- install libraries themselves,
   * bin -- install libraries and commands.
- 
+
+  
+==== Getting Statistics ====
+  
+Some data structure provides statistics about their internal work: efficiency, memory footprint, etc.
+As these features are not essential for the work of these data structures and as they may take place
+or time, they are only compiled conditionally by passing this option to CMake:
+
+<code sh>
+> cmake . -DELM_STAT
+</code>
+
+The name of these special methods are usually prefixed by "_stat_".
