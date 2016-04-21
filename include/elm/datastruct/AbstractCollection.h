@@ -35,7 +35,7 @@ public:
 	virtual bool contains(const T& item) const = 0;
 	virtual bool isEmpty(void) const = 0;
 	inline operator bool(void) const { return !isEmpty(); }
-	virtual IteratorInst<const T&> *iterator(void) const = 0;
+	virtual IteratorInst<T> *iterator(void) const = 0;
 };
 
 // MutableAbstractCollection class

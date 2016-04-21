@@ -20,7 +20,7 @@ public:
 
 	inline StringBuffer(int capacity = 64, int increment = 32)
 		: io::Output(_stream), _stream(capacity, increment)
-		{ String::buffer_t str = { 0 }; _stream.write((char *)&str, sizeof(short)); }
+		{ init(); }
 
 	inline String toString(void)
 		{ int len = length(); _stream.write('\0');
@@ -29,10 +29,11 @@ public:
 	inline String copyString(void)
 		{ return String( _stream.block() + sizeof(short), _stream.size() - sizeof(short)); }
 	inline int length(void) const { return _stream.size() - sizeof(short); }
-	inline void reset(void) { _stream.clear(); _stream.setSize(sizeof(short)); }
+	inline void reset(void) { _stream.clear(); init(); }
 	inline io::OutStream& stream(void) { return _stream; }
 
 private:
+	inline void init(void) { String::buffer_t str = { 0 }; _stream.write((char *)&str, sizeof(short)); }
 	io::BlockOutStream _stream;
 };
 
