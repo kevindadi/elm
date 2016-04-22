@@ -67,6 +67,7 @@ public:
 	inline bool contains(Path& path) const { return path.buf.startsWith(path.buf); }
 	static Path current(void);
 	static Path home(void);
+	static Path temp(void);
 
 	// path testing
 	bool exists(void) const;

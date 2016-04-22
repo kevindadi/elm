@@ -30,6 +30,7 @@
 #include <elm/io/WinInStream.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -53,8 +54,16 @@ namespace elm {
 			return last_error;
 		}
 		
+		void setError(void) {
+			last_error = GetLastError();
+		}
+
 		void setError(int code) {
 			last_error = code;
+		}
+		string getLastErrorMessage(void) {
+			setError();
+			return getErrorMessage();
 		}
 		
 		string getErrorMessage(void) {
@@ -609,12 +618,89 @@ bool System::hasEnv(cstring key) {
 void System::makeDir(const sys::Path& path) throw(SystemException) {
 #	if defined(__WIN32) || defined(__WIN64)
 		if(!CreateDirectory(&path.toString().toCString(), NULL))
-			throw SystemException(0, _ << "cannot create " << path << ": " << win::getErrorMessage()));
+			throw SystemException(0, _ << "cannot create " << path << ": " << win::getLastErrorMessage()));
 #	else
 		int r = mkdir(&path.toString().toCString(), 0777);
 		if(r)
 			throw SystemException(r, _ << "cannot create " << path << ": " << strerror(errno));
 #	endif
+}
+
+/**
+ * Remove a directory.
+ * @param path	Path of the directory to remove.
+ */
+void System::removeDir(const sys::Path& path) throw(SystemException) {
+#	if defined(__WIN32) || defined(__WIN64)
+		if(!RemoveDirectory(&path.toString().toCString(), NULL))
+			throw SystemException(0, _ << "cannot remove " << path << ": " << win::getLastErrorMessage()));
+#	else
+		int r = rmdir(&path.toString().toCString());
+		if(r)
+			throw SystemException(r, _ << "cannot remove " << path << ": " << strerror(errno));
+#	endif
+}
+
+
+/**
+ * Get the path of a non-existing temporary file: the file is
+ * created that should prevent another application to use the
+ * same temporary file name.
+ *
+ * The application is responsible for cleaning up the file.
+ * @return	Temporary file path.
+ */
+sys::Path System::getTempFile(void) throw(SystemException) {
+#	if defined(__WIN32) || defined(__WIN64)
+		// From https://msdn.microsoft.com/en-us/library/windows/desktop/aa363875%28v=vs.85%29.aspx
+		char buf[MAX_PATH + 1];
+		UINT r = GetTempFileName(&temp().toString(), "elf,", 0, buf);
+		if(r == 0)
+			throw SystemException(_ << "cannot create a temporary file: " << win::getLastErrorMessage());
+		else
+			return Path(buf);
+#	else
+		string tmp = (Path::temp() / "elf,XXXXXX").toString();
+		char t[tmp.length() + 1];
+		strncpy(t, &tmp, tmp.length());
+		t[tmp.length()] = '\0';
+		int fd = mkstemp(t);
+		close(fd);
+		return Path(t);
+	#	endif
+}
+
+/**
+ * Get the path of a non-existing temporary directory that is
+ * created and whose path is returned.
+ *
+ * The application is responsible for cleaning up the directory.
+ * @return	Temporary directory path.
+ */
+sys::Path System::getTempDir(void) throw(SystemException) {
+#	if defined(__WIN32) || defined(__WIN64)
+	// Windows: https://msdn.microsoft.com/en-us/library/windows/desktop/aa363875%28v=vs.85%29.aspx
+	int cnt = 0;
+	while(cnt < 1000) {
+		Path path = temp() / (_ << "elf," << cnt);
+		try {
+			makeDir(path);
+			return path;
+		}
+		catch(System) {
+			cnt++;
+		}
+	}
+	throw SystemException(_ << "cannot create a temporary directory: " << win::getLastErrorMessage());
+
+#	else
+		string tmp = (Path::temp() / "elf,XXXXXX").toString();
+		char t[tmp.length() + 1];
+		strncpy(t, &tmp, tmp.length());
+		t[tmp.length()] = '\0';
+		mkdtemp(t);
+		return Path(t);
+	#	endif
 }
 
 } } // elm::sys

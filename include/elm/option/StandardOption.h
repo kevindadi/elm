@@ -22,7 +22,7 @@
 #ifndef ELM_OPTION_STANDARD_OPTION_H
 #define ELM_OPTION_STANDARD_OPTION_H
 
-#include <elm/option/Manager.h>
+//#include <elm/option/Manager.h>
 #include <elm/option/Option.h>
 
 namespace elm { namespace option {

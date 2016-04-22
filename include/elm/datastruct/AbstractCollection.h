@@ -42,6 +42,7 @@ public:
 template <class T>
 class MutableAbstractCollection: public virtual AbstractCollection<T> {
 public:
+	virtual ~MutableAbstractCollection(void) { }
 	virtual void clear(void) = 0;
 	virtual void add(const T& item) = 0;
 	virtual void addAll(const AbstractCollection<T>& items) = 0;

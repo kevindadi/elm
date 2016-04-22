@@ -22,7 +22,8 @@
 #ifndef OTAWA_OPTION_SWITCHOPTION_H_
 #define OTAWA_OPTION_SWITCHOPTION_H_
 
-#include <elm/option/Manager.h>
+//#include <elm/option/Manager.h>
+#include "Option.h"
 
 namespace elm { namespace option {
 

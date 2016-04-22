@@ -31,6 +31,31 @@ namespace elm { namespace option {
 
 class Manager;
 
+// configuration tags
+const int end			= 0,
+		  program		= 1,	// const char *
+		  version		= 2,	// Version *
+		  author		= 3,	// const char *
+		  copyright		= 4,	// const char *
+		  description	= 5,	// const char *
+		  help			= 5,	// alias for description
+		  free_arg		= 6,	// const char *
+		  cmd			= 7,	// const char *
+		  short_cmd		= 8,	// char
+		  long_cmd		= 9,	// const char *
+		  def			= 10,	// option dependent
+		  require		= 12,	// none
+		  optional		= 13,	// none
+		  arg_desc		= 14;	// const char *
+
+
+// OptionException exception
+class OptionException: public MessageException {
+public:
+	OptionException(const String& message);
+};
+
+
 // Argument usage
 typedef enum usage_t {
 	arg_none,

@@ -22,38 +22,16 @@
 #ifndef ELM_OPTION_MANAGER_H
 #define ELM_OPTION_MANAGER_H
 
+#include <elm/genstruct/SortedBinMap.h>
 #include <elm/genstruct/Vector.h>
 #include <elm/option/Option.h>
+#include <elm/option/SwitchOption.h>
+#include <elm/option/ValueOption.h>
 #include <elm/util/Version.h>
-#include <elm/util/MessageException.h>
-#include <elm/genstruct/SortedBinMap.h>
 #include <elm/util/VarArg.h>
+#include <elm/util/MessageException.h>
 
 namespace elm { namespace option {
-
-// OptionException exception
-class OptionException: public MessageException {
-public:
-	OptionException(const String& message);
-};
-
-// configuration tags
-const int end			= 0,
-		  program		= 1,	// const char *
-		  version		= 2,	// Version *
-		  author		= 3,	// const char *
-		  copyright		= 4,	// const char *
-		  description	= 5,	// const char *
-		  help			= 5,	// alias for description
-		  free_arg		= 6,	// const char *
-		  cmd			= 7,	// const char *
-		  short_cmd		= 8,	// char
-		  long_cmd		= 9,	// const char *
-		  def			= 10,	// option dependent
-		  require		= 12,	// none
-		  optional		= 13,	// none
-		  arg_desc		= 14;	// const char *
-
 
 // Manager
 class Manager {
@@ -78,6 +56,10 @@ public:
 		cstring _free_argument_description;
 	};
 
+	// shortcut to make options
+	inline SwitchOption::Make make_switch(void) { return SwitchOption::Make(*this); }
+	template <class T> typename ValueOption<T>::Make make_value(void) { return typename ValueOption<T>::Make(*this); }
+
 	typedef const char * const *argv_t;
 	inline Manager(void) { }
 	Manager(int tag, ...);
@@ -98,12 +80,6 @@ public:
 
 protected:
 	Make info;
-	/*CString program;
-	Version version;
-	CString author;
-	CString copyright;
-	CString description;
-	CString free_argument_description;*/
 	virtual void process(String arg);
 	virtual void configure(int tag, VarArg& args);
 

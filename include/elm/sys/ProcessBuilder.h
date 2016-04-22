@@ -22,6 +22,8 @@
 #define ELM_SYS_PROCESS_BUILDER_H
 
 #include <elm/genstruct/Vector.h>
+#include <elm/sys/Path.h>
+#include <elm/sys/System.h>
 #include <elm/sys/SystemIO.h>
 #include <elm/sys/Process.h>
 
@@ -29,16 +31,23 @@ namespace elm { namespace sys {
 
 // ProcessBuilder class
 class ProcessBuilder {
-	genstruct::Vector<CString> args;
-	SystemInStream *in;
-	SystemOutStream *out, *err;
 public:
-	ProcessBuilder(CString command);
-	void addArgument(CString argument);
+	ProcessBuilder(sys::Path command);
+	void addArgument(string argument);
+	inline void add(string argument) { addArgument(argument); }
+	inline ProcessBuilder& operator+(string argument) { addArgument(argument); return *this; }
+	inline ProcessBuilder& operator+=(string argument) { addArgument(argument); return *this; }
 	void setInput(SystemInStream *_in);
 	void setOutput(SystemOutStream *_out);
 	void setError(SystemOutStream *_out);
-	Process *run(void);
+	void setNewSession(bool enabled);
+	Process *run(void) throw(SystemException);
+
+private:
+	genstruct::Vector<string> args;
+	SystemInStream *in;
+	SystemOutStream *out, *err;
+	bool new_session;
 };
 
 } } // elm::sys

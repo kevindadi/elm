@@ -27,6 +27,7 @@
 
 #include <elm/genstruct/Vector.h>
 #include <elm/sys/Path.h>
+#include <elm/sys/System.h>
 #include <elm/sys/SystemException.h>
 
 //#define DEBUG
@@ -104,15 +105,11 @@ Path Path::canonical(void) const {
 
 		// Select the component
 		String comp = path.buf.substring(start, stop - start);
-		if(!comp || comp == ".")
-			;
-
-		// Select the component
 		if(comp == "..") {
 			if(comps.count() > 0)
 				comps.setLength(comps.count() - 1);
 		}
-		else if(comp)
+		else if(comp && comp != ".")
 			comps.add(comp);
 
 		// Go to next component
@@ -300,6 +297,66 @@ Path Path::current(void) {
  */
 Path Path::home(void) {
 	return Path(getenv("HOME"));
+}
+
+
+/**
+ * Get a temporary directory. If the OS does not provide any temporary
+ * directory, the current directory is selected. As a fallback, a "tmp"
+ * directory is created in the user home. If it can't be, the user home
+ * is returned.
+ * @return Temporary directory path.
+ */
+Path Path::temp(void) {
+	static bool init = false;
+	static Path path;
+	if(!init) {
+#		if defined(__WIN32) || defined(__WIN64)
+			char buf[MAX_PATH + 1];
+			DWORD r = GetTempPath(MAXPATH + 1, buf);
+			if(!r)
+				throw SystemException("cannot get temporary file");
+			else {
+				init = true;
+				path = Path(buf);
+			}
+#		else
+
+			// look in possible paths
+			Path paths[] = {
+				home() / "tmp",
+				"/tmp",
+				current(),
+				home(),
+				Path()
+			};
+			for(int i = 0; paths[i]; i++)
+				if(paths[i].isDir() && paths[i].isWritable()) {
+					path = paths[i];
+					init = true;
+					break;
+				}
+
+			// else try to make HOME/tmp
+			if(!init) {
+				path = home() / "tmp";
+				try {
+					System::makeDir(path);
+					init = true;
+				}
+				catch(SystemException& e) {
+				}
+			}
+
+			// fallback to home
+			if(!init) {
+				init = true;
+				path = home();
+			}
+
+#		endif
+	}
+	return path;
 }
 
 

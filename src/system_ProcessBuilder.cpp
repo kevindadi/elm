@@ -30,8 +30,6 @@
 #	include <windows.h>
 #endif
 
-extern char **environ;
-
 namespace elm { namespace sys {
 
 #if defined(__unix) || defined(__APPLE__)
@@ -54,12 +52,38 @@ namespace elm { namespace sys {
  * Construct a process builder.
  * @param command	Command to use.
  */
-ProcessBuilder::ProcessBuilder(CString command)
+/*ProcessBuilder::ProcessBuilder(string command)
 :	in(&io::in),
  	out(&io::out),
  	err(&io::err)
 {
 	args.add(command);
+}*/
+
+
+/**
+ * Construct a process builder.
+ * @param command	Command to use.
+ */
+ProcessBuilder::ProcessBuilder(sys::Path command)
+:	in(&io::in),
+ 	out(&io::out),
+ 	err(&io::err),
+	new_session(false)
+{
+	args.add(command);
+}
+
+
+/**
+ * If the argument is true, the built process will run in its
+ * own session and is separated from the creator process.
+ * Practically, this means that the end of the parent process
+ * will not cause the end of the child process.
+ * @param enabled	True to get a new session, false else.
+ */
+void ProcessBuilder::setNewSession(bool enabled) {
+	new_session = enabled;
 }
 
 
@@ -67,7 +91,7 @@ ProcessBuilder::ProcessBuilder(CString command)
  * Add an argument to the command line.
  * @param argument	Argument to add.
  */	
-void ProcessBuilder::addArgument(CString argument) {
+void ProcessBuilder::addArgument(string argument) {
 	args.add(argument);
 }
 
@@ -104,7 +128,7 @@ void ProcessBuilder::setError(SystemOutStream *_err) {
  * @return	The built process.
  * @throws SystemException	Thrown if there is an error during the build.
  */
-Process *ProcessBuilder::run(void) {
+Process *ProcessBuilder::run(void) throw(SystemException) {
 #if defined(__unix) || defined(__APPLE__)
 	int error = 0;
 	int old_in = -1, old_out = -1, old_err = -1;
@@ -146,10 +170,19 @@ Process *ProcessBuilder::run(void) {
 		// son
 		else {
 
-			// Build arguments
+			// if needed, create new session
+			if(new_session) {
+				int r = setsid();
+				if(r < 0) {
+					cerr << "ERROR: cannot create new session!\n";
+					exit(1);
+				}
+			}
+
+			// build arguments
 			char *tab[args.count() + 1];
 			for(int i = 0; i < args.count(); i++)
-				tab[i] = (char *)&args[i];
+				tab[i] = (char *)&args[i].toCString();
 			tab[args.count()] = 0;
 
 			// Launch the command

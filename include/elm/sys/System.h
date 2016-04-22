@@ -56,6 +56,9 @@ public:
 	static string getLibraryFileName(const string& name);
 	static string getPluginFileName(const string& name);
 	static void makeDir(const sys::Path& path) throw(SystemException);
+	static void removeDir(const sys::Path& path) throw(SystemException);
+	static sys::Path getTempFile(void) throw(SystemException);
+	static sys::Path getTempDir(void) throw(SystemException);
 };
 
 } } // elm::system

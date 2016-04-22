@@ -21,6 +21,7 @@
  */
 
 #include <elm/assert.h>
+#include <elm/option/Manager.h>
 #include <elm/option/StandardOption.h>
 
 namespace elm { namespace option {

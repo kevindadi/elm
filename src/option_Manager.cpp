@@ -130,7 +130,10 @@ namespace elm { namespace option {
  * @li readibility (see below),
  * @li extensibility (new configurations may be added without breaking the old configurations).
  *
- * @par The Second Generation Approach
+ * @par The Old Generation Approach
+ *
+ * <b>Notice that the old generation approach for option definition is now considered
+ * DEPRECATED. It will be removed in the next versions of ELM.</b>
  *
  * The goal of the new approach is to remove as much developer disturbance as possible.
  * The full option configuration is based on variable arguments formed as list of tags
@@ -580,6 +583,18 @@ void Manager::displayHelp(void) {
 		cerr << "\n\t" << option->description() << io::endl;
 	}
 }
+
+/**
+ * @fn SwitchOption::Make Manager::make_switch(void);
+ * This function is a shortcut to @ref SwitchOption::Make() to reduce the definition
+ * of options inside a @ef Manager class.
+ */
+
+/**
+ * @fn ValueOption<T>::Make make_value(void);
+ * This function is a shortcut to @ref ValueOption::Make() to reduce the definition
+ * of options inside a @ef Manager class.
+ */
 
 } } // elm::option
 
