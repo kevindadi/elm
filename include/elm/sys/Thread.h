@@ -1,9 +1,8 @@
 /*
- *	$Id$
- *	System class interface
+ *	Thread class interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2011, IRIT UPS.
+ *	Copyright (c) 2011-16, IRIT UPS.
  *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -23,6 +22,7 @@
 #define ELM_SYSTEM_THREAD_H_
 
 #include <elm/sys/SystemException.h>
+#include <elm/util/GenValue.h>
 #include <elm/util/MessageException.h>
 
 namespace elm { namespace sys {
@@ -49,21 +49,51 @@ private:
 	Thread *thr;
 };
 
+
 // Thread class
 class Thread {
 	friend class Runnable;
+	typedef void *key_t;
 public:
+
+	template <class T>
+	class Key {
+		friend class Thread;
+	public:
+		inline ~Key(void) { delKey(k); }
+		inline void set(const T& val)  throw(ThreadException)
+			{ Thread::set(k, new GenValue<T>(val)); }
+		inline const T& get(void) const
+			{ AbstractValue *v = Thread::get(k); ASSERT(v); return static_cast<GenValue<T> *>(v)->value(); }
+		inline void clean(void) const
+			{ AbstractValue *v = Thread::get(k); if(v) { Thread::set(k, 0); delete v; } }
+	private:
+		inline Key(void): k(newKey()) { }
+		key_t k;
+	};
+
 	virtual ~Thread(void);
 	static Thread *make(Runnable& runnable);
+	template <class T>
+	inline static Key<T> *key(void) throw(ThreadException)
+		{ return new Key<T>(); }
+
 	virtual void start(void) throw(ThreadException) = 0;
 	virtual void join(void) throw(ThreadException) = 0;
 	virtual void kill(void) throw(ThreadException) = 0;
 	virtual bool isRunning(void) = 0;
 
+
 protected:
 	Runnable& _runnable;
 	Thread(Runnable& runnable);
 	virtual void stop(void) = 0;
+
+private:
+	static key_t newKey(void) throw(ThreadException);
+	static void delKey(key_t k);
+	static AbstractValue *get(key_t k);
+	static void set(key_t k, AbstractValue *val) throw(ThreadException);
 };
 
 

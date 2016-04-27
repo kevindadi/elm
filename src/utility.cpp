@@ -20,6 +20,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <elm/util/GenValue.h>
 #include <elm/utility.h>
 
 namespace elm {
@@ -75,5 +76,53 @@ String Exception::message(void) {
 	//cerr << "elm::Exception::message() = \"\"\n";
 	return "";	
 }
+
+
+/**
+ * @class AbstractValue
+ * Support class for @ref GenValue.
+ *
+ * @ingroup util
+ */
+
+
+/**
+ */
+AbstractValue::~AbstractValue(void) {
+}
+
+
+/**
+ * @class Value
+ * The purpose of this class is to store in safe way a collection of vales
+ * of different types. As it inherits from @ref AbstractValue, they can be deleted
+ * in a safe way. To use this class, the collection must accept values of type
+ * AbstractValue * (that will accept Value * objects) and the collection has to
+ * delete its contained item using the delete operator.
+ *
+ * @code
+ *	genstruct::Vector<AbstractValue *> vals;
+ *  vals.add(gen_value(666));
+ *  vals.add(gen_value(string("ok"));
+ *  vals.add(gen_value(111.666);
+ *  vals.add(gen_value(MyClass()));
+ *
+ *  ...
+ *
+ *  for(int i = 0; i < vals.length(); i++)
+ *  	delete vals[i];
+ *
+ * @endcode
+ *
+ * @sa gen_value
+ * @ingroup util
+ */
+
+/**
+ * @fn Value<T> *gen_value(const T& v);
+ * Shortcut to build a @ref GenValue.
+ * @param v		Value to store.
+ * @return		GenValue to store the value in.
+ */
 
 };

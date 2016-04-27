@@ -228,6 +228,34 @@ Mutex::~Mutex(void) { }
 		pthread_mutex_t h;
 	};
 
+	static void key_cleanup(void *v) {
+		if(v)
+			delete static_cast<AbstractValue *>(v);
+	}
+
+	Thread::key_t Thread::newKey(void) throw(ThreadException) {
+		pthread_key_t *k = new pthread_key_t;
+		if(pthread_key_create(k, key_cleanup) < 0) {
+			delete k;
+			throw ThreadException(strerror(errno));
+		}
+		return k;
+	}
+
+	void Thread::delKey(key_t k) {
+		delete static_cast<pthread_key_t *>(k);
+	}
+
+	AbstractValue *Thread::get(key_t k) {
+		return static_cast<AbstractValue *>(pthread_getspecific(*static_cast<pthread_key_t *>(k)));
+	}
+
+	void Thread::set(key_t k, AbstractValue *val) throw(ThreadException) {
+		if(pthread_setspecific(*static_cast<pthread_key_t *>(k), val) < 0)
+			throw ThreadException(strerror(errno));
+	}
+
+
 #elif defined(__WIN32) || defined(__WIN64)
 
 	/**
