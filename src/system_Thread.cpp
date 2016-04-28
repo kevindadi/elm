@@ -114,6 +114,36 @@ Mutex::~Mutex(void) { }
  */
 
 
+/**
+ * @class Thread::Key
+ * This class is used to store data local to a thread.
+ * A key is obtained calling @ref Thread::key() method then
+ * the @ref Key methods allows to store or retrieve data local
+ * to the current thread.
+ * @param T		Type of data to store.
+ */
+
+/**
+ * @fn void Thread::Key::set(const T& val) throw(ThreadException);
+ * Set the value associated with this local to the current thread.
+ * @param val				Value to set.
+ * @throw ThreadException	If the value cannot be stored.
+ */
+
+/**
+ * @fn Option<T> Thread::Key::get(void) const;
+ * Get the value local to the current thread associated
+ * with the current key.
+ * @return	Some value if any or none.
+ */
+
+/**
+ * @fn void Thread::Key::clean(void) const;
+ * Remove local value of the current thread associated with
+ * the current key.
+ */
+
+
 #if defined(__unix) || defined(__APPLE__)
 
 	/**

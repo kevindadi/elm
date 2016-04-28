@@ -63,8 +63,9 @@ public:
 		inline ~Key(void) { delKey(k); }
 		inline void set(const T& val)  throw(ThreadException)
 			{ Thread::set(k, new GenValue<T>(val)); }
-		inline const T& get(void) const
-			{ AbstractValue *v = Thread::get(k); ASSERT(v); return static_cast<GenValue<T> *>(v)->value(); }
+		Option<T> get(void) const
+			{ AbstractValue *v = Thread::get(k); if(!v) return none;
+			else return some(static_cast<GenValue<T> *>(v)->value()); }
 		inline void clean(void) const
 			{ AbstractValue *v = Thread::get(k); if(v) { Thread::set(k, 0); delete v; } }
 	private:
