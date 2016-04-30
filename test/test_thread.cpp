@@ -18,37 +18,21 @@ t::int64 s1, s2;
 
 class Sum: public Runnable {
 public:
-	Sum(t::int64& _r, t::int64 _s, t::int64 _n): r(_r), s(_s), n(_n) { }
+	Sum(t::int64& _r, t::int64 _s, t::int64 _n): ok(true), r(_r), s(_s), n(_n) { }
 
 	virtual void run(void) {
 		t::int64 sum = 0;
 		for(t::int64 i = 0; i < n; i++)
 			sum += ::t[i + s];
 		r = sum;
+		ok = ok && (&Runnable::current() == this);
 	}
+
+	bool ok;
 
 private:
 	t::int64& r;
 	t::int64 s, n;
-};
-
-class KeyRunnable: public Runnable {
-public:
-	KeyRunnable(Thread::Key<int> *key, int number, int& ref): k(key), n(number), r(ref) { }
-
-	virtual void run(void) {
-		k->set(n);
-		int s = 0;
-		int m = int(sys::System::random(1000000));
-		for(int i = 0; i < m; i++)
-			s += i;
-		r = k->get();
-	}
-
-private:
-	Thread::Key<int> *k;
-	int n;
-	int& r;
 };
 
 
@@ -72,35 +56,9 @@ TEST_BEGIN(thread)
 		t1->join();
 		t2->join();
 		CHECK_EQUAL(s1 + s2, (N * (N - 1) / 2));
-	}
-
-	{
-		const static int n = 10;
-		Thread *ts[n];
-		KeyRunnable *rs[n];
-		int res[n];
-
-		// run thread
-		Thread::Key<int> *k = Thread::key<int>();
-		for(int i = 0; i < n; i++) {
-			rs[i] = new KeyRunnable(k, i, res[i]);
-			ts[i] = Thread::make(*rs[i]);
-			ts[i]->start();
-		}
-
-		// join them and clean them
-		for(int i = 0; i < n; i++) {
-			ts[i]->join();
-			delete ts[i];
-			delete rs[i];
-		}
-
-		// check result
-		int c = 0;
-		for(int i = 0; i < n; i++)
-			if(res[i] == i)
-				c++;
-		CHECK_EQUAL(c, n);
+		CHECK(sum1.ok);
+		CHECK(sum2.ok);
+		CHECK_EQUAL(&Runnable::current(), &Runnable::null);
 	}
 
 TEST_END

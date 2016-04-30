@@ -39,12 +39,19 @@ public:
 
 // Runnable class
 class Runnable {
+	friend class Thread;
 public:
+	static Runnable null;
+	Runnable(void);
 	virtual ~Runnable(void);
-	virtual void run(void) = 0;
+
+	virtual void run(void);
+
+	inline Thread *thread(void) const { return thr; }
+	inline static Runnable& current(void);
+
 protected:
 	void stop(void);
-	inline Thread *current(void) const { return thr; }
 private:
 	Thread *thr;
 };
@@ -53,49 +60,27 @@ private:
 // Thread class
 class Thread {
 	friend class Runnable;
-	typedef void *key_t;
+
 public:
-
-	template <class T>
-	class Key {
-		friend class Thread;
-	public:
-		inline ~Key(void) { delKey(k); }
-		inline void set(const T& val)  throw(ThreadException)
-			{ Thread::set(k, new GenValue<T>(val)); }
-		Option<T> get(void) const
-			{ AbstractValue *v = Thread::get(k); if(!v) return none;
-			else return some(static_cast<GenValue<T> *>(v)->value()); }
-		inline void clean(void) const
-			{ AbstractValue *v = Thread::get(k); if(v) { Thread::set(k, 0); delete v; } }
-	private:
-		inline Key(void): k(newKey()) { }
-		key_t k;
-	};
-
 	virtual ~Thread(void);
+	inline Runnable& runnable(void) const { return *_runnable; }
+
 	static Thread *make(Runnable& runnable);
-	template <class T>
-	inline static Key<T> *key(void) throw(ThreadException)
-		{ return new Key<T>(); }
+	static Thread *current(void);
+	static void setRootRunnable(Runnable& runnable);
 
 	virtual void start(void) throw(ThreadException) = 0;
 	virtual void join(void) throw(ThreadException) = 0;
 	virtual void kill(void) throw(ThreadException) = 0;
 	virtual bool isRunning(void) = 0;
 
-
 protected:
-	Runnable& _runnable;
+	Runnable *_runnable;
 	Thread(Runnable& runnable);
 	virtual void stop(void) = 0;
-
-private:
-	static key_t newKey(void) throw(ThreadException);
-	static void delKey(key_t k);
-	static AbstractValue *get(key_t k);
-	static void set(key_t k, AbstractValue *val) throw(ThreadException);
 };
+
+inline Runnable& Runnable::current(void) { return Thread::current()->runnable(); }
 
 
 class Mutex {

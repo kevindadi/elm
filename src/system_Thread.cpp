@@ -47,18 +47,27 @@ namespace elm { namespace sys {
  * Whatever, the end of run method stop also the thread.
  */
 
+/**
+ * This method must be overloaded to provide the computation to the thread.
+ * As a default, it does nothing and return immediately.
+ */
+void Runnable::run(void) {
+}
 
 /**
- * @fn Runnable::run()
- * This method must be overloaded to provide the computation to the thread.
+ * Runnable that does nothing.
  */
+Runnable Runnable::null;
 
+/**
+ */
+Runnable::Runnable(void): thr(0) {
+}
 
 /**
  */
 Runnable::~Runnable(void) {
 }
-
 
 /**
  * Cause the thread to stop immediately.
@@ -67,18 +76,95 @@ void Runnable::stop(void) {
 	thr->stop();
 }
 
+/**
+ * @fn Thread *Runnable::thread(void) const;
+ * Get the current thread executing the runnable.
+ * @return	Thread executing the runnable, null if the run()
+ * 			has been called out of a thread scope.
+ */
+
+/**
+ * @fn Runnable& Runnable::current(void);
+ * Get the runnable for the current thread.
+ * @return	Current thread runnable.
+ */
+
+
+/**
+ * @class Thread
+ * Portable thread implementation A thread executes
+ * in a concurrent execution flow the given @ref Runnable
+ * object.
+ *
+ * The threads execution supports:
+ * @li @ref join() at end,
+ * @li @ref kill() killing,
+ * @li @ref Mutex synchronization.
+ */
 
 /**
  */
-Thread::Thread(Runnable& runnable): _runnable(runnable) {
-
+Thread::Thread(Runnable& runnable): _runnable(&runnable) {
+	runnable.thr = this;
 }
-
 
 /**
  */
 Thread::~Thread(void) {
 }
+
+/**
+ * @fn Thread *Thread::make(Runnable& runnable);
+ * Build a new portable thread. Notice that the runnable
+ * is not executed when the thread is created. It starts only
+ * when a call to @ref start() is performed!
+ * @return	Built thread or null if there is no more resources.
+ */
+
+/**
+ * @fn void Thread::start(void) throw(ThreadException);
+ * Start the execution of the thread and perform the call
+ * to Runnable::run(). The thread is stopped when Runnable::run()
+ * returns, when it is killed or when the Runnable::run() performs
+ * a call to stop.
+ * @throw ThreadException	If no more resources are available for the thread.
+ */
+
+/**
+ * @fn void Thread::stop(void);
+ * Stop the current thread.
+ */
+
+/**
+ * @fn void Thread::join(void) throw(ThreadException);
+ * Wait for the current thread to stop.
+ */
+
+/**
+ * @fn void Thread::kill(void) throw(ThreadException);
+ * Kill the current thread: notice that this method does not
+ * allow any synchronization, the thread will be killed but
+ * guarantee can be done at which program point it will happen.
+ * @throw ThreadException	Thrown if the thread is already dead.
+ */
+
+/**
+ * @fn bool Thread::isRunning(void);
+ * Test if the current thread is running.
+ * @return	True if the thread is running, false else.
+ */
+
+/**
+ * @fn Thread *Thread::current(void);
+ * Get the current thread.
+ * @return Current thread.
+ */
+
+/**
+ * @fn void Thread::setRootRunnable(Runnable& runnable);
+ * Convenient function to set the runnable of root thread.
+ * @param runnable	Runnable to assign to the root thread.
+ */
 
 
 /**
@@ -86,11 +172,9 @@ Thread::~Thread(void) {
  * System-independent implementation of a mutex.
  */
 
-
 /**
  */
 Mutex::~Mutex(void) { }
-
 
 /**
  * @fn void Mutex::lock(void);
@@ -98,13 +182,11 @@ Mutex::~Mutex(void) { }
  * @throw SystemException	No more place in waiting queue.
  */
 
-
 /**
  * @fn void Mutex::unlock(void);
  * Release a mutex acquired by the current thread.
  * @throw SystemException	Mutex not owned by the current thread.
  */
-
 
 /**
  * bool Mutex::tryLock(void);
@@ -114,43 +196,23 @@ Mutex::~Mutex(void) { }
  */
 
 
-/**
- * @class Thread::Key
- * This class is used to store data local to a thread.
- * A key is obtained calling @ref Thread::key() method then
- * the @ref Key methods allows to store or retrieve data local
- * to the current thread.
- * @param T		Type of data to store.
- */
-
-/**
- * @fn void Thread::Key::set(const T& val) throw(ThreadException);
- * Set the value associated with this local to the current thread.
- * @param val				Value to set.
- * @throw ThreadException	If the value cannot be stored.
- */
-
-/**
- * @fn Option<T> Thread::Key::get(void) const;
- * Get the value local to the current thread associated
- * with the current key.
- * @return	Some value if any or none.
- */
-
-/**
- * @fn void Thread::Key::clean(void) const;
- * Remove local value of the current thread associated with
- * the current key.
- */
-
-
 #if defined(__unix) || defined(__APPLE__)
 
 	/**
 	 * PThread: implementation on Linux of threads
 	 */
 	class PThread: public Thread {
+		friend class Thread;
 	public:
+
+		PThread(void): Thread(Runnable::null), pt(0), running(false) {
+			pt = pthread_self();
+			int r = pthread_key_create(&_key, NULL);
+			if(r < 0)
+				throw ThreadException("cannot run threads");
+			if(pthread_setspecific(_key, this) < 0)
+				throw ThreadException("cannot run threads");
+		}
 
 		PThread(Runnable& runnable): Thread(runnable), pt(0), running(false) { }
 
@@ -187,6 +249,7 @@ Mutex::~Mutex(void) { }
 	private:
 		pthread_t pt;
 		bool running;
+		static pthread_key_t _key;
 
 		static void cleanup(void *arg) {
 			ASSERT(arg);
@@ -199,12 +262,15 @@ Mutex::~Mutex(void) { }
 			PThread *thread = (PThread *)arg;
 			pthread_cleanup_push(cleanup, thread);
 			thread->running = true;
-			thread->_runnable.run();
+			if(pthread_setspecific(_key, thread) < 0)
+				throw ThreadException("cannot run threads");
+			thread->_runnable->run();
 			pthread_cleanup_pop(1);
 			return NULL;
 		}
 
 	};
+	pthread_key_t PThread::_key;
 
 	class PMutex: public Mutex {
 	public:
@@ -258,33 +324,15 @@ Mutex::~Mutex(void) { }
 		pthread_mutex_t h;
 	};
 
-	static void key_cleanup(void *v) {
-		if(v)
-			delete static_cast<AbstractValue *>(v);
+	static PThread root;
+
+	void Thread::setRootRunnable(Runnable& runnable) {
+		root._runnable = &runnable;
 	}
 
-	Thread::key_t Thread::newKey(void) throw(ThreadException) {
-		pthread_key_t *k = new pthread_key_t;
-		if(pthread_key_create(k, key_cleanup) < 0) {
-			delete k;
-			throw ThreadException(strerror(errno));
-		}
-		return k;
+	Thread *Thread::current(void) {
+		return static_cast<Thread *>(pthread_getspecific(PThread::_key));
 	}
-
-	void Thread::delKey(key_t k) {
-		delete static_cast<pthread_key_t *>(k);
-	}
-
-	AbstractValue *Thread::get(key_t k) {
-		return static_cast<AbstractValue *>(pthread_getspecific(*static_cast<pthread_key_t *>(k)));
-	}
-
-	void Thread::set(key_t k, AbstractValue *val) throw(ThreadException) {
-		if(pthread_setspecific(*static_cast<pthread_key_t *>(k), val) < 0)
-			throw ThreadException(strerror(errno));
-	}
-
 
 #elif defined(__WIN32) || defined(__WIN64)
 
