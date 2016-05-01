@@ -63,6 +63,7 @@ set(TEST_SOURCES
 	"test_stree.cpp"
 	"test_string.cpp"
 	"test_string_buffer.cpp"
+	"test_system.cpp"
 	"test_table.cpp"
 	"test_utility.cpp"
 	"test_vararg.cpp"

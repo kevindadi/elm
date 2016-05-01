@@ -703,4 +703,44 @@ sys::Path System::getTempDir(void) throw(SystemException) {
 	#	endif
 }
 
+
+/**
+ * Get the number of cores of the current host.
+ * @notice	ELM is not ever able to determine the number of cores according
+ * 			to the underlying OS: when it cant, it only assume 1 core!
+ * @return	Number of core.
+ */
+int System::coreCount(void) {
+	static int nb = -1;
+	if(nb < 0) {
+#		ifdef __linux
+			try {
+				io::InStream *in_stream = readFile("/proc/cpuinfo");
+				io::Input in(*in_stream);
+				nb = 0;
+				string line = in.scanLine();
+				while(line) {
+					if(line.startsWith("processor\t:"))
+						nb++;
+					line = in.scanLine();
+				}
+				if(nb < 0)
+					nb = 1;
+				delete in_stream;
+			}
+			catch(SystemException& e) {
+				nb = 1;
+			}
+#		elif defined(__WIN32) || defined(__WIN64)
+			LPSYSTEM_INFO info;
+			GetSystemInfo(&info);
+			nb = info.dwNumberOfProcessors;
+#		else
+			nb = 1;
+#		endif
+	}
+	return nb;
+}
+
+
 } } // elm::sys

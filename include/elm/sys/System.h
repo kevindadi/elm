@@ -59,6 +59,7 @@ public:
 	static void removeDir(const sys::Path& path) throw(SystemException);
 	static sys::Path getTempFile(void) throw(SystemException);
 	static sys::Path getTempDir(void) throw(SystemException);
+	static int coreCount(void);
 };
 
 } } // elm::system
