@@ -25,6 +25,7 @@ set(LIBELM_LA_SOURCES
 	"block_DynBlock.cpp"
 	"checksum_Fletcher.cpp"
 	"checksum_MD5.cpp"
+	"data_ArrayList.cpp"
 	"data_List.cpp"
 	"data_SortedList.cpp"
 	"debug.cpp"

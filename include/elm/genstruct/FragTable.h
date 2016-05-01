@@ -52,6 +52,7 @@ public:
 
 	class Iterator: public PreIterator<Iterator, const T&> {
 	public:
+		inline Iterator(void): arr(0), i(0), len(0) { }
 		inline Iterator(const FragTable<T>& array, int pos = 0): arr(&array), i(pos), len(array.count()) { }
 		inline void next(void) { ASSERT(i < len); i++; }
 		inline const T& item(void) const { return arr->get(i); }
