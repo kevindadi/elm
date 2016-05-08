@@ -364,5 +364,56 @@ TEST_BEGIN(string)
 		CHECK_EQUAL(t.trim(), string("1 2 3"));
 	}
 
+	// character builder
+	{
+		string s = string::make('?');
+		CHECK_EQUAL(s, string("?"));
+	}
+
+	// check splitter
+	{
+		string s = "otawa.hard.Platform";
+		str::Split sp(s, '.');
+		CHECK(!sp.ended());
+		CHECK_EQUAL(*sp, string("otawa"));
+		sp.next();
+		CHECK(!sp.ended());
+		CHECK_EQUAL(*sp, string("hard"));
+		sp.next();
+		CHECK(!sp.ended());
+		CHECK_EQUAL(*sp, string("Platform"));
+		sp.next();
+		CHECK(sp.ended());
+	}
+	{
+		string s = "otawa";
+		str::Split sp(s, '.');
+		CHECK(!sp.ended());
+		CHECK_EQUAL(*sp, string("otawa"));
+		sp.next();
+		CHECK(sp.ended());
+	}
+	{
+		string s = "";
+		str::Split sp(s, '.');
+		CHECK(!sp.ended());
+		CHECK_EQUAL(*sp, string());
+		sp.next();
+		CHECK(sp.ended());
+	}
+	{
+		string s = "otawa.hard.";
+		str::Split sp(s, '.');
+		CHECK(!sp.ended());
+		CHECK_EQUAL(*sp, string("otawa"));
+		sp.next();
+		CHECK(!sp.ended());
+		CHECK_EQUAL(*sp, string("hard"));
+		sp.next();
+		CHECK(!sp.ended());
+		CHECK_EQUAL(*sp, string(""));
+		sp.next();
+		CHECK(sp.ended());
+	}
 TEST_END
 

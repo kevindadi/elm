@@ -150,7 +150,17 @@
 		off = zero_off;
 		len = _len; 
  	}
- }
+}
+
+/**
+ * Build a string with a single character.
+ * @param chr	Character containing the string.
+ * @return		Built string.
+ */
+String String::make(char chr) {
+	char buf[2] = { chr, '\0' };
+	return String(buf);
+}
 
 /**
  * Build a new string by concatenation of two character arrays.
@@ -531,4 +541,20 @@ string String::rtrim(void) const {
  * Wrapper around C usual string.
  * @ingroup string
  */
+
+namespace str {
+
+/**
+ * @class Split
+ * This is an helper class to split a string in sub-parts
+ * using a separator (character or string). At each iteration,
+ * the next separated part is provided.
+ *
+ * Notice that the split of an empty string iterates exactly
+ * once and its unique value is the empty string.
+ *
+ * @ingroup string
+ */
+
+}	// str
 }	// elm

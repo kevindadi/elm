@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	type_info class interface
  *
  *	This file is part of OTAWA
@@ -23,6 +22,7 @@
 #define ELM_STRING_STRING_H
 
 #include <assert.h>
+#include <elm/PreIterator.h>
 #include <elm/string/CString.h>
 
 namespace elm {
@@ -69,6 +69,7 @@ public:
 		{ unlock(); copy(str.chars(), str.length()); return *this; };
 	inline String& operator=(const char *str)
 		{ if(!str) str = ""; unlock(); copy(str, strlen(str)); return *this; };
+	static String make(char chr);
 
 	inline int length(void) const { return len; };
 	inline const char *chars(void) const { return buf + off; };
@@ -106,12 +107,18 @@ public:
 	inline int lastIndexOf(const String& str) { return lastIndexOf(str, length()); }
 	int lastIndexOf(const String& str, int pos);
 
-	inline bool startsWith(const char *str) const;
-	inline bool startsWith(const CString str) const;
-	inline bool startsWith(const String& str) const;
-	inline bool endsWith(const char *str) const;
-	inline bool endsWith(const CString str) const;
-	inline bool endsWith(const String& str) const;
+	inline bool startsWith(const char *str) const
+		{ return startsWith(CString(str)); }
+	inline bool startsWith(const CString str) const
+		{ int l = str.length(); return len >= l && !memcmp(chars(), str.chars(), l); }
+	inline bool startsWith(const String& str) const
+		{ return len >= str.len && !memcmp(chars(), str.chars(), str.length()); }
+	inline bool endsWith(const char *str) const
+		{ return endsWith(CString(str)); }
+	inline bool endsWith(const CString str) const
+		{ int l = str.length(); return len >= l && !memcmp(chars() + len - l, str.chars(), l); }
+	inline bool endsWith(const String& str) const
+		{ return len>= str.len && !memcmp(chars() + len - str.len, str.chars(), str.len); }
 
 	String trim(void) const;
 	String ltrim(void) const;
@@ -122,29 +129,6 @@ public:
 #ifndef ELM_NO_STRING_SHORTCUT
 	typedef String string;
 #endif
-
-// Inlines
-inline bool String::startsWith(const char *str) const {
-	return startsWith(CString(str));
-}
-inline bool String::startsWith(const CString str) const {
-	int l = str.length();
-	return len >= l && !memcmp(chars(), str.chars(), l);
-}
-inline bool String::startsWith(const String& str) const {
-	return len >= str.len && !memcmp(chars(), str.chars(), str.length());
-}
-inline bool String::endsWith(const char *str) const {
-	return endsWith(CString(str));
-}
-inline bool String::endsWith(const CString str) const {
-	int l = str.length();
-	return len >= l && !memcmp(chars() + len - l, str.chars(), l);
-}
-inline bool String::endsWith(const String& str) const {
-	return len>= str.len
-		&& !memcmp(chars() + len - str.len, str.chars(), str.len);
-}
 
 } // elm
 

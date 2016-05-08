@@ -13,6 +13,7 @@
 #include <elm/string/String.h>
 #include <elm/string/StringBuffer.h>
 #include <elm/string/AutoString.h>
+#include <elm/string/Split.h>
 
 namespace elm {
 
