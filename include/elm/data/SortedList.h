@@ -37,7 +37,7 @@ public:
 
 	inline SortedList(void) { }
 	inline SortedList(const C& c): _c(c) { }
-	SortedList(SortedList & source): list(source.list) { }
+	SortedList(const SortedList & source): list(source.list) { }
 
 	inline void removeFirst(void) { list.removeFirst(); }
 	inline void removeLast(void) { list.removeLast(); }
