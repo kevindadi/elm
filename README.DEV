@@ -33,8 +33,9 @@ Activating the test compilation:
 	cmake . -DELM_TEST=ON
 
 Testing:
-	test/test			launch all automated tests
-	test/test-thread	thread classes
+	cd test
+	./test			launch all automated tests
+	./test-thread	thread classes
 
 Under Windows:
 	move src/libelm.dll to test/
