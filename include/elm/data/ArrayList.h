@@ -104,7 +104,7 @@ public:
 		{ ASSERT(index < _size); return chunk(index)->items[offset(index)]; }
 	int indexOf(const T &value, int start = 0) const
 		{ for(iter i(*this, start); i; i++) if(E::equals(*i, value)) return i.index(); return -1; }
-	int lastIndexOf(const T &value, int start = count()) const
+	int lastIndexOf(const T &value, int start = -1) const
 		{ int r = -1; for(iter i(*this, start); i && i.index() <= start; i++) if(E::equals(*i, value)) r =  i.index();  return r; }
 	inline const T &operator[](int index) const { return get(index); }
 
