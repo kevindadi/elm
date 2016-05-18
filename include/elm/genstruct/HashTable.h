@@ -41,7 +41,7 @@ class HashTable {
 		T value;
 	} node_t;
 
-	node_t *find(const K& key) {
+	node_t *find(const K& key) const {
 		int i = H::hash(key) % size;
 		for(node_t *node = tab[i], *prev = 0; node; prev = node, node = node->next)
 			if(H::equals(node->key, key)) {
@@ -96,9 +96,9 @@ public:
 	int count(void) const
 	 	 { int cnt = 0; for(int i = 0; i < size; i++) for(node_t *cur = tab[i]; cur; cur = cur->next) cnt++; return cnt; }
 
-	inline Option<T> get(const K& key)
+	inline Option<T> get(const K& key) const
 		{ node_t *node = find(key); return node ? Option<T>(type_info<T>::get(node->value)) : Option<T>(); }
-	inline const T get(const K& key, const T& def_value)
+	inline const T get(const K& key, const T& def_value) const
 		{ node_t *node = find(key); return node ? type_info<T>::get(node->value) : def_value; }
 	inline bool hasKey(const K& key)
 	 	 { node_t *node = find(key); return node != 0; }
