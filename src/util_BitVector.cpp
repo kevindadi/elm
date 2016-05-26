@@ -22,6 +22,7 @@
 
 #include <elm/util/BitVector.h>
 #include <elm/int.h>
+#include <elm/compare.h>
 
 namespace elm {
 
@@ -375,6 +376,21 @@ int BitVector::countBits(void) const {
 		result += bit_counter.counts[bits[i]];
 	return result;
 }
+
+
+/**
+ * Test if vectors have some bit to 1 in common.
+ * @param bv	Bit vector to compare with.
+ * @return		True if there is something common, false else.
+ */
+bool BitVector::meets(const BitVector& bv) {
+	int s = min(bytes(), bv.bytes());
+	for(int i = 0; i < s; i++)
+		if(bits[i] & bv.bits[i])
+			return true;
+	return false;
+}
+
 
 
 /**

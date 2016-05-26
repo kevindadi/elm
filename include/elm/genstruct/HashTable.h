@@ -148,6 +148,13 @@ public:
 		inline const K& key(void) const { return type_info<K>::get(this->node->key); };
 	};
 
+	// MutableIter class
+	class MutableIter: public InternIterator, public PreIterator<MutableIter, T> {
+	public:
+		inline MutableIter(HashTable<K, T, H>& htab): InternIterator(htab) { }
+		inline T& item(void) const { return this->node->value; }
+	};
+
 	// PairIterator class
 	class PairIterator: public InternIterator, public PreIterator<PairIterator, Pair<K, T> > {
 	public:

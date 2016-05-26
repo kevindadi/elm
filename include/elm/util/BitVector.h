@@ -48,6 +48,7 @@ public:
 	inline bool equals(const BitVector& vec) const;
 	int countBits(void) const;
 	inline void resize(int new_size);
+	bool meets(const BitVector& bv);
 	
 	inline void set(int index) const;
 	inline void set(int index, bool value) const;
