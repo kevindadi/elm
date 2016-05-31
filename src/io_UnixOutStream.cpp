@@ -22,6 +22,7 @@
 
 #include <unistd.h>
 #include <errno.h>
+#include <unistd.h>
 #include <elm/io/UnixOutStream.h>
 #include <elm/io.h>
 
@@ -48,6 +49,21 @@ UnixOutStream::UnixOutStream(int fd): _fd(fd) {
  * Build a Unix output stream using a file descriptor identifier.
  * @param _fd	File descriptor identifier.
  */
+
+
+/**
+ * Close an Unix output stream.
+ */
+UnixOutStream::~UnixOutStream() {
+#if defined(__unix) || defined(__APPLE__)
+	if(_fd >= 0) {
+		::close(_fd);
+		_fd = -1;
+	}
+#elif defined(__WIN32) || defined(__WIN64)
+	CloseHandle(_fd);
+#endif
+}
 
 
 /**
