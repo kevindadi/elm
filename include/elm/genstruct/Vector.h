@@ -100,6 +100,8 @@ public:
 		{ Iterator i(start); while(i && *i != item) i++; return i; }
 	inline const T& top(void) const
 		{ ASSERTP(cnt > 0, "no more data in the stack"); return tab[cnt - 1]; }
+	inline T& top(void)
+		{ ASSERTP(cnt > 0, "no more data in the stack"); return tab[cnt - 1]; }
 
 	// Mutators
 	inline void add(void);
