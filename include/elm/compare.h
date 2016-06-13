@@ -86,6 +86,15 @@ public:
 };
 
 
+// CompareInst class
+template <class T, class C = Comparator<T> >
+class DefaultCompare {
+public:
+	static inline int compare(const T& v1, const T& v2)
+		{ return C::compare(v1, v2); }
+};
+
+
 // Useful inlines
 template <class T> inline const T& min(const T& x, const T& y)
 	{ if(Comparator<T>::compare(x, y) >= 0) return y; else return x; }

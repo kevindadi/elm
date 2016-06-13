@@ -98,4 +98,13 @@ namespace elm {
  * @param C		Comparator for the key.
  */
 
+
+/**
+ * @class DefaultCompare
+ * Default implementation of @ref Compare concept from a Comparator.
+ *
+ * @param T		Type of item to compare.
+ * @param C		Comparator implementing the comparison.
+ */
+
 }

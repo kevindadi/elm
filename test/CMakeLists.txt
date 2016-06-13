@@ -56,6 +56,7 @@ set(TEST_SOURCES
 	"test_plugin.cpp"
 	"test_process.cpp"
 	"test_ptr.cpp"
+	"test_quicksort"
 	"test_ref.cpp"
 	"test_simplegc.cpp"
 	"test_stack_alloc.cpp"

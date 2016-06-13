@@ -27,7 +27,7 @@
 
 namespace elm {
 
-// SortedSLList class
+// SortedList class
 template <class T, class C = Comparator<T>, class A = IdAdapter<T> >
 class SortedList {
 	typedef genstruct::SLList<T, CompareEquiv<T, C> > list_t;

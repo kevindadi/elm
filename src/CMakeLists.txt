@@ -27,6 +27,7 @@ set(LIBELM_LA_SOURCES
 	"checksum_MD5.cpp"
 	"data_ArrayList.cpp"
 	"data_List.cpp"
+	"data_ListQueue.cpp"
 	"data_SortedList.cpp"
 	"debug.cpp"
 	"genstruct.h"

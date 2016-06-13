@@ -1,5 +1,5 @@
 /*
- *	data module documentation
+ *	ListQueue class interface
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2015, IRIT UPS.
@@ -18,6 +18,8 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
+#include <elm/data/ListQueue.h>
 
 namespace elm {
 
@@ -38,6 +40,8 @@ namespace elm {
  * Memory usage:
  * @li two pointers for object itself,
  * @li one pointer + data for stored items.
+ *
+ * @ingroup data
  */
 
 
@@ -75,4 +79,3 @@ namespace elm {
  */
 
 }
-

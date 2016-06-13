@@ -886,4 +886,20 @@ public:
 	static const K& key(const T& value);
 };
 
+
+/**
+ * The Compare concept enables the comparison of values
+ * using a single method @ref compare. Unlike @ref
+ * Comparator, it supports a comparison induced from an
+ * instance and, therefore, dependeng not only on the type
+ * but also on the instance state.
+ *
+ * @param T		Type of value to compare.
+ */
+template <class T>
+class Compare {
+public:
+		int compare(T v1, T v2);
+};
+
 } } // elm::concept
