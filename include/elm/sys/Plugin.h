@@ -23,6 +23,7 @@
 
 #include <elm/types.h>
 #include <elm/string.h>
+#include <elm/data/List.h>
 #include <elm/genstruct/Vector.h>
 #include <elm/genstruct/Table.h>
 #include <elm/util/Version.h>
@@ -40,6 +41,7 @@ namespace elm { namespace sys {
 
 // Plugin class
 class Plugin {
+	t::uint32 magic;
 public:
 	static const t::uint32 MAGIC = 0xCAFEBABE;
 	typedef genstruct::Table<string> aliases_t;
@@ -61,32 +63,6 @@ public:
 		genstruct::Vector<string> aliases;
 	};
 
-private:
-	friend class Plugger;
-	static genstruct::Vector<Plugin *> static_plugins;
-	static genstruct::Vector<Plugin *> unused_plugins;
-	CString _hook;
-	string _name;
-	Version per_vers;
-	void *_handle;
-	int state;
-	genstruct::DeletableTable<string> _aliases;
-	t::uint32 magic;
-	Path _path;
-
-	void plug(void *handle);
-	static void step(void);
-	static Plugin *get(cstring hook, const string& name);
-	void setPath(const Path& path) { _path = path; }
-
-protected:
-	CString _description;
-	CString _licence;
-	Version _plugin_version;
-	virtual void startup(void);
-	virtual void cleanup(void);
-
-public:
 	Plugin(string name, const Version& plugger_version, CString hook = "", const aliases_t& aliases = aliases_t::EMPTY);
 	Plugin(const make& maker);
 	virtual ~Plugin(void);
@@ -100,6 +76,35 @@ public:
 	bool matches(const string& name) const;
 	void unplug(void);
 	inline const Path& path(void) const { return _path; }
+
+	typedef List<Plugin *>::iter DepIter;
+	inline DepIter dependencies(void) const { return DepIter(deps); }
+
+protected:
+	virtual void startup(void);
+	virtual void cleanup(void);
+
+	CString _description;
+	CString _licence;
+	Version _plugin_version;
+
+private:
+	void plug(void *handle);
+	static void step(void);
+	static Plugin *get(cstring hook, const string& name);
+	void setPath(const Path& path) { _path = path; }
+
+	friend class Plugger;
+	static genstruct::Vector<Plugin *> static_plugins;
+	static genstruct::Vector<Plugin *> unused_plugins;
+	CString _hook;
+	string _name;
+	Version per_vers;
+	void *_handle;
+	int state;
+	genstruct::DeletableTable<string> _aliases;
+	Path _path;
+	List<Plugin *> deps;
 };
 
 // Inlines

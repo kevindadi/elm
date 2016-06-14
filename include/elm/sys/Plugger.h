@@ -100,7 +100,7 @@ private:
 	Plugin *plug(Plugin *plugin, void *handle);
 	inline genstruct::Vector<Plugin *>& statics(void);
 	void onError(error_level_t level, const string& message);
-	Plugin *lookELD(const Path& path, error_t& err);
+	Plugin *lookELD(const Path& path, error_t& err, genstruct::Vector<Plugin *>& deps);
 
 	// portability functions
 	static void *link(sys::Path lib);

@@ -228,9 +228,8 @@ Plugin *Plugger::plug(Plugin *plugin, void *handle) {
  */
 static inline sys::Path evaluate(sys::Path plugin_path, sys::Path path) {
 	string p = path;
-	if(p.startsWith("$ORIGIN")) {
-		return plugin_path.dirPart() / p.substring(7);
-	}
+	if(p.startsWith("$ORIGIN"))
+		return plugin_path.dirPart() / p.substring(8);
 	else
 		return path;
 }
@@ -296,7 +295,8 @@ void *Plugger::lookSymbol(void *handle, cstring name) {
  * @param err	To return error.
  * @return		Opened plugin if any.
  */
-Plugin *Plugger::lookELD(const Path& path, error_t& err) {
+Plugin *Plugger::lookELD(const Path& path, error_t& err, genstruct::Vector<Plugin *>& _deps) {
+	_deps.clear();
 
 	// compute ELD path
 	sys::Path ppath = path;
@@ -323,7 +323,10 @@ Plugin *Plugger::lookELD(const Path& path, error_t& err) {
 			genstruct::Vector<string> deps;
 			sect->getList(DEPS_ATT, deps);
 			for(int i = 0; i < deps.count(); i++) {
-				if(!plug(deps[i])) {
+				Plugin *plugin = plug(evaluate(ppath, deps[i]));
+				if(plugin)
+					_deps.add(plugin);
+				else {
 					onError(level_error, _ << "cannot plug " << deps[i]);
 					err = MISSING_DEP;
 					return 0;
@@ -365,8 +368,13 @@ Plugin *Plugger::lookELD(const Path& path, error_t& err) {
 Plugin *Plugger::plugFile(sys::Path path) {
 	err = OK;
 
+	// add extension if not present
+	if(path.extension() != PLUG_EXT)
+		path = path.setExtension(PLUG_EXT);
+
 	// look for ELD file
-	Plugin *res = lookELD(path, err);
+	genstruct::Vector<Plugin *> deps;
+	Plugin *res = lookELD(path, err, deps);
 	if(err != OK)
 		return 0;
 	if(res)
@@ -459,6 +467,8 @@ Plugin *Plugger::plugFile(sys::Path path) {
 
 	// Plug it
 	plugin->setPath(path);
+	for(genstruct::Vector<Plugin *>::Iterator dep(deps); dep; dep++)
+		plugin->deps.add(dep);
 	return plug(plugin, handle);
 }
 

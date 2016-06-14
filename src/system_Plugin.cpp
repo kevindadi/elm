@@ -260,17 +260,16 @@ Plugin::Plugin(
 	CString hook,
 	const aliases_t& aliases
 ) :
+	magic(MAGIC),
 	_hook(hook),
 	_name(name),
 	per_vers(plugger_version),
 	_handle(0),
-	state(0),
-	magic(MAGIC)
+	state(0)
 {
 	if(hook)
 		static_plugins.add(this);
 	_aliases.copy(aliases);
-	//cerr << "DEBUG: Plugin::Plugin(" << (void *)this << ", " << name << ")\n";
 }
 
 
@@ -279,15 +278,15 @@ Plugin::Plugin(
  * @param maker	Maker for plugin.
  */
 Plugin::Plugin(const Plugin::make& maker)
-:	_hook(maker._hook),
+:	magic(MAGIC),
+ 	_description(maker._description),
+ 	_licence(maker._license),
+ 	_plugin_version(maker._plugin_version),
+	_hook(maker._hook),
  	_name(maker._name),
  	per_vers(maker._plugger_version),
  	_handle(0),
- 	state(0),
- 	magic(MAGIC),
- 	_description(maker._description),
- 	_licence(maker._license),
- 	_plugin_version(maker._plugin_version)
+ 	state(0)
 {
 	if(_hook)
 		static_plugins.add(this);
@@ -296,7 +295,6 @@ Plugin::Plugin(const Plugin::make& maker)
 		as.addAll(maker.aliases);
 		_aliases = as.detach();
 	}
-	//cerr << "DEBUG: Plugin::Plugin(" << (void *)this << ", " << _name << ")\n";
 }
 
 /**
