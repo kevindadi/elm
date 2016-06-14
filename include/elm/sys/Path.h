@@ -64,7 +64,7 @@ public:
 	bool isRelative(void) const;
 	bool isHomeRelative(void) const;
 	inline bool equals(Path& path) const { return buf == path.buf; }
-	inline bool contains(Path& path) const { return path.buf.startsWith(path.buf); }
+	inline bool subPathOf(const Path& path) const { return buf.startsWith(path.buf); }
 	static Path current(void);
 	static Path home(void);
 	static Path temp(void);
@@ -103,6 +103,9 @@ public:
 		const string& s;
 		int p, n;
 	};
+
+	// deprecated
+	inline bool contains(const Path& path) const { return path.subPathOf(*this); }
 
 private:
 	int nextSeparator(int start = 0) const;

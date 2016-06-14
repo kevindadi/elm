@@ -268,8 +268,10 @@ bool Path::isHomeRelative(void) const {
 
 
 /**
- * @fn bool Path::contains(Path& path);
- * Test if a path lexically contains another path.
+ * @fn bool Path::subPathOf(Path& path);
+ * Test if the current path is a sub-path of given path.
+ * This means that the path is a prefix of the current
+ * path.
  * @return	True if it contains, false else.
  */
 
