@@ -902,4 +902,24 @@ public:
 		int compare(T v1, T v2);
 };
 
+
+/**
+ * A predicate enables testing of an item and returns true or false.
+ * They are usually used by set functions as @ref elm::forall()
+ * or elm::exists().
+ *
+ * @param T		Type of item to test.
+ */
+template <class T>
+class Predicate {
+public:
+
+	/**
+	 * Test if the predicate is true for the given item.
+	 * @param item	Item to test.
+	 * @return		True or false according to the internal policy.
+	 */
+	bool test(const T& item);
+};
+
 } } // elm::concept

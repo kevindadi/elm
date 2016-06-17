@@ -23,7 +23,7 @@ using namespace elm::avl;
 #endif
 
 static const int maxv = 1000;
-static const int count = 10000;
+static const int _count = 10000;
 
 // Entry point
 TEST_BEGIN(avl)
@@ -74,14 +74,14 @@ TEST_BEGIN(avl)
 		Set<int> tree;
 		bool intensive = true;
 		
-		for(int i = 0; intensive && i < count; i++) {
+		for(int i = 0; intensive && i < _count; i++) {
 			LOG(tree.dump(cerr); cerr << io::endl;)
 			int a = system::System::random(maxv * 3);
 
 			// remove
 			if(a < 2 * maxv && ints.count()) {
 				int n = ints[a % ints.count()];
-				LOG(cerr << "removing " << ints[a % ints.count()] << io::endl;)
+				LOG(cerr << "removing " << ints[a % ints._count()] << io::endl;)
 				ints.remove(n);
 				tree.remove(n);
 				intensive = !tree.contains(n);
@@ -118,7 +118,7 @@ TEST_BEGIN(avl)
 		genstruct::HashTable<string, int> htab;
 
 		bool map_intensive = true;
-		for(int i = 0; map_intensive && i < count; i++) {
+		for(int i = 0; map_intensive && i < _count; i++) {
 			int a = system::System::random(maxv * 4);
 
 			// remove

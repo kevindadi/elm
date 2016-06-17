@@ -42,6 +42,18 @@ public:
 		{ return ((I *)this)->item(); }
 };
 
+template <class I>
+inline int count(I i)
+	{ int c = 0; for(; i; i++) c++; return c; }
+
+template <class I, class P>
+inline bool forall(I i, const P& p)
+	{ for(; i; i++) if(!p.test(*i)) return false; return true; }
+
+template <class I, class P>
+inline bool exists(I i, const P& p)
+	{ for(; i; i++) if(p.test(*i)) return true; return false; }
+
 } // elm
 
 #endif	// ELM_PREITERATOR_H

@@ -60,6 +60,35 @@ namespace elm {
  * @ingroup data
  */
 
+/**
+ * @fn template <class I> int count(I i);
+ * Count the number of items accessible from iterator i.
+ * @param i		Iterator.
+ * @return		Counter of item to iterate on.
+ *
+ * @ingroup data
+ */
+
+/**
+ * @fn template <class I, class P> bool forall(I i, const P& p);
+ * Test if the given predicate t is true for all items of the iterator i.
+ * @param i		Iterator on the items to test.
+ * @param p		Predicate to test (must match @ref concept::Predicate concept).
+ * @return		True if all item are accepted by predicate, false else.
+ *
+ * @ingroup	data
+ */
+
+/**
+ * @fn template <class I, class P> bool exists(I i, const P& p);
+ * Test if the given predicate t is true for one of items of the iterator i.
+ * @param i		Iterator on the items to test.
+ * @param p		Predicate to test (must match @ref concept::Predicate concept).
+ * @return		True if one item is accepted by predicate, false else.
+ *
+ * @ingroup	data
+ */
+
 }	// elm
 
 #endif /* ELM_DATA_H_ */
