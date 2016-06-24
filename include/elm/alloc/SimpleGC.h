@@ -24,11 +24,39 @@
 #include <elm/util/BitVector.h>
 #include <elm/stree/Tree.h>
 #include <elm/genstruct/SLList.h>
+#include <elm/genstruct/DLList.h>
 #include <elm/alloc/DefaultAllocator.h>
 
 namespace elm {
 
+class SimpleGC;
+
+class Temp: public inhstruct::DLNode {
+public:
+	inline Temp(SimpleGC& gc);
+	virtual ~Temp(void);
+	virtual void collect(SimpleGC& gc) = 0;
+};
+
+template <class T>
+class TempPtr: public Temp {
+public:
+	inline TempPtr(SimpleGC& gc, T *ptr): Temp(gc), p(ptr) { }
+	virtual void collect(SimpleGC& gc) { p->collect(gc); }
+
+	inline operator T *(void) const { return p; }
+	inline T *operator&(void) const { return *p; }
+	inline T *operator->(void) const { return *p; }
+	inline T& operator*(void) const { return *p; }
+	inline operator bool(void) const { return p; }
+	inline TempPtr<T>& operator=(T *ptr) { p = ptr; return *this; }
+
+private:
+	T *p;
+};
+
 class SimpleGC {
+	friend class Temp;
 public:
 	SimpleGC(t::size size = 4096);
 	virtual ~SimpleGC(void);
@@ -61,6 +89,7 @@ private:
 	genstruct::SLList<chunk_t *> chunks;
 	t::size csize;
 	block_t *free_list;
+	inhstruct::DLList temps;
 
 	typedef stree::Tree<void *, chunk_t *> tree_t;
 	tree_t *st;

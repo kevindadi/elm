@@ -25,12 +25,56 @@
 namespace elm {
 
 /**
+ * @class Temp
+ * This class records itself to a garbage collector as representing
+ * a set of alive values. When a garbage collection is started,
+ * the collect() method is called.
+ *
+ * @ingroup alloc
+ */
+
+/**
+ * Build a temporary.
+ * @param gc	Garbage collector.
+ */
+Temp::Temp(SimpleGC& gc) {
+	gc.temps.addFirst(this);
+}
+
+/**
+ */
+Temp::~Temp(void) {
+	remove();
+}
+
+
+/**
+ * @class class TempPtr
+ * This class is pointer wrapper class to use with @ref SimpleGC.
+ * It records a pointer allocated from SimpleGC as alive until
+ * it is deleted (at end of its declaring block for example).
+ *
+ * It is useful to record pointer allocated from the garbage collector
+ * but not already stored in point reachable from the application
+ * data structures. It is particularly useful as a function local
+ * variable when several objects are allocated to form a complex
+ * structure before being stored in the main data structures.
+ *
+ * @pram T	Type of pointer data.
+ * @ingroup alloc
+ */
+
+
+/**
  * @class SimpleGC
  * Basically, this allocator is a stack allocator
  * that support monitored reference collection for garbage collection.
  * This means that the user is responsible to provide the live references
  * at garbage collection time. This is done by overloading the @ref collect()
  * method and calling @ref mark() on each live block.
+ *
+ * @sa Temp, TempPtr.
+ * @ingroup alloc
  */
 
 /**
@@ -76,6 +120,8 @@ void SimpleGC::clear(void) {
  */
 void SimpleGC::doGC(void) {
 	beginGC();
+	for(inhstruct::DLNode *node = temps.first(); !node->atEnd(); node = node->next())
+		static_cast<Temp *>(node)->collect(*this);
 	collect();
 	endGC();
 }
