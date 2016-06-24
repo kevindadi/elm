@@ -70,20 +70,32 @@ namespace elm {
  */
 
 /**
- * @fn template <class I, class P> bool forall(I i, const P& p);
+ * @fn template <class I, class P> bool forall(I i, P p);
  * Test if the given predicate t is true for all items of the iterator i.
  * @param i		Iterator on the items to test.
- * @param p		Predicate to test (must match @ref concept::Predicate concept).
+ * @param p		Predicate to test (type bool (*)(I)).
  * @return		True if all item are accepted by predicate, false else.
  *
  * @ingroup	data
  */
 
 /**
- * @fn template <class I, class P> bool exists(I i, const P& p);
- * Test if the given predicate t is true for one of items of the iterator i.
+ * @fn template <class I, class P, class A> bool forall(I i, P p, A a);
+ * Test if the given predicate t is true for all items of the iterator i and supports an extra argument.
  * @param i		Iterator on the items to test.
- * @param p		Predicate to test (must match @ref concept::Predicate concept).
+ * @param p		Predicate to test (type bool (*)(I, A)).
+ * @param a		Extra argument.
+ * @return		True if all item are accepted by predicate, false else.
+ *
+ * @ingroup	data
+ */
+
+/**
+ * @fn template <class I, class P, class A> bool exists(I i, P p, A a);
+ * Test if the given predicate t is true for one of items of the iterator i and supports an extra argument.
+ * @param i		Iterator on the items to test.
+ * @param p		Predicate to test (type bool (*)(I, A)).
+ * @param a		Extra argument.
  * @return		True if one item is accepted by predicate, false else.
  *
  * @ingroup	data

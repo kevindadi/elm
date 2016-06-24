@@ -36,7 +36,7 @@
 #include <elm/sys/System.h>
 #include <elm/io.h>
 #include <elm/ini.h>
-#include <elm/util/AutoDestructor.h>
+#include <elm/util/UniquePtr.h>
 
 namespace elm { namespace sys {
 
@@ -308,7 +308,7 @@ Plugin *Plugger::lookELD(const Path& path, error_t& err, genstruct::Vector<Plugi
 	try {
 
 		// open the ELD file
-		AutoDestructor<ini::File> file(ini::File::load(ppath));
+		UniquePtr<ini::File> file(ini::File::load(ppath));
 		ini::Section *sect = file->get(SECTION_NAME);
 
 		// if section is provided

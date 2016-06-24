@@ -28,7 +28,7 @@ namespace elm {
 /**
  * @defgroup utility Utility Classes
  * 
- * This module contains classes providing miscalleneous services.
+ * This module contains classes providing miscellaneous services.
  * 
  * @li @ref AutoComparator -- implementation of the @ref concept::Comparator
  * using the default "==" and "<" operators.
@@ -38,7 +38,6 @@ namespace elm {
  * static objects,
  * @li @ref STRONG_TYPE -- automatic class wrapper around scalar types like
  * enumeration (to avoid ambiguities in C++ type conversion),
- * @li @ref VarArg -- wrapper around the variable arguments of function,
  * @li @ref Version -- unified version representation.
  * 
  * Other classes provides base classes to a unified exception system:
@@ -50,9 +49,15 @@ namespace elm {
  * @li @ref Pair -- pair of values,
  * 
  * Finally, some classes provides facilities to handle references:
- * @li @ref AutoPtr and @ref Lock -- provides an automatic pointer management
+ * @li @ref LockPtr and @ref Lock -- provides an automatic pointer management
  * system,
  * @li @ref Ref -- mutable references.
+ * @li @ref SharedPtr
+ * @li @ref UniquePtr
+ * Notice that the set of pointer wrapper classes can be include with "elm/ptr.h".
+ *
+ * @par deprecated
+ * @li @ref VarArg -- wrapper around the variable arguments of function,
  */
 
 /**
@@ -125,4 +130,107 @@ AbstractValue::~AbstractValue(void) {
  * @return		GenValue to store the value in.
  */
 
+
+/**
+ * @class UniquePtr
+ * Implements a pointer wrapper class ensuring there is only one owner
+ * of a pointed object. When a unique pointer is deleted, the pointed
+ * object is also deleted while when a unique pointer is assigned
+ * to another one, it looses the pointed object that is passed
+ * to assigned unique pointer.
+ *
+ * @param T		Type of pointed objects.
+ * @ingroup		utility
+ */
+
+/**
+ * @fn bool UniquePtr::isNull(void) const;
+ * Test if the pointer is null.
+ * @return	True if the pointer is null, false else.
+ */
+
+/**
+ * @fn void UniquePtr::clean(void);
+ * Free the pointed memory and set the pointer to null.
+ */
+
+/**
+ * @fn T *UniquePtr::detach(void);
+ * Return the pointer and set it in the object to null (it will no more be
+ * automatically fried).
+ * @return	Stored pointer.
+ */
+
+/**
+ * @fn UniquePtr& UniquePtr::operator=(T *ptr);
+ * Change the pointer contained in the unique pointer, the old pointer begin
+ * fried.
+ * Same as set().
+ * @param ptr	Pointer to set.
+ * @return		Set unique pointer.
+ */
+
+/**
+ * @fn UniquePtr& UniquePtr::operator=(UniquePtr& ptr);
+ * Change the current pointer with the one of the given unique pointer. The old
+ * pointer is first fried and the ad pointer is set to null.
+ * @param 	ptr	Unique pointer to set the pointer form.
+ * @return	Set unique pointer.
+ */
+
+/**
+ * @fn UniquePtr::operator T *(void) const;
+ * Same as get().
+ */
+
+
+/**
+ * @fn T *UniquePtr::operator->(void) const;
+ * Indirect access to the members of stored pointer.
+ * @return	Stored pointer.
+ */
+
+
+/**
+ * @fn UniquePtr::operator bool(void) const;
+ * Same as !isNull().
+ */
+
+
+/**
+ * @class SharedPtr
+ * Implements a pointer wrapper class that takes care of the usage of
+ * a pointer and that automatically delete a pointed object when it
+ * is no more used.
+ *
+ * Based on reference counting approach, assignment of shared pointer
+ * induces the decrementation of the previous pointer and the incrementation
+ * of the new pointer.
+ *
+ * Beware: this also means that pointed objects forming a cycle will not
+ * be deleted!
+ *
+ * @param T		Type of pointed object.
+ * @ingroup		utility
+ */
+
+
+/**
+ * @class LockPtr
+ * Implements a pointer wrapper class that takes care of the usage of
+ * a pointer and that automatically delete a pointed object when it
+ * is no more used.
+ *
+ * Based on reference counting approach, assignment of shared pointer
+ * induces the decrementation of the previous pointer and the incrementation
+ * of the new pointer.  Unlike the @ref SharedPtr, the pointed object must
+ * implements the @ref Lock class. This permits to save one extraneous pointer
+ * used, in @ref SharedPtr, to link the pointed objects with its counter.
+ *
+ * Beware: this also means that pointed objects forming a cycle will not
+ * be deleted!
+ *
+ * @param T		Type of pointed object.
+ * @ingroup		utility
+ */
 };

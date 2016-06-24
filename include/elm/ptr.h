@@ -24,5 +24,6 @@
 
 #include "util/LockPtr.h"
 #include "util/SharedPtr.h"
+#include "util/UniquePtr.h"
 
 #endif /* INCLUDE_ELM_PTR_H_ */
