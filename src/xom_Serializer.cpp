@@ -476,9 +476,9 @@ void Serializer::writeEscaped(String text) {
 		while(i < len && !isTextEscape(text[i]))
 			i++;
 		if(i > j)
-			writeRaw(&text + j, j - i);
+			writeRaw(&text + j, i - j);
 		if(i < len)
-			writeRaw(escapeSimple(text[i++]));
+			writeRaw(escapeSimple(text[i]));
 	}
 }
 
