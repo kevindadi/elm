@@ -141,12 +141,10 @@ public:
 	inline const T& last(void) const { return lastNode()->val; }
 	inline T& nth(int n) { Iter i(*this); while(n) { ASSERT(i); i++; n--; } ASSERT(i); return i.node->val; };
 	inline const T& nth(int n) const { Iter i(*this); while(n) { ASSERT(i); i++; n--; } ASSERT(i); return *i; };
-	PrecIter find(const T& item) const
-		{ PrecIter iter(*this); for(; iter; iter++) if(E::equals(item, iter)) break; return iter;  }
-	PrecIter find(const T& item, const PrecIter& pos) const
-		{ PrecIter iter(pos); for(iter++; iter; iter++) if(E::equals(item, iter)) break; return iter; }
-	Iter find(const T& item, const Iter& pos = items()) const
-		{ Iter iter(pos); for(iter++; iter; iter++) if(E::equals(item, iter)) break; return iter; }
+	Iter find(const T& item) const
+		{ Iter i; for(i = items(); i; i++) if(E::equals(item, i)) break; return i; }
+	Iter find(const T& item, const Iter& pos) const
+		{ Iter i = pos; for(i++; i; i++) if(E::equals(item, i)) break; return i; }
 
 	// MutableList concept
 	inline void addFirst(const T& value) { _list.addFirst(new Node(value)); }
