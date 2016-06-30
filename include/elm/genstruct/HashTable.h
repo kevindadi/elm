@@ -98,7 +98,7 @@ public:
 
 	inline Option<T> get(const K& key) const
 		{ node_t *node = find(key); return node ? Option<T>(type_info<T>::get(node->value)) : Option<T>(); }
-	inline const T get(const K& key, const T& def_value) const
+	inline const T& get(const K& key, const T& def_value) const
 		{ node_t *node = find(key); return node ? type_info<T>::get(node->value) : def_value; }
 	inline bool hasKey(const K& key)
 	 	 { node_t *node = find(key); return node != 0; }

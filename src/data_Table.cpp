@@ -1,8 +1,8 @@
 /*
- *	type_info class shortcut
+ *	Table classes implementation
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2007-16, IRIT UPS.
+ *	Copyright (c) 2016, IRIT UPS.
  *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,16 +18,5 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_TYPES_H
-#define ELM_TYPES_H
 
-#include <elm/int.h>
-
-namespace elm {
-
-template <class T>
-inline T *null(void) { return static_cast<T *>(0); }
-
-}	// elm
-
-#endif // ELM_TYPES_H
+#include <elm/data/Table.h>

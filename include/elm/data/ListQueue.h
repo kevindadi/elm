@@ -44,6 +44,8 @@ public:
 	inline const T &head(void) const { ASSERTP(h, "empty queue"); return h->val; }
 	inline T get(void)
 		{ ASSERTP(h, "empty queue"); T r = h->val; node_t *n = h; h = h->next; if(!h) t = 0; delete n; return r; }
+	inline bool contains(const T& val)
+		{ for(node_t *n = h; n; n = n->next) if(E::equals(n->val, val)) return true; return false; }
 
 	inline void put(const T &item)
 		{ node_t *n = new node_t(item); (h ? t->next : h) = n; t = n; }

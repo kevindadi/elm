@@ -27,7 +27,7 @@ TEST_BEGIN(list)
 		CHECK(list.count() == 10);
 		int i = 9;
 		bool good = true;
-		for(List<int>::iter iter(list); iter; iter++, i--)
+		for(List<int>::Iter iter(list); iter; iter++, i--)
 			if(iter.item() != i) {
 				good = false;
 				break;
@@ -81,14 +81,14 @@ TEST_BEGIN(list)
 		List<int> l;
 		for(int i = 0; i < 10; i++)
 			l += i;
-		for(List<int>::prec_iter i(l); i;) {
+		for(List<int>::PrecIter i(l); i;) {
 			if(*i % 2 == 0)
-				i.remove();
+				l.remove(i);
 			else
 				i++;
 		}
 		int pairs = 0;
-		for(List<int>::iter i(l); i; i++)
+		for(List<int>::Iter i(l); i; i++)
 			if(*i % 2 == 0)
 				pairs++;
 		CHECK_EQUAL(pairs, 0);
@@ -104,9 +104,9 @@ TEST_BEGIN(list)
 		List<int> l;
 		for(int i = 9; i >= 0; i--)
 			l += i;
-		List<int>::iter b, e;
-		for(List<int>::iter i = l.begin();
-		i != l.end();
+		List<int>::Iter b, e;
+		for(List<int>::Iter i = l;
+		i;
 		i++) {
 			if(i == 3)
 				b = i;
@@ -115,7 +115,7 @@ TEST_BEGIN(list)
 		}
 		CHECK(b);
 		CHECK(e);
-		List<int>::sub_iter s(b, e);
+		List<int>::SubIter s(b, e);
 		for(int i = 3; i < 8; i++) {
 			CHECK(s);
 			CHECK(*s == i);

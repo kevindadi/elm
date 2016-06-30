@@ -77,7 +77,7 @@ public:
 	void unplug(void);
 	inline const Path& path(void) const { return _path; }
 
-	typedef List<Plugin *>::iter DepIter;
+	typedef List<Plugin *>::Iter DepIter;
 	inline DepIter dependencies(void) const { return DepIter(deps); }
 
 protected:

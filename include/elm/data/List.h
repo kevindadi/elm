@@ -48,92 +48,74 @@ public:
 	inline ~List(void) { clear(); }
 
 	void copy(const List<T>& list) {
-		clear(); iter item(list); if(!item) return; addFirst(*item); Node *cur = firstNode();
+		clear(); Iter item(list); if(!item) return; addFirst(*item); Node *cur = firstNode();
 		for(item++; item; item++) { cur->insertAfter(new Node(*item)); cur = cur->next(); }
 	}
 
-	// iter class
-	class iter: public PreIterator<iter, const T&> {
+	// Iter class
+	class Iter: public PreIterator<Iter, const T&> {
+		friend class List;
 	public:
-		inline iter(void): node(0) { }
-		inline iter(const List& _list): node(_list.firstNode()) { }
-		inline bool operator==(const iter& i) { return node == i.node; }
-		inline bool operator!=(const iter& i) { return node != i.node; }
+		inline Iter(void): node(0) { }
+		inline Iter(const List& _list): node(_list.firstNode()) { }
+		inline bool operator==(const Iter& i) { return node == i.node; }
+		inline bool operator!=(const Iter& i) { return node != i.node; }
 
 		inline bool ended(void) const { return !node; }
 		inline const T& item(void) const { ASSERT(node); return node->val; }
 		inline void next(void) { ASSERT(node); node = node->next(); }
 
 	private:
-		friend class List;
 		friend class prec_iter;
 		Node *node;
 	};
-	inline iter begin(void) const { return iter(*this); }
-	inline iter end(void) const { return iter(); }
+	inline Iter items(void) const { return Iter(*this); }
+	inline Iter operator*(void) const { return items(); }
+	inline operator Iter(void) const { return items(); }
 
-	// prec_iter class
-	class prec_iter: public PreIterator<prec_iter, const T&> {
+	// PrecIter class
+	class PrecIter: public PreIterator<PrecIter, const T&> {
+		friend class List;
 	public:
-		inline prec_iter(void): node(0), prev(0) { }
-		inline prec_iter(const List& _list): node(_list.firstNode()), prev(0) { }
-		inline operator iter(void) const { iter i; i.node = node; return i; }
-		inline bool operator==(const prec_iter& i) { return node == i.node; }
-		inline bool operator!=(const prec_iter& i) { return node != i.node; }
+		inline PrecIter(void): node(0), prev(0) { }
+		inline PrecIter(const List& _list): node(_list.firstNode()), prev(0) { }
+		inline operator Iter(void) const { Iter i; i.node = node; return i; }
+		inline bool operator==(const PrecIter& i) { return node == i.node; }
+		inline bool operator!=(const PrecIter& i) { return node != i.node; }
 
 		inline bool ended(void) const { return !node; }
 		inline const T& item(void) const { ASSERT(node); return node->val; }
 		inline void next(void) { ASSERT(node); prev = node; node = node->next(); }
 
-		void remove(void) { node = node->next(); prev->removeNext(); }
-
 	private:
-		friend class List;
 		Node *node, *prev;
 	};
 
-	// mutable_iter class
-	class mutable_iter: public PreIterator<mutable_iter, T&> {
+	// SubIter class
+	class SubIter: public PreIterator<SubIter, T> {
 	public:
-		inline mutable_iter(void): node(0) { }
-		inline mutable_iter(List& _list): node(_list.firstNode()) { }
-		inline bool operator==(const mutable_iter& i) { return node == i.node; }
-		inline bool operator!=(const mutable_iter& i) { return node != i.node; }
-
-		inline bool ended(void) const { return !node; }
-		inline T& item(void) const { ASSERT(node); return node->val; }
-		inline void next(void) { ASSERT(node); node = node->next(); }
-	private:
-		friend class List;
-		Node *node;
-	};
-	inline mutable_iter mutable_begin(void) { return mutable_iter(*this); }
-	inline mutable_iter mutable_end(void) { mutable_iter i(*this); while(i) i++; return i;}
-
-	// sub_iter class
-	class sub_iter: public PreIterator<sub_iter, T> {
-	public:
-		inline sub_iter(void) { }
-		inline sub_iter(iter begin, iter end): c(begin), e(end) { }
-
+		inline SubIter(void) { }
+		inline SubIter(Iter begin, Iter end): c(begin), e(end) { }
 		inline bool ended(void) const { return c == e; }
 		inline const T& item(void) const { return *c; }
 		inline void next(void) { c++; }
+		inline Iter asIter(void) const { return c; }
+		inline operator Iter(void) const { return c; }
 	private:
-		iter c, e;
+		Iter c, e;
 	};
 
 	// Collection concept
 	static List<T, E> null;
 	inline int count(void) const { return _list.count(); }
 	inline bool contains (const T &item) const
-		{ for(iter iter(*this); iter; iter++) if(E::equals(item, iter)) return true; return false; }
+		{ for(Iter iter(*this); iter; iter++) if(E::equals(item, iter)) return true; return false; }
 	inline bool isEmpty(void) const { return _list.isEmpty(); };
 	inline operator bool(void) const { return !isEmpty(); }
 	bool equals(const List<T>& l) const
-		{ iter i1(*this), i2(l); while(i1 && i2) { if(!E::equals(*i1, *i2)) return false; i1++; i2++; } return !i1 && !i2; }
+		{ Iter i1(*this), i2(l); while(i1 && i2) { if(!E::equals(*i1, *i2)) return false; i1++; i2++; } return !i1 && !i2; }
 	bool includes(const List<T>& l) const
-		{ iter i1(*this), i2(l); while(i1 && i2) { if(E::equals(*i1, *i2)) i2++; i1++; } ; return !i2; }
+		{ Iter i1(*this), i2(l); while(i1 && i2) { if(E::equals(*i1, *i2)) i2++; i1++; } ; return !i2; }
 
 	// MutableCollection concept
 	inline void clear(void)
@@ -150,32 +132,32 @@ public:
 		if(E::equals(cur->val, value)) { prev->removeNext(); return; }
 	}
 
-	inline void remove(prec_iter &iter) { remove(iter.prev, iter.node); }
+	inline void remove(PrecIter &iter) { iter.node = iter.node->next(); iter.prev->removeNext(); }
 
 	// List concept
 	inline T& first(void) { return firstNode()->val; }
 	inline const T& first(void) const { return firstNode()->val; }
 	inline T& last(void) { return lastNode()->val; }
 	inline const T& last(void) const { return lastNode()->val; }
-	inline T& nth(int n) { mutable_iter i(*this); while(n) { ASSERT(i); i++; n--; } ASSERT(i); return *i; };
-	inline const T& nth(int n) const { iter i(*this); while(n) { ASSERT(i); i++; n--; } ASSERT(i); return *i; };
-	prec_iter find(const T& item) const
-		{ prec_iter iter(*this); for(; iter; iter++) if(E::equals(item, iter)) break; return iter;  }
-	prec_iter find(const T& item, const prec_iter& pos) const
-		{ prec_iter iter(pos); for(iter++; iter; iter++) if(E::equals(item, iter)) break; return iter; }
-	iter find(const T& item, const iter& pos) const
-		{ iter iter(pos); for(iter++; iter; iter++) if(E::equals(item, iter)) break; return iter; }
+	inline T& nth(int n) { Iter i(*this); while(n) { ASSERT(i); i++; n--; } ASSERT(i); return i.node->val; };
+	inline const T& nth(int n) const { Iter i(*this); while(n) { ASSERT(i); i++; n--; } ASSERT(i); return *i; };
+	PrecIter find(const T& item) const
+		{ PrecIter iter(*this); for(; iter; iter++) if(E::equals(item, iter)) break; return iter;  }
+	PrecIter find(const T& item, const PrecIter& pos) const
+		{ PrecIter iter(pos); for(iter++; iter; iter++) if(E::equals(item, iter)) break; return iter; }
+	Iter find(const T& item, const Iter& pos = items()) const
+		{ Iter iter(pos); for(iter++; iter; iter++) if(E::equals(item, iter)) break; return iter; }
 
 	// MutableList concept
 	inline void addFirst(const T& value) { _list.addFirst(new Node(value)); }
 	inline void addLast(const T& value) { _list.addLast(new Node(value)); }
-	inline void addAfter(const iter& pos, const T& value)
+	inline void addAfter(const Iter& pos, const T& value)
 		{ ASSERT(pos.node); pos.node->insertAfter(new Node(value)); }
-	inline void addBefore(const prec_iter& pos, const T& value)
+	inline void addBefore(const PrecIter& pos, const T& value)
 		{ if(!pos.prev) addFirst(value); else pos.prev->insertAfter(new Node(value)); }
 	inline void removeFirst(void) { Node *node = firstNode(); _list.removeFirst(); delete node; }
 	inline void removeLast(void) { Node *node = lastNode(); _list.removeLast(); delete node; }
-	inline void set(const iter &pos, const T &item) { ASSERT(pos.node); pos.node->val = item; }
+	inline void set(const Iter &pos, const T &item) { ASSERT(pos.node); pos.node->val = item; }
 
 	// Stack concept
 	inline const T& top(void) const { return first(); }

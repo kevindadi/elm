@@ -29,6 +29,7 @@ set(LIBELM_LA_SOURCES
 	"data_List.cpp"
 	"data_ListQueue.cpp"
 	"data_SortedList.cpp"
+	"data_Table.cpp"
 	"debug.cpp"
 	"genstruct.h"
 	"genstruct_AssocList.cpp"
