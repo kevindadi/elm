@@ -58,8 +58,8 @@ public:
 	inline T& get(int idx) { ASSERT(0 <= idx && idx < cnt); return buf[idx]; }
 	inline void set(int idx, const T& val) { ASSERT(0 <= idx && idx < cnt); buf[idx] = val; }
 
-	inline const T *operator&(void) const { return buffer(); }
-	inline T *operator&(void) { return buffer(); }
+	inline const T *operator()(void) const { return buffer(); }
+	inline T *operator()(void) { return buffer(); }
 	inline const T& operator[](int idx) const { return get(idx); }
 	inline T& operator[](int idx) { return get(idx); }
 	inline Table<T>& operator=(const Table<T>& t) { set(t); return *this; }
@@ -79,13 +79,16 @@ public:
 	inline AllocTable(int count): Table<T>(count, new T[count]) { }
 	inline AllocTable(int count, const T& val): Table<T>(count, new T[count]) { fill(val); }
 	inline AllocTable(const Table<T>& t): Table<T>(t.cnt, new T[t.cnt]) { Table<T>::copy(t); }
+	inline AllocTable(const AllocTable<T>& t): Table<T>(t.cnt, new T[t.cnt]) { Table<T>::copy(t); }
 	inline ~AllocTable(void) { if(this->buf) delete [] this->buf; }
 
 	inline void copy(const Table<T>& t)
 		{ if(this->count() < t.count()) { if(this->buf) delete [] this->buf;
 		  this->set(t.count(), new T[t.count()]); } Table<T>::copy(t); }
+	inline void set(int cnt, T *buffer) { if(this->buf) delete [] this->buf; Table<T>::set(cnt, buffer); }
 
 	inline AllocTable<T>& operator=(const Table<T>& t) { copy(t); return *this; }
+	inline AllocTable<T>& operator=(const AllocTable<T>& t) { copy(t); return *this; }
 };
 
 } // elm
