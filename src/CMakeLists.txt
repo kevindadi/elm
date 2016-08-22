@@ -19,6 +19,7 @@ set(LIBELM_LA_SOURCES
 	"alloc_BlockAllocatorWithGC.cpp"
 	"alloc_DefaultAllocator.cpp"
 	"alloc_SimpleGC.cpp"
+	"alloc_GroupedGC.cpp"
 	"alloc_StackAllocator.cpp"
 	"avl_GenTree.cpp"
 	"avl_Tree.cpp"

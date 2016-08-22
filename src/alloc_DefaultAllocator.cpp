@@ -22,6 +22,7 @@
 
 #include <new>
 #include <elm/alloc/DefaultAllocator.h>
+#include <elm/assert.h>
 
 namespace elm {
 
@@ -137,6 +138,17 @@ void *DefaultAllocator::allocate(t::size size) throw(BadAlloc) {
 	}
 }
 
+
+/**
+ * Mark a memory block of the given size so that it will not be released by the garbage collector.
+ * @param data	The data to collect
+ * @param size	Size of the block to allocate.
+ * @return		If the data is already marked
+ */
+bool DefaultAllocator::mark(void *data, t::size size) {
+	ASSERTP(false, "Please implement the mark() method in the specialized allocator");
+	return false;
+}
 
 /**
  * @fn void DefaultAllocator::free(void *block);
