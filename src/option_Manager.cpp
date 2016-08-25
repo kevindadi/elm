@@ -24,6 +24,7 @@
 #include <elm/io.h>
 #include <elm/option/Manager.h>
 #include <elm/string.h>
+#include <elm/sys/System.h>
 
 namespace elm { namespace option {
 
@@ -305,12 +306,18 @@ OptionException::OptionException(const String& message)
 
 
 /**
+ */
+Manager::Manager(void): _help(0) {
+}
+
+
+/**
  * Build a manager with the new method.
  * @param config	First configuration item.
  * @param ...		end() ended configuration item list.
  * @deprecated		Since 22/03/13.
  */
-Manager::Manager(int tag, ...) {
+Manager::Manager(int tag, ...): _help(0) {
 	VARARG_BEGIN(args, tag)
 		while(tag != end) {
 			configure(tag, args);
@@ -319,12 +326,24 @@ Manager::Manager(int tag, ...) {
 	VARARG_END
 }
 
-
 /**
  * Build a new option manager.
  * @param maker		Information for initialization.
  */
-Manager::Manager(const Make& maker): info(maker) {
+Manager::Manager(const Make& maker): info(maker), _help(0) {
+	if(info._help)
+		_help = new SwitchOption(SwitchOption::Make(*this)
+			.cmd("-h")
+			.cmd("--help")
+			.description("display this help message"));
+}
+
+
+/**
+ */
+Manager::~Manager(void) {
+	if(_help)
+		delete _help;
 }
 
 
@@ -412,7 +431,12 @@ void Manager::processOption(
 	}
 	
 	// Process the option
-	option->process(arg);
+	if(option != _help)
+		option->process(arg);
+	else {
+		displayHelp();
+		sys::System::exit(1);
+	}
 }
 
 
@@ -596,5 +620,39 @@ void Manager::displayHelp(void) {
  * of options inside a @ef Manager class.
  */
 
-} } // elm::option
 
+/**
+ * @class Manager::Make
+ * This class is an initializer for class @ref Manager. It procides a safe and
+ * readable way to initialize an option manager. It is usually passed directly
+ * to the @ref Manager constructor.
+ */
+
+/**
+ * @fn Manager::Make& Manager::Make::author(cstring s);
+ * Specify the author of the application.
+ */
+
+/**
+ * @fn Manager::Make& Manager::Make::copyright(cstring s);
+ * Specify the copyright of the application.
+ */
+
+/**
+ * @fn Manager::Make& Manager::Make::description(cstring s);
+ * Specify the description of the application.
+ */
+
+/**
+ * @fn Manager::Make& Manager::Make::free_argument(cstring s);
+ * Specify description of the free arguments.
+ */
+
+/**
+ * @fn Manager::Make& Manager::Make::help(void);
+ * Ask the manager to create a switch option activated with "-h" or "--help"
+ * that, when activated, display help message and the list of options.
+ * Then it stops the application with an exit code of 1.
+ */
+
+} } // elm::option

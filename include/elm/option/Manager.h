@@ -41,12 +41,13 @@ public:
 	class Make {
 		friend class Manager;
 	public:
-		inline Make(void) { }
-		inline Make(cstring program, Version version = Version::ZERO): _program(program), _version(version) { }
+		inline Make(void): _help(false) { }
+		inline Make(cstring program, Version version = Version::ZERO): _program(program), _version(version), _help(false) { }
 		inline Make& author(cstring s) { _author = s; return *this; }
 		inline Make& copyright(cstring s) { _copyright = s; return *this; }
 		inline Make& description(cstring s) { _description = s; return *this; }
 		inline Make& free_argument(cstring s) { _free_argument_description = s; return *this; }
+		inline Make& help(void) { _help = true; return *this; }
 	private:
 		cstring _program;
 		Version _version;
@@ -54,6 +55,7 @@ public:
 		cstring _copyright;
 		cstring _description;
 		cstring _free_argument_description;
+		bool _help;
 	};
 
 	// shortcut to make options
@@ -61,10 +63,10 @@ public:
 	template <class T> typename ValueOption<T>::Make make_value(void) { return typename ValueOption<T>::Make(*this); }
 
 	typedef const char * const *argv_t;
-	inline Manager(void) { }
+	Manager(void);
 	Manager(int tag, ...);
 	Manager(const Make& maker);
-	virtual ~Manager(void) { }
+	virtual ~Manager(void);
 	void addOption(Option *option) throw(OptionException);
 	void removeOption(Option *option);
 	void parse(int argc, argv_t argv) throw(OptionException);
@@ -91,6 +93,7 @@ private:
 	void addCommand(string cmd, Option *option) throw(OptionException);
 	genstruct::SortedBinMap<char, Option *> shorts;
 	genstruct::SortedBinMap<string, Option *> cmds;
+	Option *_help;
 };
 
 } } //elm::option

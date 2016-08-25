@@ -60,6 +60,7 @@ public:
 	static sys::Path getTempFile(void) throw(SystemException);
 	static sys::Path getTempDir(void) throw(SystemException);
 	static int coreCount(void);
+	static void exit(int code = 0);
 };
 
 } } // elm::system

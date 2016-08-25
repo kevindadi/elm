@@ -743,4 +743,12 @@ int System::coreCount(void) {
 }
 
 
+/**
+ * Stop the application.
+ * @param code	Code to return (usually 0 for success).
+ */
+void System::exit(int code) {
+	::exit(code);
+}
+
 } } // elm::sys
