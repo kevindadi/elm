@@ -22,7 +22,6 @@
 #ifndef ELM_ASSERT_H
 #define ELM_ASSERT_H
 
-
 // Useful functions
 namespace elm {
 

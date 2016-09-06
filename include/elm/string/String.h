@@ -21,7 +21,6 @@
 #ifndef ELM_STRING_STRING_H
 #define ELM_STRING_STRING_H
 
-#include <assert.h>
 #include <elm/PreIterator.h>
 #include <elm/string/CString.h>
 

@@ -19,6 +19,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <elm/assert.h>
 #include <elm/alloc/GroupedGC.h>
 #include <elm/stree/SegmentBuilder.h>
 
@@ -140,7 +141,7 @@ void GroupedGC::newChunk(int index) {
 	c->index = index;
 	c->init = 1;
 	totalChunkSize = totalChunkSize + csize;
-	assert(chunk_list[index] == 0);
+	ASSERT(chunk_list[index] == 0);
 	chunk_list[index] = c;
 	requestCount++;
 	chunkDist[index]++;
@@ -202,7 +203,7 @@ void *GroupedGC::allocFromFreeList(t::size size, unsigned int index) {
 	allocFuncCount++;
 
 	// find the index
-	assert(index <= maxAllocatableIndex);
+	ASSERT(index <= maxAllocatableIndex);
 
 	if(free_list[index] != 0) {
 		void *res = (t::uint8 *)free_list[index];
@@ -217,14 +218,14 @@ void *GroupedGC::allocFromFreeList(t::size size, unsigned int index) {
 	// no data from free_list, look if chunk still exists
 	if(chunk_list[index] != 0) {
 		chunk_t *currChunk = chunk_list[index];
-		assert(currChunk->init != 0);
+		ASSERT(currChunk->init != 0);
 		t::intptr newSize = currChunk->size - size;
 		void *res = (t::uint8 *)currChunk->buffer + newSize;
 		currChunk->size = newSize;
 		if(newSize < size) { // not enough for the next allocation
 			chunk_list[index] = 0;
 			currChunk->init = 0;
-			assert(newSize == 0);
+			ASSERT(newSize == 0);
 		}
 #ifdef AZX
 		elm::cerr << __SOURCE_INFO__ << __TAB__ << "[" << allocFuncCount << "] for size = " << size  << " (index = " << index << "), use data from chunk" << " @ " << (void*)res << io::endl;
@@ -316,7 +317,7 @@ void *GroupedGC::allocate(t::size s) throw(BadAlloc) {
 
 	res = allocFromFreeList(size, index);
 
-	assert(res != 0);
+	ASSERT(res != 0);
 	return res;
 }
 
@@ -420,7 +421,7 @@ void GroupedGC::endGC(void) {
 				// free block here
 				block_t *blk2 = static_cast<block_t *>(static_cast<void *>(c->buffer + i * blockSize));
 				block_t *blk = static_cast<block_t *>(static_cast<void *>(c->buffer + currentSize));
-				assert(blk == blk2);
+				ASSERT(blk == blk2);
 				blk->next = free_list[index];
 #ifdef NON_OPTIMIZATION
 				blk->size = blockSize; // actually not necessary
