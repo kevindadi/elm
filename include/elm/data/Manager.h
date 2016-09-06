@@ -21,6 +21,7 @@
 #ifndef ELM_DATA_MANAGER_H_
 #define ELM_DATA_MANAGER_H_
 
+#include <elm/compare.h>
 #include <elm/util/Equiv.h>
 #include <elm/alloc/DefaultAllocator.h>
 
@@ -36,6 +37,17 @@ public:
 	static EquivManager def;
 };
 template <class T, class E, class A> EquivManager<T, E, A> EquivManager<T, E, A>::def;
+
+// CompareManager class
+template <class T, class C = Comparator<T>, class A = DefaultAllocator>
+class CompareManager {
+public:
+	inline CompareManager(void): alloc(DefaultAllocator::DEFAULT) { }
+	C cmp;
+	A& alloc;
+	static CompareManager def;
+};
+template <class T, class C, class A> CompareManager<T, C, A> CompareManager<T, C, A>::def;
 
 }	// elm
 

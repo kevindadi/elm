@@ -86,4 +86,22 @@ TEST_BEGIN(hashtable)
 		CHECK_EQUAL(*(tab["ko"]), 666);
 	}
 
+	// copy of table
+	{
+		genstruct::HashTable<string, int> t, tt;
+		for(int i = 0; i < 100; i++)
+			t.put(_ << i << (-i), i);
+		tt = t;
+		bool failed = false;
+		for(int i = 0; i < 100; i++) {
+			string k = _ << i << (-i);
+			Option<int> o = tt.get(k);
+			if(!o || *o != i) {
+				failed = true;
+				break;
+			}
+		}
+		CHECK(!failed);
+	}
+
 TEST_END

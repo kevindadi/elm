@@ -33,6 +33,7 @@ namespace elm { namespace genstruct {
 // InHashTable class
 template <class K, class T, class H = HashKey<K> >
 class HashTable {
+	typedef HashTable<K, T, H> self_t;
 
 	typedef struct node_t {
 		inline node_t(const K& k): next(0), key(k)  { }
@@ -88,6 +89,8 @@ class HashTable {
 public:
 	HashTable(int _size = 211): size(_size), tab(new node_t *[_size])
 		{ for(int i = 0; i < size; i++) tab[i] = 0; }
+	HashTable(const self_t& h, int _size = 211): size(_size), tab(new node_t *[_size])
+		{ putAll(h); }
 	~HashTable(void)
 		{ clear(); delete [] tab; }
 
@@ -105,6 +108,8 @@ public:
 	inline bool exists(const K& key) { return hasKey(key); };
 
 	inline Ref operator[](const K& key) { return Ref(*this, key); }
+	inline self_t& operator=(const self_t& h)
+		{ clear(); putAll(h); return *this; }
 
 	void put(const K& key, const T& value)
 		{ node_t *node = find(key); if(node) node->value = value; else add(key, value); }
