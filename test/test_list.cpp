@@ -11,6 +11,11 @@
 
 using namespace elm;
 
+class Eq {
+public:
+	bool isEqual(int x, int y) const { return x == y; }
+};
+
 TEST_BEGIN(list)
 
 	// Test initial
@@ -138,6 +143,17 @@ TEST_BEGIN(list)
 		CHECK(!(l1 > l1));
 		CHECK(l1 >= l2);
 		CHECK(l1 > l2);
+	}
+
+	// special equivalence
+	{
+		Eq e;
+		typedef EquivManager<int, Eq> man_t;
+		man_t m(e);
+		List<int, man_t> l(m);
+	}
+	{
+		List<int, EquivManager<Eq> > l;
 	}
 
 TEST_END

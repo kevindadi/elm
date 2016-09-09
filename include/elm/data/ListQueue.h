@@ -22,42 +22,47 @@
 #define ELM_DATA_LISTQUEUE_H_
 
 #include <elm/assert.h>
-#include <elm/compare.h>
-#include <elm/inhstruct/SLList.h>
+#include <elm/data/Manager.h>
 
 namespace elm {
 
-template <class T, class E = Equiv<T> >
+template <class T, class M = EquivManager<T> >
 class ListQueue {
 
-	typedef struct node_t  {
-		inline node_t(const T& v, node_t *n = 0): next(n), val(v) { }
-		node_t *next;
+	class Node  {
+	public:
+		inline Node(const T& v, Node *n = 0): next(n), val(v) { }
+		Node *next;
 		T val;
-	} node_t;
+		void *operator new(size_t s, M& m) { return m.alloc.allocate(s); }
+		inline void free(M& m) { this->~Node(); m.alloc.free(this); }
+	private:
+		inline ~Node(void) { }
+	};
 
 public:
-	inline ListQueue(void): h(0), t(0) { }
+	inline ListQueue(void): h(0), t(0), _man(Single<M>::_) { }
 	inline ~ListQueue(void) { reset(); }
 
 	inline bool isEmpty(void) const { return !h; }
 	inline const T &head(void) const { ASSERTP(h, "empty queue"); return h->val; }
 	inline T get(void)
-		{ ASSERTP(h, "empty queue"); T r = h->val; node_t *n = h; h = h->next; if(!h) t = 0; delete n; return r; }
+		{ ASSERTP(h, "empty queue"); T r = h->val; Node *n = h; h = h->next; if(!h) t = 0; n->free(_man); return r; }
 	inline bool contains(const T& val)
-		{ for(node_t *n = h; n; n = n->next) if(E::equals(n->val, val)) return true; return false; }
+		{ for(Node *n = h; n; n = n->next) if(_man.eq.equals(n->val, val)) return true; return false; }
 
 	inline void put(const T &item)
-		{ node_t *n = new node_t(item); (h ? t->next : h) = n; t = n; }
+		{ Node *n = new(_man) Node(item); (h ? t->next : h) = n; t = n; }
 	inline void reset(void)
-		{ for(node_t *n = h, *nn; n; n = nn) { nn = n->next; delete n; } }
+		{ for(Node *n = h, *nn; n; n = nn) { nn = n->next; n->free(_man); } }
 
 	inline operator bool(void) const { return !isEmpty(); }
 	inline ListQueue& operator<<(const T& v) { put(v); return *this; }
 	inline ListQueue& operator>>(T& v) { v = get(); return *this; }
 
 private:
-	node_t *h, *t;
+	Node *h, *t;
+	M& _man;
 };
 
 }	// elm

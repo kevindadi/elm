@@ -25,7 +25,12 @@
 // Useful functions
 namespace elm {
 
-void crash(void);
+#ifdef __GNUC__
+	void crash(void) __attribute__ ((noreturn));
+#else
+	void crash(void);
+#endif
+
 
 } // elm
 

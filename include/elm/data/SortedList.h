@@ -18,8 +18,8 @@
  *	along with ELM; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_SORTEDLIST_H_
-#define ELM_SORTEDLIST_H_
+#ifndef ELM_DATA_SORTEDLIST_H_
+#define ELM_DATA_SORTEDLIST_H_
 
 #include <elm/genstruct/SLList.h>
 #include <elm/compare.h>
@@ -100,4 +100,4 @@ private:
 
 }	// elm
 
-#endif /* ELM_SORTEDLIST_H_ */
+#endif /* ELM_DATA_SORTEDLIST_H_ */

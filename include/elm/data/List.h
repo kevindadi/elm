@@ -48,7 +48,7 @@ class List {
 
 public:
 
-	inline List(void): _man(M::def) { }
+	inline List(void): _man(Single<M>::_) { }
 	inline List(const List& list): _man(list._man) { copy(list); }
 	inline List(M& man): _man(man) { }
 	inline ~List(void) { clear(); }
@@ -115,13 +115,13 @@ public:
 	static List<T, M> null;
 	inline int count(void) const { return _list.count(); }
 	inline bool contains (const T &item) const
-		{ for(Iter iter(*this); iter; iter++) if(_man.eq.equals(item, iter)) return true; return false; }
+		{ for(Iter iter(*this); iter; iter++) if(_man.eq.isEqual(item, iter)) return true; return false; }
 	inline bool isEmpty(void) const { return _list.isEmpty(); };
 	inline operator bool(void) const { return !isEmpty(); }
 	bool equals(const List<T>& l) const
-		{ Iter i1(*this), i2(l); while(i1 && i2) { if(!_man.eq.equals(*i1, *i2)) return false; i1++; i2++; } return !i1 && !i2; }
+		{ Iter i1(*this), i2(l); while(i1 && i2) { if(!_man.eq.isEqual(*i1, *i2)) return false; i1++; i2++; } return !i1 && !i2; }
 	bool includes(const List<T>& l) const
-		{ Iter i1(*this), i2(l); while(i1 && i2) { if(_man.eq.equals(*i1, *i2)) i2++; i1++; } ; return !i2; }
+		{ Iter i1(*this), i2(l); while(i1 && i2) { if(_man.eq.isEqual(*i1, *i2)) i2++; i1++; } ; return !i2; }
 
 	// MutableCollection concept
 	inline void clear(void)
@@ -149,9 +149,9 @@ public:
 	inline T& nth(int n) { Iter i(*this); while(n) { ASSERT(i); i++; n--; } ASSERT(i); return i.node->val; };
 	inline const T& nth(int n) const { Iter i(*this); while(n) { ASSERT(i); i++; n--; } ASSERT(i); return *i; };
 	Iter find(const T& item) const
-		{ Iter i; for(i = items(); i; i++) if(_man.eq.equals(item, i)) break; return i; }
+		{ Iter i; for(i = items(); i; i++) if(_man.eq.isEqual(item, i)) break; return i; }
 	Iter find(const T& item, const Iter& pos) const
-		{ Iter i = pos; for(i++; i; i++) if(_man.eq.equals(item, i)) break; return i; }
+		{ Iter i = pos; for(i++; i; i++) if(_man.eq.isEqual(item, i)) break; return i; }
 
 	// MutableList concept
 	inline void addFirst(const T& value) { _list.addFirst(new(_man) Node(value)); }

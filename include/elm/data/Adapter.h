@@ -1,5 +1,5 @@
 /*
- *	Data Manager classes
+ *	Adapter classes interface
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2016, IRIT UPS.
@@ -18,40 +18,9 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_DATA_MANAGER_H_
-#define ELM_DATA_MANAGER_H_
+#ifndef ELM_DATA_ADAPTER_H_
+#define ELM_DATA_ADAPTER_H_
 
-#include <elm/compare.h>
-#include <elm/util/Equiv.h>
-#include <elm/alloc/DefaultAllocator.h>
+#include <elm/adapter.h>
 
-namespace elm {
-
-template <class T>
-class Single {
-public:
-	static T _;
-};
-template <class T> T Single<T>::_;
-
-// EquivManager class
-template <class T, class E = Equiv<T>, class A = DefaultAllocator>
-class EquivManager {
-public:
-	inline EquivManager(E& e = Single<E>::_, A& a = A::DEFAULT): eq(e), alloc(a) { }
-	E& eq;
-	A& alloc;
-};
-
-// CompareManager class
-template <class T, class C = Comparator<T>, class A = DefaultAllocator>
-class CompareManager {
-public:
-	inline CompareManager(void): alloc(DefaultAllocator::DEFAULT) { }
-	C cmp;
-	A& alloc;
-};
-
-}	// elm
-
-#endif /* ELM_DATA_MANAGER_H_ */
+#endif /* ELM_DATA_ADAPTER_H_ */

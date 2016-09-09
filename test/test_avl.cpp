@@ -22,8 +22,8 @@ using namespace elm::avl;
 #	define LOG(cmd)	// cmd
 #endif
 
-static const int maxv = 1000;
-static const int _count = 10000;
+static const int maxv = 10000;
+static const int _count = 100000;
 
 // Entry point
 TEST_BEGIN(avl)
@@ -74,6 +74,9 @@ TEST_BEGIN(avl)
 		Set<int> tree;
 		bool intensive = true;
 		
+		int rem_cnt = 0,
+			ins_cnt = 0,
+			chk_cnt = 0;
 		for(int i = 0; intensive && i < _count; i++) {
 			LOG(tree.dump(cerr); cerr << io::endl;)
 			int a = system::System::random(maxv * 3);
@@ -85,6 +88,7 @@ TEST_BEGIN(avl)
 				ints.remove(n);
 				tree.remove(n);
 				intensive = !tree.contains(n);
+				rem_cnt++;
 			}
 
 			// insert
@@ -95,6 +99,7 @@ TEST_BEGIN(avl)
 					ints.add(n);
 				tree.add(n);
 				intensive = tree.contains(n);
+				ins_cnt++;
 			}
 
 			// check
@@ -104,8 +109,12 @@ TEST_BEGIN(avl)
 					if(!tree.contains(ints[i]))
 						ok = false;
 				intensive = ok;
+				chk_cnt++;
 			}
 		}
+		cerr << "INFO: rem_cnt = " << rem_cnt
+			 <<     ", ins_cnt = " << ins_cnt
+			 <<     ", chk_cnt = " << chk_cnt << io::endl;
 		CHECK(intensive);
 	}
 	

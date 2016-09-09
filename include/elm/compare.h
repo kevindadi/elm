@@ -36,7 +36,9 @@ public:
 	static inline int compare(const T& v1, const T& v2)
 		{ if(v1 == v2) return 0; else if(v1 > v2) return 1; else return -1; }
 	int doCompare(const T& v1, const T& v2) const { return compare(v1, v2); }
+	static Comparator<T> def;
 };
+template <class T> Comparator<T> Comparator<T>::def;
 
 // DelegateComparator class
 template <class T, class C>
@@ -44,7 +46,9 @@ class DelegateComparator {
 public:
 	static inline int compare(const T& v1, const T& v2) { return C::compare(v1, v2); }
 	inline int doCompare(const T& v1, const T& v2) const { return compare(v1, v2); }
+	static DelegateComparator<T, C> def;
 };
+template <class T, class C> DelegateComparator<T, C> DelegateComparator<T, C>::def;
 
 // CompareComparator class
 template <class T>
