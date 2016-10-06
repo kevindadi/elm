@@ -32,6 +32,7 @@ set(TEST_SOURCES
 	"test.cc"
 	"test_avl.cpp"
 	"test_autostr.cpp"
+	"test_bidilist.cpp"
 	"test_bitvector.cpp"
 	"test_char.cpp"
 	"test_dllist.cpp"

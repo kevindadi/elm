@@ -27,13 +27,6 @@
 
 namespace elm {
 
-template <class T>
-class Single {
-public:
-	static T _;
-};
-template <class T> T Single<T>::_;
-
 // EquivManager class
 template <class T, class E = Equiv<T>, class A = DefaultAllocator>
 class EquivManager {

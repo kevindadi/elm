@@ -26,6 +26,13 @@
 namespace elm {
 
 template <class T>
+class Single {
+public:
+	static T _;
+};
+template <class T> T Single<T>::_;
+
+template <class T>
 inline T *null(void) { return static_cast<T *>(0); }
 
 }	// elm

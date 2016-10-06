@@ -27,6 +27,7 @@ set(LIBELM_LA_SOURCES
 	"checksum_Fletcher.cpp"
 	"checksum_MD5.cpp"
 	"data_ArrayList.cpp"
+	"data_BiDiList.cpp"
 	"data_List.cpp"
 	"data_ListQueue.cpp"
 	"data_SortedList.cpp"

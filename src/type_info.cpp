@@ -317,7 +317,14 @@ cstring type_info<string>::name(void) { return "string"; }
  * @ingroup types
  */
 
-
+/**
+ * @class Single
+ * Ensures a unique implementation of a singleton of type T.
+ * This singleton is accessible by Single<T>::_ (no need to declare and define
+ * it somewhere).
+ *
+ * @param T		Type of singleton. Must support no-paramater constructor.
+ */
 
 }  // elm
 

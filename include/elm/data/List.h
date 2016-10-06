@@ -21,7 +21,6 @@
 #ifndef ELM_DATA_LIST_H
 #define ELM_DATA_LIST_H
 
-#include <elm/io.h>
 #include <elm/assert.h>
 #include <elm/PreIterator.h>
 #include <elm/inhstruct/SLList.h>

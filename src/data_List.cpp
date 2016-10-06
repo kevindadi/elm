@@ -41,8 +41,7 @@ namespace genstruct {
  * @li @ref addition -- O(1)
  * @li @ref removal -- O(n)
  * @li @ref find -- O(n)
- * @li @ref basic memory -- 1 pointer,
- * @li @ref element memory -- 1 pointer.
+ * @li @ref memory -- 2 pointers + 1 pointer / element
  *
  * @par Implemented concepts:
  * @li @ref elm::concept::Collection
@@ -52,13 +51,13 @@ namespace genstruct {
  * @li @ref elm::concept::Stack
  *
  * @param T	Type of data stored in the list.
- * @param E	Equivalence class to compare items of the list.
+ * @param M	Manager supporting equivallence and allocation.
  * @ingroup data
  */
 
 
 /**
- * @fn void List::copy(const SLList<T>& list);
+ * @fn void List::copy(const List<T>& list);
  * Copy the given list in the current list (removing the previous items of the current list).
  * @param list	List to copy in.
  */
