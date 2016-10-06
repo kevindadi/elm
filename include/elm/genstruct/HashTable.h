@@ -89,8 +89,8 @@ class HashTable {
 public:
 	HashTable(int _size = 211): size(_size), tab(new node_t *[_size])
 		{ for(int i = 0; i < size; i++) tab[i] = 0; }
-	HashTable(const self_t& h, int _size = 211): size(_size), tab(new node_t *[_size])
-		{ putAll(h); }
+	HashTable(const self_t& h): size(h.size), tab(new node_t *[h.size])
+		{ for(int i = 0; i < size; i++) tab[i] = 0; putAll(h); }
 	~HashTable(void)
 		{ clear(); delete [] tab; }
 

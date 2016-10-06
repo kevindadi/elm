@@ -21,23 +21,25 @@
 #ifndef ELM_DATA_SORTEDLIST_H_
 #define ELM_DATA_SORTEDLIST_H_
 
-#include <elm/genstruct/SLList.h>
-#include <elm/compare.h>
-#include <elm/adapter.h>
+#include "Adapter.h"
+#include "List.h"
+#include "Manager.h"
+#include <elm/util/Option.h>
 
 namespace elm {
 
 // SortedList class
-template <class T, class C = Comparator<T>, class A = IdAdapter<T> >
+template <class T, class M = CompareManager<T>, class A = IdAdapter<T> >
 class SortedList {
-	typedef genstruct::SLList<T, CompareEquiv<T, C> > list_t;
+	typedef List<T, M> list_t;
 public:
+	typedef SortedList<T, M, A> self_t;
 	typedef typename A::key_t key_t;
 	typedef typename A::val_t val_t;
 
-	inline SortedList(void) { }
-	inline SortedList(const C& c): _c(c) { }
-	SortedList(const SortedList & source): list(source.list) { }
+	inline SortedList(void): _man(Single<M>::_) { }
+	inline SortedList(M& man): _man(man) { }
+	SortedList(const SortedList &l): list(l.list), _man(l._man) { }
 
 	inline void removeFirst(void) { list.removeFirst(); }
 	inline void removeLast(void) { list.removeLast(); }
@@ -46,8 +48,8 @@ public:
 	inline int count (void) const { return list.count(); }
 
 	bool contains(const key_t &item) const {
-		for (Iterator current(*this); current; current++) {
-			int cmp = _c.doCompare(item,  A::key(*current));
+		for(typename list_t::Iter current(list); current; current++) {
+			int cmp = _man.cmp.doCompare(item,  A::key(*current));
 			if(cmp > 0) continue; else if(!cmp) return true; else break;
 		}
 		return false;
@@ -56,22 +58,18 @@ public:
 	inline bool isEmpty(void) const { return list.isEmpty(); }
 	inline operator bool(void) const { return !list.isEmpty(); }
 
-	class Iterator: public list_t::Iterator {
+	class Iter: public list_t::Iter {
 	public:
-		inline Iterator(void) { }
-		inline Iterator(const SortedList& _list): list_t::Iterator(_list.list) { }
-	private:
-		friend class SortedList;
-		inline Iterator(const typename list_t::Iterator& iter)
-			: list_t::Iterator(iter) { }
+		inline Iter(void) { }
+		inline Iter(const self_t& _list): list_t::Iter(_list.list) { }
 	};
 
 	// MutableCollection concept
 	inline void clear(void) { list.clear(); }
 
-	void add (const T &value) {
-		for(Iterator current(*this); current; current++)
-			if(_c.doCompare(A::key(value),  A::key(*current)) < 0) {
+	void add(const T &value) {
+		for(typename list_t::PrecIter current(list); current; current++)
+			if(_man.cmp.doCompare(A::key(value),  A::key(*current)) < 0) {
 				list.addBefore(current, value);
 				return;
 			}
@@ -83,19 +81,55 @@ public:
 	inline void remove(const T &item) { list.remove(item); }
 	template <template <class _> class CC> inline void removeAll(const CC<T> &items)
 		{ list.removeAll(items); }
-	void remove(const Iterator &iter) { list.remove(iter); }
+	void remove(const Iter &iter) { list.remove(iter); }
 
 	// List concept
 	inline const T& first(void) const { return list.first(); }
 	inline const T& last(void) const { return list.last(); }
-	inline Iterator find(const T& item) const
-		{ return Iterator(list.find(item)); }
-	inline Iterator find(const T& item, const Iterator& iter) const
+	inline Iter find(const T& item) const
+		{ return Iter(list.find(item)); }
+	inline Iter find(const T& item, const Iter& iter) const
 		{ return list.find(item, iter); }
 
 private:
 	list_t list;
-	C _c;
+	M& _man;
+};
+
+template <class T, class M = CompareManager<T> >
+class ListSet: public SortedList<T, M> {
+public:
+
+};
+
+template <class K, class T, class M = CompareManager<T> >
+class ListMap: public SortedList<Pair<K, T>, M, PairAdapter<K, T> > {
+public:
+	typedef SortedList<Pair<K, T>, M, PairAdapter<K, T> > base_t;
+	typedef ListMap<K, T, M> self_t;
+
+	inline ListMap(void) { }
+	inline ListMap(const ListMap<K, T, M>& l): base_t(l) { }
+
+	class KeyIter: public PreIterator<KeyIter, K> {
+	public:
+		inline KeyIter(const self_t& m): i(m) { }
+	private:
+		typename base_t::Iter i;
+	};
+
+	inline Option<T> get(const K& k)
+		{ typename base_t::Iter i = base_t::find(k); if(i) return some(*i); else return none; }
+	inline const T& get(const K& k, const T& d)
+		{ typename base_t::Iter i = base_t::find(k);
+		if(i) return *i; else return d; }
+	inline bool hasKey(const K& k)
+		{ typename base_t::Iter i = base_t::find(k); return !i.ended(); }
+
+	inline void put(const K& k, const T& v)
+		{ base_t::add(pair(k, v)); }
+	inline void remove(const K& k)
+		{ typename base_t::Iter i = find(k); if(i) remove(*i); }
 };
 
 }	// elm

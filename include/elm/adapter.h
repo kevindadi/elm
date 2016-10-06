@@ -21,6 +21,8 @@
 #ifndef ELM_ADAPTER_H_
 #define ELM_ADAPTER_H_
 
+#include <elm/util/Pair.h>
+
 namespace elm {
 
 // Id adapter

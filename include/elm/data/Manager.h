@@ -48,6 +48,7 @@ template <class T, class C = Comparator<T>, class A = DefaultAllocator>
 class CompareManager {
 public:
 	inline CompareManager(void): alloc(DefaultAllocator::DEFAULT) { }
+	inline CompareManager(const C& c, A& a = DefaultAllocator::DEFAULT): cmp(c), alloc(a) { }
 	C cmp;
 	A& alloc;
 };

@@ -155,11 +155,11 @@ public:
 
 	// MutableList concept
 	inline void addFirst(const T& value) { _list.addFirst(new(_man) Node(value)); }
-	inline void addLast(const T& value) { _list.addLast(new Node(value)); }
+	inline void addLast(const T& value) { _list.addLast(new(_man) Node(value)); }
 	inline void addAfter(const Iter& pos, const T& value)
-		{ ASSERT(pos.node); pos.node->insertAfter(new Node(value)); }
+		{ ASSERT(pos.node); pos.node->insertAfter(new(_man) Node(value)); }
 	inline void addBefore(const PrecIter& pos, const T& value)
-		{ if(!pos.prev) addFirst(value); else pos.prev->insertAfter(new Node(value)); }
+		{ if(!pos.prev) addFirst(value); else pos.prev->insertAfter(new(_man) Node(value)); }
 	inline void removeFirst(void) { Node *node = firstNode(); _list.removeFirst(); node->free(_man); }
 	inline void removeLast(void) { Node *node = lastNode(); _list.removeLast(); delete node; }
 	inline void set(const Iter &pos, const T &item) { ASSERT(pos.node); pos.node->val = item; }

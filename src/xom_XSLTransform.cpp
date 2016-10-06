@@ -223,6 +223,7 @@ Document *XSLTransform::transformDocument(Document *in) throw(XSLException) {
 
 	// return result
 	return fact->makeDocument(res);
+
 }
 
 

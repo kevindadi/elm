@@ -8,6 +8,7 @@
 #include <elm/ini.h>
 #include <elm/util/test.h>
 
+#if 0
 using namespace elm;
 using namespace elm::ini;
 
@@ -57,5 +58,7 @@ TEST_BEGIN(ini)
 	delete file;
 
 TEST_END
+
+#endif
 
 

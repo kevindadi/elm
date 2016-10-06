@@ -7,6 +7,8 @@
 
 #include <elm/util/test.h>
 #include <elm/data/List.h>
+#include <elm/data/SortedList.h>
+#include <elm/genstruct/AssocList.h>
 #include <elm/genstruct/Vector.h>
 
 using namespace elm;
@@ -154,6 +156,43 @@ TEST_BEGIN(list)
 	}
 	{
 		List<int, EquivManager<Eq> > l;
+	}
+
+	// sorted list
+	{
+		SortedList<int> s;
+		s.add(0);
+		s.add(10);
+		s.add(5);
+		SortedList<int>::Iter i(s);
+		CHECK_EQUAL(*i, 0);
+		i++;
+		CHECK_EQUAL(*i, 5);
+		i++;
+		CHECK_EQUAL(*i, 10);
+		i++;
+		CHECK(i.ended());
+	}
+
+	// set test
+	{
+		ListSet<int> l;
+	}
+
+	// test map
+	{
+		/*ListMap<int, int> m;
+		m.put(0, 0);
+		m.put(1, 1);
+		CHECK_EQUAL(m.get(0, -1), 0);*/
+	}
+
+	// compatibility test
+	{
+		genstruct::AssocList<int, int> a;
+		a.put(0, 0);
+		for(typename genstruct::AssocList<int, int>::Iterator i(a); i; i++)
+			;
 	}
 
 TEST_END
