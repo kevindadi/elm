@@ -79,7 +79,7 @@ public:
 	 * @param iterator	Iterator to clone.
 	 */
 	Iterator(const Iterator& iterator);
-	
+
 	/**
 	 * Test if the end of the traversal is reached.
 	 * @return	True if end is reached, false else.
@@ -96,7 +96,7 @@ public:
 	 * @return Current item.
 	 * @warning	Do not call this method when @ref ended() == true !
 	 */
-	const T& item(void);
+	T item(void);
 	
 	/**
 	 * Same as ! @ref ended().
@@ -106,7 +106,7 @@ public:
 	/**
 	 * Same as @ref item().
 	 */
-	operator const T& (void);
+	operator T (void);
 	
 	/**
 	 * Same as @ref next().
@@ -176,7 +176,7 @@ public:
 	 * Iterator on the items of the collection. No assertion can be made
 	 * about the order of traversal of the collection items.
 	 */
-	class Iterator: public concept::Iterator<T> {
+	class Iter: public concept::Iterator<T> {
 	public:
 	
 		/**
@@ -185,12 +185,18 @@ public:
 		 */
 		Iter(const Collection<T>& collection);
 	
-		/**
-		 * Build an iterator from a collection.
-		 * @param collection	Collection to traverse.
-		 */
-		Iter(const Collection<T> *collection);
 	};
+
+	/**
+	 * Get an iterator on the collection.
+	 * @return	Iterator.
+	 */
+	Iter operator*(void) const;
+
+	/**
+	 * Empty collection constant.
+	 */
+	static const Collection null;
 };
 
 

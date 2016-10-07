@@ -66,6 +66,7 @@ public:
 		{ T *rt = tab; int rc = cnt; tab = 0; cnt = 0; return Table<T>(rt, rc); }
 
 	// Collection concept
+	static const Vector<T, M> null;
 	inline int count(void) const { return cnt; }
 	bool contains(const T& v) const
 		{ for(Iter i(*this); i; i++) if(v == *i) return true; return false; }
@@ -73,6 +74,7 @@ public:
 		{ for(typename C<T>::Iter item(items); item; item++) if(!contains(item)) return false; return true; }
 	inline bool isEmpty(void) const { return cnt == 0; }
 	inline operator bool(void) const { return cnt != 0; }
+	inline Iter operator*(void) const { return Iter(*this); }
 
 	// MutableCollection concept
 	inline void clear(void) { cnt = 0; }
@@ -147,6 +149,9 @@ private:
 	T *tab;
 	int cap, cnt;
 };
+
+template <class T, class M>
+const Vector<T, M> Vector<T, M>::null;
 
 }	// elm
 

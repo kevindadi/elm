@@ -24,7 +24,7 @@
 namespace elm {
 
 /**
- * @class BiDiList
+ * @class Vector
  * This class provides a generic implementation of an extensible vector.
  * It provides fast access to its content using indexes but the addition of new elements
  * may be expensive if the number of elements exceeds the capacity. Therefore, it more
@@ -37,7 +37,7 @@ namespace elm {
  * @li @ref find -- O(n)
  * @li @ref memory -- 3 pointers
  *
- * @par Implemented concepts:
+ * @par Implemented concepts
  * @li @ref elm::concept::Array
  * @li @ref elm::concept::Collection
  * @li @ref elm::concept::List
