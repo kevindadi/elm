@@ -158,6 +158,25 @@ TEST_BEGIN(vector)
 		CHECK(v[0] == 0 && v[1] == 2 && v[2] == 3);
 	}
 
+	// vector of class type
+	{
+		Vector<string> v;
+		v.add("1");
+		v.add("2");
+		v.add("3");
+		Vector<string>::Iter i(v);
+		CHECK(!i.ended());
+		CHECK_EQUAL(*i, string("1"));
+		i++;
+		CHECK(!i.ended());
+		CHECK_EQUAL(*i, string("2"));
+		i++;
+		CHECK(!i.ended());
+		CHECK_EQUAL(*i, string("3"));
+		i++;
+		CHECK(i.ended());
+	}
+
 TEST_END
 
 

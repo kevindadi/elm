@@ -29,8 +29,11 @@ namespace elm {
 
 template <class T, class M = EquivManager<T> >
 class Vector {
-	inline T *allocate(int size) { return static_cast<T *>(_man.alloc.allocate(size * sizeof(T))); }
+	inline T *allocate(int size)
+		{	T *t = static_cast<T *>(_man.alloc.allocate(size * sizeof(T)));
+			array::init(t, size); return t; }
 	inline void free(T *t) { _man.alloc.free(t); }
+
 public:
 	inline Vector(int _cap = 8, M& m = Single<M>::_): _man(m), tab(allocate(_cap)), cap(_cap), cnt(0) { }
 	inline Vector(const Vector<T>& vec): _man(vec._man), tab(0), cap(0), cnt(0) { copy(vec); }

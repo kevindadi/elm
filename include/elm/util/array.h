@@ -23,6 +23,7 @@
 #ifndef ELM_UTIL_ARRAY_H_
 #define ELM_UTIL_ARRAY_H_
 
+#include <new>
 #include <string.h>
 #include <elm/meta.h>
 #include <elm/type_info.h>
@@ -40,6 +41,7 @@ public:
 		{ ::memmove(target, source, size * sizeof(T)); }
 	static inline void clear(T *target, int size)
 		{ ::memset(target, 0, size * sizeof(target)); }
+	static inline void init(T *t, int size) { }
 };
 
 // slow copies (cause of constructor, destructor, etc)
@@ -53,6 +55,8 @@ public:
 		{ if(target < source) slow_copy(target, source, size); else slow_copy_back(target, source, size); }
 	static inline void clear(T *target, int size)
 		{ for(int i = 0; i < size; i++) target[i] = T(); }
+	static inline void init(T *t, int size)
+		{ for(int i = 0; i < size; i++) ::new((void *)(t + i)) T(); }
 };
 
 // copy definitions
@@ -64,6 +68,8 @@ template <class T> inline void set(T *target, int size, const T& v)
 	{ for(int i = 0; i < size; i++) target[i] = v; }
 template <class T> inline void clear(T *target, int size)
 	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::_::clear(target, size); }
+template <class T> inline void init(T *t, int size)
+	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::_::init(t, size); }
 
 } }	// elm::array
 
