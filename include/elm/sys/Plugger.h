@@ -77,7 +77,7 @@ public:
 	private:
 		Plugger& plugger;
 		genstruct::Vector<Plugin *>& statics;
-		int i;
+		int i, c;
 		int _path;
 		Directory::Iterator *file;
 		void go(void);

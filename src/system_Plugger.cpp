@@ -62,6 +62,25 @@ static cstring PLUG_EXT =
 #	endif
 static cstring fun_suffix = "_fun";
 
+
+/**
+ * Test if the given file is a library.
+ * @param file	File to test.
+ * @return		True if it is a library, false else.
+ */
+static inline bool isLibrary(FileItem *file) {
+#if defined(WITH_LIBTOOL)
+		return file->path().toString().endsWith(".la");
+#elif defined(__APPLE__)
+		return file->path().toString().endsWith(".dylib");
+#elif defined(__unix)
+		return file->path().toString().endsWith(".so");
+#elif defined(__WIN32) || defined(__WIN64)
+		return file->path().toString().endsWith(".dll");
+#endif
+}
+
+
 /**
  * @class Plugger
  * This class is used for connecting Plugin object from dynamic loaded code
@@ -599,7 +618,7 @@ void Plugger::Iterator::go(void) {
 	// Look in statics
 	if(i < statics.count()) {
 		i++;
-		while(i < statics.count()) {
+		while(i < c)  {
 			if(statics[i]->hook() == plugger.hook())
 				return;
 			i++;
@@ -633,15 +652,7 @@ void Plugger::Iterator::go(void) {
 		}
 
 		// Look current file
-#if defined(WITH_LIBTOOL)
-		if(file->item()->path().toString().endsWith(".la")) {
-#elif defined(__APPLE__)
-		if(file->item()->path().toString().endsWith(".dylib")) {
-#elif defined(__unix)
-		if(file->item()->path().toString().endsWith(".so")) {
-#elif defined(__WIN32) || defined(__WIN64)
-		if(file->item()->path().toString().endsWith(".dll")) {
-#endif
+		if(isLibrary(**file)) {
 			Plugin *plugin = plugger.plugFile(file->item()->path());
 			if(plugin) {
 				plugin->unplug();
@@ -649,6 +660,7 @@ void Plugger::Iterator::go(void) {
 			}
 		}
 	}
+
 }
 
 
@@ -660,6 +672,7 @@ Plugger::Iterator::Iterator(Plugger& _plugger)
 :	plugger(_plugger),
 	statics(_plugger.statics()),
 	i(-1),
+	c(_plugger.statics().count()),
 	_path(-1),
 	file(0)
 {
@@ -689,7 +702,7 @@ bool Plugger::Iterator::ended(void) const {
  * @return	Current plugin name.
  */
 String Plugger::Iterator::item(void) const {
-	if(i < statics.count())
+	if(i < c)
 		return statics[i]->name();
 	else {
 		Path path = (*file)->path();
@@ -705,7 +718,7 @@ String Plugger::Iterator::item(void) const {
  * @return	Plug-in path.
  */
 Path Plugger::Iterator::path(void) const {
-	if(i < statics.count())
+	if(i < c)
 		return "<static>";
 	else
 		return (*file)->path();
