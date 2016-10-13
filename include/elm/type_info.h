@@ -178,6 +178,7 @@ template <> struct type_info<cstring>: public type_t, public asis_t<cstring> {
 template <> struct type_info<string>: public type_t, public asis_t<string> {
 	static const string null;
 	static cstring name(void);
+	enum { is_virtual = 1 };
 };
 
 

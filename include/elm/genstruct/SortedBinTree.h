@@ -57,20 +57,23 @@ public:
 
 	// Iterator class
 	class Iterator: public PreIterator<Iterator, const T&> {
+		inline Node *_(inhstruct::BinTree::Node *n) { return static_cast<Node *>(n); }
 	public:
 		inline Iterator(const GenSortedBinTree& tree)
-			{ stack.push((Node *)tree.root.root()); }
-		inline Iterator(const Iterator& iter)
-			{ stack = iter.stack; }
-		bool ended(void) const { return !stack; }
-		void next(void) {
-			Node *top = stack.pop();
-			if(top->right()) stack.push((Node *)top->right());
-			if(top->left()) stack.push((Node *)top->left());
-		}
-		const T& item(void) const { return stack.top()->val; }
+			{ if(tree.root.root()) downLeft(_(tree.root.root())); }
+		inline Iterator(const Iterator& iter) { s = iter.s; }
+		bool ended(void) const { return !s; }
+		void next(void)
+			{	if(s.top()->right()) downLeft(_(s.top()->right()));
+				else { Node *n = s.pop(); if(s && n == s.top()->right()) upRight(n); } }
+		const T& item(void) const { return s.top()->val; }
+
 	private:
-		Vector<Node *> stack;
+		inline void downLeft(Node *n)
+			{ s.push(n); while(s.top()->left()) s.push(_(s.top()->left())); }
+		inline void upRight(Node *n)
+			{ while(s && s.top()->right() == n) n = s.pop(); }
+		Vector<Node *> s;
 	};
 
 	// MutableCollection concept
@@ -98,7 +101,7 @@ public:
 		else
 			while(node) {
 				int cmp = C::compare(K::key(value), K::key(node->val));
-				if(cmp <= 0) {
+				if(cmp >= 0) {
 					if(!node->right()) {
 						node->insertRight(new_node);
 						break;
@@ -130,7 +133,7 @@ public:
 			if(cmp == 0)
 				break;
 			parent = node;
-			if(cmp < 0)
+			if(cmp > 0)
 				node = (Node *)node->right();
 			else
 				node = (Node *)node->left();
@@ -172,7 +175,7 @@ private:
 			int cmp = C::compare(key, K::key(node->val));
 			if(cmp == 0)
 				break;
-			else if(cmp < 0)
+			else if(cmp > 0)
 				node = (Node *)node->right();
 			else
 				node = (Node *)node->left();

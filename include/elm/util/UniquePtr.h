@@ -43,6 +43,7 @@ public:
 	inline operator T *(void) const { return get(); }
 	inline T *operator->(void) const { return get(); }
 	inline operator bool(void) const { return !isNull(); }
+	inline T& operator*(void) const { return *get(); }
 
 private:
 	T *p;

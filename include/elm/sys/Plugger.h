@@ -55,6 +55,8 @@ public:
 	Plugin *plugFile(sys::Path path);
 	inline String hook(void) const;
 	string getLastError(void);
+	inline bool quiet(void) const { return _quiet; }
+	inline void setQuiet(bool quiet) { _quiet = quiet; }
 
 	// deprecated
 	virtual void onError(String message);
@@ -64,12 +66,6 @@ public:
 
 	// Iterator class
 	class Iterator: public PreIterator<Iterator, String> {
-		Plugger& plugger;
-		genstruct::Vector<Plugin *>& statics;
-		int i;
-		int _path;
-		Directory::Iterator *file;
-		void go(void);
 	public:
 		Iterator(Plugger& _plugger);
 		~Iterator(void);
@@ -78,6 +74,13 @@ public:
 		void next(void);
 		Plugin *plug(void) const;
 		Path path(void) const;
+	private:
+		Plugger& plugger;
+		genstruct::Vector<Plugin *>& statics;
+		int i;
+		int _path;
+		Directory::Iterator *file;
+		void go(void);
 	};
 
 	class PathIterator: public genstruct::Vector<string>::Iterator {
@@ -96,6 +99,7 @@ private:
 	genstruct::Vector<Plugin *> plugins;
 	genstruct::Vector<String> paths;
 	error_t err;
+	bool _quiet;
 	static void leave(Plugin *plugin);
 	Plugin *plug(Plugin *plugin, void *handle);
 	inline genstruct::Vector<Plugin *>& statics(void);

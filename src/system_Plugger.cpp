@@ -532,13 +532,29 @@ string Plugger::getLastError() {
 
 
 /**
+ * @fn bool Plugger::quiet(void) const;
+ * Test if the plugger emit or not message error during plugin operation.
+ * @return	True for quiet, false else.
+ */
+
+
+/**
+ * @fn void Plugger::setQuiet(bool quiet);
+ * Set the quiet mode of the plugger. If set to true, the plugger
+ * will no more emit error messages during plugin operation.
+ * @param quiet	True for quiet mode, false else.
+ */
+
+
+/**
  * This method is called when an error arises to let the user display or not
  * the message. As default, the message is displayed on standard error.
  * @param message	Message of the error.
  * @deprecated
  */
 void Plugger::onError(String message) {
-	cerr << "ERROR: " << message << io::endl;
+	if(!_quiet)
+		cerr << "ERROR: " << message << io::endl;
 }
 
 
@@ -548,6 +564,8 @@ void Plugger::onError(String message) {
  * @param message	Error message.
  */
 void Plugger::onError(error_level_t level, const string& message) {
+	if(_quiet)
+		return;
 	ErrorBase::onError(level, message);
 	if(level == level_error)
 		onError(message);
@@ -563,7 +581,8 @@ void Plugger::onError(error_level_t level, const string& message) {
  * @deprecated
  */
 void Plugger::onWarning(String message) {
-	cerr << "WARNING: " << message << io::endl;
+	if(!_quiet)
+		cerr << "WARNING: " << message << io::endl;
 }
 
 
@@ -615,15 +634,20 @@ void Plugger::Iterator::go(void) {
 
 		// Look current file
 #if defined(WITH_LIBTOOL)
-		if(file->item()->path().toString().endsWith(".la"))
+		if(file->item()->path().toString().endsWith(".la")) {
 #elif defined(__APPLE__)
-		if(file->item()->path().toString().endsWith(".dylib"))
+		if(file->item()->path().toString().endsWith(".dylib")) {
 #elif defined(__unix)
-		if(file->item()->path().toString().endsWith(".so"))
+		if(file->item()->path().toString().endsWith(".so")) {
 #elif defined(__WIN32) || defined(__WIN64)
-		if(file->item()->path().toString().endsWith(".dll"))
+		if(file->item()->path().toString().endsWith(".dll")) {
 #endif
-			break;
+			Plugin *plugin = plugger.plugFile(file->item()->path());
+			if(plugin) {
+				plugin->unplug();
+				break;
+			}
+		}
 	}
 }
 

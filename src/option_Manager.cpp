@@ -24,6 +24,7 @@
 #include <elm/io.h>
 #include <elm/option/Manager.h>
 #include <elm/string.h>
+#include <elm/data/Vector.h>
 #include <elm/sys/System.h>
 
 namespace elm { namespace option {
@@ -307,7 +308,7 @@ OptionException::OptionException(const String& message)
 
 /**
  */
-Manager::Manager(void): _help(0) {
+Manager::Manager(void) {
 }
 
 
@@ -317,7 +318,7 @@ Manager::Manager(void): _help(0) {
  * @param ...		end() ended configuration item list.
  * @deprecated		Since 22/03/13.
  */
-Manager::Manager(int tag, ...): _help(0) {
+Manager::Manager(int tag, ...) {
 	VARARG_BEGIN(args, tag)
 		while(tag != end) {
 			configure(tag, args);
@@ -330,20 +331,23 @@ Manager::Manager(int tag, ...): _help(0) {
  * Build a new option manager.
  * @param maker		Information for initialization.
  */
-Manager::Manager(const Make& maker): info(maker), _help(0) {
+Manager::Manager(const Make& maker): info(maker) {
 	if(info._help)
-		_help = new SwitchOption(SwitchOption::Make(*this)
+		_help_opt = new SwitchOption(SwitchOption::Make(*this)
 			.cmd("-h")
 			.cmd("--help")
 			.description("display this help message"));
+	if(info._version_opt)
+		_version_opt = new SwitchOption(SwitchOption::Make(*this)
+			.cmd("-v")
+			.cmd("--version")
+			.description("display this application version"));
 }
 
 
 /**
  */
 Manager::~Manager(void) {
-	if(_help)
-		delete _help;
 }
 
 
@@ -431,10 +435,13 @@ void Manager::processOption(
 	}
 	
 	// Process the option
-	if(option != _help)
-		option->process(arg);
-	else {
+	option->process(arg);
+	if(_help_opt && _help_opt->get()) {
 		displayHelp();
+		sys::System::exit(1);
+	}
+	else if(_version_opt && _version_opt->get()) {
+		displayVersion();
 		sys::System::exit(1);
 	}
 }
@@ -505,6 +512,55 @@ void Manager::addCommand(string cmd, Option *option) throw(OptionException) {
 
 
 /**
+ * Function called to run the application after
+ * the command line parse. It is called by Manager::manage()
+ * and can be overridden to provide its own behaviour to
+ * the application.
+ *
+ * The default implementation do nothing.
+ *
+ * @throw elm::Exception	For any error during application run.
+ */
+void Manager::run(void) throw(elm::Exception) {
+}
+
+
+/**
+ * Call to a complete management of the application by the option
+ * manager. It will parse the given parameters and call the @ref run
+ * method. In case of error, it will display it and provide an exit
+ * code.
+ *
+ * It is able to make the main program code very simple:
+ * @code
+ * int main(int argc, char **argv) {
+ * 		return MyApplication.manager(argc, argv);
+ * }
+ * @endcode
+ *
+ * @param argc	Argument count.
+ * @param argv	Argument list.
+ * @return		Exit code.
+ */
+int Manager::manage(int argc, argv_t argv) {
+	try {
+		parse(argc, argv);
+		run();
+		return 0;
+	}
+	catch(OptionException& e) {
+		displayHelp();
+		cerr << "ERROR: command line error: " << e.message() << io::endl;
+		return 1;
+	}
+	catch(elm::Exception& e) {
+		cerr << "ERROR: " << e.message() << io::endl;
+		return 2;
+	}
+}
+
+
+/**
  * Parse the given options.
  * @param argc				Argument count.
  * @param argv				Argument vector.
@@ -551,6 +607,14 @@ void Manager::parse(int argc, Manager::argv_t argv) throw(OptionException) {
 
 
 /**
+ * Display version information on the standard output.
+ */
+void Manager::displayVersion(void) {
+	cout << info._program << ' ' << info._version << io::endl;
+}
+
+
+/**
  * Display the help text to standard error.
  */
 void Manager::displayHelp(void) {
@@ -575,21 +639,25 @@ void Manager::displayHelp(void) {
 	cerr << '\n';
 	if(info._description)
 		cerr << info._description << '\n';
-	cerr << "OPTIONS may be:\n";
-	
-	// Display option description
-	for(genstruct::Vector<Option *>::Iterator option(options); option; option++) {
+	cerr << "\nOPTIONS may be:\n";
+
+	// display the arguments
+	Vector<Option *> done;
+	typedef genstruct::SortedBinMap<string, Option *>::PairIterator iter;
+	for(iter cmd(cmds); cmd; cmd++) {
+
+		// already done?
+		Option *option = (*cmd).snd;
+		if(done.contains(option))
+			continue;
+		done.add(option);
 
 		// display commands
-		bool fst = true;
-		for(genstruct::SortedBinMap<string, Option *>::PairIterator pair(cmds); pair; pair++)
-			if((*pair).snd == option) {
-				if(fst)
-					fst = false;
-				else
-					cerr << ", ";
-				cerr << (*pair).fst;
-			}
+		cerr << (*cmd).fst;
+		iter ocmd = cmd;
+		for(ocmd++; ocmd; ocmd++)
+			if((*ocmd).snd == option)
+				cerr << ", " << (*ocmd).fst;
 
 		// display argument
 		switch(option->usage()) {
@@ -606,7 +674,9 @@ void Manager::displayHelp(void) {
 		// display description
 		cerr << "\n\t" << option->description() << io::endl;
 	}
+
 }
+
 
 /**
  * @fn SwitchOption::Make Manager::make_switch(void);

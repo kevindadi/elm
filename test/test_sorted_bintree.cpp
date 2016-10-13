@@ -41,7 +41,10 @@ TEST_BEGIN(sorted_bintree)
 			field |= 1 << iter;
 		}
 		CHECK(cnt == 6);
-		CHECK(field == 0x3f); 
+		CHECK(field == 0x3f);
+		int n = 0;
+		for(genstruct::SortedBinTree<int>::Iterator i(tree); i; i++, n++)
+			CHECK_EQUAL(*i, n);
 	}
 	
 	{

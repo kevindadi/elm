@@ -44,7 +44,7 @@ public:
 		args.add(arg);
 	}
 
-	void run(void) {
+	void run(void) throw(elm::Exception) {
 
 		// process help
 		if(help) {

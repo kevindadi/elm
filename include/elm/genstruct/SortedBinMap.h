@@ -82,7 +82,7 @@ public:
 	class PairIterator: public PreIterator<PairIterator, const value_t&> {
 	public:
 		inline PairIterator(const SortedBinMap& map): iter(map.tree) { }
-		inline PairIterator(const PairIterator& _): iter(_) { }
+		inline PairIterator(const PairIterator& _): iter(_.iter) { }
 		inline bool ended(void) const { return iter.ended(); }
 		inline void next(void) { iter.next(); }
 		const value_t &item(void) const { return iter.item(); }

@@ -22,6 +22,7 @@
 #ifndef ELM_OPTION_MANAGER_H
 #define ELM_OPTION_MANAGER_H
 
+#include <elm/ptr.h>
 #include <elm/genstruct/SortedBinMap.h>
 #include <elm/genstruct/Vector.h>
 #include <elm/option/Option.h>
@@ -41,13 +42,14 @@ public:
 	class Make {
 		friend class Manager;
 	public:
-		inline Make(void): _help(false) { }
-		inline Make(cstring program, Version version = Version::ZERO): _program(program), _version(version), _help(false) { }
+		inline Make(void): _help(false), _version_opt(false) { }
+		inline Make(cstring program, Version version = Version::ZERO): _program(program), _version(version), _help(false), _version_opt(false) { }
 		inline Make& author(cstring s) { _author = s; return *this; }
 		inline Make& copyright(cstring s) { _copyright = s; return *this; }
 		inline Make& description(cstring s) { _description = s; return *this; }
 		inline Make& free_argument(cstring s) { _free_argument_description = s; return *this; }
 		inline Make& help(void) { _help = true; return *this; }
+		inline Make& version(void) { _version_opt = true; return *this; }
 	private:
 		cstring _program;
 		Version _version;
@@ -56,6 +58,7 @@ public:
 		cstring _description;
 		cstring _free_argument_description;
 		bool _help;
+		bool _version_opt;
 	};
 
 	// shortcut to make options
@@ -70,7 +73,10 @@ public:
 	void addOption(Option *option) throw(OptionException);
 	void removeOption(Option *option);
 	void parse(int argc, argv_t argv) throw(OptionException);
-	void displayHelp(void);
+	int manage(int artc, argv_t argv);
+
+	virtual void displayHelp(void);
+	virtual void displayVersion(void);
 
 	// accessors
 	inline cstring getProgram(void) const { return info._program; }
@@ -84,6 +90,7 @@ protected:
 	Make info;
 	virtual void process(String arg);
 	virtual void configure(int tag, VarArg& args);
+	virtual void run(void) throw(elm::Exception);
 
 private:
 	genstruct::Vector<Option *> options;
@@ -93,7 +100,7 @@ private:
 	void addCommand(string cmd, Option *option) throw(OptionException);
 	genstruct::SortedBinMap<char, Option *> shorts;
 	genstruct::SortedBinMap<string, Option *> cmds;
-	Option *_help;
+	UniquePtr<SwitchOption> _help_opt, _version_opt;
 };
 
 } } //elm::option
