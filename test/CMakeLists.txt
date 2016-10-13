@@ -54,6 +54,7 @@ set(TEST_SOURCES
 	"test_md5.cpp"
 	"test_mutex.cpp"
 	"test_option.cpp"
+	"test_path.cpp"
 	"test_plugin.cpp"
 	"test_process.cpp"
 	"test_ptr.cpp"

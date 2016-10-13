@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	Path class implementation
  *
  *	This file is part of OTAWA
@@ -82,6 +81,28 @@ int Path::lastSeparator(void) const {
  * @fn Path::Path(Path& path);
  * Build a path from another path.
  */
+
+
+/**
+ * Symbol used to represent a backward move in the path.
+ */
+const string Path::BACK_PATH = "..";
+
+
+/**
+ * Build a path which is the current path relative to
+ * the given base path.
+ * @param base	Base path to be relative to.
+ * @return		Same path but relative to the base.
+ */
+Path Path::relativeTo(Path base) const {
+	Path r;
+	while(base && !base.isPrefixOf(*this)) {
+		r = r / BACK_PATH;
+		base = base.parent();
+	}
+	return r / toString().substring(base.toString().length() + 1);
+}
 
 
 /**
@@ -273,6 +294,23 @@ bool Path::isHomeRelative(void) const {
  * This means that the path is a prefix of the current
  * path.
  * @return	True if it contains, false else.
+ * @deprecated	Use isPrefixedBy() instead.
+ */
+
+
+/**
+ * @fn bool Path::isPrefixOf(const Path& path) const;
+ * Test if the current path is prefix of the given one.
+ * @param path	Path to test.
+ * @return		True if the current path is prefix of the given one.
+ */
+
+
+/**
+ * @fn bool Path::prefixedBy(const Path& path);
+ * Test if the current path if prefixed by the given one.
+ * @param path	Prefix path.
+ * @return		True if path is a prefix of the current path.
  */
 
 

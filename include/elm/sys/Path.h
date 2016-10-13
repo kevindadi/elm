@@ -40,6 +40,7 @@ public:
 		static const char PATH_SEPARATOR = ':';
 		static inline bool isSeparator(char c) { return c == SEPARATOR; }
 #	endif
+		static const string BACK_PATH;
 
 	// Constructors
 	inline Path(void) { }
@@ -53,6 +54,7 @@ public:
 	Path append(Path path) const;
 	Path parent(void) const;
 	Path setExtension(CString new_extension) const;
+	Path relativeTo(Path base) const;
 
 	// Accessors
 	inline const String& toString(void) const { return buf; }
@@ -65,6 +67,9 @@ public:
 	bool isHomeRelative(void) const;
 	inline bool equals(Path& path) const { return buf == path.buf; }
 	inline bool subPathOf(const Path& path) const { return buf.startsWith(path.buf); }
+	inline bool isPrefixOf(const Path& path) const
+		{ return path.buf.startsWith(buf)  && (path.buf.length() == buf.length() || path.buf[buf.length()] == SEPARATOR); }
+	inline bool prefixedBy(const Path& path) const { return path.isPrefixOf(*this); }
 	static Path current(void);
 	static Path home(void);
 	static Path temp(void);
