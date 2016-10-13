@@ -27,6 +27,7 @@
 #include <elm/types.h>
 #include <elm/util/HashKey.h>
 #include <elm/util/Pair.h>
+#include <elm/util/array.h>
 
 namespace elm { namespace genstruct {
 
@@ -69,11 +70,22 @@ class HashTable {
 		int i;
 	};
 
+	class CstRef {
+	public:
+		inline CstRef(HashTable<K, T, H>& tab, const K& key): t(tab), k(key) { }
+		inline operator const T&(void) const { return get(); }
+		inline const T& operator*(void) const { return get(); }
+	private:
+		inline const T& get(void) const { node_t *node = t.find(k); ASSERTP(node, "key " << k << " not in hashtab"); return node->value; }
+		const HashTable<K, T, H>& t;
+		const K& k;
+	};
 	class Ref {
 	public:
 		inline Ref(HashTable<K, T, H>& tab, const K& key): t(tab), k(key) { }
-		inline operator const K&(void) const { return get(); }
-		inline const T& operator*(void) const { return get(); };
+		inline operator T&(void) const { return get(); }
+		inline T& operator*(void) const { return get(); }
+   		inline T& operator->(void) const { return get(); }
 		inline T& operator=(const T& v) const {
 			node_t *node = t.find(k);
 			if(!node)
@@ -81,32 +93,35 @@ class HashTable {
 			return node->value;
 		}
 	private:
-		inline const T& get(void) const { node_t *node = t.find(k); ASSERTP(node, "key " << k << " not in hashtab"); return node->value; }
+		inline T& get(void) const { node_t *node = t.find(k); ASSERTP(node, "key " << k << " not in hashtab"); return node->value; }
 		HashTable<K, T, H>& t;
 		const K& k;
 	};
 
 public:
 	HashTable(int _size = 211): size(_size), tab(new node_t *[_size])
-		{ for(int i = 0; i < size; i++) tab[i] = 0; }
+		{ array::fast<node_t*>::clear(tab, size); }
 	HashTable(const self_t& h): size(h.size), tab(new node_t *[h.size])
 		{ for(int i = 0; i < size; i++) tab[i] = 0; putAll(h); }
+	HashTable(const self_t& h, int _size = 211): size(_size), tab(new node_t *[_size])
+		{ array::fast<node_t*>::clear(tab, size); putAll(h); }
 	~HashTable(void)
 		{ clear(); delete [] tab; }
 
 	bool isEmpty(void) const
 		{ for(int i = 0; i <size; i++) if(tab[i]) return false; return true; }
 	int count(void) const
-	 	 { int cnt = 0; for(int i = 0; i < size; i++) for(node_t *cur = tab[i]; cur; cur = cur->next) cnt++; return cnt; }
+	 	{ int cnt = 0; for(int i = 0; i < size; i++) for(node_t *cur = tab[i]; cur; cur = cur->next) cnt++; return cnt; }
 
 	inline Option<T> get(const K& key) const
 		{ node_t *node = find(key); return node ? Option<T>(type_info<T>::get(node->value)) : Option<T>(); }
 	inline const T& get(const K& key, const T& def_value) const
 		{ node_t *node = find(key); return node ? type_info<T>::get(node->value) : def_value; }
 	inline bool hasKey(const K& key)
-	 	 { node_t *node = find(key); return node != 0; }
-	inline bool exists(const K& key) { return hasKey(key); };
+	 	{ node_t *node = find(key); return node != 0; }
+	inline bool exists(const K& key) { return hasKey(key); }
 
+	inline CstRef operator[](const K& key) const { return CstRef(*this, key); }
 	inline Ref operator[](const K& key) { return Ref(*this, key); }
 	inline self_t& operator=(const self_t& h)
 		{ clear(); putAll(h); return *this; }

@@ -52,7 +52,7 @@ public:
 	static inline void copy_back(T *target, const T *source, int size)
 		{ for(int i = size - 1; i >= 0; i--) target[i] = source[i]; }
 	static inline void move(T *target, const T *source, int size)
-		{ if(target < source) slow_copy(target, source, size); else slow_copy_back(target, source, size); }
+		{ if(target < source) copy(target, source, size); else copy_back(target, source, size); }
 	static inline void clear(T *target, int size)
 		{ for(int i = 0; i < size; i++) target[i] = T(); }
 	static inline void init(T *t, int size)
