@@ -24,7 +24,7 @@
 
 #include <elm/ptr.h>
 #include <elm/genstruct/SortedBinMap.h>
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 #include <elm/option/Option.h>
 #include <elm/option/SwitchOption.h>
 #include <elm/option/ValueOption.h>
@@ -93,7 +93,7 @@ protected:
 	virtual void run(void) throw(elm::Exception);
 
 private:
-	genstruct::Vector<Option *> options;
+	Vector<Option *> options;
 	void processOption(Option *option, int& i, int argc, argv_t argv, const char *earg);
 	void addShort(char cmd, Option *option) throw(OptionException);
 	void addLong(cstring cmd, Option *option) throw(OptionException);

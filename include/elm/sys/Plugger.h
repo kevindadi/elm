@@ -23,7 +23,7 @@
 
 #include <elm/PreIterator.h>
 #include <elm/sys/Plugin.h>
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 #include <elm/sys/Directory.h>
 #include <elm/sys/Path.h>
 #include <elm/util/ErrorHandler.h>
@@ -53,7 +53,7 @@ public:
 	void resetPaths(void);
 	Plugin *plug(const string& path);
 	Plugin *plugFile(sys::Path path);
-	inline String hook(void) const;
+	inline String hook(void) const { return _hook; }
 	string getLastError(void);
 	inline bool quiet(void) const { return _quiet; }
 	inline void setQuiet(bool quiet) { _quiet = quiet; }
@@ -76,52 +76,41 @@ public:
 		Path path(void) const;
 	private:
 		Plugger& plugger;
-		genstruct::Vector<Plugin *>& statics;
+		Vector<Plugin *>& statics;
 		int i, c;
 		int _path;
 		Directory::Iterator *file;
 		void go(void);
 	};
 
-	class PathIterator: public genstruct::Vector<string>::Iterator {
+	class PathIterator: public Vector<string>::Iter {
 	public:
-		inline PathIterator(const Plugger& plugger)
-			: genstruct::Vector<string>::Iterator(plugger.paths) { }
-		inline PathIterator(const PathIterator& iter)
-			: genstruct::Vector<string>::Iterator(iter) { }
+		inline PathIterator(const Plugger& plugger): Vector<string>::Iter(plugger.paths) { }
+		inline PathIterator(const PathIterator& iter): Vector<string>::Iter(iter) { }
 	};
 
 private:
 
-	static genstruct::Vector<Plugger *> pluggers;
+	static Vector<Plugger *> pluggers;
 	CString _hook;
 	Version per_vers;
-	genstruct::Vector<Plugin *> plugins;
-	genstruct::Vector<String> paths;
+	Vector<Plugin *> plugins;
+	Vector<String> paths;
 	error_t err;
 	bool _quiet;
 	static void leave(Plugin *plugin);
 	Plugin *plug(Plugin *plugin, void *handle);
-	inline genstruct::Vector<Plugin *>& statics(void);
+	inline Vector<Plugin *>& statics(void) { return Plugin::static_plugins; }
 	void onError(error_level_t level, const string& message);
-	Plugin *lookELD(const Path& path, error_t& err, genstruct::Vector<Plugin *>& deps);
+	Plugin *lookELD(const Path& path, error_t& err, Vector<Plugin *>& deps);
 
 	// portability functions
 	static void *link(sys::Path lib);
 	static void unlink(void *handle);
 	static void *lookSymbol(void *handle, cstring hook);
-	static void *lookLibrary(sys::Path lib, genstruct::Vector<string> rpath);
+	static void *lookLibrary(sys::Path lib, Vector<string> rpath);
 	static string error(void);
 };
-
-// Inlines
-inline String Plugger::hook(void) const {
-	return _hook;
-}
-
-inline genstruct::Vector<Plugin *>& Plugger::statics(void) {
-	return Plugin::static_plugins;
-}
 
 } } // elm::sys
 

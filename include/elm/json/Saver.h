@@ -21,7 +21,7 @@
 #ifndef ELM_JSON_SAVER_H_
 #define ELM_JSON_SAVER_H_
 
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 #include <elm/io.h>
 #include <elm/io/BufferedOutStream.h>
 #include <elm/string/utf8.h>
@@ -77,7 +77,7 @@ private:
 	void escape(utf8::char_t c) throw(io::IOException);
 
 	state_t state;
-	genstruct::Vector<state_t> stack;
+	Vector<state_t> stack;
 	io::Output _out;
 	bool readable;
 	string indent;

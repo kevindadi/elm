@@ -23,7 +23,7 @@
 #define ELM_OPTION_LISTOPTION_H_
 
 #include <elm/option/ValueOption.h>
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 
 namespace elm { namespace option {
 
@@ -54,7 +54,7 @@ public:
 	// Option overload
 	virtual void process(String arg) { vals.add(read<T>(arg)); }
 private:
-	genstruct::Vector<T> vals;
+	Vector<T> vals;
 };
 
 } }	// elm::option

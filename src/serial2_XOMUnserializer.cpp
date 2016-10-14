@@ -23,6 +23,7 @@
 #include <elm/io/BlockInStream.h>
 #include <elm/serial2/serial.h>
 #include <elm/serial2/XOMUnserializer.h>
+#include <elm/data/Vector.h>
 
 namespace elm { namespace serial2 {
 
@@ -179,7 +180,7 @@ void XOMUnserializer::flush(void) {
 
 		// build ID dictionary
 		genstruct::HashTable<CString, xom::Element *> elems;
-		genstruct::Vector<xom::Element *> todo;
+		Vector<xom::Element *> todo;
 		todo.push(doc->getRootElement());
 		while(todo) {
 			xom::Element *elem = todo.pop();

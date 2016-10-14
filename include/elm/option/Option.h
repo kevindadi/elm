@@ -25,7 +25,7 @@
 #include <elm/util/VarArg.h>
 #include <elm/string.h>
 #include <elm/io.h>
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 
 namespace elm { namespace option {
 
@@ -77,7 +77,7 @@ public:
 		inline Make& description(cstring desc) { _desc = desc; return *this; }
 	protected:
 		Manager& man;
-		genstruct::Vector<string> cmds;
+		Vector<string> cmds;
 		cstring _desc;
 	};
 

@@ -32,6 +32,7 @@ class Table {
 public:
 	inline Table(void): cnt(0), buf(0) { }
 	inline Table(int count, T *buffer): cnt(count), buf(buffer) { }
+	static const Table<T> null;
 
 	inline int count(void) const { return cnt; }
 	inline const T *buffer(void) const { return buf; }
@@ -72,6 +73,10 @@ protected:
 };
 
 template <class T>
+const Table<T> Table<T>::null;
+
+
+template <class T>
 class AllocTable: public Table<T> {
 public:
 	inline AllocTable(void) { }
@@ -86,6 +91,7 @@ public:
 		{ if(this->count() < t.count()) { if(this->buf) delete [] this->buf;
 		  this->set(t.count(), new T[t.count()]); } Table<T>::copy(t); }
 	inline void set(int cnt, T *buffer) { if(this->buf) delete [] this->buf; Table<T>::set(cnt, buffer); }
+	inline void set(const Table<T>& t) { if(this->buf) delete [] this->buf; Table<T>::set(t); }
 
 	inline AllocTable<T>& operator=(const Table<T>& t) { copy(t); return *this; }
 	inline AllocTable<T>& operator=(const AllocTable<T>& t) { copy(t); return *this; }

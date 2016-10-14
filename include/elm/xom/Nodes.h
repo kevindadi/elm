@@ -23,7 +23,7 @@
 #define ELM_XOM_NODES_H_
 
 #include <elm/util/MessageException.h>
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 #include <elm/xom/Node.h>
 
 namespace elm { namespace xom {
@@ -45,7 +45,7 @@ public:
 		{ Node *node = nodes[index]; nodes.remove(node); return node; }
 	inline int size(void) const { return nodes.count(); }
 private:
-	genstruct::Vector<Node *> nodes;
+	Vector<Node *> nodes;
 };
 
 // XMLException class

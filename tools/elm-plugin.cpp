@@ -20,7 +20,7 @@
  */
 
 #include <elm/options.h>
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 #include <elm/sys/Plugin.h>
 #include <elm/sys/System.h>
 
@@ -110,7 +110,7 @@ private:
 	}
 
 	option::SwitchOption info, help;
-	genstruct::Vector<string> args;
+	Vector<string> args;
 };
 
 int main(int argc, char **argv) {

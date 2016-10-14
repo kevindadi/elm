@@ -22,7 +22,7 @@
 #define ELM_ALLOC_BLOCK_ALLOCATOR_WITH_GC
 
 #include <elm/alloc/DefaultAllocator.h>
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 #include <elm/util/BitVector.h>
 
 namespace elm {
@@ -55,7 +55,7 @@ protected:
 	int free_cnt;
 
 private:
-	genstruct::Vector<t::uint8 *> chunks;
+	Vector<t::uint8 *> chunks;
 	t::uint8 *top;
 	t::size bsize, csize;
 	BitVector *coll;

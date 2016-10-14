@@ -7,7 +7,7 @@
 #ifndef ELM_XOM_ELEMENTS_H
 #define ELM_XOM_ELEMENTS_H
 
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 #include <elm/xom/String.h>
 
 namespace elm { namespace xom {
@@ -18,7 +18,7 @@ class Element;
 // Elements class
 class Elements {
 	friend class Element;
-	genstruct::Vector<Element *> elems;
+	Vector<Element *> elems;
 public:
 	inline Element *get(int index) const;
 	inline int size(void) const;

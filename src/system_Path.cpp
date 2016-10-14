@@ -24,7 +24,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 #include <elm/sys/Path.h>
 #include <elm/sys/System.h>
 #include <elm/sys/SystemException.h>
@@ -120,7 +120,7 @@ Path Path::canonical(void) const {
 	TRACE
 
 	// Select kept components
-	genstruct::Vector<String> comps;
+	Vector<String> comps;
 	int stop = path.nextSeparator(), start = 0;
 	while(stop >= 0) {
 

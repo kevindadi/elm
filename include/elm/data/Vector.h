@@ -66,7 +66,7 @@ public:
 		{	if(!tab || vec.cnt > cap) { if(tab) free(tab); cap = vec.cap; tab = allocate(vec.cap); }
 			cnt = vec.cnt; array::copy(tab, vec.tab, cnt); }
 	inline Table<T> detach(void)
-		{ T *rt = tab; int rc = cnt; tab = 0; cnt = 0; return Table<T>(rt, rc); }
+		{ T *rt = tab; int rc = cnt; tab = 0; cnt = 0; return Table<T>(rc, rt); }
 
 	// Collection concept
 	static const Vector<T, M> null;

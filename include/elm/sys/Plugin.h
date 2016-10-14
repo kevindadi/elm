@@ -24,8 +24,8 @@
 #include <elm/types.h>
 #include <elm/string.h>
 #include <elm/data/List.h>
-#include <elm/genstruct/Vector.h>
-#include <elm/genstruct/Table.h>
+#include <elm/data/Vector.h>
+#include <elm/data/Table.h>
 #include <elm/util/Version.h>
 #include <elm/sys/Path.h>
 
@@ -44,7 +44,7 @@ class Plugin {
 	t::uint32 magic;
 public:
 	static const t::uint32 MAGIC = 0xCAFEBABE;
-	typedef genstruct::Table<string> aliases_t;
+	typedef Table<string> aliases_t;
 
 	class make {
 		friend class Plugin;
@@ -60,10 +60,10 @@ public:
 		string _name;
 		cstring _description, _license, _hook;
 		Version _plugin_version, _plugger_version;
-		genstruct::Vector<string> aliases;
+		Vector<string> aliases;
 	};
 
-	Plugin(string name, const Version& plugger_version, CString hook = "", const aliases_t& aliases = aliases_t::EMPTY);
+	Plugin(string name, const Version& plugger_version, CString hook = "", const aliases_t& aliases = aliases_t::null);
 	Plugin(const make& maker);
 	virtual ~Plugin(void);
 	inline string name(void) const { return _name; }
@@ -95,14 +95,14 @@ private:
 	void setPath(const Path& path) { _path = path; }
 
 	friend class Plugger;
-	static genstruct::Vector<Plugin *> static_plugins;
-	static genstruct::Vector<Plugin *> unused_plugins;
+	static Vector<Plugin *> static_plugins;
+	static Vector<Plugin *> unused_plugins;
 	CString _hook;
 	string _name;
 	Version per_vers;
 	void *_handle;
 	int state;
-	genstruct::DeletableTable<string> _aliases;
+	AllocTable<string> _aliases;
 	Path _path;
 	List<Plugin *> deps;
 };

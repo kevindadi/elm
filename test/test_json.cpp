@@ -41,7 +41,7 @@ public:
 	int i;
 	double f;
 	string s;
-	genstruct::Vector<int> iv;
+	Vector<int> iv;
 
 	MyMaker(void): res(NONE), i(0), f(0) { }
 

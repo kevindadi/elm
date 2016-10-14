@@ -237,13 +237,13 @@ namespace elm { namespace sys {
 /**
  * List of static plugins.
  */
-genstruct::Vector<Plugin *> Plugin::static_plugins;
+Vector<Plugin *> Plugin::static_plugins;
 
 
 /**
  * List of unused plugins.
  */
-genstruct::Vector<Plugin *> Plugin::unused_plugins;
+Vector<Plugin *> Plugin::unused_plugins;
 
 
 /**
@@ -291,7 +291,7 @@ Plugin::Plugin(const Plugin::make& maker)
 	if(_hook)
 		static_plugins.add(this);
 	if(maker.aliases) {
-		genstruct::Vector<string> as;
+		Vector<string> as;
 		as.addAll(maker.aliases);
 		_aliases = as.detach();
 	}

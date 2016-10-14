@@ -23,7 +23,7 @@
 #define ELM_OPTION_STRING_LIST_H
 
 #include <elm/option/StandardOption.h>
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 
 namespace elm { namespace option {
 
@@ -59,7 +59,7 @@ public:
 
 private:
 	cstring arg_desc;
-	genstruct::Vector<string> args;
+	Vector<string> args;
 };
 
 } } // elm::option

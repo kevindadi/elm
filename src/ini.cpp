@@ -109,7 +109,7 @@ int Section::getInt(const string& key, int def) {
  * @param key	Looked key.
  * @param list	Vector to store items of the list inside.
  */
-void Section::getList(const string& key, genstruct::Vector<string>& list) {
+void Section::getList(const string& key, Vector<string>& list) {
 	string buf = get(key);
 	int p = buf.indexOf(';');
 	while(p >= 0) {

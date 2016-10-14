@@ -94,7 +94,7 @@ static inline bool isLibrary(FileItem *file) {
 /**
  * Current active pluggers.
  */
-genstruct::Vector<Plugger *> Plugger::pluggers;
+Vector<Plugger *> Plugger::pluggers;
 
 
 /**
@@ -276,7 +276,7 @@ void *Plugger::link(sys::Path lib) {
  * @param rpath	List of paths to look in (if empty, look in OS paths).
  * @return		Hook on the library.
  */
-void *Plugger::lookLibrary(sys::Path lib, genstruct::Vector<string> rpath) {
+void *Plugger::lookLibrary(sys::Path lib, Vector<string> rpath) {
 	lib = lib.setExtension(PLUG_EXT);
 	if(lib.isAbsolute() || !rpath)
 		return link(lib);
@@ -314,7 +314,7 @@ void *Plugger::lookSymbol(void *handle, cstring name) {
  * @param err	To return error.
  * @return		Opened plugin if any.
  */
-Plugin *Plugger::lookELD(const Path& path, error_t& err, genstruct::Vector<Plugin *>& _deps) {
+Plugin *Plugger::lookELD(const Path& path, error_t& err, Vector<Plugin *>& _deps) {
 	_deps.clear();
 
 	// compute ELD path
@@ -339,7 +339,7 @@ Plugin *Plugger::lookELD(const Path& path, error_t& err, genstruct::Vector<Plugi
 				return plugFile(evaluate(ppath, npath).setExtension(PLUG_EXT));
 
 			// pre-link other plugins
-			genstruct::Vector<string> deps;
+			Vector<string> deps;
 			sect->getList(DEPS_ATT, deps);
 			for(int i = 0; i < deps.count(); i++) {
 				Plugin *plugin = plug(evaluate(ppath, deps[i]));
@@ -353,12 +353,12 @@ Plugin *Plugger::lookELD(const Path& path, error_t& err, genstruct::Vector<Plugi
 			}
 
 			// pre-link libraries
-			genstruct::Vector<string> libs;
+			Vector<string> libs;
 			sect->getList(LIBS_ATT, libs);
 			if(libs) {
 
 				// add the RPATH if any
-				genstruct::Vector<string> rpaths;
+				Vector<string> rpaths;
 				sect->getList(RPATH_ATT, rpaths);
 				for(int i = 0; i < rpaths.count(); i++)
 					rpaths[i] = evaluate(ppath, rpaths[i]);
@@ -392,7 +392,7 @@ Plugin *Plugger::plugFile(sys::Path path) {
 		path = path.setExtension(PLUG_EXT);
 
 	// look for ELD file
-	genstruct::Vector<Plugin *> deps;
+	Vector<Plugin *> deps;
 	Plugin *res = lookELD(path, err, deps);
 	if(err != OK)
 		return 0;
@@ -486,7 +486,7 @@ Plugin *Plugger::plugFile(sys::Path path) {
 
 	// Plug it
 	plugin->setPath(path);
-	for(genstruct::Vector<Plugin *>::Iterator dep(deps); dep; dep++)
+	for(Vector<Plugin *>::Iter dep(deps); dep; dep++)
 		plugin->deps.add(dep);
 	return plug(plugin, handle);
 }

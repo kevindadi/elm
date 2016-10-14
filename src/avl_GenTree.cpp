@@ -22,7 +22,7 @@
 #include <elm/avl/GenTree.h>
 #include <elm/avl/Set.h>
 #include <elm/avl/Map.h>
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 
 namespace elm { namespace avl {
 
@@ -229,7 +229,7 @@ void AbstractTree::remove(Node *pa[], unsigned char da[], int k, Node *p) {
  */
 int AbstractTree::count(void) const {
 	int cnt = 0;
-	genstruct::Vector<Node *> s;
+	Vector<Node *> s;
 	s.push(root);
 	while(s) {
 		Node *node = s.pop();

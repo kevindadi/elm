@@ -23,7 +23,7 @@
 
 #include <elm/string.h>
 #include <elm/genstruct/AssocList.h>
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 #include <elm/sys/Path.h>
 
 namespace elm { namespace ini {
@@ -45,7 +45,7 @@ public:
 	inline bool isDefined(const string& key) const { return values.hasKey(key); }
 	string get(const string& key, const string& def) const;
 	int getInt(const string& key, int def);
-	void getList(const string& key, genstruct::Vector<string>& list);
+	void getList(const string& key, Vector<string>& list);
 
 	class Iterator: public map_t::PairIterator {
 	public:
