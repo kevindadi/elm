@@ -76,16 +76,16 @@ void __serialize(Serializer& serializer, const genstruct::Table<T>& tab) {
 	serializer.endCompound(&tab);
 }
 template <class T>
-void __serialize(Serializer& serializer, Table<T>& tab) {
-	__serialize(serializer, (const Table<T>&)tab);
+void __serialize(Serializer& serializer, genstruct::Table<T>& tab) {
+	__serialize(serializer, (const genstruct::Table<T>&)tab);
 }
 template <class T>
 void __serialize(Serializer& serializer, const genstruct::AllocatedTable<T>& tab) {
-	__serialize(serializer, (const Table<T>&)tab);
+	__serialize(serializer, (const genstruct::Table<T>&)tab);
 }
 template <class T>
 void __serialize(Serializer& serializer, genstruct::AllocatedTable<T>& tab) {
-	__serialize(serializer, (const Table<T>&)tab);
+	__serialize(serializer, (const genstruct::Table<T>&)tab);
 }
 
 
