@@ -107,6 +107,7 @@ TEST_BEGIN(string)
 			CHECK(s1.compare(s3) < 0);
 			CHECK(s1.compare(s4) == 0);
 		}
+		CHECK_EQUAL(s.substring(s.length()), string(""));
 	}
 	
 	// Assignment

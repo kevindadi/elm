@@ -61,6 +61,9 @@ TEST_BEGIN(path)
 	CHECK_EQUAL(f.relativeTo(b).toString(), string("c"));
 	CHECK_EQUAL(b.relativeTo(f).toString(), string(".."));
 	CHECK_EQUAL(g.relativeTo(f).toString(), string("../d"));
+
+	sys::Path rb = b.relativeTo(b);
+	CHECK_EQUAL(rb, sys::Path("."));
 }
 
 TEST_END

@@ -96,6 +96,8 @@ const string Path::BACK_PATH = "..";
  * @return		Same path but relative to the base.
  */
 Path Path::relativeTo(Path base) const {
+	if(base == *this)
+		return Path(".");
 	Path r;
 	while(base && !base.isPrefixOf(*this)) {
 		r = r / BACK_PATH;
