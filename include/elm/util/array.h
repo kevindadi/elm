@@ -40,7 +40,9 @@ public:
 	static inline void move(T *target, const T *source, int size)
 		{ ::memmove(target, source, size * sizeof(T)); }
 	static inline void clear(T *target, int size)
-		{ ::memset(target, 0, size * sizeof(target)); }
+		{ ::memset(target, 0, size * sizeof(T)); }
+	static inline int cmp(const T* t1, const T* t2, int size)
+		{ return ::memcmp(t1, t2, size); }
 	static inline void init(T *t, int size) { }
 };
 
@@ -55,6 +57,8 @@ public:
 		{ if(target < source) copy(target, source, size); else copy_back(target, source, size); }
 	static inline void clear(T *target, int size)
 		{ for(int i = 0; i < size; i++) target[i] = T(); }
+	static inline int cmp(const T* t1, const T* t2, int size)
+		{ for(int i = 0; i < size; i++) if(!(t1[i] == t2[i])) { return t1[i] > t2[i] ? +1 : -1; } return 0; }
 	static inline void init(T *t, int size)
 		{ for(int i = 0; i < size; i++) ::new((void *)(t + i)) T(); }
 };
@@ -68,6 +72,8 @@ template <class T> inline void set(T *target, int size, const T& v)
 	{ for(int i = 0; i < size; i++) target[i] = v; }
 template <class T> inline void clear(T *target, int size)
 	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::_::clear(target, size); }
+template <class T> inline int cmp(const T* t1, const T* t2, int size)
+	{ return _if<type_info<T>::is_virtual, slow<T>, fast<T> >::_::cmp(t1, t2, size); }
 template <class T> inline void init(T *t, int size)
 	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::_::init(t, size); }
 
