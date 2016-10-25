@@ -93,6 +93,7 @@ public:
 	inline int length(void) const { return count(); }
 	inline const T& get(int i) const
 		{ ASSERTP(0 <= i && i < cnt, "index out of bounds"); return tab[i]; }
+	inline const T& get(const Iter& i) const { return get(i.index()); }
 	inline int indexOf(const T& v, int p = 0) const
 		{ ASSERTP(0 <= p && p <= cnt, "index out of bounds");
 		for(int i = p; i < cnt; i++) if(_man.eq.isEqual(v, tab[i])) return i; return -1; }
@@ -100,6 +101,7 @@ public:
 		{	ASSERTP(p <= cnt, "index out of bounds");
 			for(int i = (p < 0 ? cnt : p) - 1; i >= 0; i--) if(_man.eq.isEqual(v, tab[i])) return i; return -1; }
 	inline const T & operator[](int i) const { return get(i); }
+	inline const T & operator[](const Iter& i) const { return get(i); }
 
 	// MutableArray concept
 	inline void shrink(int l)
@@ -109,7 +111,9 @@ public:
 	inline void set (const Iter &i, const T &v) { set(i.i, v); }
 	inline T& get(int index)
 		{ ASSERTP(index < cnt, "index out of bounds"); return tab[index]; }
+	inline T& get(const Iter& i) { return get(i.index()); }
 	inline T & operator[](int i) { return get(i); }
+	inline T & operator[](const Iter& i) { return get(i); }
 	void insert(int i, const T& v)
 		{	ASSERTP(0 <= i && i <= cnt, "index out of bounds");
 			if(cnt >= cap) grow(cap * 2); array::move(tab + i + 1, tab + i, cnt - i);
