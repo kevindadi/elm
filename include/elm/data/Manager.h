@@ -40,9 +40,10 @@ public:
 template <class T, class C = Comparator<T>, class A = DefaultAllocator>
 class CompareManager {
 public:
-	inline CompareManager(void): alloc(DefaultAllocator::DEFAULT) { }
-	inline CompareManager(const C& c, A& a = DefaultAllocator::DEFAULT): cmp(c), alloc(a) { }
+	inline CompareManager(void): eq(cmp), alloc(DefaultAllocator::DEFAULT) { }
+	inline CompareManager(const C& c, A& a = DefaultAllocator::DEFAULT): cmp(c), eq(cmp), alloc(a) { }
 	C cmp;
+	C& eq;
 	A& alloc;
 };
 

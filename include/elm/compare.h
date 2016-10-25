@@ -36,6 +36,8 @@ public:
 	static inline int compare(const T& v1, const T& v2)
 		{ if(v1 == v2) return 0; else if(v1 > v2) return 1; else return -1; }
 	int doCompare(const T& v1, const T& v2) const { return compare(v1, v2); }
+	static inline bool equals(const T& v1, const T& v2) { return compare(v1, v2) == 0; }
+	inline bool isEqual(const T& v1, const T& v2) const { return doCompare(v1, v2) == 0; }
 	static Comparator<T> def;
 };
 template <class T> Comparator<T> Comparator<T>::def;

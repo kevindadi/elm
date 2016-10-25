@@ -19,16 +19,14 @@
  *	along with OTAWA; if not, write to the Free Software 
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#include <elm/genstruct/SortedSLList.h>
+#include <elm/data/SortedList.h>
 #include <elm/util/test.h>
 
 using namespace elm;
-using namespace elm::genstruct;
 
-int main(void) {
-	CHECK_BEGIN("inhstruct_Tree")
+TEST_BEGIN(sorted_list)
 
-	SortedSLList<int> list;
+	SortedList<int> list;
 	
 	// Addition
 	list.add(5);
@@ -43,7 +41,7 @@ int main(void) {
 	CHECK(list.contains(9));
 	
 	// Traversal
-	SortedSLList<int>::Iterator item(list);
+	SortedList<int>::Iter item(list);
 	CHECK(item);
 	if(item) {
 		CHECK(item == 2);
@@ -76,5 +74,4 @@ int main(void) {
 	CHECK(!list.contains(9));
 	CHECK(list.isEmpty());
 	
-	CHECK_END
-}
+TEST_END

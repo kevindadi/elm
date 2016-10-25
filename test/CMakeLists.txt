@@ -61,6 +61,7 @@ set(TEST_SOURCES
 	"test_quicksort"
 	"test_ref.cpp"
 	"test_simplegc.cpp"
+	"test_sorted_list.cpp"
 	"test_stack_alloc.cpp"
 	"test_stopwatch.cpp"
 	"test_stree.cpp"
