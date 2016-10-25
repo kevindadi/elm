@@ -121,6 +121,7 @@ public:
 		{ Iter i1(*this), i2(l); while(i1 && i2) { if(!_man.eq.isEqual(*i1, *i2)) return false; i1++; i2++; } return !i1 && !i2; }
 	bool includes(const List<T>& l) const
 		{ Iter i1(*this), i2(l); while(i1 && i2) { if(_man.eq.isEqual(*i1, *i2)) i2++; i1++; } ; return !i2; }
+	inline const T& at(const Iter& i) const { return i.node->val; }
 
 	// MutableCollection concept
 	inline void clear(void)
@@ -130,13 +131,12 @@ public:
 		{ for(typename C::iter iter(items); iter; iter++) add(iter); }
 	template <class C> inline void removeAll(const C& items)
 		{ for(typename C::iter iter(items); iter; iter++) remove(iter);	}
-
 	void remove(const T& value) {
 		if(first() && _man.eq.equals(first(), value)) removeFirst(); else
 		for(Node *prev = firstNode(), *cur = prev->nextNode(); cur; prev = cur, cur = cur->nextNode())
 		if(_man.eq.equals(cur->val, value)) { prev->removeNext(); cur->free(_man); return; }
 	}
-
+	inline T& at(const Iter& i) { return i.node->val; }
 	inline void remove(PrecIter &iter)
 		{ Node *c = iter.node; iter.node = iter.node->next(); iter.prev->removeNext(); c->free(_man); }
 
