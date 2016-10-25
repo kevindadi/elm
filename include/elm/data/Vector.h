@@ -47,7 +47,7 @@ public:
 		inline bool ended(void) const { return i >= _vec.length(); }
 		inline const T& item(void) const { return _vec[i]; }
 		inline void next(void) { i++; }
-		inline int index(void) { return i; }
+		inline int index(void) const { return i; }
 	private:
 		const Vector<T>& _vec;
 		int i;
