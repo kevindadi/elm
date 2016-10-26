@@ -72,7 +72,7 @@ class HashTable {
 
 	class CstRef {
 	public:
-		inline CstRef(HashTable<K, T, H>& tab, const K& key): t(tab), k(key) { }
+		inline CstRef(const HashTable<K, T, H>& tab, const K& key): t(tab), k(key) { }
 		inline operator const T&(void) const { return get(); }
 		inline const T& operator*(void) const { return get(); }
 	private:
@@ -102,8 +102,8 @@ public:
 	HashTable(int _size = 211): size(_size), tab(new node_t *[_size])
 		{ array::fast<node_t*>::clear(tab, size); }
 	HashTable(const self_t& h): size(h.size), tab(new node_t *[h.size])
-		{ for(int i = 0; i < size; i++) tab[i] = 0; putAll(h); }
-	HashTable(const self_t& h, int _size = 211): size(_size), tab(new node_t *[_size])
+		{ array::fast<node_t*>::clear(tab, size); putAll(h); }
+	HashTable(const self_t& h, int _size): size(_size), tab(new node_t *[_size])
 		{ array::fast<node_t*>::clear(tab, size); putAll(h); }
 	~HashTable(void)
 		{ clear(); delete [] tab; }
