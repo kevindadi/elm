@@ -68,6 +68,9 @@ class HashTable {
 		inline void step(void) { for(; i < htab->size; i++) if(htab->tab[i]) { node = htab->tab[i]; break; } }
 		const HashTable<K, T, H> *htab;
 		int i;
+
+		friend const T& HashTable::operator[] (const InternIterator& iter) const;
+		friend T& HashTable::operator[](const InternIterator& iter);
 	};
 
 	class CstRef {
@@ -123,6 +126,8 @@ public:
 
 	inline CstRef operator[](const K& key) const { return CstRef(*this, key); }
 	inline Ref operator[](const K& key) { return Ref(*this, key); }
+	inline const T& operator[](const InternIterator& iter) const { return iter.node->value; }
+	inline T& operator[](const InternIterator& iter) { return iter.node->value; }
 	inline self_t& operator=(const self_t& h)
 		{ clear(); putAll(h); return *this; }
 
