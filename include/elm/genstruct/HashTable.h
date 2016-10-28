@@ -68,11 +68,14 @@ class HashTable {
 		inline void step(void) { for(; i < htab->size; i++) if(htab->tab[i]) { node = htab->tab[i]; break; } }
 		const HashTable<K, T, H> *htab;
 		int i;
+
+		friend const T& HashTable::operator[] (const InternIterator& iter) const;
+		friend T& HashTable::operator[](const InternIterator& iter);
 	};
 
 	class CstRef {
 	public:
-		inline CstRef(HashTable<K, T, H>& tab, const K& key): t(tab), k(key) { }
+		inline CstRef(const HashTable<K, T, H>& tab, const K& key): t(tab), k(key) { }
 		inline operator const T&(void) const { return get(); }
 		inline const T& operator*(void) const { return get(); }
 	private:
@@ -102,8 +105,8 @@ public:
 	HashTable(int _size = 211): size(_size), tab(new node_t *[_size])
 		{ array::fast<node_t*>::clear(tab, size); }
 	HashTable(const self_t& h): size(h.size), tab(new node_t *[h.size])
-		{ for(int i = 0; i < size; i++) tab[i] = 0; putAll(h); }
-	HashTable(const self_t& h, int _size = 211): size(_size), tab(new node_t *[_size])
+		{ array::fast<node_t*>::clear(tab, size); putAll(h); }
+	HashTable(const self_t& h, int _size): size(_size), tab(new node_t *[_size])
 		{ array::fast<node_t*>::clear(tab, size); putAll(h); }
 	~HashTable(void)
 		{ clear(); delete [] tab; }
@@ -123,6 +126,8 @@ public:
 
 	inline CstRef operator[](const K& key) const { return CstRef(*this, key); }
 	inline Ref operator[](const K& key) { return Ref(*this, key); }
+	inline const T& operator[](const InternIterator& iter) const { return iter.node->value; }
+	inline T& operator[](const InternIterator& iter) { return iter.node->value; }
 	inline self_t& operator=(const self_t& h)
 		{ clear(); putAll(h); return *this; }
 
