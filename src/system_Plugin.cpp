@@ -241,6 +241,12 @@ Vector<Plugin *> Plugin::static_plugins;
 
 
 /**
+ * True when all static has been initialied.
+ */
+bool Plugin::static_done = false;
+
+
+/**
  * List of unused plugins.
  */
 Vector<Plugin *> Plugin::unused_plugins;
@@ -267,7 +273,7 @@ Plugin::Plugin(
 	_handle(0),
 	state(0)
 {
-	if(hook)
+	if(hook && !static_done)
 		static_plugins.add(this);
 	_aliases.copy(aliases);
 }
@@ -288,7 +294,7 @@ Plugin::Plugin(const Plugin::make& maker)
  	_handle(0),
  	state(0)
 {
-	if(_hook)
+	if(_hook && !static_done)
 		static_plugins.add(this);
 	if(maker.aliases) {
 		Vector<string> as;
@@ -307,7 +313,12 @@ Plugin::~Plugin(void) {
  * For internal use only.
  */
 void Plugin::plug(void *handle) {
-	// Usage incrementation
+
+	// no static if there is an handle
+	if(handle)
+		static_plugins.remove(this);
+
+	// usage incrementation
 	if(state > 0)
 		state++;
 

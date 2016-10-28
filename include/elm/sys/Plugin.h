@@ -96,6 +96,7 @@ private:
 
 	friend class Plugger;
 	static Vector<Plugin *> static_plugins;
+	static bool static_done;
 	static Vector<Plugin *> unused_plugins;
 	CString _hook;
 	string _name;

@@ -106,7 +106,7 @@ Vector<Plugger *> Plugger::pluggers;
  * 							default system paths.
  */
 Plugger::Plugger(CString hook, const Version& plugger_version, String _paths)
-: _hook(hook), per_vers(plugger_version), err(OK) {
+: _hook(hook), per_vers(plugger_version), err(OK), _quiet(false) {
 
 	// Initialize DL library
 	#if !defined(__WIN32) && !defined(__WIN64) && defined(WITH_LIBTOOL)
@@ -231,6 +231,7 @@ Plugin *Plugger::plug(const string& name) {
 /**
  */
 Plugin *Plugger::plug(Plugin *plugin, void *handle) {
+	ASSERT(handle);
 	plugin->plug(handle);
 	if(!plugins.contains(plugin))
 		plugins.add(plugin);
@@ -362,6 +363,8 @@ Plugin *Plugger::lookELD(const Path& path, error_t& err, Vector<Plugin *>& _deps
 				sect->getList(RPATH_ATT, rpaths);
 				for(int i = 0; i < rpaths.count(); i++)
 					rpaths[i] = evaluate(ppath, rpaths[i]);
+				if(!rpaths)
+					rpaths.add(ppath.parent());
 
 				// link the libraries
 				for(int i = 0; i < libs.count(); i++)
@@ -385,6 +388,7 @@ Plugin *Plugger::lookELD(const Path& path, error_t& err, Vector<Plugin *>& _deps
  * @return		Plugin or null if there is an error.
  */
 Plugin *Plugger::plugFile(sys::Path path) {
+	Plugin::static_done = true;
 	err = OK;
 
 	// add extension if not present
@@ -466,6 +470,7 @@ Plugin *Plugger::plugFile(sys::Path path) {
 	// plugin found?
 	if(!plugin) {
 		err = NO_HOOK;
+		unlink(handle);
 		onError(level_warning, _ << "invalid plugin found at \"" << path << "\" (no hook)");
 		return 0;
 	}
@@ -473,6 +478,7 @@ Plugin *Plugger::plugFile(sys::Path path) {
 	// Check the magic
 	if(plugin->magic != Plugin::MAGIC) {
 		err = NO_MAGIC;
+		unlink(handle);
 		onError(level_warning, _ << "invalid plugin found at \"" << path << "\" (bad magic)");
 		return 0;
 	}
@@ -480,6 +486,7 @@ Plugin *Plugger::plugFile(sys::Path path) {
 	// Check plugger version
 	if(!per_vers.accepts(plugin->pluggerVersion())) {
 		err = BAD_VERSION;
+		unlink(handle);
 		onError(level_warning, _ << "bad version plugin found at \"" << path << "\" (required: " << per_vers << ", provided: " << plugin->pluggerVersion() << ")");
 		return 0;
 	}
