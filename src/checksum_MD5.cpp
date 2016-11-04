@@ -357,14 +357,14 @@ void MD5::put(const String& str) {
  * @throw io::IOException	If there is an error during stream read.
  */
 void MD5::put(io::InStream& in) {
+	int r;
 	do {
-		int r = in.read(buf + size, MD5_BUFFER - size);
+		r = in.read(buf + size, MD5_BUFFER - size);
 		if(r < 0)
 			throw io::IOException("MD5Sum: error during stream read");
 		size += r;
-		//cout << size << " " << r << io::endl;
 		update();
-	} while(size == 0);
+	} while(r != 0);
 }
 
 
@@ -384,7 +384,7 @@ void MD5::put(io::InStream& in, int length) {
 		size += r;
 		l -= r;
 		update();
-	} while(size == 0 && l != 0);
+	} while(r == 0 && l != 0);
 }
 
 
