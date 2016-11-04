@@ -104,4 +104,16 @@ TEST_BEGIN(hashtable)
 		CHECK(!failed);
 	}
 
+	// use of brackets
+	{
+		genstruct::HashTable<string, int> t;
+		t["god"] = 111;
+		t["devil"] = 666;
+		CHECK_EQUAL(111, *t["god"]);
+		CHECK_EQUAL(666, *t["devil"]);
+		t["god"] = 0;
+		CHECK_EQUAL(0, *t["god"]);
+		CHECK_EQUAL(666, *t["devil"]);
+	}
+
 TEST_END

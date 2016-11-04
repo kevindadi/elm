@@ -89,12 +89,9 @@ class HashTable {
 		inline operator T&(void) const { return get(); }
 		inline T& operator*(void) const { return get(); }
    		inline T& operator->(void) const { return get(); }
-		inline T& operator=(const T& v) const {
-			node_t *node = t.find(k);
-			if(!node)
-				node = t.make(k, v);
-			return node->value;
-		}
+		inline T& operator=(const T& v) const
+			{ node_t *node = t.find(k); if(!node) node = t.make(k, v);
+			  else node->value = v; return node->value; }
 	private:
 		inline T& get(void) const { node_t *node = t.find(k); ASSERTP(node, "key " << k << " not in hashtab"); return node->value; }
 		HashTable<K, T, H>& t;
