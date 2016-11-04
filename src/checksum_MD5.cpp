@@ -377,8 +377,9 @@ void MD5::put(io::InStream& in) {
  */
 void MD5::put(io::InStream& in, int length) {
 	t::uint32 l = length;
+	int r;
 	do {
-		int r = in.read(buf + size, min(l, MD5_BUFFER - size));
+		r = in.read(buf + size, min(l, MD5_BUFFER - size));
 		if(r < 0)
 			throw io::IOException("MD5Sum: error during stream read");
 		size += r;
