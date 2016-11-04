@@ -231,7 +231,6 @@ Plugin *Plugger::plug(const string& name) {
 /**
  */
 Plugin *Plugger::plug(Plugin *plugin, void *handle) {
-	ASSERT(handle);
 	plugin->plug(handle);
 	if(!plugins.contains(plugin))
 		plugins.add(plugin);
