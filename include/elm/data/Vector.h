@@ -35,6 +35,8 @@ class Vector {
 	inline void free(T *t) { _man.alloc.free(t); }
 
 public:
+	typedef T t;
+
 	inline Vector(int _cap = 8, M& m = Single<M>::_): _man(m), tab(allocate(_cap)), cap(_cap), cnt(0) { }
 	inline Vector(const Vector<T>& vec): _man(vec._man), tab(0), cap(0), cnt(0) { copy(vec); }
 	inline ~Vector(void) { if(tab) free(tab); }

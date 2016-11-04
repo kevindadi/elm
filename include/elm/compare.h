@@ -106,6 +106,12 @@ template <class T> inline const T& min(const T& x, const T& y)
 	{ if(Comparator<T>::compare(x, y) >= 0) return y; else return x; }
 template <class T> inline const T& max(const T& x, const T& y)
 	{ if(Comparator<T>::compare(x, y) >= 0) return x; else return y; }
+template <class C> inline typename C::t min(const C& c)
+	{ 	typename C::Iter i(c); typename C::t m = *i;
+		for(i++; i; i++) if(Comparator<typename C::t>::compare(*i, m) < 0) m = *i; return m; }
+template <class C> inline typename C::t max(const C& c)
+	{ 	typename C::Iter i(c); typename C::t m = *i;
+		for(i++; i; i++) if(Comparator<typename C::t>::compare(*i, m) > 0) m = *i; return m; }
 
 } // elm
 

@@ -35,6 +35,7 @@ set(TEST_SOURCES
 	"test_bidilist.cpp"
 	"test_bitvector.cpp"
 	"test_char.cpp"
+	"test_compare.cpp"
 	"test_dllist.cpp"
 	"test_enum_info.cpp"
 	"test_file.cpp"
