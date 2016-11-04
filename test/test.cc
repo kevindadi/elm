@@ -7,7 +7,7 @@
 
 #include <elm/io.h>
 #include <elm/util/test.h>
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 
 using namespace elm;
 
@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
 		}
 
 	// process the tests
-	genstruct::Vector<TestCase *> tests;
+	Vector<TestCase *> tests;
 	for(int i = 1; i < argc; i++) {
 		bool found = false;
 
@@ -49,8 +49,9 @@ int main(int argc, char *argv[]) {
 			tests.add(test);
 
 	// perform tests
+
 	bool failed = false;
-	for(genstruct::Vector<TestCase *>::Iterator test(tests); test; test++) {
+	for(Vector<TestCase *>::Iter test(tests); test; test++) {
 		try {
 			test->perform();
 		}
@@ -69,7 +70,7 @@ int main(int argc, char *argv[]) {
 	}
 	else {
 		cerr << "ERROR: some tests failed:\n";
-		for(genstruct::Vector<TestCase *>::Iterator test(tests); test; test++)
+		for(Vector<TestCase *>::Iter test(tests); test; test++)
 			if(test->hasFailed())
 				cerr << "  * " << test->name() << io::endl;
 		return 1;
