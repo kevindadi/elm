@@ -1,5 +1,5 @@
 /*
- *	Table classes implementation
+ *	SubCollection class implementation
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2016, IRIT UPS.
@@ -19,4 +19,5 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <elm/data/Table.h>
+#include <elm/data/SubCollection.h>
+

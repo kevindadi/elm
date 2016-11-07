@@ -1,5 +1,5 @@
 /*
- *	Table classes interface
+ *	Array classes interface
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2016, IRIT UPS.
@@ -18,32 +18,36 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_DATA_TABLE_H_
-#define ELM_DATA_TABLE_H_
+#ifndef ELM_ARRAY_TABLE_H_
+#define ELM_ARRAY_TABLE_H_
 
 #include <elm/assert.h>
 #include <elm/PreIterator.h>
 #include <elm/util/array.h>
+#include <elm/compare.h>
 
 namespace elm {
 
 template <class T>
-class Table {
+class Array {
 public:
-	inline Table(void): cnt(0), buf(0) { }
-	inline Table(int count, T *buffer): cnt(count), buf(buffer) { }
-	static const Table<T> null;
+	typedef T t;
+
+	inline Array(void): cnt(0), buf(0) { }
+	inline Array(int count, T *buffer): cnt(count), buf(buffer) { }
+	static const Array<T> null;
 
 	inline int count(void) const { return cnt; }
 	inline const T *buffer(void) const { return buf; }
 	inline T *buffer(void) { return buf; }
+	inline int size(void) const { return count(); }
 
 	class Iter: public PreIterator<Iter, T> {
 	public:
 		inline Iter(void): p(0), t(0) { }
-		inline Iter(const Table<T>& table): p(table.buffer()), t(table.buffer() + table.count()) { }
+		inline Iter(const Array<T>& table): p(table.buffer()), t(table.buffer() + table.count()) { }
 		inline bool ended(void) const { return p >= t; }
-		inline const T& item(void) const { return *p; }
+		inline const T& item(void) const { ASSERT(p < t); return *p; }
 		inline void next(void) { p++; }
 	private:
 		const T *p, *t;
@@ -52,8 +56,8 @@ public:
 	inline void set(const Iter& i, const T& val) { ASSERT(buf <= i.p && i.p < buf + cnt); *i.p = val; }
 
 	inline void set(int count, T *buffer) { cnt = count; buf = buffer; }
-	inline void set(const Table<T>& t) { cnt = t.cnt; buf = t.buf; }
-	inline void copy(const Table& t) { cnt = min(cnt, t.cnt); array::copy(buf, t.buf, cnt); }
+	inline void set(const Array<T>& t) { cnt = t.cnt; buf = t.buf; }
+	inline void copy(const Array& t) { cnt = min(cnt, t.cnt); array::copy(buf, t.buf, cnt); }
 	inline void fill(const T& val) { array::set(buf, cnt, val); }
 	inline const T& get(int idx) const { ASSERT(0 <= idx && idx < cnt); return buf[idx]; }
 	inline T& get(int idx) { ASSERT(0 <= idx && idx < cnt); return buf[idx]; }
@@ -63,7 +67,7 @@ public:
 	inline T *operator()(void) { return buffer(); }
 	inline const T& operator[](int idx) const { return get(idx); }
 	inline T& operator[](int idx) { return get(idx); }
-	inline Table<T>& operator=(const Table<T>& t) { set(t); return *this; }
+	inline Array<T>& operator=(const Array<T>& t) { set(t); return *this; }
 	inline operator Iter(void) const { return items(); }
 	inline Iter operator*(void) const { return items(); }
 
@@ -73,30 +77,33 @@ protected:
 };
 
 template <class T>
-const Table<T> Table<T>::null;
+const Array<T> Array<T>::null;
 
 
 template <class T>
-class AllocTable: public Table<T> {
+class AllocArray: public Array<T> {
 public:
-	inline AllocTable(void) { }
-	inline AllocTable(int count, T *buffer): Table<T>(count, buffer) { }
-	inline AllocTable(int count): Table<T>(count, new T[count]) { }
-	inline AllocTable(int count, const T& val): Table<T>(count, new T[count]) { fill(val); }
-	inline AllocTable(const Table<T>& t): Table<T>(t.cnt, new T[t.cnt]) { Table<T>::copy(t); }
-	inline AllocTable(const AllocTable<T>& t): Table<T>(t.cnt, new T[t.cnt]) { Table<T>::copy(t); }
-	inline ~AllocTable(void) { if(this->buf) delete [] this->buf; }
+	inline AllocArray(void) { }
+	inline AllocArray(int count, T *buffer): Array<T>(count, buffer) { }
+	inline AllocArray(int count): Array<T>(count, new T[count]) { }
+	inline AllocArray(int count, const T& val): Array<T>(count, new T[count]) { fill(val); }
+	inline AllocArray(const Array<T>& t): Array<T>(t.cnt, new T[t.cnt]) { Array<T>::copy(t); }
+	inline AllocArray(const AllocArray<T>& t): Array<T>(t.cnt, new T[t.cnt]) { Array<T>::copy(t); }
+	inline ~AllocArray(void) { if(this->buf) delete [] this->buf; }
 
-	inline void copy(const Table<T>& t)
+	inline void copy(const Array<T>& t)
 		{ if(this->count() < t.count()) { if(this->buf) delete [] this->buf;
-		  this->set(t.count(), new T[t.count()]); } Table<T>::copy(t); }
-	inline void set(int cnt, T *buffer) { if(this->buf) delete [] this->buf; Table<T>::set(cnt, buffer); }
-	inline void set(const Table<T>& t) { if(this->buf) delete [] this->buf; Table<T>::set(t); }
+		  Array<T>::set(t.count(), new T[t.count()]); } Array<T>::copy(t); }
+	inline void tie(int cnt, T *buffer) { if(this->buf) delete [] this->buf; Array<T>::set(cnt, buffer); }
+	inline void tie(const Array<T>& t) { if(this->buf) delete [] this->buf; Array<T>::set(t); }
 
-	inline AllocTable<T>& operator=(const Table<T>& t) { copy(t); return *this; }
-	inline AllocTable<T>& operator=(const AllocTable<T>& t) { copy(t); return *this; }
+	inline AllocArray<T>& operator=(const Array<T>& t) { copy(t); return *this; }
+	inline AllocArray<T>& operator=(const AllocArray<T>& t) { copy(t); return *this; }
 };
+
+template <class T>
+inline Array<T> _array(int n, T t[]) { return Array<T>(n, t); }
 
 } // elm
 
-#endif /* ELM_DATA_TABLE_H_ */
+#endif /* ELM_ARRAY_TABLE_H_ */

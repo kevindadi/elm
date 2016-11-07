@@ -1,6 +1,5 @@
 /*
- *	$Id$
- *	genstruct::HashTable class interface
+ * quicksort implementation
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2004-08, IRIT UPS.

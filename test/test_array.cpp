@@ -1,73 +1,86 @@
 /*
- * test_array.h
+ * $Id$
+ * Copyright (c) 2005, IRIT-UPS.
  *
- *  Created on: 5 janv. 2011
- *      Author: casse
+ * test/test_table.cpp -- unit tests for Table class.
  */
 
 #include <elm/util/test.h>
-#include <elm/util/array.h>
-#include <elm/system/StopWatch.h>
+#include <elm/data/Array.h>
 
 using namespace elm;
-using namespace elm::system;
 
-static bool flag = false;
-
-class Deep {
+class TopArray {
 public:
-	inline Deep& operator=(const Deep& d) { flag = true; return *this; }
+	AllocArray<int> tab;
+	TopArray(void): tab(0) { }
+	TopArray(int size): tab(size) { }
+	TopArray(const TopArray& tt): tab(tt.tab) { }
 };
 
-class Integer {
+class BottomTable {
 public:
-	inline Integer(void) { i = 0; }
-	Integer& operator=(const Integer& d) { i = d.i; return *this; }
-private:
-	int i;
+	AllocArray< TopArray > tab;
+	BottomTable(int size): tab(size) { }
 };
 
-void test_array(void) {
 
-	CHECK_BEGIN("array")
+TEST_BEGIN(array)
 
+	// Simple tests
 	{
-		int t1[20], t2[20];
-		array::copy(t1, t2, 20);
+		int t[] = { 0, 1, 2, 3 };
+		Array<int> tab(4, t);
+		CHECK(tab[0] == 0);
+		CHECK(tab[1] == 1);
+		CHECK(tab[2] == 2);
+		CHECK(tab[3] == 3);
+		CHECK(tab.size() == 4);
+		int i = 0;
+		for(Array<int>::Iter n(tab); !n.ended(); n++, i++) {
+			CHECK(i < 4);
+			CHECK(n == t[i]);
+		}
+		CHECK(i == 4);
+	}
+	
+	// Assignment tests
+	{
+		int t[] = { 0, 1, 2, 3 };
+		Array<int> tab(4, t);
+		CHECK(tab[2] == 2);
+		tab[2] = 4;
+		CHECK(tab[2] == 4);
+		tab.set(2, 6);
+		CHECK(tab[2] == 6);
+	}
+	
+	// Complex tables
+	{
+		BottomTable tt(4);
+		tt.tab[0] = TopArray(4);
+		tt.tab[1] = TopArray(4);
+		tt.tab[2] = TopArray(4);
+		tt.tab[3] = TopArray(4);
+	}
+	
+	// Boolean table
+	{
+		AllocArray<bool> tab(1024);
+		tab[0] = false;
+		CHECK(tab[0] == false);
+		tab[1] = true;
+		CHECK(tab[1] == true);
 	}
 
+	// Automatic maker
 	{
-		Deep t1[20], t2[20];
-		array::copy(t1, t2, 20);
-		CHECK(flag);
+		int t[4] = { 1, 2, 3, 4 };
+		Array<int> a = _array(4, t);
+		CHECK_EQUAL(a.size(), 4);
 	}
 
-	{
-		static const int size = 100000, count = 1000;
-		int t1[size], t2[size];
-		Integer u1[size], u2[size];
-		StopWatch sw;
+TEST_END
 
-		// shallow copy
-		sw.start();
-		for(int i = 0; i < count; i++)
-			array::copy(t1, t2, size);
-		sw.stop();
-		time_t t_shallow = sw.stopTime() - sw.startTime();
+	
 
-		// deep copy
-		sw.start();
-		for(int i = 0; i < count; i++)
-			array::copy(u1, u2, size);
-		sw.stop();
-		time_t t_deep = sw.stopTime() - sw.startTime();
-
-		// compare
-		cerr << "shallow time = " << t_shallow << io::endl;
-		cerr << "deep time = " << t_deep << io::endl;
-		cerr << "factor = " << (t_deep / t_shallow) << io::endl;
-		CHECK(t_shallow < t_deep);
-	}
-
-	CHECK_END
-}

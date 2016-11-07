@@ -25,9 +25,9 @@
 #include <elm/string.h>
 #include <elm/data/List.h>
 #include <elm/data/Vector.h>
-#include <elm/data/Table.h>
 #include <elm/util/Version.h>
 #include <elm/sys/Path.h>
+#include "../data/Array.h"
 
 namespace elm { namespace sys {
 
@@ -44,7 +44,7 @@ class Plugin {
 	t::uint32 magic;
 public:
 	static const t::uint32 MAGIC = 0xCAFEBABE;
-	typedef Table<string> aliases_t;
+	typedef Array<string> aliases_t;
 
 	class make {
 		friend class Plugin;
@@ -103,7 +103,7 @@ private:
 	Version per_vers;
 	void *_handle;
 	int state;
-	AllocTable<string> _aliases;
+	AllocArray<string> _aliases;
 	Path _path;
 	List<Plugin *> deps;
 };

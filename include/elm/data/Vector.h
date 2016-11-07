@@ -22,8 +22,8 @@
 #define INCLUDE_ELM_DATA_VECTOR_H_
 
 #include "Manager.h"
-#include "Table.h"
 #include <elm/util/array.h>
+#include "Array.h"
 
 namespace elm {
 
@@ -67,8 +67,8 @@ public:
 	void copy(const Vector& vec)
 		{	if(!tab || vec.cnt > cap) { if(tab) free(tab); cap = vec.cap; tab = allocate(vec.cap); }
 			cnt = vec.cnt; array::copy(tab, vec.tab, cnt); }
-	inline Table<T> detach(void)
-		{ T *rt = tab; int rc = cnt; tab = 0; cnt = 0; return Table<T>(rc, rt); }
+	inline Array<T> detach(void)
+		{ T *rt = tab; int rc = cnt; tab = 0; cnt = 0; return Array<T>(rc, rt); }
 
 	// Collection concept
 	static const Vector<T, M> null;

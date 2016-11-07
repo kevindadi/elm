@@ -30,6 +30,7 @@ message(STATUS ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(TEST_SOURCES
 	"test.cc"
+	"test_array.cpp"
 	"test_avl.cpp"
 	"test_autostr.cpp"
 	"test_bidilist.cpp"
@@ -69,7 +70,6 @@ set(TEST_SOURCES
 	"test_string.cpp"
 	"test_string_buffer.cpp"
 	"test_system.cpp"
-	"test_table.cpp"
 	"test_utility.cpp"
 	"test_vararg.cpp"
 	"test_vector.cpp"
@@ -78,6 +78,7 @@ set(TEST_SOURCES
 	"test_type_info.cpp"
 	"test_thread.cpp"
 	"test_utf8.cpp"
+	"test_util_array.cpp"
     "test_wah"
 )
 

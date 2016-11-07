@@ -28,6 +28,7 @@ namespace elm {
 template <class I, class T>
 class PreIterator {
 public:
+	typedef T t;
 
 	// operators
 	inline operator bool(void) const
