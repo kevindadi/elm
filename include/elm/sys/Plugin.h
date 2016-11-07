@@ -54,6 +54,7 @@ public:
 		inline make& description(cstring d) { _description = d; return *this; }
 		inline make& license(cstring l) { _license = l; return *this; }
 		inline make& version(const Version& v) { _plugin_version = v; return *this; }
+		inline make& version(int major, int minor, int release = 0) { _plugin_version = Version(major, minor, release); return *this; }
 		inline make& alias(string a) { aliases.add(a); return *this; }
 		inline make& hook(cstring h) { _hook = h; return *this; }
 	private:
