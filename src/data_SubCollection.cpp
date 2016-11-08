@@ -21,3 +21,38 @@
 
 #include <elm/data/SubCollection.h>
 
+namespace elm {
+
+/**
+ * @class class SubCollection
+ * A sub-collection, as shown by its name, represents
+ * a part of collection ranging from one iterator
+ * to another iterator.
+ *
+ * Implements concept::Collection.
+ *
+ * A fast way to build a sub-collection is to use the function
+ * sub_coll().
+ *
+ * @param I		Type of iterators.
+ * @ingroup data
+ * @see sub_coll()
+ */
+
+
+/**
+ * @fn SubCollection::SubCollection(const I& begin, const I& end);
+ * Build a sub-collection the begin iterator to the end iterator (exclusive).
+ * @param begin		Iterator on the first element of the collection.
+ * @param end		End iterator past the last element of the collection (may be ended).
+ */
+
+/**
+ * @fn SubCollection<I> sub_coll(const I& begin, const I& end);
+ * Fast way to build a sub-collection.
+ * @param begin		Iterator on the first element of the collection.
+ * @param end		End iterator past the last element of the collection (may be ended).
+ * @ingroup data
+ */
+
+}	// elm

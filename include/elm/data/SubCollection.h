@@ -29,7 +29,6 @@ template <class I>
 class SubCollection {
 public:
 	typedef typename I::t t;
-	typedef typename I::collec_t::man_t man_t;
 
 	inline SubCollection(const I& begin, const I& end)
 		: _begin(begin), _end(end) { }
@@ -59,6 +58,9 @@ public:
 private:
 	I _begin, _end;
 };
+
+template <class I>
+SubCollection<I> sub_coll(const I& begin, const I& end) { return SubCollection<I>(begin, end); }
 
 }	// elm
 
