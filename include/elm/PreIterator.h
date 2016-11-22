@@ -45,26 +45,6 @@ public:
 		{ return ((I *)this)->item(); }
 };
 
-template <class I>
-inline int count(I i)
-	{ int c = 0; for(; i; i++) c++; return c; }
-
-template <class I, class P>
-inline bool forall(I i, P p)
-	{ for(; i; i++) if(!p(*i)) return false; return true; }
-
-template <class I, class P, class A>
-inline bool forall(I i, P p, A a)
-	{ for(; i; i++) if(!p(*i, a)) return false; return true; }
-
-template <class I, class P>
-inline bool exists(I i, P p)
-	{ for(; i; i++) if(p.test(*i)) return true; return false; }
-
-template <class I, class P, class A>
-inline bool exists(I i, P p, A a)
-	{ for(; i; i++) if(p.test(*i, a)) return true; return false; }
-
 } // elm
 
 #endif	// ELM_PREITERATOR_H

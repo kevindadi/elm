@@ -35,9 +35,63 @@ namespace elm {
  * @li a data structure must not be modified while an iterator is active on it unless specific methods are provided.
  */
 
+namespace concept {
+
+/**
+ * Predicate concept.
+ * @param	T	Type of value to test.
+ * @ingroup concept
+ */
+template <class T>
+struct Predicate {
+	bool operator()(const T& v);
+};
+
+/**
+ * Predicate concept with additional argument.
+ * @param	T	Type of value to test.
+ * @param	A	Type of argument.
+ * @ingroup concept
+ */
+template <class T, class A>
+struct PredicateWithArg {
+	bool operator()(const T& v, const A& a);
+};
+
+/**
+ * Concept representing a function transforming a data
+ * to another one of the same set.
+ * @param X		Type of input argument.
+ * @param Y		Type of function result.
+ * @ingroup concept
+ */
+template <class X, class Y>
+struct Function {
+	typedef X x_t;
+	typedef Y y_t;
+	Y operator()(const X& x);
+};
+
+/**
+ * Concept representing a function transforming a data
+ * to another one of the same set (with additional argument).
+ * @param X		Type of input argument.
+ * @param Y		Type of function result.
+ * @ingroup concept
+ */
+template <class X, class Y, class A>
+struct FunctionWithArg {
+	typedef X x_t;
+	typedef Y y_t;
+	Y operator()(const X& x, const a& a);
+};
+
+}	// concept
+
+
 /**
  * @fn template <class T, template <class> class A, class C> void quicksort(A<T>& array, const C& c);
- * Sort the given array using quicksort algorithm (complexity O(N log(N)) ).
+ * Sort the given array using quicksort algorithm (average complexity O(N log(N)) ).
  *
  * @param array		Array containing the values to sort.
  * @param c			Comparator to use (rely on ELM default comparator if not provided).
@@ -50,7 +104,7 @@ namespace elm {
 
 /**
  * @fn template <class T, template <class> class A> void quicksort(A<T>& array);
- * Sort the given array using quicksort algorithm (complexity O(N log(N)) ).
+ * Sort the given array using quicksort algorithm (average complexity O(N log(N)) ).
  * The used comparator is @ref Comparator<T>.
  *
  * @param array		Array containing the values to sort.
@@ -61,45 +115,142 @@ namespace elm {
  */
 
 /**
- * @fn template <class I> int count(I i);
- * Count the number of items accessible from iterator i.
- * @param i		Iterator.
- * @return		Counter of item to iterate on.
+ * @fn int count(const C& c, const P& p);
+ * Count the number of elements of c that matches the predicate p.
+ * @param c		Collection to count in (must implement concept::Collection).
+ * @param p		Predicate to test element (must implement concept::Predicate).
  *
  * @ingroup data
  */
 
 /**
- * @fn template <class I, class P> bool forall(I i, P p);
- * Test if the given predicate t is true for all items of the iterator i.
- * @param i		Iterator on the items to test.
- * @param p		Predicate to test (type bool (*)(I)).
- * @return		True if all item are accepted by predicate, false else.
- *
- * @ingroup	data
+ * @fn int count(const C& c, const P& p, const A& a);
+ * Count the number of elements of c that matches the predicate p (using addiotnal argument a).
+ * @param c		Collection to count in (must implement concept::Collection).
+ * @param p		Predicate to test element (must implement concept::PredicateWithArg).
+ * @param a		Additional argument.
+ * @ingroup data
  */
 
 /**
- * @fn template <class I, class P, class A> bool forall(I i, P p, A a);
- * Test if the given predicate t is true for all items of the iterator i and supports an extra argument.
- * @param i		Iterator on the items to test.
- * @param p		Predicate to test (type bool (*)(I, A)).
- * @param a		Extra argument.
- * @return		True if all item are accepted by predicate, false else.
- *
- * @ingroup	data
+ * @fn bool forall(const C& c, const P& p);
+ * Test if the predicate p is true for each element of c.
+ * @param c		Collection to test (must implement concept::Collection).
+ * @param p		Predicate to evaluate (must implement concept::Predicate).
+ * @return		True if the predicate p is true for all element of c.
+ * @ingroup data
  */
 
 /**
- * @fn template <class I, class P, class A> bool exists(I i, P p, A a);
- * Test if the given predicate t is true for one of items of the iterator i and supports an extra argument.
- * @param i		Iterator on the items to test.
- * @param p		Predicate to test (type bool (*)(I, A)).
- * @param a		Extra argument.
- * @return		True if one item is accepted by predicate, false else.
- *
- * @ingroup	data
+ * @fn bool forall(const C& c, const P& p, const A& a);
+ * Test if the predicate p is true for each element of c (using an additional argument a).
+ * @param c		Collection to test (must implement concept::Collection).
+ * @param p		Predicate to evaluate (must implement concept::PredicateWithArg).
+ * @param a		Additional argument.
+ * @return		True if the predicate p is true for all element of c.
+ * @ingroup data
  */
+
+/**
+ * @fn bool exists(const C& c, const P& p);
+ * Test if the predicate p is true at least for one element of c.
+ * @param c		Collection to test (must implement concept::Collection).
+ * @param p		Predicate to evaluate (must implement concept::Predicate).
+ * @return		True if at least one element is true for predicate p.
+ * @ingroup data
+ */
+
+/**
+ * @fn bool exists(const C& c, const P& p, const A& a);
+ * Test if the predicate p is true at least for one element of c (with an additional argument).
+ * @param c		Collection to test (must implement concept::Collection).
+ * @param p		Predicate to evaluate (must implement concept::PredicateWithArg).
+ * @param a		Additional argument.
+ * @return		True if at least one element is true for predicate p.
+ * @ingroup data
+ */
+
+/**
+ * @fn I find(I i, const P& p);
+ * Find an element starting at iterator i matching the predicate p.
+ * @param i		Iterator to start look up.
+ * @param p		Predicate to test (must implement concept::Predicate).
+ * @return		Either the end iterator, or the iterator on the first position where o is true.
+ * @ingroup data
+ */
+
+/**
+ * @fn I find(I i, const P& p, const A& a);
+ * Find an element starting at iterator i matching the predicate p (with additional argument).
+ * @param i		Iterator to start look up.
+ * @param p		Predicate to test (must implement concept::Predicate).
+ * @param a		Additional argument.
+ * @return		Either the end iterator, or the iterator on the first position where o is true.
+ * @ingroup data
+ */
+
+/**
+ * void map(const C& c, const F& f, D& d);
+ * Map the elements of a collection to element of another collection using
+ * the function f.
+ * @param c	Original collection (must implement concept::Collection).
+ * @param f	Transforming function (must implement concept::Function).
+ * @param d	Filled collection (must implement concept::MutableCollection).
+ * @ingroup data
+ */
+
+/**
+ * void map(const C& c, const F& f, const A& a, D& d);
+ * Map the elements of a collection to element of another collection using
+ * the function f (with an additional argument).
+ * @param c	Original collection (must implement concept::Collection).
+ * @param f	Transforming function (must implement concept::Function).
+ * @param a	Additional argument passed to the function.
+ * @param d	Filled collection (must implement concept::MutableCollection).
+ * @ingroup data
+ */
+
+/**
+ * @fn void iter(const C& c, const F& f);
+ * Apply the function f on the element of collection c (ignoring the result).
+ * @param c		Collection to iterate on (must implement concept::Collection).
+ * @param f		Function to apply (must implement concept::Function).
+ * @ingroup data
+ */
+
+/**
+ * @fn void iter(const C& c, const F& f, const A& a);
+ * Apply the function f on the element of collection c (ignoring the result and with an additional argument).
+ * @param c		Collection to iterate on (must implement concept::Collection).
+ * @param f		Function to apply (must implement concept::FunctionWithArg).
+ * @param a		Additional argument passed to f.
+ * @ingroup data
+ */
+
+/**
+ * @fn typename F::y_t fold(const C& c, const F& f, typename F::y_t t);
+ * Evaluate the elements of the given collection with using function and accumulating
+ * with value t. The final t value is then returned.
+ *
+ * @param c		Collection to iterate on.
+ * @param f		Function to apply (must implement concept::FunctionWithArg and A and Y types must be the  same).
+ * @param t		Initial value. If not provided, use F::null static value.
+ */
+
+template <class C>
+inline typename C::t sum(const C& c)
+	{ return fold(c, Single<Add<typename C::t> >::_, 0); }
+
+template <class C>
+inline typename C::t product(const C& c)
+	{ return fold(c, Single<Mul<typename C::t> >::_); }
+
+
+// construction operations
+template <class C>
+inline void fill(C& c, int n, const typename C::t v = type_info<typename C::t>::null)
+	{ for(int i = 0; i < n; i++) c.add(v); }
+
 
 }	// elm
 

@@ -31,15 +31,15 @@ template <class T, class M = EquivManager<T> >
 class Vector {
 	inline T *allocate(int size)
 		{	T *t = static_cast<T *>(_man.alloc.allocate(size * sizeof(T)));
-			array::init(t, size); return t; }
-	inline void free(T *t) { _man.alloc.free(t); }
+			array::construct(t, size); return t; }
+	inline void free(T *t, int size) { array::destruct(t, size); _man.alloc.free(t); }
 
 public:
 	typedef T t;
 
 	inline Vector(int _cap = 8, M& m = Single<M>::_): _man(m), tab(allocate(_cap)), cap(_cap), cnt(0) { }
 	inline Vector(const Vector<T>& vec): _man(vec._man), tab(0), cap(0), cnt(0) { copy(vec); }
-	inline ~Vector(void) { if(tab) free(tab); }
+	inline ~Vector(void) { if(tab) free(tab, cap); }
 
 	// Iterator
 	class Iter: public PreIterator<Iter, const T&> {
@@ -59,13 +59,13 @@ public:
 	inline int capacity(void) const { return cap; }
 	void grow(int new_cap)
 		{	ASSERTP(new_cap >= cap, "new capacity must be bigger than old one");
-			cap = new_cap; T *new_tab = allocate(cap); array::copy(new_tab, tab, cnt); free(tab); tab = new_tab; }
+			T *new_tab = allocate(new_cap); array::copy(new_tab, tab, cnt); free(tab, cap); tab = new_tab; cap = new_cap; }
 	void setLength(int new_length)
 		{	int new_cap; ASSERTP(new_length >= 0, "new length must be >= 0");
 			for(new_cap = 1; new_cap < new_length; new_cap *= 2);
 			if (new_cap > cap) grow(new_cap); cnt = new_length; }
 	void copy(const Vector& vec)
-		{	if(!tab || vec.cnt > cap) { if(tab) free(tab); cap = vec.cap; tab = allocate(vec.cap); }
+		{	if(!tab || vec.cnt > cap) { if(tab) free(tab, cap); cap = vec.cap; tab = allocate(vec.cap); }
 			cnt = vec.cnt; array::copy(tab, vec.tab, cnt); }
 	inline Array<T> detach(void)
 		{ T *rt = tab; int rc = cnt; tab = 0; cnt = 0; return Array<T>(rc, rt); }

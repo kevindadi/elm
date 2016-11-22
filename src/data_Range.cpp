@@ -1,5 +1,5 @@
 /*
- *	SubCollection class implementation
+ *	Range class implementation
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2016, IRIT UPS.
@@ -19,13 +19,13 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <elm/data/SubCollection.h>
+#include "../include/elm/data/Range.h"
 
 namespace elm {
 
 /**
- * @class class SubCollection
- * A sub-collection, as shown by its name, represents
+ * @class class Range
+ * A subrange, as shown by its name, represents
  * a part of collection ranging from one iterator
  * to another iterator.
  *
@@ -36,22 +36,24 @@ namespace elm {
  *
  * @param I		Type of iterators.
  * @ingroup data
- * @see sub_coll()
+ * @see range()
  */
 
 
 /**
- * @fn SubCollection::SubCollection(const I& begin, const I& end);
- * Build a sub-collection the begin iterator to the end iterator (exclusive).
+ * @fn Range::Range(const I& begin, const I& end);
+ * Build a range the begin iterator to the end iterator (exclusive).
  * @param begin		Iterator on the first element of the collection.
  * @param end		End iterator past the last element of the collection (may be ended).
  */
 
 /**
- * @fn SubCollection<I> sub_coll(const I& begin, const I& end);
- * Fast way to build a sub-collection.
+ * @fn Range<I> range(const I& begin, const I& end);
+ * Fast way to build a range.
  * @param begin		Iterator on the first element of the collection.
  * @param end		End iterator past the last element of the collection (may be ended).
+ * @return			Built range.
+ * @see	Range
  * @ingroup data
  */
 

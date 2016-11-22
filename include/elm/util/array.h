@@ -43,7 +43,8 @@ public:
 		{ ::memset(target, 0, size * sizeof(T)); }
 	static inline int cmp(const T* t1, const T* t2, int size)
 		{ return ::memcmp(t1, t2, size); }
-	static inline void init(T *t, int size) { }
+	static inline void construct(T *t, int size) { }
+	static inline void destruct(T *t, int size) { }
 };
 
 // slow copies (cause of constructor, destructor, etc)
@@ -59,8 +60,10 @@ public:
 		{ for(int i = 0; i < size; i++) target[i] = T(); }
 	static inline int cmp(const T* t1, const T* t2, int size)
 		{ for(int i = 0; i < size; i++) if(!(t1[i] == t2[i])) { return t1[i] > t2[i] ? +1 : -1; } return 0; }
-	static inline void init(T *t, int size)
+	static inline void construct(T *t, int size)
 		{ for(int i = 0; i < size; i++) ::new((void *)(t + i)) T(); }
+	static inline void destruct(T *t, int size)
+		{ for(int i = 0; i < size; i++) (t + i)->~T(); }
 };
 
 // copy definitions
@@ -74,8 +77,10 @@ template <class T> inline void clear(T *target, int size)
 	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::_::clear(target, size); }
 template <class T> inline int cmp(const T* t1, const T* t2, int size)
 	{ return _if<type_info<T>::is_virtual, slow<T>, fast<T> >::_::cmp(t1, t2, size); }
-template <class T> inline void init(T *t, int size)
-	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::_::init(t, size); }
+template <class T> inline void construct(T *t, int size)
+	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::_::construct(t, size); }
+template <class T> inline void destruct(T *t, int size)
+	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::_::destruct(t, size); }
 
 } }	// elm::array
 

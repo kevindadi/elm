@@ -1,5 +1,5 @@
 /*
- *	SubCollection class
+ *	Range class
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2016, IRIT UPS.
@@ -18,31 +18,31 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_DATA_SUBCOLLECTION_H_
-#define ELM_DATA_SUBCOLLECTION_H_
+#ifndef ELM_DATA_RANGE_H_
+#define ELM_DATA_RANGE_H_
 
 #include <elm/util/Equiv.h>
 
 namespace elm {
 
 template <class I>
-class SubCollection {
+class Range {
 public:
 	typedef typename I::t t;
 
-	inline SubCollection(const I& begin, const I& end)
+	inline Range(const I& begin, const I& end)
 		: _begin(begin), _end(end) { }
 
-	class Iter: public PreIterator<I, t> {
+	class Iter: public PreIterator<Iter, t> {
 	public:
-		typedef SubCollection collec_t;
-		inline Iter(const SubCollection& collection)
+		typedef Range collec_t;
+		inline Iter(const Range& collection)
 			: c(collection), i(c._begin) { }
 		inline bool ended(void) const { return i == c._end; }
-		inline t item(void) const { return *i; }
-		inline void next(void) const { i.next(); }
+		inline const t& item(void) const { return i.item(); }
+		inline void next(void) { i.next(); }
 	private:
-		const SubCollection& c;
+		const Range& c;
 		I i;
 	};
 
@@ -60,9 +60,8 @@ private:
 };
 
 template <class I>
-SubCollection<I> sub_coll(const I& begin, const I& end) { return SubCollection<I>(begin, end); }
+Range<I> range(const I& begin, const I& end) { return Range<I>(begin, end); }
 
 }	// elm
 
-
-#endif /* ELM_DATA_SUBCOLLECTION_H_ */
+#endif /* ELM_DATA_RANGE_H_ */
