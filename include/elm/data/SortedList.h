@@ -39,7 +39,7 @@ public:
 
 	inline SortedList(void): _man(Single<M>::_) { }
 	inline SortedList(M& man): _man(man) { }
-	SortedList(const SortedList &l): list(l.list), _man(l._man) { }
+	SortedList(const SortedList<T, M, A> &l): list(l.list), _man(l._man) { }
 
 	inline void removeFirst(void) { list.removeFirst(); }
 	inline void removeLast(void) { list.removeLast(); }

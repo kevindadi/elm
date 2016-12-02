@@ -74,4 +74,15 @@ TEST_BEGIN(sorted_list)
 	CHECK(!list.contains(9));
 	CHECK(list.isEmpty());
 	
+	// Sorted list clone
+	list.add(3);
+	list.add(0);
+	list.add(5);
+	SortedList<int> cloned_list(list);
+	CHECK(!list.isEmpty());
+	CHECK(list.contains(3));
+	CHECK(list.contains(0));
+	CHECK(list.contains(5));
+	CHECK(!list.contains(2));
+
 TEST_END

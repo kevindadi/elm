@@ -48,11 +48,11 @@ class List {
 public:
 
 	inline List(void): _man(Single<M>::_) { }
-	inline List(const List& list): _man(list._man) { copy(list); }
+	inline List(const List<T, M>& list): _man(list._man) { copy(list); }
 	inline List(M& man): _man(man) { }
 	inline ~List(void) { clear(); }
 
-	void copy(const List<T>& list) {
+	void copy(const List<T, M>& list) {
 		clear(); Iter item(list); if(!item) return; addFirst(*item); Node *cur = firstNode();
 		for(item++; item; item++) { cur->insertAfter(new(_man) Node(*item)); cur = cur->next(); }
 	}
