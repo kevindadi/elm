@@ -30,5 +30,6 @@
 #include <elm/option/StandardOption.h>
 #include <elm/option/StringOption.h>
 #include <elm/option/SwitchOption.h>
+#include <elm/option/ListOption.h>
 
 #endif	// ELM_OPTIONS_H
