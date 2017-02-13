@@ -209,7 +209,7 @@ Path Path::append(Path path) const {
 Path Path::parent(void) const {
 	int pos = lastSeparator();
 	if(pos < 0)
-		return Path("");
+		return Path(".");
 	else
 		return Path(buf.substring(0, pos));
 }
