@@ -43,6 +43,7 @@ protected:
 	virtual void beginGC(void);
 	virtual void collect(void) { ASSERTP(false, "collect function must be implemented."); }
 	virtual void endGC(void);
+	bool getNeedGC(void) { return needGC; }
 
 private:
 	void newChunk(int index);
@@ -67,32 +68,27 @@ private:
 	t::size csize; // the chunk size
 	block_t **free_list; // the free list of blocks
 	inhstruct::DLList temps;
+	bool needGC; // delayed GC feature
 
 	typedef stree::Tree<void *, chunk_t *> tree_t;
 	tree_t *st; // use to store the tree of the chunks vs the range of the memory addresses
 
 	static inline t::size round(t::size size) { return (size + sizeof(block_t) - 1) & ~(sizeof(block_t) - 1); }
 
-
 	// for future
 	unsigned int shiftToIndex;   // the amount of the bit shift to obtain the exact bins' index
-
 
 	bool disableGC;                  // if the GC is disabled
 
 	// for testing
 	unsigned long totalChunkSize;
 
-
-
-
-
 	unsigned int currentMaxIndex;
 	unsigned int maxSlotSize;
 
-
 	// see the request distribution
 	unsigned long* useDist;
+	unsigned long* currUseDist;
 	unsigned long* markDist;
 	unsigned long* currMarkDist;
 	unsigned long* freeDist;
@@ -100,9 +96,7 @@ private:
 	unsigned long* chunkDist;
 	unsigned long* gcDist;
 
-
-
-	// ===========
+	// used to main the table of allocating size
 	unsigned int maxAllocatableIndex;
 	chunk_t **chunk_list;
 	bool* chunk_init;

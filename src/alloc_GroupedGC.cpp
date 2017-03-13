@@ -32,10 +32,12 @@
 
 bool willia = false;
 unsigned long processedSemInstCount = 0;
-unsigned int gcIndex = 0;
 
 // global to maintain the current iteration of the GC
 unsigned int gcCount = 0;
+unsigned int gcIndex = 0;
+unsigned long memTime = 0;
+unsigned long memNodeCount = 0;
 
 namespace elm {
 //#define GCDBG
@@ -58,7 +60,7 @@ namespace elm {
  * @param size	Size of chunks.
  */
 GroupedGC::GroupedGC(t::size size)
-: csize(round(size)), st(0) {
+: csize(round(size)), needGC(false), st(0) {
 
 	//  S            exact-bins
 	//  *  |------------------------------|
@@ -104,6 +106,7 @@ GroupedGC::GroupedGC(t::size size)
 	}
 
 	useDist = new unsigned long[maxAllocatableIndex];
+	currUseDist = new unsigned long[maxAllocatableIndex];
 	markDist = new unsigned long[maxAllocatableIndex];
 	freeDist = new unsigned long[maxAllocatableIndex];
 	chunkDist = new unsigned long[maxAllocatableIndex];
@@ -112,6 +115,7 @@ GroupedGC::GroupedGC(t::size size)
 	currFreeDist = new unsigned long[maxAllocatableIndex];
 	for(unsigned long i = 0; i < maxAllocatableIndex; i++) {
 		useDist[i] = 0;
+		currUseDist[i] = 0;
 		markDist[i] = 0;
 		freeDist[i] = 0;
 		chunkDist[i] = 0;
@@ -125,7 +129,6 @@ GroupedGC::GroupedGC(t::size size)
 	markCount = 0;
 	allocCount = 0;
 	totalAllocTime = 0;
-	gcIndex = 0;
 	return;
 }
 
@@ -176,8 +179,13 @@ void GroupedGC::clear(void) {
  */
 void GroupedGC::doGC(void) {
 
+	if(!needGC)
+		return;
 
-
+	needGC = false;
+#ifdef SHOW_GC_FREQ
+	elm::cout << "               now we do GC" << io::endl;
+#endif
 	gcCount++;
 
 	for(unsigned long i = 0; i < maxAllocatableIndex; i++) {
@@ -187,8 +195,6 @@ void GroupedGC::doGC(void) {
 	beginGC();
 	collect();
 	endGC();
-
-//	if(gcCount == 154) assert(0);
 }
 
 
@@ -208,7 +214,10 @@ void *GroupedGC::allocFromFreeList(t::size size, unsigned int index) {
 	if(free_list[index] != 0) {
 		void *res = (t::uint8 *)free_list[index];
 		free_list[index] = free_list[index]->next;
+#ifdef SHOW_GC_FREQ
 		useDist[index]++;
+		currUseDist[index]++;
+#endif
 #ifdef AZX
 		elm::cerr << __SOURCE_INFO__ << __TAB__ << "[" << allocFuncCount << "] for size = " << size  << " (index = " << index << "), use data from free_list" << " @ " << (void*)res << io::endl;
 #endif
@@ -230,7 +239,10 @@ void *GroupedGC::allocFromFreeList(t::size size, unsigned int index) {
 #ifdef AZX
 		elm::cerr << __SOURCE_INFO__ << __TAB__ << "[" << allocFuncCount << "] for size = " << size  << " (index = " << index << "), use data from chunk" << " @ " << (void*)res << io::endl;
 #endif
+#ifdef SHOW_GC_FREQ
 		useDist[index]++;
+		currUseDist[index]++;
+#endif
 		return res;
 	}
 
@@ -274,25 +286,33 @@ void *GroupedGC::allocate(t::size s) throw(BadAlloc) {
 	t::size size = round(s);
 	unsigned int index = size >> shiftToIndex;
 
-
 	// look for a free block
 	void *res = allocFromFreeList(size, index);
 	if(res) {
-
-
 		return res;
 	}
+
+	// falls here if not enough space in the chunk
 
 	// in the disableGC mode, new chunk will be allocated directly
 	if(chunk_init[index] == true) {
 		chunk_init[index] = false;
 		newChunk(index);
 	}
+
+#ifndef NON_DELAYED_GC
+	else {
+#ifdef SHOW_GC_FREQ
+		elm::cout << "                                    need GC for index = " << index << ", size = " << s << " for " << currUseDist[index] << "th alloc" << io::endl;
+		currUseDist[index] = 0;
+#endif
+		newChunk(index);
+		needGC = true;
+	}
+#else
 	else if(!disableGC) {
-		gcIndex = index;
 		gcDist[index]++;
 
-		// else perform a GC
 		doGC();
 
 		// check if necessary to create provisional chunk
@@ -300,7 +320,7 @@ void *GroupedGC::allocate(t::size s) throw(BadAlloc) {
 			newChunk(index);
 		}
 	}
-
+#endif
 	// now make some decision on totalChunkSize, totalFreed, and size
 	// i.e. even though totalFreed maybe larger then size, but maybe its size is very small
 	// so that GC will be activated again ..

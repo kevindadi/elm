@@ -117,9 +117,9 @@ public:
 		{ node_t *node = find(key); return node ? Option<T>(type_info<T>::get(node->value)) : Option<T>(); }
 	inline const T& get(const K& key, const T& def_value) const
 		{ node_t *node = find(key); return node ? type_info<T>::get(node->value) : def_value; }
-	inline bool hasKey(const K& key)
+	inline bool hasKey(const K& key) const
 	 	{ node_t *node = find(key); return node != 0; }
-	inline bool exists(const K& key) { return hasKey(key); }
+	inline bool exists(const K& key) const { return hasKey(key); }
 
 	inline CstRef operator[](const K& key) const { return CstRef(*this, key); }
 	inline Ref operator[](const K& key) { return Ref(*this, key); }
