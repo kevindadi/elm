@@ -85,5 +85,21 @@ TEST_BEGIN(hashkey)
 		CHECK(h1 != h2);
 	}
 
+	// hash for pair
+	{
+		typedef Pair<bool, string> pair_t;
+		pair_t p1(true, string("ok"));
+		pair_t p2(true, string("ok"));
+		pair_t p3(false, string("ok"));
+		pair_t p4(true, string("ko"));
+		typedef HashKey<pair_t> HK;
+		CHECK_EQUAL(HK::hash(p1), HK::hash(p1));
+		CHECK_EQUAL(HK::hash(p1), HK::hash(p2));
+		CHECK(HK::equals(p1, p1));
+		CHECK(HK::equals(p1, p2));
+		CHECK(!HK::equals(p1, p3));
+		CHECK(!HK::equals(p1, p4));
+	}
+
 	TEST_END
 

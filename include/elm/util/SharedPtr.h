@@ -39,12 +39,15 @@ public:
 	inline SharedPtr(T *p): c(new cell_t(p)) { }
 	inline SharedPtr(const SharedPtr<T>& p): c(p.c) { lock(); }
 	inline ~SharedPtr(void) { unlock(); }
+	inline bool isEmpty(void) const { return c->ptr; }
+	inline T *ptr(void) const { return c->ptr; }
+	inline T& ref(void) const { return *(c->ptr); }
 
-	inline operator bool(void) const { return c->ptr; }
-	inline operator T *(void) const { return c->ptr; }
-	inline T *operator->(void) const { return c->ptr; }
-	inline T& operator*(void) const { return *(c->ptr); }
-	inline T *operator&(void) const { return c->ptr; }
+	inline operator bool(void) const { return isEmpty(); }
+	inline operator T *(void) const { return ptr(); }
+	inline T *operator->(void) const { return ptr(); }
+	inline T& operator*(void) const { return ref(); }
+	inline T *operator&(void) const { return ptr(); }
 	inline SharedPtr<T>& operator=(const SharedPtr<T>& p) { unlock(); c = p.c; lock(); return *this; }
 	inline SharedPtr<T>& operator=(T *p) { unlock(); c = new cell_t(p); return *this; }
 

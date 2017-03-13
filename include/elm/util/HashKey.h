@@ -11,6 +11,7 @@
 #include <elm/string.h>
 #include <elm/util/Equiv.h>
 #include <elm/util/Option.h>
+#include <elm/util/Pair.h>
 
 namespace elm {
 
@@ -72,6 +73,14 @@ public:
 	static t::hash hash(const String& key) { return hash_string(key.chars(), key.length()); };
 	static inline bool equals(const String& key1, const String& key2) { return key1 == key2; };
 };
+
+template <class T1, class T2> class HashKey<Pair<T1, T2> > {
+public:
+	typedef Pair<T1, T2> T;
+	static t::hash hash(const T& p) { return HashKey<T1>::hash(p.fst) + HashKey<T2>::hash(p.snd); };
+	static inline bool equals(const T& p1, const T& p2) { return p1 == p2; };
+};
+
 
 // Hasher class
 class Hasher {

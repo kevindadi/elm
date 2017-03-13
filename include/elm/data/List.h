@@ -132,7 +132,7 @@ public:
 	template <class C> inline void removeAll(const C& items)
 		{ for(typename C::iter iter(items); iter; iter++) remove(iter);	}
 	void remove(const T& value) {
-		if(first() && _man.eq.equals(first(), value)) removeFirst(); else
+		if(isEmpty()) return; else if(_man.eq.equals(first(), value)) removeFirst(); else
 		for(Node *prev = firstNode(), *cur = prev->nextNode(); cur; prev = cur, cur = cur->nextNode())
 		if(_man.eq.equals(cur->val, value)) { prev->removeNext(); cur->free(_man); return; }
 	}
