@@ -22,6 +22,9 @@
 #ifndef ELM_UTIL_DELEGATE_H
 #define ELM_UTIL_DELEGATE_H
 
+#include <elm/assert.h>
+#include <elm/util/Option.h>
+
 namespace elm {
 
 // ArrayDelegate class
@@ -76,6 +79,32 @@ public:
 private:
 	C *cont;
 	I id;
+};
+
+
+// MapDelegate class
+template <class C>
+class StrictMapDelegate {
+public:
+	typedef StrictMapDelegate<C> self_t;
+	typedef typename C::key_t key_t;
+	typedef typename C::val_t val_t;
+
+	inline StrictMapDelegate(C& map, const key_t& key)
+		: _map(map), _key(key) { }
+
+	inline val_t get(void) const
+		{  Option<val_t> v = _map.get(_key); ASSERT(!v.isNone()); return *v; }
+	inline void put(const val_t& val) { _map.put(_key, val); }
+
+
+	inline operator val_t(void) const { return get(); }
+	inline val_t operator*(void) const { return get(); }
+	inline self_t& operator=(const val_t& val) { put(val); return *this; }
+
+private:
+	C& _map;
+	const key_t& _key;
 };
 
 } // elm

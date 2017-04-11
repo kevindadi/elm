@@ -374,7 +374,7 @@ TEST_BEGIN(string)
 	// check splitter
 	{
 		string s = "otawa.hard.Platform";
-		str::Split sp(s, '.');
+		StringSplit sp(s, '.');
 		CHECK(!sp.ended());
 		CHECK_EQUAL(*sp, string("otawa"));
 		sp.next();
@@ -388,7 +388,7 @@ TEST_BEGIN(string)
 	}
 	{
 		string s = "otawa";
-		str::Split sp(s, '.');
+		StringSplit sp(s, '.');
 		CHECK(!sp.ended());
 		CHECK_EQUAL(*sp, string("otawa"));
 		sp.next();
@@ -396,7 +396,7 @@ TEST_BEGIN(string)
 	}
 	{
 		string s = "";
-		str::Split sp(s, '.');
+		StringSplit sp(s, '.');
 		CHECK(!sp.ended());
 		CHECK_EQUAL(*sp, string());
 		sp.next();
@@ -404,7 +404,7 @@ TEST_BEGIN(string)
 	}
 	{
 		string s = "otawa.hard.";
-		str::Split sp(s, '.');
+		StringSplit sp(s, '.');
 		CHECK(!sp.ended());
 		CHECK_EQUAL(*sp, string("otawa"));
 		sp.next();

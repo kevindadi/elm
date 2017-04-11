@@ -23,14 +23,13 @@
 
 #include <elm/string/String.h>
 
-namespace elm { namespace str {
+namespace elm {
 
-// Split class
-class Split: public PreIterator<Split, String> {
+class StringSplit: public PreIterator<StringSplit, String> {
 public:
-	inline Split(void): l(-1), p(-1) { }
-	inline Split(const String& str, char chr): s(str), ss(String::make(chr)), l(-1), p(-1) { find(); }
-	inline Split(const String& str, String sub): s(str), ss(sub), l(-1), p(-1) { find(); }
+	inline StringSplit(void): l(-1), p(-1) { }
+	inline StringSplit(const String& str, char chr): s(str), ss(String::make(chr)), l(-1), p(-1) { find(); }
+	inline StringSplit(const String& str, String sub): s(str), ss(sub), l(-1), p(-1) { find(); }
 	inline bool ended(void) const { return l >= s.length(); }
 	inline String item(void) { return s.substring(l + 1, p - l - 1); }
 	inline void next(void) { if(p >= s.length()) l = s.length(); else find(); }
@@ -43,6 +42,6 @@ private:
 	int l, p;
 };
 
-} }	// elm::str
+}	// elm
 
 #endif /* ELM_STRING_SPLIT_H_ */

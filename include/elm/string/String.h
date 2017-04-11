@@ -127,6 +127,7 @@ public:
 // Type shortcut
 #ifndef ELM_NO_STRING_SHORTCUT
 	typedef String string;
+	inline string str(const char *s) { return string(s); }
 #endif
 
 } // elm

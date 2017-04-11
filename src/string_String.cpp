@@ -542,10 +542,8 @@ string String::rtrim(void) const {
  * @ingroup string
  */
 
-namespace str {
-
 /**
- * @class Split
+ * @class StringSplit
  * This is an helper class to split a string in sub-parts
  * using a separator (character or string). At each iteration,
  * the next separated part is provided.
@@ -556,5 +554,4 @@ namespace str {
  * @ingroup string
  */
 
-}	// str
 }	// elm

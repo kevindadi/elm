@@ -60,6 +60,7 @@ public:
 // Type shortcut
 #ifndef ELM_NO_STRING_SHORTCUT
 	typedef CString cstring;
+	inline cstring cstr(const char *s) { return cstring(s); }
 #endif
 
 } // elm

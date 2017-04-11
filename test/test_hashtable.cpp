@@ -6,6 +6,7 @@
  */
 
 #include <elm/util/test.h>
+#include <elm/data/HashMap.h>
 #include <elm/genstruct/HashTable.h>
 
 using namespace elm;
@@ -13,64 +14,65 @@ using namespace elm;
 // test_hashtable()
 TEST_BEGIN(hashtable)
 
+
 	// Simple key
 	{
-		genstruct::HashTable<int, int> htab;
-		CHECK(htab.isEmpty() == true);
-		CHECK(htab.count() == 0);
-		htab.put(666, 111);
-		CHECK(htab.isEmpty() == false);
-		CHECK(htab.count() == 1);
-		CHECK(htab.get(666, 0) == 111);
-		CHECK(htab.get(111, 0) == 0);
-		htab.put(777, 222);
-		CHECK(htab.isEmpty() == false);
-		CHECK(htab.count() == 2);
-		CHECK(htab.get(666, 0) == 111);
-		CHECK(htab.get(777, 0) == 222);
-		CHECK(htab.get(111, 0) == 0);
-		htab.remove(666);
-		CHECK(htab.count() == 1);
-		CHECK(htab.get(666, 0) == 0);
-		CHECK(htab.get(777, 0) == 222);
+		HashMap<int, int> map;
+		CHECK(map.isEmpty() == true);
+		CHECK(map.count() == 0);
+		map.put(666, 111);
+		CHECK(map.isEmpty() == false);
+		CHECK(map.count() == 1);
+		CHECK(map.get(666, 0) == 111);
+		CHECK(map.get(111, 0) == 0);
+		map.put(777, 222);
+		CHECK(map.isEmpty() == false);
+		CHECK(map.count() == 2);
+		CHECK(map.get(666, 0) == 111);
+		CHECK(map.get(777, 0) == 222);
+		CHECK(map.get(111, 0) == 0);
+		map.remove(666);
+		CHECK(map.count() == 1);
+		CHECK(map.get(666, 0) == 0);
+		CHECK(map.get(777, 0) == 222);
 	}
 
 	// Complex key
 	{
-		genstruct::HashTable<String, int> htab;
+		HashMap<String, int> map;
 		String k1("key1"), k2("key2"), k3("key3");
-		CHECK(htab.isEmpty() == true);
-		CHECK(htab.count() == 0);
-		htab.put(k1, 111);
-		CHECK(htab.isEmpty() == false);
-		CHECK(htab.count() == 1);
-		CHECK(htab.get(k1, 0) == 111);
-		CHECK(htab.get(k3, 0) == 0);
-		htab.put(k2, 222);
-		CHECK(htab.isEmpty() == false);
-		CHECK(htab.count() == 2);
-		CHECK(htab.get(k1, 0) == 111);
-		CHECK(htab.get(k2, 0) == 222);
-		CHECK(htab.get(k3, 0) == 0);
-		htab.remove(k1);
-		CHECK(htab.count() == 1);
-		CHECK(htab.get(k1, 0) == 0);
-		CHECK(htab.get(k2, 0) == 222);
+		CHECK(map.isEmpty() == true);
+		CHECK(map.count() == 0);
+		map.put(k1, 111);
+		CHECK(map.isEmpty() == false);
+		CHECK(map.count() == 1);
+		CHECK(map.get(k1, 0) == 111);
+		CHECK(map.get(k3, 0) == 0);
+		map.put(k2, 222);
+		CHECK(map.isEmpty() == false);
+		CHECK(map.count() == 2);
+		CHECK(map.get(k1, 0) == 111);
+		CHECK(map.get(k2, 0) == 222);
+		CHECK(map.get(k3, 0) == 0);
+		map.remove(k1);
+		CHECK(map.count() == 1);
+		CHECK(map.get(k1, 0) == 0);
+		CHECK(map.get(k2, 0) == 222);
 	}
 
 	// Iterator test
 	{
-		genstruct::HashTable<int, int> tab;
+		HashMap<int, int> map;
 		for(int i = 0; i < 10; i++)
-			tab.put(i, 9 - i);
+			map.put(i, 9 - i);
 		int mask = 0x3ff;
-		for(genstruct::HashTable<int, int>::KeyIterator key(tab); key; key++) {
+		for(HashMap<int, int>::KeyIter key(map); key; key++) {
 			CHECK(mask & (1 << key));
 			mask &= ~(1 << key);
 		}
 		CHECK(!mask);
 		mask = 0x3ff;
-		for(genstruct::HashTable<int, int>::Iterator item(tab); item; item++) {
+		for(HashMap<int, int>::Iter item(map); item; item++) {
 			CHECK(mask & (1 << item));
 			mask &= ~(1 << item);
 		}
@@ -79,23 +81,23 @@ TEST_BEGIN(hashtable)
 
 	// operator[] test
 	{
-		genstruct::HashTable<cstring, int> tab;
-		tab["ok"] = 111;
-		tab["ko"] = 666;
-		CHECK_EQUAL(*(tab["ok"]), 111);
-		CHECK_EQUAL(*(tab["ko"]), 666);
+		HashMap<cstring, int> map;
+		map[cstring("ok")] = 111;
+		map[cstring("ko")] = 666;
+		CHECK_EQUAL(*(map[cstring("ok")]), 111);
+		CHECK_EQUAL(*(map[cstring("ko")]), 666);
 	}
 
 	// copy of table
 	{
-		genstruct::HashTable<string, int> t, tt;
+		HashMap<string, int> map1, map2;
 		for(int i = 0; i < 100; i++)
-			t.put(_ << i << (-i), i);
-		tt = t;
+			map1.put(_ << i << (-i), i);
+		map2 = map1;
 		bool failed = false;
 		for(int i = 0; i < 100; i++) {
 			string k = _ << i << (-i);
-			Option<int> o = tt.get(k);
+			Option<int> o = map2.get(k);
 			if(!o || *o != i) {
 				failed = true;
 				break;
@@ -106,14 +108,14 @@ TEST_BEGIN(hashtable)
 
 	// use of brackets
 	{
-		genstruct::HashTable<string, int> t;
-		t["god"] = 111;
-		t["devil"] = 666;
-		CHECK_EQUAL(111, *t["god"]);
-		CHECK_EQUAL(666, *t["devil"]);
-		t["god"] = 0;
-		CHECK_EQUAL(0, *t["god"]);
-		CHECK_EQUAL(666, *t["devil"]);
+		HashMap<string, int> map;
+		map[str("god")] = 111;
+		map[str("devil")] = 666;
+		CHECK_EQUAL(111, *map[str("god")]);
+		CHECK_EQUAL(666, *map[str("devil")]);
+		map[str("god")] = 0;
+		CHECK_EQUAL(0, *map[str("god")]);
+		CHECK_EQUAL(666, *map[str("devil")]);
 	}
 
 TEST_END

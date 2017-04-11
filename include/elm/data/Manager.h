@@ -21,9 +21,10 @@
 #ifndef ELM_DATA_MANAGER_H_
 #define ELM_DATA_MANAGER_H_
 
+#include <elm/alloc/DefaultAllocator.h>
 #include <elm/compare.h>
 #include <elm/util/Equiv.h>
-#include <elm/alloc/DefaultAllocator.h>
+#include <elm/util/HashKey.h>
 
 namespace elm {
 
@@ -44,6 +45,15 @@ public:
 	inline CompareManager(const C& c, A& a = DefaultAllocator::DEFAULT): cmp(c), eq(cmp), alloc(a) { }
 	C cmp;
 	C& eq;
+	A& alloc;
+};
+
+template <class K, class H = HashKey<K>, class A = DefaultAllocator>
+class HashManager {
+public:
+	inline HashManager(void): alloc(DefaultAllocator::DEFAULT) { }
+	inline HashManager(const H& h, A& a = DefaultAllocator::DEFAULT): hash(h), alloc(a) { }
+	H hash;
 	A& alloc;
 };
 

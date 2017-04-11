@@ -235,6 +235,7 @@ struct FunctionWithArg {
  * @param c		Collection to iterate on.
  * @param f		Function to apply (must implement concept::FunctionWithArg and A and Y types must be the  same).
  * @param t		Initial value. If not provided, use F::null static value.
+ * @ingroup data
  */
 
 template <class C>
@@ -251,6 +252,56 @@ template <class C>
 inline void fill(C& c, int n, const typename C::t v = type_info<typename C::t>::null)
 	{ for(int i = 0; i < n; i++) c.add(v); }
 
+/**
+ * @class EquivManager
+ * This class is used to control the work of container classes (see @ref data)
+ * supporting lookup based on @ref Equiv test. It embeds two control objects:
+ * @li eq of type E -- used to test for equality,
+ * @li alloc -- for memory allocation.
+ *
+ * It is easily customized by changing the type parameters and by passing
+ * objects to the constructor.
+ *
+ * @param T		Type of managed data.
+ * @param E		Equivalence class (default to @ref Equiv<T>).
+ * @param A		Allocation class (default to @ref DefaultAllocator).
+ *
+ * @ingroup data
+ */
+
+/**
+ * @class CompareManager
+ * This class is used to control the work of container classes (see @ref data)
+ * supporting lookup and sorting based on comparisons. It embeds two control objects:
+ * @li cmp of type C -- used to test for order,
+ * @li alloc -- for memory allocation.
+ *
+ * It is easily customized by changing the type parameters and by passing
+ * objects to the constructor.
+ *
+ * @param T		Type of managed data.
+ * @param C		Comparator class (default to @ref Comparator<T>).
+ * @param A		Allocation class (default to @ref DefaultAllocator).
+ *
+ * @ingroup data
+ */
+
+/**
+ * @class HashManager
+ * This class is used to control the work of container classes (see @ref data)
+ * supporting lookup and sorting based on key hashing. It embeds two control objects:
+ * @li hash of type H -- used to test perform hashing,
+ * @li alloc -- for memory allocation.
+ *
+ * It is easily customized by changing the type parameters and by passing
+ * objects to the constructor.
+ *
+ * @param K		Type of data keys.
+ * @param H		Hash class (default to @ref HashKey<K>).
+ * @param A		Allocation class (default to @ref DefaultAllocator).
+ *
+ * @ingroup data
+ */
 
 }	// elm
 
