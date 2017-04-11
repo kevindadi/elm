@@ -6,7 +6,7 @@
  */
 
 #include <elm/util/test.h>
-#include <elm/util/array.h>
+#include <elm/array.h>
 #include <elm/system/StopWatch.h>
 
 using namespace elm;

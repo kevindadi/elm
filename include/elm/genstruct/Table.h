@@ -24,7 +24,7 @@
 #include <elm/assert.h>
 #include <elm/deprecated.h>
 #include <elm/util/IndexedIterator.h>
-#include <elm/util/array.h>
+#include <elm/array.h>
 
 namespace elm { namespace genstruct {
 

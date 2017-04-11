@@ -23,7 +23,7 @@
 
 #include "Manager.h"
 #include <elm/adapter.h>
-#include <elm/util/array.h>
+#include <elm/array.h>
 
 namespace elm {
 

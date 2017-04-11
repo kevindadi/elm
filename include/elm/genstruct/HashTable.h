@@ -27,7 +27,7 @@
 #include <elm/types.h>
 #include <elm/util/HashKey.h>
 #include <elm/util/Pair.h>
-#include <elm/util/array.h>
+#include <elm/array.h>
 
 namespace elm { namespace genstruct {
 

@@ -23,7 +23,7 @@
 
 #include <elm/assert.h>
 #include <elm/PreIterator.h>
-#include <elm/util/array.h>
+#include <elm/array.h>
 #include <elm/compare.h>
 
 namespace elm {
