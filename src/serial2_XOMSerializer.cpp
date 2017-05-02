@@ -401,7 +401,7 @@ void XOMElementSerializer::onValue(const String& v) {
  * @param path	Path document to serialize to.
  */
 XOMSerializer::XOMSerializer(const sys::Path& path)
-: XOMElementSerializer(prepare()), _path(_path) {
+: XOMElementSerializer(prepare()), _path(path) {
 }
 
 

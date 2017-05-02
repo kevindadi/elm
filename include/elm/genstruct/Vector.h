@@ -23,6 +23,7 @@
 #define ELM_GENSTRUCT_VECTOR_H
 
 #include <elm/assert.h>
+#include <elm/compat.h>
 #include <elm/genstruct/Table.h>
 #include <elm/genstruct/Vector.h>
 #include <elm/PreIterator.h>

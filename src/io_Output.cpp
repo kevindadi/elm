@@ -379,63 +379,69 @@ void Output::print(const FloatFormat& fmt) {
 
 	// simple special case
 	double x = fmt._val;
-	if(isnan(x)) {
+	switch(fpclassify(x)) {
+		
+	case FP_NAN:
 		ip -= 3;
 		memcpy(ip, "NaN", 3);
 		decw = 0;
-	}
-	else if(isinf(x) == 1) {
-		ip -= 4;
-		memcpy(ip, "+inf", 4);
-		decw = 0;
-	}
-	else if(isinf(x) == -1) {
-		ip -= 4;
-		memcpy(ip, "-inf", 4);
-		decw = 0;
-	}
-	else if(x == 0) {
+		break;
+		
+	case FP_INFINITE:
+		if(x > 0) {
+			ip -= 4;
+			memcpy(ip, "+inf", 4);
+			decw = 0;
+		}
+		else {
+			ip -= 4;
+			memcpy(ip, "-inf", 4);
+			decw = 0;
+		}
+		break;
+		
+	case FP_ZERO:
 		*ip = '.';
 		*--ip = '0';
-	}
+		break;
+	
+	default: {
+			// take absolute value
+			double x =fmt._val;
+			if(x < 0) {
+				x = -x;
+				neg = true;
+			}
 
-	// non-zero case
-	else {
+			// separate integral / fractional part
+			double frac, intp;
+			frac = modf(x, &intp);
 
-		// take absolute value
-		double x =fmt._val;
-		if(x < 0) {
-			x = -x;
-			neg = true;
+			// generate the integral part
+			while(intp != 0) {
+				double digit = modf(intp / 10, &intp);
+				*--ip = int((digit + .03) * 10) + '0';
+			}
+
+			// generate the fractional part
+			while(frac > 0) {
+				if(fp > pp + maxflt)
+					break;
+				frac *= 10;
+				frac = modf(frac, &intp);
+				*++fp = int(intp) + '0';
+			}
+
+			// compact if possible
+			if(fmt._style == FloatFormat::SHORTEST
+			|| fmt._style == FloatFormat::SCIENTIFIC) {
+				if(ip == pp)
+					for(cp = ip + 1; *cp == '0'; cp++) e10++;
+				else if(fp == pp)
+					for(cp = ip - 1; *cp =='0'; cp--) e10--;
+			}
 		}
-
-		// separate integral / fractional part
-		double frac, intp;
-		frac = modf(x, &intp);
-
-		// generate the integral part
-		while(intp != 0) {
-			double digit = modf(intp / 10, &intp);
-			*--ip = int((digit + .03) * 10) + '0';
-		}
-
-		// generate the fractional part
-		while(frac > 0) {
-			if(fp > pp + maxflt)
-				break;
-			frac *= 10;
-			frac = modf(frac, &intp);
-			*++fp = int(intp) + '0';
-		}
-
-		// compact if possible
-		if(fmt._style == FloatFormat::SHORTEST
-		|| fmt._style == FloatFormat::SCIENTIFIC) {
-			if(ip == pp)
-				for(cp = ip + 1; *cp == '0'; cp++) e10++;
-			else if(fp == pp)
-				for(cp = ip - 1; *cp =='0'; cp--) e10--;
-		}
+		break;
 	}
 
 	// select a style for SHORTEST
