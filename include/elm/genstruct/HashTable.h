@@ -22,6 +22,7 @@
 #ifndef ELM_GENSTRUCT_HASHTABLE_H
 #define ELM_GENSTRUCT_HASHTABLE_H
 
+#include <elm/compat.h>
 #include <elm/PreIterator.h>
 #include <elm/type_info.h>
 #include <elm/types.h>

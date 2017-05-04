@@ -22,8 +22,10 @@
 #define INCLUDE_ELM_DATA_VECTOR_H_
 
 #include "Manager.h"
-#include <elm/array.h>
 #include "Array.h"
+
+#include <elm/array.h>
+#include <elm/compat.h>
 
 namespace elm {
 

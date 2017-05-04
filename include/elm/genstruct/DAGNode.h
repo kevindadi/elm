@@ -23,6 +23,7 @@
 #define ELM_GENSTRUCT_DAGNODE_H
 
 #include <elm/assert.h>
+#include <elm/compat.h>
 #include <elm/PreIterator.h>
 #include <elm/genstruct/SLList.h>
 #include <elm/genstruct/HashTable.h>

@@ -21,6 +21,7 @@
 #ifndef ELM_COMPARATOR_H_
 #define ELM_COMPARATOR_H_
 
+#include <elm/compat.h>
 #include <elm/string.h>
 #include <elm/type_info.h>
 #include <elm/util/Pair.h>
