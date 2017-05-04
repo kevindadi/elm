@@ -7,7 +7,6 @@
 
 #include <elm/util/test.h>
 #include <elm/data/Array.h>
-#include <elm/data/iterator.h>
 
 using namespace elm;
 
@@ -79,17 +78,6 @@ TEST_BEGIN(array)
 		int t[4] = { 1, 2, 3, 4 };
 		Array<int> a = _array(4, t);
 		CHECK_EQUAL(a.size(), 4);
-	}
-
-	// Array iterator
-	{
-		const int n = 10;
-		AllocArray<int> a(n);
-		for(int i = 0; i < n; i++)
-			a[i] = i;
-		int i = 0;
-		for(ArrayIter<int, Array<int> > it(a); it; it++, i++)
-			CHECK_EQUAL(*it, a[i]);
 	}
 
 TEST_END
