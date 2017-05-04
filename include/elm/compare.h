@@ -35,79 +35,92 @@ public:
 	static inline int compare(const T& v1, const T& v2)
 		{ if(v1 == v2) return 0; else if(v1 > v2) return 1; else return -1; }
 	int doCompare(const T& v1, const T& v2) const { return compare(v1, v2); }
-	static inline bool equals(const T& v1, const T& v2) { return compare(v1, v2) == 0; }
-	inline bool isEqual(const T& v1, const T& v2) const { return doCompare(v1, v2) == 0; }
-	static Comparator<T> def;
 };
-template <class T> Comparator<T> Comparator<T>::def;
 
-// DelegateComparator class
+// StaticComparator class
 template <class T, class C>
-class DelegateComparator {
+class StaticComparator {
 public:
 	static inline int compare(const T& v1, const T& v2) { return C::compare(v1, v2); }
 	inline int doCompare(const T& v1, const T& v2) const { return compare(v1, v2); }
-	static DelegateComparator<T, C> def;
 };
-template <class T, class C> DelegateComparator<T, C> DelegateComparator<T, C>::def;
 
-// CompareComparator class
+// DynamicComparator class
 template <class T>
-class CompareComparator {
+class DynamicComparator {
 public:
 	static inline int compare(const T& v1, const T& v2) { return v1.compare(v2); }
+	inline int doCompare(const T& v1, const T& v2) const { return v1.compare(v2); }
 };
-template <> class Comparator<cstring>: public CompareComparator<cstring> { };
-template <> class Comparator<string>: public CompareComparator<string> { };
-
+template <> class Comparator<cstring>: public DynamicComparator<cstring> { };
+template <> class Comparator<string>: public DynamicComparator<string> { };
 
 // AssocComparator class
 template <class K, class T, class C = Comparator<K> >
 class AssocComparator {
 public:
 	typedef Pair<K, T> pair_t;
+	inline AssocComparator(const C& c = Single<C>::_): _c(c) { }
 	static inline int compare(const pair_t& v1, const pair_t& v2)
 		{ return C::compare(v1.fst, v2. fst); }
+	inline int doCompare(const pair_t& v1, const pair_t& v2)
+		{ return _c.compare(v1.fst, v2. fst); }
+private:
+	const C& _c;
 };
 template <class K, class T> class Comparator<Pair<K, T> >
 	: public AssocComparator<K, T> { };
-
 
 // ReverseComparator class
 template <class T, class C>
 class ReverseComparator {
 public:
+	inline ReverseComparator(const C& c = Single<C>::_): _c(c) { }
 	static inline int compare(const T& v1, const T& v2)
 		{ return -C::compare(v1, v2); }
+	inline int doCompare(const T& v1, const T& v2) const
+		{ return -_c.doCompare(v1, v2); }
+private:
+	const C& _c;
 };
-
 
 // CompareEquiv class
 template <class T, class C = Comparator<T> >
 class CompareEquiv {
 public:
+	inline CompareEquiv(const C& c = Single<C>::_): _c(c) { }
 	static inline bool equals(const T& v1, const T& v2)
 		{ return C::compare(v1, v2) == 0; }
+	inline bool isEqual(const T& v1, const T& v2)
+		{ return _c.compare(v1, v2) == 0; }
+private:
+	const C& _c;
 };
 
-
-// CompareInst class
-template <class T, class C = Comparator<T> >
-class DefaultCompare {
+// GlobalComparator class
+template <class T>
+class GlobalComparator {
 public:
 	static inline int compare(const T& v1, const T& v2)
-		{ return C::compare(v1, v2); }
+		{ return compare(v1, v2); }
 };
-
 
 // Useful inlines
 template <class T> inline const T& min(const T& x, const T& y)
 	{ if(Comparator<T>::compare(x, y) >= 0) return y; else return x; }
+template <class T, class C> inline const T& min(const T& x, const T& y, const C& c = Single<C>::_)
+	{ if(c.doCompare(x, y) >= 0) return y; else return x; }
 template <class T> inline const T& max(const T& x, const T& y)
 	{ if(Comparator<T>::compare(x, y) >= 0) return x; else return y; }
+template <class T, class C> inline const T& max(const T& x, const T& y, const C& c = Single<C>::_)
+	{ if(c.doCompare(x, y) >= 0) return x; else return y; }
+
 template <class C> inline typename C::t min(const C& c)
 	{ 	typename C::Iter i(c); typename C::t m = *i;
 		for(i++; i; i++) if(Comparator<typename C::t>::compare(*i, m) < 0) m = *i; return m; }
+template <class C, class CC> inline typename C::t min(const C& c, const CC& cc)
+	{ 	typename C::Iter i(c); typename C::t m = *i;
+		for(i++; i; i++) if(cc.doCompare(*i, m) < 0) m = *i; return m; }
 template <class C> inline typename C::t max(const C& c)
 	{ 	typename C::Iter i(c); typename C::t m = *i;
 		for(i++; i; i++) if(Comparator<typename C::t>::compare(*i, m) > 0) m = *i; return m; }

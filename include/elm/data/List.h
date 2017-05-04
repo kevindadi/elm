@@ -77,6 +77,8 @@ public:
 	inline Iter items(void) const { return Iter(*this); }
 	inline Iter operator*(void) const { return items(); }
 	inline operator Iter(void) const { return items(); }
+	inline Iter begin(void) const { return items; }
+	inline Iter end(void) const { return Iter(); }
 
 	// PrecIter class
 	class PrecIter: public PreIterator<PrecIter, const T&> {
@@ -137,8 +139,7 @@ public:
 		if(_man.eq.equals(cur->val, value)) { prev->removeNext(); cur->free(_man); return; }
 	}
 	inline T& at(const Iter& i) { return i.node->val; }
-	inline void remove(PrecIter &iter)
-		{ Node *c = iter.node; iter.node = iter.node->next(); iter.prev->removeNext(); c->free(_man); }
+	inline void remove(PrecIter &iter) { remove(iter.prev, iter.node); }
 
 	// List concept
 	inline T& first(void) { return firstNode()->val; }
@@ -157,8 +158,9 @@ public:
 	inline void addLast(const T& value) { _list.addLast(new(_man) Node(value)); }
 	inline void addAfter(const Iter& pos, const T& value)
 		{ ASSERT(pos.node); pos.node->insertAfter(new(_man) Node(value)); }
-	inline void addBefore(const PrecIter& pos, const T& value)
-		{ if(!pos.prev) addFirst(value); else pos.prev->insertAfter(new(_man) Node(value)); }
+	inline void addBefore(PrecIter& pos, const T& value)
+		{ 	if(!pos.prev) { addFirst(value); pos.prev = firstNode(); }
+			else { pos.prev->insertAfter(new(_man) Node(value)); pos.prev = pos.prev->next(); } }
 	inline void removeFirst(void) { Node *node = firstNode(); _list.removeFirst(); node->free(_man); }
 	inline void removeLast(void) { Node *node = lastNode(); _list.removeLast(); delete node; }
 	inline void set(const Iter &pos, const T &item) { ASSERT(pos.node); pos.node->val = item; }
@@ -191,12 +193,9 @@ private:
 
 	inline Node *firstNode(void) const { return static_cast<Node *>(_list.first()); }
 	inline Node *lastNode(void) const { return static_cast<Node *>(_list.last()); }
-	void remove(Node* prev, Node*& cur) {
-		ASSERT(cur);
-		if(!prev) { removeFirst(); cur = firstNode(); }
-		else { prev->removeNext(); cur->free(_man); cur = prev->next(); }
-	}
-
+	void remove(Node* prev, Node*& cur)
+		{	ASSERT(cur); if(!prev) { removeFirst(); cur = firstNode(); }
+			else { prev->removeNext(); cur->free(_man); cur = prev->next(); } }
 };
 
 template <class T, class E> List<T, E> List<T, E>::null;

@@ -1,15 +1,29 @@
 /*
- * $Id$
- * Copyright (c) 2005, IRIT UPS.
+ *	SortedList class test
  *
- * test/test_SLList/test_SLList.cpp -- test program for SLList class.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2005, IRIT UPS.
+ *
+ *	ELM is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	ELM is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with ELM; if not, write to the Free Software
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <elm/util/test.h>
 #include <elm/data/List.h>
+#include <elm/data/ListSet.h>
 #include <elm/data/SortedList.h>
-#include <elm/genstruct/AssocList.h>
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 
 using namespace elm;
 
@@ -72,7 +86,7 @@ TEST_BEGIN(list)
 
 	// test addAll, removeAll
 	{
-		genstruct::Vector<int> v;
+		Vector<int> v;
 		v.add(1);
 		v.add(2);
 		v.add(3);
@@ -177,23 +191,91 @@ TEST_BEGIN(list)
 	// set test
 	{
 		ListSet<int> l;
+		CHECK_EQUAL(l.count(), 0);
+		CHECK(!l.contains(0));
+		l.insert(0);
+		CHECK_EQUAL(l.count(), 1);
+		CHECK(!l.contains(1));
 	}
 
+	// join set operation
+	{
+		ListSet<int> l, ll;
+		l.insert(0);
+		l.insert(2);
+		ll.insert(1);
+		ll.insert(3);
+		l.join(ll);
+		CHECK_EQUAL(l.count(), 4);
+		CHECK(l.contains(0));
+		CHECK(l.contains(1));
+		CHECK(l.contains(2));
+		CHECK(l.contains(3));
+	}
+
+	// meet set operation
+	{
+		ListSet<int> l, ll;
+		l.insert(0);
+		l.insert(1);
+		ll.insert(1);
+		ll.insert(2);
+		l.meet(ll);
+		CHECK_EQUAL(l.count(), 1);
+		CHECK(!l.contains(0));
+		CHECK(l.contains(1));
+		CHECK(!l.contains(2));
+	}
+
+	// diff set operation
+	{
+		ListSet<int> l, ll;
+		l.insert(0);
+		l.insert(1);
+		l.insert(2);
+		ll.insert(1);
+		ll.insert(3);
+		l.diff(ll);
+		CHECK_EQUAL(l.count(), 2);
+		CHECK(l.contains(0));
+		CHECK(!l.contains(1));
+		CHECK(l.contains(2));
+		CHECK(!l.contains(3));
+	}
+
+	// operator test
+	{
+		ListSet<int> l;
+		l += 0;
+		l += 1;
+		l += 2;
+		CHECK(1 % l);
+		l -= 1;
+		CHECK(!(1 % l));
+	}
+
+#if 0
 	// test map
 	{
-		/*ListMap<int, int> m;
-		m.put(0, 0);
-		m.put(1, 1);
-		CHECK_EQUAL(m.get(0, -1), 0);*/
+		ListMap<int, string> m;
+		CHECK_EQUAL(m.count(), 0);
+		m.put(0, "zero");
+		CHECK_EQUAL(m.count(), 1);
+		m.put(1, "one");
+		CHECK_EQUAL(m.count(), 2);
+		//CHECK(m.contains("zero"));
+		/*CHECK_EQUAL(m.get(0, -1), 0);*/
 	}
 
 	// compatibility test
+	/* TODO
 	{
-		genstruct::AssocList<int, int> a;
+		ListMap<int, int> a;
 		a.put(0, 0);
-		for(typename genstruct::AssocList<int, int>::Iterator i(a); i; i++)
+		CHECK(a.hasKey(0));
+		for(typename ListMap<int, int>::Iter i(a); i; i++)
 			;
-	}
+	}*/
+#endif
 
 TEST_END
-

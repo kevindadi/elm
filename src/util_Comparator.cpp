@@ -25,26 +25,23 @@ namespace elm {
 
 /**
  * @class Comparator
- * Comparator concept (elm/compare.h) allows comparing two data. Comparator may be used
- * statically with the @ref compare() method but also as in instance with @ref doCompare() method.
- * As a default, @ref doCompare() performs a call to @ref compare().
+ * Comparator concept (elm/compare.h) allows comparing two data.
  *
  * Several implementation of Comparator concept exists:
  * @li @ref Comparator -- default implementation based on == and < operators.
- * @li @ref CompareComparator -- assumes that data has a compare() method.
+ * @li @ref StaticComparator -- assumes that data has a T::compare() static method.
+ * @li @ref DynamicComparator -- assumes that data has a T::compare() dynamic method.
+ * @li @ref GlobalComparator -- assumes that it exists a compare() function working on T type.
  * @li @ref AssocComparator -- works on pairs assuming order in based on the first component.
  * @li @ref ReverseComparator -- invert direction of another comparator.
+ *
+ * @param T		Type of compared objects.
+ * @ingroup utility
  */
 
 /**
  * @fn int Comparator::compare(const T& v1, const T& v2);
- * Compare v1 and v2 and returns:
- * @li > 0 if v1 > v2
- * @li = 0 if v1 = v2
- * @li < 0 if v1 < v2
- * @param v1	First value.
- * @param v2	Second value
- * @return	See above.
+ * @deprecated	Use doCompare() instead.
  */
 
 /**
@@ -60,28 +57,40 @@ namespace elm {
 
 
 /**
- * @fn const T& Comparator::min(const T& v1, const T& v2);
- * Get the minimum of two values.
+ * @fn const T& min(const T& v1, const T& v2);
+ * Get the minimum of two values using Comparator<T>.
  * @param v1	First value.
  * @param v2	Second value.
  * @return		Minimum of v1 and v2.
+ * @ingroup		utility
  */
 
 
 /**
- * @fn const T& Comparator::max(const T& v1, const T& v2);
- * Get the maximum of two values.
+ * @fn const T& max(const T& v1, const T& v2);
+ * Get the maximum of two values using Comparator<T>.
  * @param v1	First value.
  * @param v2	Second value.
  * @return		Maximum of v1 and v2.
+ * @ingroup		utility
  */
 
 
 /**
- * @class CompareComparator
+ * @class StaticComparator
  * Implementation of the @ref elm::concept::Comparator for values providing
- * a compare() method.
+ * a static compare() method.
  * @param T	Type of the values.
+ * @ingroup		utility
+ */
+
+
+/**
+ * @class DynamicComparator
+ * Implementation of the @ref elm::concept::Comparator for values providing
+ * a dynamic compare() method.
+ * @param T	Type of the values.
+ * @ingroup		utility
  */
 
 
@@ -96,15 +105,26 @@ namespace elm {
  * @param K		Key type.
  * @param T		Value type.
  * @param C		Comparator for the key.
+ * @ingroup		utility
  */
 
 
 /**
- * @class DefaultCompare
- * Default implementation of @ref Compare concept from a Comparator.
+ * @class GlobalComparator
+ * Implementation of @ref Comparator concept based on the use of a global
+ * function named compare() and taking two values of type T.
  *
  * @param T		Type of item to compare.
- * @param C		Comparator implementing the comparison.
+ * @ingroup		utility
+ */
+
+/**
+ * @class CompareEquiv
+ * Implements the @ref Equiv concept using a comparator object.
+ *
+ * @param T		Type of compared data.
+ * @param C		Comparator type (default to Comparator<T>).
+ * @ingroup		utility
  */
 
 }

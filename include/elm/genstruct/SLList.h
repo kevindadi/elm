@@ -102,7 +102,7 @@ public:
 		{ while(!_list.isEmpty()) { Node *node = firstNode(); _list.removeFirst(); delete node; } }
 	inline void add(const T& value) { addFirst(value); }
 	template <class C> inline void addAll(const C& items)
-		{ for(typename C::Iterator iter(items); iter; iter++) add(iter); }
+		{ for(typename C::Iter iter(items); iter; iter++) add(iter); }
 	template <class C> inline void removeAll(const C& items)
 		{ for(typename C::Iterator iter(items); iter; iter++) remove(iter);	}
 

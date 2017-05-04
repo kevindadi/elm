@@ -26,6 +26,8 @@
 #include <elm/type_info.h>
 #include <elm/types.h>
 
+#include "util.h"
+
 namespace elm {
 
 // simple functions
@@ -54,6 +56,9 @@ template <class T> struct scalar_one
 template <class T> struct class_one
 	{ static inline T one(void) { return T::zero; } };
 template <class T> T Mul<T>::null = _if<type_info<T>::is_scalar, scalar_one<T>, class_one<T> >::_::one();
+
+template <class T> struct true_pred
+	{ inline bool operator()(const T& v) { return true; } };
 
 
 // predicate operations

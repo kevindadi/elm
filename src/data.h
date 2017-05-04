@@ -303,6 +303,13 @@ inline void fill(C& c, int n, const typename C::t v = type_info<typename C::t>::
  * @ingroup data
  */
 
+/**
+ * @class ArrayIter
+ *
+ * Standard iterator for data structure implementing the @ref concept::Array concept.
+ *
+ * @ingroup data
+ */
 }	// elm
 
 #endif /* ELM_DATA_H_ */

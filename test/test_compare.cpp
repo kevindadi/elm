@@ -38,6 +38,9 @@ TEST_BEGIN(compare)
 	string god("god"), devil("devil");
 	CHECK_EQUAL(min(god, devil), devil);
 	CHECK_EQUAL(max(god, devil), god);
+	elm::ReverseComparator<string, Comparator<string> > rcmp;
+	CHECK_EQUAL(min(god, devil, rcmp), god);
+	CHECK_EQUAL(max(god, devil, rcmp), devil);
 }
 
 // collection case with int

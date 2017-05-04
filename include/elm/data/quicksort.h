@@ -27,7 +27,7 @@ namespace elm {
 
 // quick sort
 template <class T, template <class> class A, class C>
-void quicksort(A<T>& array, const C& c = DefaultCompare<C>()) {
+void quicksort(A<T>& array, const C& c = Comparator<C>()) {
 	static const int max = 300;
 	int beg[max], end[max], i = 0, L, R, swap;
 	T piv;
@@ -54,7 +54,7 @@ void quicksort(A<T>& array, const C& c = DefaultCompare<C>()) {
 
 template <class T, template <class> class A>
 void quicksort(A<T>& array) {
-	quicksort<T, A, DefaultCompare<T> >(array, DefaultCompare<T>());
+	quicksort<T, A, Comparator<T> >(array, Comparator<T>());
 }
 
 } // elm

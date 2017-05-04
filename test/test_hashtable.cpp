@@ -7,7 +7,8 @@
 
 #include <elm/util/test.h>
 #include <elm/data/HashMap.h>
-#include <elm/genstruct/HashTable.h>
+#include <elm/data/HashSet.h>
+#include <elm/data/Vector.h>
 
 using namespace elm;
 
@@ -116,6 +117,48 @@ TEST_BEGIN(hashtable)
 		map[str("god")] = 0;
 		CHECK_EQUAL(0, *map[str("god")]);
 		CHECK_EQUAL(666, *map[str("devil")]);
+	}
+
+	// HashMap test
+	{
+		HashSet<int> set;
+		CHECK(set.isEmpty());
+		CHECK_EQUAL(set.count(), 0);
+		set.add(111);
+		CHECK(!set.isEmpty());
+		CHECK_EQUAL(set.count(), 1);
+		CHECK(set.contains(111));
+		CHECK(!set.contains(666));
+		set.add(666);
+		CHECK(!set.isEmpty());
+		CHECK_EQUAL(set.count(), 2);
+		CHECK(set.contains(111));
+		CHECK(set.contains(666));
+		set.remove(111);
+		CHECK(!set.isEmpty());
+		CHECK_EQUAL(set.count(), 1);
+		CHECK(!set.contains(111));
+		CHECK(set.contains(666));
+
+		HashSet<int>::Iter i = set.items();
+		CHECK(i);
+		CHECK_EQUAL(*i, 666);
+		i++;
+		CHECK(!i);
+
+		Vector<int> v;
+		v.add(666);
+		CHECK(set.containsAll(v));
+		v.add(111);
+		CHECK(!set.containsAll(v));
+		set.addAll(v);
+		CHECK(!set.isEmpty());
+		CHECK_EQUAL(set.count(), 2);
+		CHECK(set.contains(111));
+		CHECK(set.contains(666));
+		set.removeAll(v);
+		CHECK(set.isEmpty());
+		CHECK_EQUAL(set.count(), 0);
 	}
 
 TEST_END

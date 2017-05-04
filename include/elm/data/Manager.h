@@ -38,16 +38,23 @@ public:
 };
 
 // CompareManager class
-template <class T, class C = Comparator<T>, class A = DefaultAllocator>
+template <class T, class C = Comparator<T>, class E = Equiv<T>, class A = DefaultAllocator>
 class CompareManager {
 public:
-	inline CompareManager(void): eq(cmp), alloc(DefaultAllocator::DEFAULT) { }
-	inline CompareManager(const C& c, A& a = DefaultAllocator::DEFAULT): cmp(c), eq(cmp), alloc(a) { }
-	C cmp;
-	C& eq;
+	inline CompareManager(const C& c = Single<C>::_, const E& e = Single<E>::_, A& a = DefaultAllocator::DEFAULT)
+		: cmp(c), eq(e), alloc(a) { }
+
+	inline int compare(const T& v1, const T& v2) const { return cmp.doCompare(v1, v2); }
+	inline bool equals(const T& v1, const T& v2) const { return eq.isEqual(v1, v2); }
+	inline void *allocate(t::size size) const { return alloc.allocate(size); }
+
+	const C& cmp;
+	const E& eq;
 	A& alloc;
 };
 
+
+// HashManager class
 template <class K, class H = HashKey<K>, class A = DefaultAllocator>
 class HashManager {
 public:
@@ -56,6 +63,20 @@ public:
 	H hash;
 	A& alloc;
 };
+
+
+// CompareManager class
+#if 0
+template <class T, class A = IdAdapter<T>, class C = Comparator<T>, class TC = Comparator<T>, class A = DefaultAllocator>
+class KeyCompareManager {
+public:
+	/*inline CompareMapManager(void): alloc(DefaultAllocator::DEFAULT) { }
+	inline CompareMapManager(const KC& kc, const TC& tc, A& a = DefaultAllocator::DEFAULT): kcmp(kc), tcmp(tc), alloc(a) { }
+	KC kcmp;
+	TC tcmp;
+	A& alloc;*/
+};
+#endif
 
 }	// elm
 

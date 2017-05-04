@@ -29,9 +29,9 @@ namespace elm {
  * @class HashKey
  * This is the default implementation of the Hash concept in ELM. It provides
  * a generic Jenkins hash function but provides also easier or more adapted
- * hash functions for curren types like integers, void pointer or strings.
+ * hash functions for current types like integers, void pointer or strings.
  * 
- * Refer to @ref hash concept for more details.
+ * Refer to @ref concept::Hash concept for more details.
  * 
  * @ingroup utility
  */ 

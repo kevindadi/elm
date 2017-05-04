@@ -1,8 +1,8 @@
 /*
- *	hash classes
+ *	Iterator classes interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2006, IRIT UPS.
+ *	Copyright (c) 2016, IRIT UPS.
  *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,9 +18,25 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_UTIL_HASH_KEY_H
-#define ELM_UTIL_HASH_KEY_H
+#ifndef ELM_DATA_ITERATOR_H_
+#define ELM_DATA_ITERATOR_H_
 
-#include <elm/hash.h>
+#include <elm/PreIterator.h>
 
-#endif	// ELM_UTIL_HASH_KEY_H
+namespace elm {
+
+template <class T, class C>
+class ArrayIter: public PreIterator<ArrayIter<T, C>, T> {
+public:
+	inline ArrayIter(const C& c): _c(c), _i(0) { }
+	inline bool ended(void) const { return _i >= _c.count(); }
+	inline const T& item(void) const { return _c.get(_i); }
+	inline void next(void) {  _i++; }
+private:
+	const C& _c;
+	int _i;
+};
+
+}	// elm
+
+#endif /* ELM_DATA_ITERATOR_H_ */
