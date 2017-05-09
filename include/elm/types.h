@@ -22,6 +22,7 @@
 #define ELM_TYPES_H
 
 #include <elm/int.h>
+#include <elm/type_info.h>
 
 namespace elm {
 

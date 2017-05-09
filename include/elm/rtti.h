@@ -24,6 +24,7 @@
 
 #include <elm/string.h>
 #include <elm/types.h>
+#include <elm/ptr.h>
 
 namespace elm {
 
@@ -132,6 +133,26 @@ inline CString _unqualify(CString name) {
 	else
 		return name.substring(pos + 1);
 }
+
+class Type {
+public:
+	static const Type *get(string name);
+	Type(string name);
+	virtual ~Type(void);
+	inline string name(void) const { return _name; }
+	const Type *pointer(void) const;
+	virtual bool canCast(const Type *t) const;
+	virtual bool isBool(void) const;
+	virtual bool isInt(void) const;
+	virtual bool isFloat(void) const;
+	virtual bool isPtr(void) const;
+private:
+	string _name;
+	mutable UniquePtr<Type>_pointer;
+};
+
+extern const Type &int8_type, &uint8_type, &int16_type, &uint16_type, &int32_type, &uint32_type, &int64_type, &uint64_type;
+extern const Type &float_type, &double_type, &long_double_type;
 
 } // elm
 

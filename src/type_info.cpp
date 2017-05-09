@@ -21,6 +21,7 @@
  */
 
 #include <float.h>
+#include <elm/data/HashMap.h>
 #include <elm/type_info.h>
 #include <elm/rtti.h>
 
@@ -325,6 +326,181 @@ cstring type_info<string>::name(void) { return "string"; }
  *
  * @param T		Type of singleton. Must support no-paramater constructor.
  */
+
+/**
+ * Map of available types.
+ */
+static HashMap<string, const Type *> type_map;
+
+/**
+ * Class for pointer type.
+ */
+class PointerType: public Type {
+public:
+	PointerType(const Type *t): Type(t->name() + "*") { }
+	virtual bool isPointer(void) const { return true; }
+};
+
+/**
+ * @class Type
+ * Materialize the concept of type. Used for serialization or
+ * with classes like variant.
+ * @ingroup types
+ */
+
+/**
+ */
+Type::Type(string name): _name(name) {
+	type_map.put(name, this);
+}
+
+/**
+ * Get a type by its name.
+ * @param name	Name of looked type.
+ * @return		Found type or null.
+ */
+const Type *Type::get(string name) {
+	return type_map.get(name, 0);
+}
+
+/**
+ */
+Type::~Type(void) { }
+
+/**
+ * Obtain pointer type on the current type.
+ * @return	Corresponding pointer type.
+ */
+const Type *Type::pointer(void) const {
+	if(!_pointer)
+		_pointer = new PointerType(this);
+	return _pointer;
+}
+
+/**
+ * @fn string Type::name(void) const;
+ * Get the name of the type.
+ */
+
+/**
+ * Test if the type can be casted to the given type.
+ * @param t		Type to cast to.
+ * @return		True if the type can be casted to the given type, false else.
+ */
+bool Type::canCast(const Type *t) const {
+	return t == this;
+}
+
+/**
+ * Test if the type is a boolean.
+ * @return	True if the type is boolean, false else.
+ */
+bool Type::isBool(void) const {
+	return false;
+}
+
+/**
+ * Test if the type is a integer.
+ * @return	True if the type is boolean, false else.
+ */
+bool Type::isInt(void) const {
+	return false;
+}
+
+/**
+ * Test if the type is a floating-point real.
+ * @return	True if the type is boolean, false else.
+ */
+bool Type::isFloat(void) const {
+	return false;
+}
+
+/**
+ * Test if the type is a pointer.
+ * @return	True if the type is boolean, false else.
+ */
+bool Type::isPtr(void) const {
+	return false;
+}
+
+
+/**
+ * Type class for integers.
+ */
+template <class T>
+class IntType: public Type {
+public:
+	IntType(void): Type(type_info<T>::name()) { }
+	virtual bool isInt(void) const { return true; }
+	virtual bool canCast(const Type *t) const { return t->isBool() || t->isInt() || t->isFloat(); }
+};
+
+/**
+ * Type for signed 8-bit integer.
+ */
+const Type& int8_type = Single<IntType<t::int8> >::_;
+
+/**
+ * Type for unsigned 8-bit integer.
+ */
+const Type& uint8_type = Single<IntType<t::uint8> >::_;
+
+/**
+ * Type for signed 16-bit integer.
+ */
+const Type& int16_type = Single<IntType<t::int16> >::_;
+
+/**
+ * Type for unsigned 8-bit integer.
+ */
+const Type& uint16_type = Single<IntType<t::uint16> >::_;
+
+/**
+ * Type for signed 32-bit integer.
+ */
+const Type& int32_type = Single<IntType<t::int32> >::_;
+
+/**
+ * Type for unsigned 32-bit integer.
+ */
+const Type& uint32_type = Single<IntType<t::uint32> >::_;
+
+/**
+ * Type for signed 64-bit integer.
+ */
+const Type& int64_type = Single<IntType<t::int64> >::_;
+
+/**
+ * Type for unsigned 64-bit integer.
+ */
+const Type& uint64_type = Single<IntType<t::uint64> >::_;
+
+
+/**
+ * Type class for floating-point reals.
+ */
+template <class T>
+class FloatType: public Type {
+public:
+	FloatType(void): Type(type_info<T>::name()) { }
+	virtual bool isFloat(void) const { return true; }
+	virtual bool canCast(const Type *t) const { return t->isBool() || t->isInt() || t->isFloat(); }
+};
+
+/**
+ * Type for single-precision floating-point real.
+ */
+const Type& float_type = Single<FloatType<float> >::_;
+
+/**
+ * Type for double-precision floating-point real.
+ */
+const Type& double_type = Single<FloatType<double> >::_;
+
+/**
+ * Type for quadruple-precision floating-point real.
+ */
+const Type& long_double_type = Single<FloatType<long double> >::_;
 
 }  // elm
 
