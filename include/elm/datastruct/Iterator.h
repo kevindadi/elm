@@ -51,6 +51,20 @@ protected:
 	IteratorInst<T> *iter;
 };
 
+template <class T, class I>
+class AbstractIter: public elm::datastruct::IteratorInst<T> {
+public:
+	inline AbstractIter(const I& i): _i(i) { }
+	virtual ~AbstractIter(void) { }
+	virtual bool ended(void) const { return _i.ended(); }
+	virtual T item(void) const { return _i.item(); }
+	virtual void next(void) { _i.next(); }
+private:
+	I _i;
+};
+template <class T, class I>
+inline AbstractIter<T, I> *abstract_iter(const I& i) { return new AbstractIter<T, I>(i); }
+
 } } // elm::datastruct
 
 #endif // ELM_DATASTRUCT_ITERATOR_H

@@ -111,7 +111,6 @@ set(LIBELM_LA_SOURCES
 	"system_System.cpp"
 	"system_SystemException.cpp"
 	"system_SystemIO.cpp"
-	"type_info.cpp"
 	"util_BitVector.cpp"
 	"util_Cleaner.cpp"
 	"util_Comparator.cpp"
@@ -131,6 +130,7 @@ set(LIBELM_LA_SOURCES
 	"util_Version.cpp"
 	"util_WAHVector.cpp"
 	"utility.cpp"
+	"type_info.cpp"
 	)
 
 

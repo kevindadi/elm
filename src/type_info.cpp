@@ -349,9 +349,21 @@ public:
  */
 
 /**
+ * Initializer to avoid the initialization issue of C++.
+ */
+Initializer<Type> Type::_init(false);
+
+/**
  */
 Type::Type(string name): _name(name) {
-	type_map.put(name, this);
+	_init.record(this);
+}
+
+/**
+ * For internal use only. Do not call it.
+ */
+void Type::initialize(void) {
+	type_map.put(name(), this);
 }
 
 /**
@@ -360,6 +372,7 @@ Type::Type(string name): _name(name) {
  * @return		Found type or null.
  */
 const Type *Type::get(string name) {
+	_init.startup();
 	return type_map.get(name, 0);
 }
 

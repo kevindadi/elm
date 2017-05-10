@@ -25,6 +25,7 @@
 #include <elm/string.h>
 #include <elm/types.h>
 #include <elm/ptr.h>
+#include <elm/util/Initializer.h>
 
 namespace elm {
 
@@ -146,9 +147,11 @@ public:
 	virtual bool isInt(void) const;
 	virtual bool isFloat(void) const;
 	virtual bool isPtr(void) const;
+	void initialize(void);
 private:
 	string _name;
 	mutable UniquePtr<Type>_pointer;
+	static Initializer<Type> _init;
 };
 
 extern const Type &int8_type, &uint8_type, &int16_type, &uint16_type, &int32_type, &uint32_type, &int64_type, &uint64_type;
