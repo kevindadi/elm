@@ -22,7 +22,7 @@
 #define ELM_DATA_HASHMAP_H_
 
 #include "HashTable.h"
-#include <elm/util/delegate.h>
+#include <elm/delegate.h>
 
 namespace elm {
 

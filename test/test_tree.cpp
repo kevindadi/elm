@@ -1,6 +1,6 @@
 #include <elm/inhstruct/Tree.h>
 #include <elm/genstruct/Tree.h>
-#include <elm/util/test.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 using namespace elm::inhstruct;

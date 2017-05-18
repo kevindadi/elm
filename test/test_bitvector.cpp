@@ -5,8 +5,8 @@
  * test/test_bitvector.cpp -- test program for BitVector class.
  */
 
-#include <elm/util/test.h>
 #include <elm/util/BitVector.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

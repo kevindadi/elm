@@ -33,7 +33,7 @@ namespace elm { namespace sys {
 /**
  * @class File
  * This class represents a regular file.
- * @ingroup system_inter
+ * @ingroup system
  */
 
 

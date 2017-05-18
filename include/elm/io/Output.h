@@ -249,20 +249,6 @@ inline Output& operator<<(Output& out, const StringFormat& value) { out.print(va
 // End-of-line
 const char endl = '\n';
 
-// starter macro
-inline IntFormat f(signed char			value)	{ return IntFormat(value); }
-inline IntFormat f(unsigned char			value) 	{ return IntFormat(value); }
-inline IntFormat f(signed short			value) 	{ return IntFormat(value); }
-inline IntFormat f(unsigned short			value)	{ return IntFormat(value); }
-inline IntFormat f(signed int				value)	{ return IntFormat(value); }
-inline IntFormat f(unsigned int			value) 	{ return IntFormat(value); }
-inline IntFormat f(signed long			value) 	{ return IntFormat(value); }
-inline IntFormat f(unsigned long			value) 	{ return IntFormat(value); }
-inline IntFormat f(signed long long		value) 	{ return IntFormat(value); }
-inline IntFormat f(unsigned long long	value) 	{ return IntFormat(value); }
-inline FloatFormat f(float value)					{ return FloatFormat(value); }
-inline FloatFormat f(double value)				{ return FloatFormat(value); }
-
 // predefined styles
 IntFormat pointer(const void *p);
 IntFormat byte(t::uint8 b);

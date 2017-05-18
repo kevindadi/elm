@@ -5,8 +5,8 @@
  * Reference class test
  */
 
-#include <elm/util/test.h>
 #include <elm/util/Ref.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

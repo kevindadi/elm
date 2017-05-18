@@ -22,10 +22,10 @@
 
 #include <iostream>
 #include <elm/type_info.h>
-#include <elm/util/test.h>
 #include <elm/util/Option.h>
 #include <elm/genstruct/HashTable.h>
 #include <elm/genstruct/Vector.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

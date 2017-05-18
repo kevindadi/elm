@@ -5,12 +5,12 @@
  *      Author: casse
  */
 
-#include <elm/util/test.h>
 #include <elm/array.h>
-#include <elm/system/StopWatch.h>
+#include <elm/sys/StopWatch.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
-using namespace elm::system;
+using namespace elm::sys;
 
 static bool flag = false;
 

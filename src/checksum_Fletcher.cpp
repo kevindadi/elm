@@ -33,7 +33,9 @@ namespace elm { namespace checksum {
  * 
  * Data are checksummed calling any one of the @ref put() methods.
  * When all data has been checksummed, the checksum value is returned by
- * @ref sum. 
+ * @ref sum.
+ *
+ * @ingroup checksum
  */
 
 

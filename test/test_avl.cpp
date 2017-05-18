@@ -7,12 +7,12 @@
 
 #define ELM_DEBUG_AVL
 
-#include <elm/util/test.h>
+#include "../include/elm/test.h"
 #include <elm/genstruct/Vector.h>
 #include <elm/avl/Set.h>
 #include <elm/avl/Map.h>
 #include <elm/genstruct/HashTable.h>
-#include <elm/system/System.h>
+#include <elm/sys/System.h>
 #include <elm/io.h>
  
 using namespace elm;
@@ -79,7 +79,7 @@ TEST_BEGIN(avl)
 			chk_cnt = 0;
 		for(int i = 0; intensive && i < _count; i++) {
 			LOG(tree.dump(cerr); cerr << io::endl;)
-			int a = system::System::random(maxv * 3);
+			int a = sys::System::random(maxv * 3);
 
 			// remove
 			if(a < 2 * maxv && ints.count()) {
@@ -128,7 +128,7 @@ TEST_BEGIN(avl)
 
 		bool map_intensive = true;
 		for(int i = 0; map_intensive && i < _count; i++) {
-			int a = system::System::random(maxv * 4);
+			int a = sys::System::random(maxv * 4);
 
 			// remove
 			if(a < 2 * maxv && !htab.isEmpty()) {

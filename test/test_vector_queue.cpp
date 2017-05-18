@@ -6,8 +6,8 @@
  */
 
 #include <elm/genstruct/VectorQueue.h>
-#include <elm/util/test.h>
 #include <stdlib.h>
+#include "../include/elm/test.h"
 
 using namespace elm::genstruct;
 using namespace elm;

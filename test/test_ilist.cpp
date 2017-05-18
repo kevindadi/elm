@@ -5,9 +5,9 @@
  *      Author: casse
  */
 
-#include <elm/util/test.h>
 #include <elm/imm/list.h>
 #include <elm/genstruct/Vector.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 using namespace elm::imm;

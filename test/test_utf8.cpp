@@ -20,7 +20,7 @@
  */
 
 #include <elm/string/utf8.h>
-#include <elm/util/test.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 using namespace elm::utf8;

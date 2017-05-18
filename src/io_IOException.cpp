@@ -41,9 +41,9 @@ namespace elm { namespace io {
  * @ref Output and the formatted input class is @ref Input.
  * 
  * Three global variables give access to the standard input/output:
- * @li cin -- standard input,
- * @li cout -- standard output,
- * @li cerr -- standard error.
+ * @li @ref elm::cin -- standard input,
+ * @li @ref elm::cout -- standard output,
+ * @li @ref elm::cerr -- standard error.
  * 
  * Most basic types are supported (including @ref String and @ref CString).
  * Some constants are provided for special output:
@@ -74,12 +74,22 @@ namespace elm { namespace io {
  * The errors are managed here using exception objects derived from the
  * @ref IOException class.
  *
+ * As with streams of the STL, the operators "<<" and ">>" can be overload to
+ * be adapted to custom types:
+ * @code
+ * class T { ... };
+ * io::Output& operator<<(io::Output& out, const T& v) { ...; return out; }
+ * io::Input& operator>>(io::Input& out, T& v) { ...; return in; }
+ * @endcode
  *
+ * To group together input, output and error stream, the @ref Monitor class
+ * provides the base of a configurable monitoring system with error and warning
+ * display support.
  *
  * @section int_format Formatting
  *
  * The class @ref IntFormat embeds the value of an integer and
- * its format configuration. Such is usually passed to @ref Output object
+ * its format configuration. These objects are usually passed to @ref Output object
  * and is built from a list of usual inline functions (described below):
  *
  * @code
@@ -88,7 +98,7 @@ namespace elm { namespace io {
  * @endcode
  *
  * The basic to display a formatted integer is to use a constructor inline
- * function as io::f(). This builds an @ref IntFormat object to display
+ * function as io::fmt(). This builds an @ref IntFormat object to display
  * the passed integer. The format can then be modified by calling specific
  * functions as listed below:
  * @li IntFormat::base() -- select a specific base,
@@ -97,12 +107,12 @@ namespace elm { namespace io {
  * @li IntFormat::hex() -- hexadecimal base,
  * @li IntFormat::width() -- field with (in characters),
  * @li IntFormat::align() -- alignment (one of io::LEFT, io::CENTER or io::RIGHT),
- * @li IntFormat::left -- left alignment,
- * @li IntFormat::center -- centered alignment,
- * @li IntFormat::right -- right alignment,
- * @li IntFormat::pad -- padding character (if the number does not occupy the full width),
- * @li IntFormat::uppercase -- uppercase character for digits greater than 10,
- * @li IntFormat::lowercase -- lowercase character for digits greater than 10.
+ * @li IntFormat::left() -- left alignment,
+ * @li IntFormat::center() -- centered alignment,
+ * @li IntFormat::right() -- right alignment,
+ * @li IntFormat::pad() -- padding character (if the number does not occupy the full width),
+ * @li IntFormat::uppercase() -- uppercase character for digits greater than 10,
+ * @li IntFormat::lowercase() -- lowercase character for digits greater than 10.
  * 
  * One way to implement the pointer of the above example is to define an inline function as this:
  * @code
@@ -125,7 +135,7 @@ namespace elm { namespace io {
  * the display of particular object inside the usual flow of "<<" operators.
  * The example below displays a string escaping the special characters "<", ">"
  * and "&" in order, for example, to output HTML text:
- * <code c++>
+ * @code
  * class Escape {
  * public:
  * 		typedef string t;
@@ -142,35 +152,46 @@ namespace elm { namespace io {
  *
  * string my_string;
  * cout << Tag<Escape>(my_string) << io::endl;
- * </code>
+ * @endcode
  * 
+ * ELM proposes some predefined formats:
+ * @li @ref pointer() -- hexadecimal representation of a pointer on a fixed size.
+ * @li @ref byte() -- hexadecimal representation of a byte on a fixed size.
+ *
  * @section low_level Byte Streams
  * 
  * The low-level IO system is only responsible for exchanging streams of bytes.
  * 
  * All input streams must inherit from the @ref InStream class and defines the
  * following functions:
- * @li read(buffer) -- read some bytes into the given buffer,
- * @li read() -- read one byte.
+ * @li @ref InStream::read(void *buffer, int size) -- read some bytes into the given buffer,
+ * @li @ref InStream::read(void) -- read one byte.
  * ELM provides byte input streams for files (@ref InFileStream), for memory
  * blocks (@ref BlockInStream) or system pipes (@ref PipeInStream).
  * 
  * The errors are returned by the called functions. Either a positive value,
  * or a value of @ref InStream::FAILED (error on the media), or
  * @ref InStream::ENDED (end of the media reached). Information about the
- * errors may be obtained by the lastErrorMessage() method.
+ * errors may be obtained by the @ref InStream::lastErrorMessage() method.
  * 
  * All output streams must inherit from the @ref OutStream class and defines the
  * following functions:
- * @li write(buffer) -- write some bytes from the given buffer,
- * @li write() -- write one byte,
- * @li @ref flush() -- ensures that all written btes have been transferred to
+ * @li @ref OutStream::write(const char *buffer, int size) -- write some bytes from the given buffer,
+ * @li @ref OutStream::write(char byte) -- write one byte,
+ * @li @ref OutStream::flush() -- ensures that all written bytes have been transferred to
  * the media.
  * ELM provides byte output streams for files (@ref OutFileStream), for memory
  * blocks (@ref BlockOutStream) or system pipes (@ref PipeOutStream).
  * 
- * The errors are returned as negative value by this functions. Information
- * about the errors may be obtained by the lastErrorMessage() method.
+ * The errors are returned as negative value by this functions. Information about the errors may be obtained by the
+ * @ref OutStream::lastErrorMessage() method.
+ *
+ * Byte-stream level of IO provides also some convenient classes:
+ * @li @ref TeeOutStream -- duplicate an output to two other outputs (convenient for checksumming and writing to a file).
+ * @li @ref BufferedOutStream -- buffered output.
+ * @li @ref BufferedInStream -- buffered input.
+ * @li @ref RandomAccessStream --both input and output stream with free move on the media.
+ * @li @ref StreamPipe -- connect an in stream to an out stream and perform the transmission to the end.
  */
 
 

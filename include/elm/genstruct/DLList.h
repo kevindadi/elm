@@ -22,9 +22,9 @@
 #ifndef ELM_GENSTRUCT_DLLIST_H
 #define ELM_GENSTRUCT_DLLIST_H
 
-#include <elm/util/Equiv.h>
 #include <elm/PreIterator.h>
 #include <elm/inhstruct/DLList.h>
+#include "../equiv.h"
 
 namespace elm { namespace genstruct {
 

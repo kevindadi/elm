@@ -78,7 +78,7 @@ const T& result, const T& reference) {
 #define ELM_REQUIRE(tst, action)	if(!__case.require(__FILE__, __LINE__, #tst, tst)) action
 #define ELM_CHECK_EQUAL(res, ref)	__case.check_equal(__FILE__, __LINE__, #res " == " #ref, res, ref)
 #define ELM_CHECK_EXCEPTION(exn, stat)	{ __case.test(__FILE__, __LINE__, #stat); \
-	try { stat; __case.failed(); } catch(exn) { __case.succeeded(); } }
+	try { stat; __case.failed(); } catch(const exn&) { __case.succeeded(); } }
 #define ELM_FAIL_ON_EXCEPTION(exn, stat) { __case.test(__FILE__, __LINE__, #stat); \
 	try { stat; __case.succeeded(); } \
 	catch(exn& e) { __case.failed(); cerr << "exception = " << e.message() << elm::io::endl; } }

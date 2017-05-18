@@ -24,8 +24,8 @@
 
 #include <elm/assert.h>
 #include <elm/PreIterator.h>
-#include <elm/util/Equiv.h>
 #include <elm/inhstruct/SLList.h>
+#include "../equiv.h"
 
 namespace elm { namespace genstruct {
 

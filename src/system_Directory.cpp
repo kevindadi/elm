@@ -34,7 +34,7 @@ namespace elm { namespace sys {
 /**
  * @class Directory
  * This class represents a directory file item.
- * @ingroup system_inter
+ * @ingroup system
  */
 
 

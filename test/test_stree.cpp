@@ -19,7 +19,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <elm/util/test.h>
+#include "../include/elm/test.h"
 #define ELM_STREE_DEBUG
 #include <elm/stree/MarkerBuilder.h>
 #include <elm/stree/SegmentBuilder.h>

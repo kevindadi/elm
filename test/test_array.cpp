@@ -5,8 +5,8 @@
  * test/test_table.cpp -- unit tests for Table class.
  */
 
-#include <elm/util/test.h>
 #include <elm/data/Array.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

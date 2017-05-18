@@ -5,7 +5,7 @@
  * test_string_buffer.cpp -- unit tests for StringBuffer..
  */
 
-#include <elm/util/test.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

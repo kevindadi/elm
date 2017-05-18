@@ -20,14 +20,14 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <elm/util/test.h>
 #include <elm/io/RandomAccessStream.h>
 #include <elm/checksum/Fletcher.h>
 #include <elm/io/BufferedInStream.h>
 #include <elm/io/BufferedOutStream.h>
 #include <elm/io/InFileStream.h>
-#include <elm/system/System.h>
+#include <elm/sys/System.h>
 #include <elm/io/BlockInStream.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 using namespace elm::io;
@@ -128,11 +128,11 @@ void test_BufferedOutStream(void) {
 	{
 #		define BUF_SIZE 64
 		char buf[BUF_SIZE];
-		InStream *in = system::System::readFile("file.xml");
-		OutStream *str = system::System::createFile("out.xml");
+		InStream *in = sys::System::readFile("file.xml");
+		OutStream *str = sys::System::createFile("out.xml");
 		BufferedOutStream out(*str, 32);
 		int len;
-		while((len = in->read(buf, system::System::random(BUF_SIZE))) > 0)
+		while((len = in->read(buf, sys::System::random(BUF_SIZE))) > 0)
 			out.write(buf, len);
 	}
 
@@ -141,8 +141,8 @@ void test_BufferedOutStream(void) {
 		bool ok = true;
 		int res1, res2;
 		char buf1[BUF_SIZE], buf2[BUF_SIZE];
-		InStream *in1 = system::System::readFile("file.xml");
-		InStream *in2 = system::System::readFile("out.xml");
+		InStream *in1 = sys::System::readFile("file.xml");
+		InStream *in2 = sys::System::readFile("out.xml");
 		while(1) {
 			res1 = in1->read(buf1, BUF_SIZE);
 			res2 = in2->read(buf2, BUF_SIZE);

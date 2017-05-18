@@ -67,7 +67,7 @@ namespace sys {
  * @class FileItem
  * This class represents an item of the file systems. It is inheited from
  * @ref File and @ref Directory classes.
- * @ingroup system_inter
+ * @ingroup system
  */
  
 

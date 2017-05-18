@@ -1,5 +1,5 @@
 #include <elm/sys/System.h>
-#include <elm/util/test.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

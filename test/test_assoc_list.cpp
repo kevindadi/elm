@@ -21,7 +21,7 @@
  */
 
 #include <elm/genstruct/AssocList.h>
-#include <elm/util/test.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 using namespace elm::genstruct;

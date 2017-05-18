@@ -5,8 +5,8 @@
  * test/test_frag_table.cpp -- FragTable class unit test.
  */
 
-#include <elm/util/test.h>
 #include <elm/genstruct/FragTable.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 using namespace elm::genstruct;

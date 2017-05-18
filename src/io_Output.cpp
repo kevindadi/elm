@@ -906,9 +906,10 @@ void Output::print(const StringFormat& fmt) {
  * Format a pointer for display.
  * @param p		Pointer to format.
  * @return		Formatted pointer.
+ * @ingroup ios
  */
 IntFormat pointer(const void *p) {
-	return f(t::intptr(p)).hex().width(sizeof(t::intptr) * 2).pad('0');
+	return fmt(t::intptr(p)).hex().width(sizeof(t::intptr) * 2).pad('0');
 }
 
 
@@ -916,9 +917,10 @@ IntFormat pointer(const void *p) {
  * Format an integer to display it as an hexadecimal byte.
  * @param b		Byte to format.
  * @return		Formatted byte.
+ * @ingroup ios
  */
 IntFormat byte(t::uint8 b) {
-	return f(b).hex().width(2).pad('0').right();
+	return fmt(b).hex().width(2).pad('0').right();
 }
 
 /**
@@ -980,6 +982,80 @@ IntFormat byte(t::uint8 b) {
  * point of the program.
  *
  * @ingroup ios
+ */
+
+
+/**
+ * @fn IntFormat fmt(t::int8 i);
+ * Build a formatted signed 8-bit integer.
+ * @ingroup ios
+ */
+
+/**
+ * @fn IntFormat fmt(t::uint8 i);
+ * Build a formatted unsigned 8-bit integer.
+ * @ingroup ios
+ */
+
+/**
+ * @fn IntFormat fmt(t::int16 i);
+ * Build a formatted signed 16-bit integer.
+ * @ingroup ios
+ */
+
+/**
+ * @fn IntFormat fmt(t::uint16 i);
+ * Build a formatted unsigned 16-bit integer.
+ * @ingroup ios
+ */
+
+/**
+ * @fn IntFormat fmt(t::int32 i);
+ * Build a formatted signed 32-bit integer.
+ * @ingroup ios
+ */
+
+/**
+ * @fn IntFormat fmt(t::uint32 i);
+ * Build a formatted unsigned 32-bit integer.
+ * @ingroup ios
+ */
+
+/**
+ * @fn IntFormat fmt(t::int64 i);
+ * Build a formatted signed 64-bit integer.
+ * @ingroup ios
+ */
+
+/**
+ * @fn IntFormat fmt(t::uint64 i);
+ * Build a formatted unsigned 64-bit integer.
+ * @ingroup ios
+ */
+
+/**
+ * @fn FloatFormat fmt(float f);
+ * Build a formatted single floating-point number.
+ */
+
+/**
+ * @fn FloatFormat fmt(double f);
+ * Build a formatted double floating-point number.
+ */
+
+/**
+ * @fn StringFormat fmt(string s);
+ * Build a formatted string.
+ */
+
+/**
+ * @fn StringFormat fmt(cstring s);
+ * Build a formatted string.
+ */
+
+/**
+ * @fn StringFormat fmt(const char *s);
+ * Build a formatted string.
  */
 
 } // io

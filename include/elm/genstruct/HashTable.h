@@ -26,7 +26,7 @@
 #include <elm/PreIterator.h>
 #include <elm/type_info.h>
 #include <elm/types.h>
-#include <elm/util/HashKey.h>
+#include <elm/hash.h>
 #include <elm/util/Pair.h>
 #include <elm/array.h>
 

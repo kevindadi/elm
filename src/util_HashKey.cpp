@@ -21,7 +21,7 @@
  */
 
 #include <string.h>
-#include <elm/util/HashKey.h>
+#include <elm/hash.h>
 
 namespace elm {
 

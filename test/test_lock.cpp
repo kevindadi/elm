@@ -5,9 +5,9 @@
  * test/test_lock.cpp -- unit tests for elm::Lock class.
  */
 
-#include <elm/util/test.h>
 #include <elm/utility.h>
 #include <elm/util/LockPtr.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

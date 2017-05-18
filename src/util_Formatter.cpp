@@ -5,11 +5,11 @@
  * elm/util_Formatter.cpp -- Formatter class implementation.
  */
 
-#include <elm/util/Formatter.h>
+#include <elm/string/Formatter.h>
 using namespace elm;
 using namespace elm::io;
 
-namespace elm { namespace util {
+namespace elm {
 
 /**
  * @class Formatter
@@ -95,4 +95,4 @@ int Formatter::format(io::InStream& in, io::OutStream& out) {
  * @return	Escape character.
  */
 
-} } // elm::util
+} // elm

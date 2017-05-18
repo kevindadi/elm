@@ -5,12 +5,11 @@
  * test/test_formatter.cpp -- unit tests for Formatter class.
  */
 
-#include <elm/util/test.h>
-#include <elm/util/Formatter.h>
+#include <elm/string/Formatter.h>
 #include <elm/io/BlockInStream.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
-using namespace elm::util;
 
 class MyFormatter: public Formatter {
 	int index;

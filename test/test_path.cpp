@@ -19,8 +19,8 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <elm/util/test.h>
 #include <elm/sys/Path.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 
@@ -35,7 +35,7 @@ TEST_BEGIN(path)
 	p = p.parent();
 	CHECK_EQUAL(p.namePart(), string("a"));
 	p = p.parent();
-	CHECK(!p);
+	CHECK_EQUAL(p, sys::Path("."));
 }
 
 // subPathOf/prefixedBy test

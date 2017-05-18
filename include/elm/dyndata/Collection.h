@@ -19,12 +19,12 @@
  *	along with OTAWA; if not, write to the Free Software 
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_DATASTRUCT_COLLECTION_H
-#define ELM_DATASTRUCT_COLLECTION_H
+#ifndef ELM_DYNDATA_COLLECTION_H
+#define ELM_DYNDATA_COLLECTION_H
 
-#include <elm/datastruct/AbstractCollection.h>
+#include "../dyndata/AbstractCollection.h"
 
-namespace elm { namespace datastruct {
+namespace elm { namespace dyndata {
 
 // Collection class
 template <class T, template <class _> class C>
@@ -36,13 +36,13 @@ public:
 	virtual int count(void) { return coll.count(); }
 	virtual bool contains(const T& item) const { return coll.contains(item); }
 	virtual bool isEmpty(void) const { return coll.isEmpty(); }
-	virtual IteratorInst<const T&> *iterator(void) const { return new Iterator(coll); }
+	virtual AbstractIter<const T&> *iterator(void) const { return new Iter(coll); }
 
 protected:
 	C<T> coll;
-	class Iterator: public IteratorInst<const T&> {
+	class Iter: public AbstractIter<const T&> {
 	public:
-		inline Iterator(const C<T>& coll): iter(coll) { }
+		inline Iter(const C<T>& coll): iter(coll) { }
 		virtual bool ended(void) const { return iter.ended(); }
 		virtual const T& item(void) const { return iter.item(); }
 		virtual void next(void) { iter.next(); }
@@ -54,18 +54,33 @@ protected:
 template <class T, template <class _> class C>
 class MutableCollection: public Collection<T, C>, public MutableAbstractCollection<T> {
 public:
+	virtual ~MutableCollection(void) { }
 	virtual void clear(void) { Collection<T, C>::coll.clear(); }
 	virtual void add(const T& item) { Collection<T, C>::coll.add(item); }
 	virtual void addAll(const AbstractCollection<T>& items)
-		{ for(Iterator<const T&> iter(items.iterator()); iter; iter++) add(iter); }
+		{ for(Iter<const T&> iter(items.iterator()); iter; iter++) add(iter); }
 	virtual void remove(const T& item) { Collection<T, C>::coll.remove(item); }
 	virtual void removeAll(const AbstractCollection<T>& items)
-		{ for(Iterator<const T&> iter(items.iterator()); iter; iter++) remove(iter); }
-	virtual void remove(const Iterator<const T&>& iter)
+		{ for(Iter<const T&> iter(items.iterator()); iter; iter++) remove(iter); }
+	virtual void remove(const AbstractIter<const T&>& iter)
 		{ Collection<T, C>::coll.remove(
 			static_cast<typename Collection<T, C>::Iterator *>(iter.instance())->iter); }
 };
 
-} } // elm::datastruct
+template <class T, class I>
+class IterInst: public elm::dyndata::AbstractIter<T> {
+public:
+	inline IterInst(const I& i): _i(i) { }
+	virtual ~IterInst(void) { }
+	virtual bool ended(void) const { return _i.ended(); }
+	virtual T item(void) const { return _i.item(); }
+	virtual void next(void) { _i.next(); }
+private:
+	I _i;
+};
+template <class T, class I>
+inline IterInst<T, I> *iter(const I& i) { return new IterInst<T, I>(i); }
 
-#endif	// ELM_DATASTRUCT_COLLECTION_H
+} } // elm::dyndata
+
+#endif	// ELM_DYNDATA_COLLECTION_H

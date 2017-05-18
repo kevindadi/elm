@@ -7,7 +7,7 @@
 
 #include <elm/sys/System.h>
 #include <elm/sys/Thread.h>
-#include <elm/util/test.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 using namespace elm::sys;

@@ -5,10 +5,10 @@
  * test/test_utility.cpp -- unit tests for elm/utility.h.
  */
 
-#include <elm/util/test.h>
 #include <elm/utility.h>
-#include <elm/util/HashKey.h>
+#include <elm/hash.h>
 #include <elm/util/Version.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

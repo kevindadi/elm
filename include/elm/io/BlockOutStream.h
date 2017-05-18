@@ -8,7 +8,7 @@
 #define ELM_IO_BLOCK_OUT_STREAM_H
 
 #include <elm/io/OutStream.h>
-#include <elm/block/DynBlock.h>
+#include <elm/alloc/DynBlock.h>
 #include <elm/string/CString.h>
 #include <elm/string/String.h>
 

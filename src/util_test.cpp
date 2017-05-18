@@ -6,7 +6,7 @@
  */
 
 #include <elm/io.h>
-#include <elm/util/test.h>
+#include "../include/elm/test.h"
 
 namespace elm {
 

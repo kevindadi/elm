@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	MD5 class implementation
  *
  *	This file is part of OTAWA
@@ -89,6 +88,7 @@ namespace elm { namespace checksum {
  * (or using the overloaded operator <<).
  * When all data has been checksummed, the checksum value is returned by
  * digest().
+ * @ingroup checksum
  */
 
 

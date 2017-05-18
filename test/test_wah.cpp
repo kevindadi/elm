@@ -1,7 +1,7 @@
 #include <elm/util/WAHVector.h>
-#include "elm/util/test.h"
 #include <elm/util/BitVector.h>
 #include <elm/sys/System.h>
+#include "../include/elm/test.h"
 
 #define	INTENSIVE
 

@@ -24,10 +24,11 @@
 namespace elm { namespace io {
 
 /**
- * @class TeeOutStream: public OutStream
+ * @class TeeOutStream
  * This class allows to divert the byte stream to two different outputs.
  * This may be useful to perform an output while performing a parallel
  * processing of the streamed data: size computation, checksumming, etc.
+ * @ingroup ios
  */
 
 /**

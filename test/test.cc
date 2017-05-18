@@ -5,8 +5,9 @@
  * Unit tests
  */
 
+#include "../include/elm/test.h"
+
 #include <elm/io.h>
-#include <elm/util/test.h>
 #include <elm/data/Vector.h>
 
 using namespace elm;

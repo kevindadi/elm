@@ -44,7 +44,7 @@ namespace elm { namespace sys {
 /**
  * @class ProcessBuilder
  * This class is used to build a new process by launching a command line.
- * @ingroup system_inter
+ * @ingroup system
  */
 
 

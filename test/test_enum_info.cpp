@@ -1,5 +1,5 @@
-#include <elm/util/test.h>
 #include <elm/enum_info.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

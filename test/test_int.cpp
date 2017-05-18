@@ -5,9 +5,9 @@
  *      Author: casse
  */
 
-#include <elm/util/test.h>
 #include <elm/int.h>
 #include <elm/compare.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

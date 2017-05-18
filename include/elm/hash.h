@@ -24,9 +24,9 @@
 
 #include <elm/types.h>
 #include <elm/string.h>
-#include <elm/util/Equiv.h>
 #include <elm/util/Option.h>
 #include <elm/util/Pair.h>
+#include "equiv.h"
 
 namespace elm {
 

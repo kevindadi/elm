@@ -7,11 +7,11 @@
 
 #include <elm/io.h>
 #include <elm/sys/Thread.h>
-#include <elm/system/StopWatch.h>
+#include <elm/sys/StopWatch.h>
 #include <math.h>
 
 using namespace elm;
-using namespace elm::system;
+using namespace elm::sys;
 
 double my_cos(double x) {
     double t , s ;

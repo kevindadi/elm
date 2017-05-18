@@ -23,7 +23,7 @@
 #define ELM_GENSTRUCT_VECTORQUEUE_H
 
 #include <elm/assert.h>
-#include <elm/util/Equiv.h>
+#include "../equiv.h"
 
 namespace elm { namespace genstruct {
 	

@@ -21,7 +21,7 @@
 
 #include <elm/data/util.h>
 #include <elm/data/Vector.h>
-#include <elm/util/test.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

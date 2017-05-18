@@ -84,7 +84,7 @@ namespace elm {
 namespace sys {
 
 /**
- * @defgroup system_inter System Interface
+ * @defgroup system System Interface
  *
  * These classes provides a unified interface to the OS services.
  *
@@ -190,7 +190,7 @@ namespace sys {
 /**
  * @class System
  * Non-instatiable object giving access to system facilities.
- * @ingroup system_inter
+ * @ingroup system
  */
 
 

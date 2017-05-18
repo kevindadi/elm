@@ -22,7 +22,6 @@
 #define ELM_SYSTEM_THREAD_H_
 
 #include <elm/sys/SystemException.h>
-#include <elm/util/GenValue.h>
 #include <elm/util/MessageException.h>
 
 namespace elm { namespace sys {

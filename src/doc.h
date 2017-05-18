@@ -22,6 +22,8 @@
 #ifndef ELM_DOC_H_
 #define ELM_DOC_H_
 
+namespace elm {
+
 /**
  * @mainpage
  * 
@@ -33,8 +35,26 @@
  * @li efficient string class,
  * @li other utility classes.
  * 
- * Please take a look at the module part for detailed description.
- * 
+ * The facilities of ELM (classes, functions, templates, etc) are sorted in the following
+ * modules:
+ * @li @ref alloc -- specialized allocators and interactive garbage collector,
+ * @li @ref checksum -- checksum algorithms,
+ * @li @ref data -- common generic data structures and associated facilities,
+ * @li @ref dyndata -- data structure implementation using inheritance and virtual methods,
+ * @li @ref ios -- unformatted and formatted input/output classes,
+ * @li @ref json -- JSon format ELM implementation,
+ * @li @ref net -- network access abstraction classes,
+ * @li @ref option -- command line option parsing classes,
+ * @li @ref serial2 -- serialization facilities,
+ * @li @ref string -- character string facilities,
+ * @li @ref system -- system abstraction facilities (file system, plugin, random number, process management),
+ * @li @ref type -- RTTI type support,
+ * @li @ref util -- miscellaneous utility classes (including debugging and testing helper classes),
+ * @li @ref xom -- XML input/output classes.
+ *
+ *
+
+/*
  * @par Type Facilities
  * 
  * ELM provides a lot of OS-independent simple and reliable types in @ref int
@@ -205,5 +225,16 @@
  * @li @c REQUIRE(cnd, action) -- perform the action only if the given condition is true, else stop the test.
  *
  */
+
+/**
+ * @defgroup checksum Checksum Engines
+ *
+ * This small modules provides two checksum engines:
+ * @li @ref checksum::Fletcher for fast checksumming,
+ * @li @ref checksum::MD5 for MD5 checksum often used on the web.
+ *
+ */
+
+}	// elm
 
 #endif /*ELM_DOC_H_*/

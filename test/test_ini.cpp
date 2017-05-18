@@ -6,7 +6,7 @@
  */
 
 #include <elm/ini.h>
-#include <elm/util/test.h>
+#include "../include/elm/test.h"
 
 #if 0
 using namespace elm;

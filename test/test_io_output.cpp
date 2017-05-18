@@ -5,10 +5,10 @@
  * test/test_io_output.cpp -- io output classes test.
  */
 
-#include <elm/util/test.h>
 #include <elm/io/OutFileStream.h>
 #include <elm/io.h>
 #include <elm/string.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 using namespace elm::io;

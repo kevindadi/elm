@@ -20,9 +20,9 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <elm/util/test.h>
 #include <elm/checksum/MD5.h>
 #include <elm/sys/System.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 using namespace elm::checksum;

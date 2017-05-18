@@ -18,8 +18,8 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#include <elm/util/test.h>
 #include <elm/data/Vector.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

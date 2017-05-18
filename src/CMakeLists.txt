@@ -36,17 +36,7 @@ set(LIBELM_LA_SOURCES
 	"data_SortedList.cpp"
 	"data_Vector.cpp"
 	"debug.cpp"
-	"genstruct.h"
-	"genstruct_AssocList.cpp"
-	"genstruct_DLList.cpp"
-	"genstruct_FragTable.cpp"
-	"genstruct_DAGNode.cpp"
-	"genstruct_SortedBinMap.cpp"
-	"genstruct_SortedBinTree.cpp"
-	"genstruct_Tree.cpp"
-	"genstruct_VectorQueue.cpp"
-	"genstruct_Table.cpp"
-	"genstruct_Tree.cpp"
+	"dyndata_Collection.cpp"
 	"imm_list.cpp"
 	"inhstruct_BinTree.cpp"
 	"inhstruct_SortedBinTree.cpp"
@@ -131,6 +121,19 @@ set(LIBELM_LA_SOURCES
 	"util_WAHVector.cpp"
 	"utility.cpp"
 	"type_info.cpp"
+
+	# deprecated
+	"genstruct.h"
+	"genstruct_AssocList.cpp"
+	"genstruct_DLList.cpp"
+	"genstruct_FragTable.cpp"
+	"genstruct_DAGNode.cpp"
+	"genstruct_SortedBinMap.cpp"
+	"genstruct_SortedBinTree.cpp"
+	"genstruct_Tree.cpp"
+	"genstruct_VectorQueue.cpp"
+	"genstruct_Table.cpp"
+	"genstruct_Tree.cpp"
 	)
 
 

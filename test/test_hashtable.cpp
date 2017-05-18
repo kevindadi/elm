@@ -5,10 +5,10 @@
  * test/test_hastable.cpp -- unit tests for elm::xxx::HashTable classes.
  */
 
-#include <elm/util/test.h>
 #include <elm/data/HashMap.h>
 #include <elm/data/HashSet.h>
 #include <elm/data/Vector.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

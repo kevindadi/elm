@@ -5,8 +5,8 @@
  * test_plugin.cpp -- test the plugin feature.
  */
 
-#include <elm/util/test.h>
 #include <elm/sys/Plugger.h>
+#include "../include/elm/test.h"
 #if defined(__WIN32) || defined(__WIN64)
 #include <windows.h>
 #endif

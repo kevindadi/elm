@@ -5,10 +5,10 @@
  * test/test_io_format.cpp -- formatted io classes test.
  */
 
-#include <elm/util/test.h>
 #include <elm/io.h>
 #include <elm/string.h>
 #include <elm/io/BlockInStream.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 using namespace elm::io;

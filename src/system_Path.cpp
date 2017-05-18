@@ -41,7 +41,7 @@ namespace elm { namespace sys {
 /**
  * @class Path
  * This class represents a file path in the current file system.
- * @ingroup system_inter
+ * @ingroup system
  */
 
 

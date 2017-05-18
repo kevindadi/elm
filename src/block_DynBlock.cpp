@@ -7,7 +7,7 @@
 
 #include <elm/assert.h>
 #include <cstring>
-#include <elm/block/DynBlock.h>
+#include <elm/alloc/DynBlock.h>
 
 namespace elm { namespace block {
 

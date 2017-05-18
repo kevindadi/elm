@@ -5,8 +5,8 @@
  * test_plugin.cpp -- test the plugin feature.
  */
 
-#include <elm/util/test.h>
 #include <elm/sys/Thread.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 using namespace elm::sys;

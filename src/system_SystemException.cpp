@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	SystemException class implementation
  *
  *	This file is part of OTAWA
@@ -31,7 +30,7 @@ namespace elm { namespace sys {
 /**
  * @class SystemException
  * This exception is usually thrown due to system related errors.
- * @ingroup system_inter
+ * @ingroup system
  */
 
 

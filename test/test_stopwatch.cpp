@@ -6,8 +6,8 @@
  */
 
 #include <elm/sys/StopWatch.h>
-#include <elm/util/test.h>
 #include <unistd.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

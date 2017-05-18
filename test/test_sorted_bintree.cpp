@@ -5,10 +5,10 @@
  * test_sorted_bintree.cpp -- unit tests for SortedBinTree class.
  */
 
-#include <elm/util/test.h>
 #include <elm/sys/System.h>
 #include <elm/genstruct/SortedBinTree.h>
 #include <elm/genstruct/SortedBinMap.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

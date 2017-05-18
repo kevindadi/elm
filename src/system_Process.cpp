@@ -44,7 +44,7 @@ namespace elm { namespace sys {
 /**
  * @class Process
  * An interface with the processes of the OS.
- * @ingroup system_inter
+ * @ingroup system
  */
 
 

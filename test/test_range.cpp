@@ -20,8 +20,8 @@
  */
 
 #include <elm/data/Vector.h>
-#include <elm/util/test.h>
 #include "../include/elm/data/Range.h"
+#include "../include/elm/test.h"
 
 using namespace elm;
 

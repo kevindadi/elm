@@ -7,7 +7,7 @@
 
 #include <elm/system/System.h>
 #include <elm/io.h>
-#include <elm/util/test.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 using namespace elm::system;

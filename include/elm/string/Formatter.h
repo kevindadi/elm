@@ -4,12 +4,12 @@
  *
  * elm/util/Formatter.h -- Formatter class interface.
  */
-#ifndef ELM_UTIL_FORMATTER_H
-#define ELM_UTIL_FORMATTER_H
+#ifndef ELM_STRING_FORMATTER_H
+#define ELM_STRING_FORMATTER_H
 
 #include <elm/io.h>
 
-namespace elm { namespace util {
+namespace elm {
 
 // Formatter class
 class Formatter {
@@ -31,6 +31,6 @@ inline char Formatter::escape(void) const {
 	return esc;
 }
 
-} } // elm::util
+} // elm
 
-#endif	// ELM_UTIL_FORMATTER_H
+#endif	// ELM_STRING_FORMATTER_H

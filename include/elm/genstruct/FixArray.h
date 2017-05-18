@@ -22,8 +22,9 @@
 #ifndef ELM_GENSTRUCT_FIXARRAY_H_
 #define ELM_GENSTRUCT_FIXARRAY_H_
 
-#include <elm/util/Equiv.h>
 #include <elm/util/array.h>
+
+#include "../equiv.h"
 
 template <class T, int S, class E = Equiv<T> >
 class FixArray {

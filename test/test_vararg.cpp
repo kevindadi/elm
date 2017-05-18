@@ -5,8 +5,8 @@
  * test/test_vararg.cpp -- unit tests for elm/util/VarArg.h.
  */
 
-#include <elm/util/test.h>
 #include <elm/util/VarArg.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

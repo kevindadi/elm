@@ -5,11 +5,11 @@
  * test/test_lock.cpp -- unit tests for elm::Lock class.
  */
 
-#include <elm/util/test.h>
 #include <elm/sys/ProcessBuilder.h>
 #include <elm/sys/System.h>
 #include <elm/io.h>
 #include <elm/io/OutFileStream.h>
+#include "../include/elm/test.h"
 
 #ifdef __unix
 #elif defined(__WIN32) || defined(__WIN64)

@@ -23,8 +23,8 @@
 
 #include <elm/alloc/DefaultAllocator.h>
 #include <elm/compare.h>
-#include <elm/util/Equiv.h>
-#include <elm/util/HashKey.h>
+#include <elm/hash.h>
+#include <elm/equiv.h>
 
 namespace elm {
 

@@ -5,9 +5,9 @@
  * test/test_xom.cpp -- unit tests for elm::xom classes.
  */
 
-#include <elm/util/test.h>
 #include <elm/xom.h>
 #include <elm/xom/XIncluder.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 using namespace xom;

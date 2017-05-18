@@ -1,6 +1,6 @@
-#include <elm/util/test.h>
 #include <elm/alloc/StackAllocator.h>
 #include <elm/sys/System.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

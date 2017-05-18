@@ -21,7 +21,7 @@
 #ifndef ELM_DATA_RANGE_H_
 #define ELM_DATA_RANGE_H_
 
-#include <elm/util/Equiv.h>
+#include "../equiv.h"
 
 namespace elm {
 

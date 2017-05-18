@@ -5,9 +5,9 @@
  * test/test_file.cpp -- system/file classes test.
  */
 
-#include <elm/util/test.h>
 #include <elm/sys/Directory.h>
 #include <elm/io.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 using namespace elm::sys;

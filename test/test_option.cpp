@@ -5,10 +5,10 @@
  * test/test_option.cpp -- option module test.
  */
 
-#include <elm/util/test.h>
 #include <elm/options.h>
 #include <elm/option/BoolOption.h>
 #include <elm/option/ListOption.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 using namespace elm::option;

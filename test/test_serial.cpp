@@ -5,7 +5,6 @@
  * test/test_serial.cpp -- serial module test.
  */
 
-#include <elm/util/test.h>
 #include <elm/io.h>
 #include <elm/xom.h>
 #include <elm/serial/interface.h>
@@ -14,6 +13,7 @@
 #include <elm/serial/XOMUnserializer.h>
 #include <elm/serial/TextSerializer.h>
 #include <elm/genstruct/Table.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

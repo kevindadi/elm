@@ -19,12 +19,38 @@
  *	along with OTAWA; if not, write to the Free Software 
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_DATASTRUCT_ABSTRACTCOLLECTION_H
-#define ELM_DATASTRUCT_ABSTRACTCOLLECTION_H
+#ifndef ELM_DYNDATA_ABSTRACTCOLLECTION_H
+#define ELM_DYNDATA_ABSTRACTCOLLECTION_H
 
-#include <elm/datastruct/Iterator.h>
+#include <elm/PreIterator.h>
 
-namespace elm { namespace datastruct {
+namespace elm { namespace dyndata {
+
+// IteratorInst class
+template <class T>
+class AbstractIter {
+public:
+	virtual ~AbstractIter(void) { }
+	virtual bool ended(void) const = 0;
+	virtual T item(void) const = 0;
+	virtual void next(void) = 0;
+};
+
+
+// Iterator class
+template <class T>
+class Iter: public PreIterator<Iter<T>, T> {
+public:
+	inline Iter(AbstractIter<T> *_iter): iter(_iter) { }
+	inline AbstractIter<T> *instance(void) const { return iter; }
+	inline ~Iter(void) { delete iter; }
+	inline bool ended(void) const { return iter->ended(); }
+	inline T item(void) const { return iter->item(); }
+	inline void next(void) { iter->next(); }
+protected:
+	AbstractIter<T> *iter;
+};
+
 
 // AbstractCollection class
 template <class T>
@@ -35,7 +61,7 @@ public:
 	virtual bool contains(const T& item) const = 0;
 	virtual bool isEmpty(void) const = 0;
 	inline operator bool(void) const { return !isEmpty(); }
-	virtual IteratorInst<T> *iterator(void) const = 0;
+	virtual AbstractIter<T> *iterator(void) const = 0;
 };
 
 // MutableAbstractCollection class
@@ -48,9 +74,9 @@ public:
 	virtual void addAll(const AbstractCollection<T>& items) = 0;
 	virtual void remove(const T& item) = 0;
 	virtual void removeAll(const AbstractCollection<T>& items) = 0;
-	virtual void remove(const Iterator<const T&>& iter) = 0;	
+	virtual void remove(const AbstractIter<const T&>& iter) = 0;
 };
 
-} } // elm::datastruct
+} } // elm::dyndata
 
-#endif	// ELM_DATASTRUCT_ABSTRACTCOLLECTION_H
+#endif	// ELM_DYNDATA_ABSTRACTCOLLECTION_H

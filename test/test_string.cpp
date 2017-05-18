@@ -5,8 +5,8 @@
  * test/test_string.cpp -- unit tests for String class.
  */
 
-#include <elm/util/test.h>
 #include <elm/io/BlockInStream.h>
+#include "../include/elm/test.h"
 
 using namespace elm;
 

@@ -19,8 +19,8 @@
  *	along with OTAWA; if not, write to the Free Software 
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_UTIL_EQUIV_H_
-#define ELM_UTIL_EQUIV_H_
+#ifndef ELM_EQUIV_H_
+#define ELM_EQUIV_H_
 
 #include <elm/string.h>
 #include <elm/util/Pair.h>
@@ -59,9 +59,7 @@ public:
 	static AssocEquiv<K, T, E> def;
 };
 template <class K, class T, class E> AssocEquiv<K, T, E> AssocEquiv<K, T, E>::def;
-template <class K, class T> class Equiv<Pair<K, T> >
-	: public AssocEquiv<K, T> { };
 
 } // elm
 
-#endif /* ELM_UTIL_EQUIV_H_ */
+#endif /* ELM_EQUIV_H_ */

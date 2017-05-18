@@ -31,6 +31,7 @@ namespace elm { namespace io {
  * it provides access to standard input/output to communicate with the user
  * but it may be customized in any way without need of customization of classes
  * based on this class.
+ * @ingroup ios
  */
 
 

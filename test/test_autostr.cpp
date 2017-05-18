@@ -6,9 +6,9 @@
  */
 
 //#define ELM_TEST_AUTOSTR
-#include <elm/util/test.h>
 #include <elm/io.h>
 #include <elm/string.h>
+#include "../include/elm/test.h"
  
 using namespace elm;
 

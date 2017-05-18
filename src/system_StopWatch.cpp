@@ -40,7 +40,7 @@ namespace elm { namespace sys {
  * Create a stopwatch, call start() just before the code to measure and stop()
  * jus after it and delay() will return the time execute in process time (if
  * the OS allows this).
- * @ingroup system_inter
+ * @ingroup system
  */
 
 //used on windows to convert FILETIME to uint64
