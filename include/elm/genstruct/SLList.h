@@ -79,6 +79,7 @@ public:
 		friend class SLList;
 		Node *node, *prev;
 	};
+	typedef Iterator Iter;
 
 	// MutableIterator class
 	class MutableIterator: public PreIterator<Iterator, T&> {

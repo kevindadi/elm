@@ -102,6 +102,25 @@ protected:
 	M& _man;
 };
 
+
+template <class T, class M = CompareManager<T> >
+class ListSet: public SortedList<T, M> {
+public:
+	inline ListSet(void): SortedList<T, M>() { }
+	inline ListSet(M& man): SortedList<T, M>(man) { }
+	ListSet(const ListSet &l): SortedList<T, M>(static_cast<SortedList<T,M> >(l)) { }
+ 
+	void add(const T &value) {
+		if(SortedList<T, M>::contains(value))
+			return;
+		SortedList<T, M>::add(value);
+	}
+	template <template <class _> class CC> inline void addAll (const CC<T> &items)
+	{ for(typename CC<T>::Iter item(items); item; item++) add(item); }
+	static const ListSet<T, M> null;
+};
+template <class T, class M> const ListSet<T, M> ListSet<T, M>::null;
+
 #	if 0
 template <class K, class T, class M = CompareManager<K> >
 class ListMap {

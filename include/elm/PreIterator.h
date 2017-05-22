@@ -41,7 +41,11 @@ public:
 		{ ((I *)this)->next(); return *(I *)this; }
 	inline T operator*(void) const
 		{ return ((I *)this)->item(); }
+	inline T operator*(void)
+		{ return ((I *)this)->item(); }
 	inline T operator->(void) const
+		{ return ((I *)this)->item(); }
+	inline T operator->(void)
 		{ return ((I *)this)->item(); }
 };
 
