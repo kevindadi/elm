@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	ServerSocket class implementation
  *
  *	This file is part of OTAWA
@@ -45,9 +44,48 @@
 namespace elm { namespace net {
 
 /**
+ * @defgroup net_mod Network Module
+ *
+ * This module provides basic classes to implement network access in a portable way.
+ *
+ * For a client, the basic class is the @ref ClientSocket that opens a bidirectional TCP/IP
+ * connection to a remote socket. The input and output streams are provided using
+ * @ref elm::io::InStream and @ref elm::io::OutStream.
+ *
+ * In the opposite, the @ref ServerSocket provides basic facilities to build a server that
+ * opens a connection on a random or a selected port and listen for connection.
+ * A @ref Connection is manages a socket and provides access using @ref elm::io::InStream and
+ * @ref elm::io::Outstream.
+ *
+ * The @ref Server wraps around a @ref ServerSocket and implements a waiting loop for
+ * connection. When a connection is established, the protected function @ref Server::onConnection()
+ * is called to let implement the behavior of the server application itself. Below is an example
+ * of echo server:
+ * @code
+ * #include <elm/net/ServerSocket.h>
+ * using namespace elm;
+ *
+ * class EchoServer: public net::Server {
+ * public:
+ * 	EchoServer(void): Server(7) { }
+ * protected:
+ * 	virtual void onConnection(Connection& connection) {
+ * 		while(true) {
+ * 			int c = connection.in().read();
+ * 			if(c < 0)
+ * 				break;
+ * 			connection.out().write(c);
+ * 		}
+ * 	}
+ * };
+ * @endcode
+ */
+
+/**
  * @class Connection
  * This object represents a connection to a server from a client socket.
  * It provides in and out streams for this connection.
+ * @ingroup net_mod
  */
 
 
@@ -264,6 +302,7 @@ Connection::~Connection(void) {
 /**
  * @class Exception
  * Exception thrown for network errors.
+ * @ingroup net_mod
  */
 
 
@@ -293,6 +332,7 @@ Exception::Exception(const string& message): elm::MessageException(message) {
  * @class ServerSocket
  * This class provides a way to listen on a port for connection.
  * For each connection, a dedicated object is created and returned.
+ * @ingroup net_mod
  */
 
 
@@ -352,13 +392,14 @@ ServerSocket::~ServerSocket(void) {
  * This class provides a way to listen on a port for connection as server.
  * For each connection, a dedicated object is created and the method onConnection()
  * is called: this lets an inheriting class to specialize the processing of this connection.
+ * @ingroup net_mod
  */
 
 
 /**
  * Build a server on non-predefined port.
  */
-Server::Server(void): _port(-1), sock(0) {
+Server::Server(void): _port(-1), sock(0), on(false) {
 }
 
 
@@ -366,7 +407,7 @@ Server::Server(void): _port(-1), sock(0) {
  * Build a server on the given port.
  * @param port	Port to use.
  */
-Server::Server(int port): _port(port), sock(0) {
+Server::Server(int port): _port(port), sock(0), on(false) {
 }
 
 

@@ -56,8 +56,9 @@ namespace elm { namespace option {
  * @endcode
  *
  * According to your needs, as many configurations as needed can be passed
- * to the Make() object while maintaining type checking. Refer to @ref elm::option::Manager::Make
- * class documentation for the list of available configurations.
+ * to the Make() object while maintaining type checking. Refer to
+ * @ref elm::option::Manager::Make class documentation for the list of available
+ * configurations.
  *
  * The options works in the same way:
  * @code
@@ -66,8 +67,7 @@ namespace elm { namespace option {
  *
  * As many ".cmd()" method calls can be added and other configurations can be passed
  * using the same syntax. Refer to the documentations of the different option classes
- * to get details about the configuration items (@ref elm::option::Option::Make,
- * @ref elm::option::SwitchOption::Make, ...).
+ * to get details about the configuration items (@ref elm::option::Option::Make, ...).
  *
  * Using both configuration system for the manager and the option, a command is usually defined
  * as in the following example:
@@ -112,10 +112,10 @@ namespace elm { namespace option {
  * };
  * @endcode
  *
- * The example above supports only one argument. If not defined, the argument @c arg
- * is copied to the field @c my_arg. If it is already defined, an @ref OptionException
- * is raised. In this case, the passed message will be displayed and the syntax
- * of the command will automatically be displayed to the user then.
+ * The example above supports only one argument.In this example, if the argument is not defined,
+ * the argument @c arg is copied to the field @c my_arg. If it is already defined,
+ * an @ref OptionException is raised. In this case, the passed message will be displayed
+ * to the user and the syntax of the command will also automatically be displayed then.
  *
  * To use such a command, the @c main parameters, @c argc and @c argv, must be passed
  * to the @c parse() method:
@@ -131,6 +131,12 @@ namespace elm { namespace option {
  * @li type checking ability,
  * @li readibility (see below),
  * @li extensibility (new configurations may be added without breaking the old configurations).
+ *
+ * The classes allowed in this version of options are:
+ * @li @ref ActionOption
+ * @li @ref ListOption
+ * @li @ref SwitchOption
+ * @li @ref ValueOption
  *
  * @par The Old Generation Approach
  *

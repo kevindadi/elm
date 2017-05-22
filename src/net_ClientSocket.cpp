@@ -55,7 +55,7 @@ namespace elm { namespace net {
 			: _host(host), _port(port), _fd(-1), _in(0), _out(0) { }
 
 		NativeClientSocket(const string& host, const string& service)
-			: _host(host), _serv(service), _fd(-1), _in(0), _out(0) { }
+			: _host(host), _serv(service), _port(-1), _fd(-1), _in(0), _out(0) { }
 
 		NativeClientSocket(int port)
 			: _host("127.0.0.1"), _port(port), _fd(-1), _in(0), _out(0) { }
@@ -236,6 +236,7 @@ namespace elm { namespace net {
 /**
  * @class ClientSocket
  * Class implementing a client through a socket connection.
+ * @ingroup net_mod
  */
 
 
