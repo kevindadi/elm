@@ -20,7 +20,9 @@
  */
 
 #include <elm/util/SharedPtr.h>
-#include "../include/elm/test.h"
+#include <elm/test.h>
+#include <elm/sys/System.h>
+#include <elm/data/Vector.h>
 
 using namespace elm;
 
@@ -32,6 +34,31 @@ public:
 	~C(void) { del = true; }
 	int x;
 };
+
+class R {
+public:
+	R(void) { cerr << "DEBUG: new " << (void *)(this) << io::endl; }
+	~R(void) { cerr << "DEBUG: delete " << (void *)(this) << io::endl; }
+};
+
+void f(SharedPtr<R> p) {
+	SharedPtr<R> q = p;
+}
+
+class L {
+public:
+	L(SharedPtr<L> q): p(q) { cerr << "DEBUG: new " << (void *)(this) << io::endl; }
+	~L(void) { cerr << "DEBUG: delete " << (void *)(this) << io::endl; }
+	SharedPtr<L> p;
+};
+
+SharedPtr<R> id(SharedPtr<R> p) {
+	return p;
+}
+
+SharedPtr<R> make(void) {
+	return new R;
+}
 
 TEST_BEGIN(ptr)
 
@@ -78,6 +105,62 @@ TEST_BEGIN(ptr)
 			CHECK(del == false);
 		}
 		CHECK(del == true);
+	}
+
+	// parameter passing
+	{
+		cerr << "1\n";
+		SharedPtr<R> p = new R;
+		cerr << "2\n";
+		SharedPtr<R> q = p;
+		cerr << "3\n";
+		f(p);
+		cerr << "4\n";
+		f(q);
+		cerr << "5\n";
+	}
+
+	// list
+	{
+		cerr << "1\n";
+		SharedPtr<L> l;
+		cerr << "2\n";
+		l = new L(l);
+		cerr << "3\n";
+		l = new L(l);
+		cerr << "4\n";
+		l = new L(l);
+		cerr << "5\n";
+	}
+
+	// tree
+	{
+		cerr << "1\n";
+		SharedPtr<L> t = new L(0);
+		cerr << "2\n";
+		SharedPtr<L> l = new L(t);
+		cerr << "3\n";
+		SharedPtr<L> r = new L(t);
+		cerr << "4\n";
+		SharedPtr<L> ll = new L(l);
+		cerr << "5\n";
+		SharedPtr<L> lr = new L(r);
+		cerr << "5\n";
+		lr = l;
+		cerr << "6\n";
+	}
+
+	// as return
+	{
+		cerr << "1\n";
+		SharedPtr<R> p = id(new R());
+		cerr << "2\n";
+		p = id(new R());
+		cerr << "3\n";
+		p = make();
+		cerr << "4\n";
+		p = make();
+		cerr << "5\n";
 	}
 
 TEST_END

@@ -125,7 +125,18 @@ public:
 
 	inline self_t& operator=(const self_t& map) { clear(); putAll(map); return *this; }
 
+#	ifdef ELM_STAT
+		int minEntry(void) const { int m = count(0); for(int i = 1; i < _size; i++) m = min(m, count(i)); return m; }
+		int maxEntry(void) const { int m = count(0); for(int i = 1; i < _size; i++) m = max(m, count(i)); return m; }
+		int zeroEntry(void) const { int c = 0; for(int i = 0; i < _size; i++) if(count(i) == 0) c++; return c; }
+		int size(void) const { return _size; }
+#	endif
+
 private:
+#	ifdef ELM_STAT
+		int count(int i) const { int c = 0; for(node_t *n = _tab[i]; n; n = n->next) c++; return c; }
+#	endif
+
 	M& _man;
 	int _size;
 	node_t **_tab;

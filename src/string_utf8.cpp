@@ -24,16 +24,10 @@
 namespace elm { namespace utf8 {
 
 /**
- * @defgroup utf8 UTF-8 Support
- *
- * This module contains several classes and facilities to work with UTF-8 string.
- * Refer to https://tools.ietf.org/html/rfc3629.
- */
-
-/**
  * @class Iter
- * Traverse an UTF-8 string Unicode character by unicode character.
- * @ingroup utf8
+ * Traverse an UTF-8 string Unicode character based on UTF-8 unicode characters.
+ *
+ * @ingroup string
  */
 
 /**

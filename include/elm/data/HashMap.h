@@ -98,6 +98,13 @@ public:
 	inline const T& operator[](const Iter& i) const { const typename tab_t::data_t *r = _tab.get(i.key()); ASSERT(r); return (*r).snd; }
 	inline StrictMapDelegate<self_t> operator[](const Iter& i) { return StrictMapDelegate<self_t>(*this, i.key()); }
 
+#	ifdef ELM_STAT
+		int minEntry(void) const { return _tab.minEntry(); }
+		int maxEntry(void) const { return _tab.maxEntry(); }
+		int zeroEntry(void) const { return _tab.zeroEntry(); }
+		int size(void) const { return _tab.size(); }
+#	endif
+
 private:
 	tab_t _tab;
 };

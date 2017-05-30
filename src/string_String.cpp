@@ -111,6 +111,16 @@
   * for(int i = 0; i < 10; i++)
   * 	my_function(_ << "Hello world: " << i << io:endl);
   * @endcode
+  *
+  *
+  * @par Tool Classes
+  *
+  * Other classes provide several facilities:
+  * @li @ref Char -- character operations.
+  * @li @ref Formatter -- formatter for string supporting "%" escapes.
+  * @li @ref StringSplit -- splitter for strings.
+  * @li @ref utf8::Iter
+  * @li @ref utf16::Char
   */
 
 

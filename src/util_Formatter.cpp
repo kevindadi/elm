@@ -25,6 +25,7 @@ namespace elm {
  * @par
  * Note that two times the escape character is replaced by one occurrence of the
  * escape character.
+ * @ingroup string
  */
 
 

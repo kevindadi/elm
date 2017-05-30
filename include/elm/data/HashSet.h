@@ -67,6 +67,13 @@ public:
 	inline Iter operator*(void) const { return items(); }
 	static const self_t null;
 
+#	ifdef ELM_STAT
+		int minEntry(void) const { return _tab.minEntry(); }
+		int maxEntry(void) const { return _tab.maxEntry(); }
+		int zeroEntry(void) const { return _tab.zeroEntry(); }
+		int size(void) const { return _tab.size(); }
+#	endif
+
 private:
 	tab_t _tab;
 };

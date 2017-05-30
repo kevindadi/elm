@@ -25,10 +25,10 @@ namespace elm { namespace utf16 {
 
 /**
  * @class Char
- * Wrapper class around UTF-16 16 bits characters.
+ * Wrapper class around UTF-16 16-bit characters.
+ *
  * @ingroup string
  */
-
 
 /**
  * Convert UTF-16 to UTF-8, to be embedded in a string.
