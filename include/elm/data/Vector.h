@@ -109,7 +109,7 @@ public:
 
 	// MutableArray concept
 	inline void shrink(int l)
-		{ ASSERTP(0 <= l && l < cnt, "bad shrink value"); cnt = l; }
+		{ ASSERTP(0 <= l && l <= cnt, "bad shrink value"); cnt = l; }
 	inline void set(int i, const T& v)
 		{ ASSERTP(0 <= i && i < cnt, "index out of bounds"); tab[i] = v; }
 	inline void set (const Iter &i, const T &v) { set(i.i, v); }
