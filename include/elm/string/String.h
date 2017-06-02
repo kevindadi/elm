@@ -56,6 +56,9 @@ class String {
 		: buf((char *)buffer), off(offset), len(length) { lock(); };
 
 public:
+	static String make(char chr);
+	static String make(String chr, int n);
+
 	inline String(void): buf((char *)&empty_buf), off(zero_off), len(0) { lock(); };
 	inline String(const char *str, int _len) { copy(str, _len); };
 	inline String(const char *str) { if(!str) str = ""; copy(str, strlen(str)); };
@@ -68,7 +71,6 @@ public:
 		{ unlock(); copy(str.chars(), str.length()); return *this; };
 	inline String& operator=(const char *str)
 		{ if(!str) str = ""; unlock(); copy(str, strlen(str)); return *this; };
-	static String make(char chr);
 
 	inline int length(void) const { return len; };
 	inline const char *chars(void) const { return buf + off; };
@@ -122,6 +124,7 @@ public:
 	String trim(void) const;
 	String ltrim(void) const;
 	String rtrim(void) const;
+	String replace(String pat, String sub);
 };
 
 // Type shortcut

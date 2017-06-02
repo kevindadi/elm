@@ -165,11 +165,24 @@
 /**
  * Build a string with a single character.
  * @param chr	Character containing the string.
+ * @param
  * @return		Built string.
  */
 String String::make(char chr) {
 	char buf[2] = { chr, '\0' };
 	return String(buf);
+}
+
+/**
+ * Build a string by repeating n times the argument string.
+ * @param str	String to repeat.
+ * @param n		Number of repetitions.
+ */
+String String::make(String str, int n) {
+	StringBuffer buf;
+	for(int i = 0; i < n; i++)
+		buf << str;
+	return buf.toString();
 }
 
 /**
@@ -543,6 +556,27 @@ string String::rtrim(void) const {
 	while(i >= 0 && isblank(charAt(i)))
 		i--;
 	return substring(0, i + 1);
+}
+
+
+/**
+ * Replace any instance of pat by sub in the current string.
+ */
+string String::replace(string pat, string sub) {
+	int p = indexOf(pat);
+	if(p < 0)
+		return *this;
+	StringBuffer buf;
+	string c = *this;
+	while(p >= 0) {
+		if(p > 0)
+			buf << c.substring(0, p);
+		buf << sub;
+		c = c.substring(p + pat.length());
+		p = c.indexOf(pat);
+	}
+	buf << c;
+	return buf.toString();
 }
 
 
