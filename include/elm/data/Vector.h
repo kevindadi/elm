@@ -155,6 +155,9 @@ public:
 		{ if(length() != v.length()) return false; for(int i = 0; i < length(); i++) if(get(i) != v[i]) return false; return true; }
 	inline bool operator!=(const Vector<T>& v) const { return !(*this == v); }
 
+	// serialization compatibility
+	inline T& addNew(void) { if(cnt >= cap) grow(cap * 2); return tab[cnt++]; }
+
 private:
 	M& _man;
 	T *tab;

@@ -32,7 +32,7 @@ public:
 	virtual void beginCompound(const void*);
 	virtual void onItem(void);
 	virtual void endCompound(const void*);
-	virtual void onEnum(const void *address, int value, AbstractEnum& clazz); 
+	virtual void onEnum(const void *address, int value, const rtti::Enum& clazz);
 
 	// Base value serializers
 	virtual void onValue(const bool& v);
@@ -59,6 +59,7 @@ private:
 	int level;
 	io::Output& _out;
 	void prefix(AbstractType& type, const void *object);
+	void prefix(const rtti::Type& type, const void *object);
 	void suffix(void);
 };
 

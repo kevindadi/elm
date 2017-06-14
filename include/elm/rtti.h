@@ -22,26 +22,60 @@
 #ifndef ELM_RTTI_H
 #define ELM_RTTI_H
 
+#include <elm/ptr.h>
+#include <elm/rtti/Class.h>
+#include <elm/rtti/Enum.h>
 #include <elm/string.h>
 #include <elm/types.h>
-#include <elm/ptr.h>
-#include <elm/util/Initializer.h>
 
 namespace elm {
 
-// value_t structure
-class value_t {
-	CString _name;
-	int _value;
-public:
-	static inline value_t end(void) { return value_t("", 0); }
-	inline value_t(CString name, int value): _name(name), _value(value) { }
-	inline CString name(void) const { return _name; }
-	inline int value(void) const { return _value; }
-};
-inline value_t value(CString name, int value) {
-	return value_t(name, value);
-} 
+namespace rtti {
+extern const Type &int8_type, &uint8_type, &int16_type, &uint16_type, &int32_type, &uint32_type, &int64_type, &uint64_type;
+extern const Type &float_type, &double_type, &long_double_type;
+extern const Type &bool_type, &string_type, &cstring_type;
+
+// type determination
+template <class T> struct _type
+	{ static inline const Type& _(void) { return T::__type; } };
+template <> inline const Type& _type<t::int8>::_(void) { return int8_type; }
+template <> inline const Type& _type<t::int16>::_(void) { return int16_type; }
+template <> inline const Type& _type<t::int32>::_(void) { return int32_type; }
+template <> inline const Type& _type<t::int64>::_(void) { return int64_type; }
+template <> inline const Type& _type<t::uint8>::_(void) { return uint8_type; }
+template <> inline const Type& _type<t::uint16>::_(void) { return uint16_type; }
+template <> inline const Type& _type<t::uint32>::_(void) { return uint32_type; }
+template <> inline const Type& _type<t::uint64>::_(void) { return uint64_type; }
+template <> inline const Type& _type<float>::_(void) { return float_type; }
+template <> inline const Type& _type<double>::_(void) { return double_type; }
+template <> inline const Type& _type<long double>::_(void) { return long_double_type; }
+template <> inline const Type& _type<bool>::_(void) { return bool_type; }
+template <> inline const Type& _type<cstring>::_(void) { return cstring_type; }
+template <> inline const Type& _type<string>::_(void) { return string_type; }
+
+template <class T> struct _type<T *>
+	{ static inline const Type& _(void) { return _type<T>::_().pointer(); } };
+
+} // rtti
+
+template <class T> inline const rtti::Type& type_of(void) { return rtti::_type<T>::_(); }
+
+inline rtti::Enum::Value value(cstring name, int value) {
+	return rtti::Enum::Value(name, value);
+}
+
+// New support for enumeration
+#define ELM_DECLARE_ENUM(name) \
+	namespace elm { namespace rtti { template <> const Type& _type<name>::_(void); } } \
+	elm::io::Output& operator<<(io::Output& out, name value) { out << elm::type_of<name>().asEnum().nameFor(value); return out; }
+
+#define ELM_DEFINE_ENUM(type, desc) \
+		namespace elm { namespace rtti { template <> const Type& _type<type>::_(void) { return desc; } } }
+
+#ifndef ELM_NO_SHORTCUT
+#	define DECLARE_ENUM(name) 		ELM_DECLARE_ENUM(name)
+#	define DEFINE_ENUM(type, desc)	ELM_DEFINE_ENUM	(type, desc)
+#endif
 
 
 // Field class
@@ -79,14 +113,17 @@ inline DefaultField<T> field(CString name, T& value, const T& def) {
 #define ELM_ENUM(type) \
 	namespace elm { \
 		template <> struct type_info<type>: public enum_t { \
-			static value_t __vals[]; \
+			static elm::rtti::Enum::Value __vals[]; \
 			static inline CString name(void) { return "<enum " #type ">"; } \
-			static inline value_t *values(void) { return __vals; } \
+			static inline elm::rtti::Enum::Value *values(void) { return __vals; } \
 		}; \
+		namespace rtti { template <> inline const Type& _type<type>::_(void); } \
+		elm::io::Output& operator<<(io::Output& out, type value) { out << elm::type_of<type>().asEnum().nameFor(value); return out; } \
 	}
 #define ELM_ENUM_BEGIN(type) \
 	namespace elm { \
-		value_t type_info<type>::__vals[] = {
+		namespace rtti { template <> inline const Type& _type<type>::_(void) { static Enum _("", elm::type_info<type>::__vals); return _; };  } \
+		elm::rtti::Enum::Value type_info<type>::__vals[] = {
 #define ELM_ENUM_END \
 			, value("", 0) \
 		}; \
@@ -101,31 +138,6 @@ inline DefaultField<T> field(CString name, T& value, const T& def) {
 #endif
 
 
-// AbstractClass class
-class AbstractClass {
-	CString _name;
-	AbstractClass *_base;
-public:
-	inline AbstractClass(CString name, AbstractClass *base = 0)
-		: _name(name), _base(base) { };
-	virtual ~AbstractClass(void) { }
-	inline CString name(void) const { return _name; };
-	inline AbstractClass *base(void) const { return _base; };
-	virtual void *instantiate(void) = 0;
-	bool baseOf(AbstractClass *clazz);
-};
-
-
-// Class class
-template <class T>
-class Class: public AbstractClass {
-public:
-	inline Class(CString name, AbstractClass *base = 0)
-		: AbstractClass(name, base) { };
-	virtual void *instantiate(void) { return new T; }; 
-};
-
-
 // _unqualify function
 inline CString _unqualify(CString name) {
 	int pos = name.lastIndexOf(':');
@@ -134,28 +146,6 @@ inline CString _unqualify(CString name) {
 	else
 		return name.substring(pos + 1);
 }
-
-class Type {
-public:
-	static const Type *get(string name);
-	Type(string name);
-	virtual ~Type(void);
-	inline string name(void) const { return _name; }
-	const Type *pointer(void) const;
-	virtual bool canCast(const Type *t) const;
-	virtual bool isBool(void) const;
-	virtual bool isInt(void) const;
-	virtual bool isFloat(void) const;
-	virtual bool isPtr(void) const;
-	void initialize(void);
-private:
-	string _name;
-	mutable UniquePtr<Type>_pointer;
-	static Initializer<Type> _init;
-};
-
-extern const Type &int8_type, &uint8_type, &int16_type, &uint16_type, &int32_type, &uint32_type, &int64_type, &uint64_type;
-extern const Type &float_type, &double_type, &long_double_type;
 
 } // elm
 

@@ -7,6 +7,8 @@
 #ifndef ELM_SERIAL2_UNSERIALIZER_H
 #define ELM_SERIAL2_UNSERIALIZER_H
 
+#include <elm/rtti.h>
+
 namespace elm { namespace serial2 {
 
 class AbstractType;
@@ -27,7 +29,7 @@ public:
 	virtual bool nextItem(void) = 0;
 	virtual int countItems(void) = 0;
 	virtual void endCompound(void*) = 0;
-	virtual int onEnum(AbstractEnum& clazz) = 0; 
+	virtual int onEnum(const rtti::Enum& clazz) = 0;
 
 	// Base value serializers
 	virtual void onValue(bool& v) = 0;

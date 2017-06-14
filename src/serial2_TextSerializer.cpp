@@ -36,6 +36,21 @@ void TextSerializer::prefix(AbstractType& type, const void *object) {
 
 
 /**
+ * Display prefix information.
+ * @param type		Type of the object.
+ * @param object	Current object.
+ */
+void TextSerializer::prefix(const rtti::Type& type, const void *object) {
+	_out << '*' << t::intptr(object);
+	objects.put(object, true);
+	if(!level)
+		_out << ':' << type.name();
+	_out << '=';
+	level++;
+}
+
+
+/**
  * Display suffix information.
  */
 void TextSerializer::suffix(void) {
@@ -88,7 +103,7 @@ void TextSerializer::endField(void) {
  */
 void TextSerializer::onPointer(AbstractType& type, const void *object) {
 	_out << "&" << t::intptr(object) << ';';
-	if(!objects.exists(object)) {
+	if(object && !objects.exists(object)) {
 		to_process.put(pair(object, &type));
 		objects.put(object, false);
 	}
@@ -242,10 +257,10 @@ void TextSerializer::onValue(const String& v) {
 
 /**
  */
-void TextSerializer::onEnum(const void *address, int value, AbstractEnum& clazz)
+void TextSerializer::onEnum(const void *address, int value, const rtti::Enum& clazz)
 {
 	prefix(clazz, address);
-	CString name = clazz.nameOf(value);
+	CString name = clazz.nameFor(value);
 	ASSERTP(name, "empty class name");
 	_out << name;
 	suffix(); 

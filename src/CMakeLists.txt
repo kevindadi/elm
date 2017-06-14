@@ -80,6 +80,7 @@ set(LIBELM_LA_SOURCES
 	"option_StringOption.cpp"
 	"option_SwitchOption.cpp"
 	"option_ValueOption.cpp"
+	"rtti.cpp"
 	"serial2_serial.cpp"
 	"serial2_TextSerializer.cpp"
 	"stree_Tree.cpp"

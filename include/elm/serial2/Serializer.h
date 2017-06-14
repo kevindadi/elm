@@ -43,7 +43,7 @@ public:
 	virtual void beginCompound(const void *object) = 0;
 	virtual void onItem(void) = 0;
 	virtual void endCompound(const void*) = 0;
-	virtual void onEnum(const void *address, int value, AbstractEnum& clazz) = 0; 
+	virtual void onEnum(const void *address, int value, const rtti::Enum& clazz) = 0;
 
 	// Base value serializers
 	virtual void onValue(const bool& v) = 0;

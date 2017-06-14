@@ -23,10 +23,10 @@
 
 #include <elm/genstruct/HashTable.h>
 #include <elm/genstruct/Vector.h>
-#include <elm/serial2/Serializer.h>
-#include <elm/genstruct/HashTable.h>
 #include <elm/genstruct/VectorQueue.h>
+#include <elm/serial2/Serializer.h>
 #include <elm/util/Pair.h>
+#include <elm/sys/Path.h>
 
 namespace elm {
 
@@ -57,7 +57,7 @@ public:
 	virtual void onPointer(AbstractType& clazz, const void *object);
 	virtual void beginCompound(const void*);
 	virtual void endCompound(const void*);
-	virtual void onEnum(const void *address, int value, AbstractEnum& clazz); 
+	virtual void onEnum(const void *address, int value, const rtti::Enum& clazz);
 	virtual void onValue(const bool& v);
 	virtual void onValue(const signed int& v);
 	virtual void onValue(const unsigned int& v);

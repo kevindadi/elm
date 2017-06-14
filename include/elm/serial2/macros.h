@@ -17,6 +17,7 @@
 		template <class T> void __visit(T& e) { e & fields; } \
 	private:
 #define ELM_SERIALIZE(name) elm::serial2::Class<name> name::__class(#name);
+#define ELM_SERIALIZE_EXTENDED(name, ext) elm::serial2::Class<name> name::__class(#name, &ext::__class);
 #define ELM_FIELD(name) elm::field(#name, name)
 #define ELM_DFIELD(name, def) elm::field(#name, name, def)
 #define ELM_BASE(name) ((name&)*this)
@@ -25,6 +26,7 @@
 #ifndef ELM_NO_SHORTCUT
 #	define SERIALIZABLE(name, fields) ELM_SERIALIZABLE(name, fields)
 #	define SERIALIZE(name) ELM_SERIALIZE(name)
+#	define SERIALIZE_EXTENDED(name, ext) ELM_SERIALIZE_EXTENDED(name, ext)
 #	define FIELD(name) ELM_FIELD(name)
 #	define DFIELD(name, def) ELM_DFIELD(name, def)
 #	define BASE(name) ELM_BASE(name)

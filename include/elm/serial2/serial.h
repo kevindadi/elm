@@ -36,12 +36,12 @@ template <class T> struct from_class {
 	static inline AbstractType& type(const T& v) { return v.__getSerialClass(); }
 	static inline void serialize(Serializer& s, const T& v) {
 		s.beginObject(T::__class, &v);
-		((T&)v).__visit(s);
+		v.__getSerialClass().serialize(s, &v);
 		s.endObject(T::__class, &v);
 	}
 	static inline void unserialize(Unserializer& s, T& v) {
 		s.beginObject(T::__class, &v);
-		v.__visit(s);
+		v.__getSerialClass().unserialize(s, &v);
 		s.endObject(T::__class, &v);
 	}
 };
@@ -60,8 +60,8 @@ template <class T> struct from_type {
 
 // Enum information
 template <class T> struct from_enum {
-	inline static AbstractType& type(void);
-	inline static AbstractType& type(const T& v);
+	//inline static AbstractType& type(void);
+	//inline static AbstractType& type(const T& v);
 	static inline void serialize(Serializer& s, const T& v);
 	static inline void unserialize(Unserializer& s, T& v);
 };
@@ -158,7 +158,7 @@ inline Unserializer& operator>>(Unserializer &s, const DefaultField<T>& field) {
 
 
 // AbstractType class
-class AbstractType: public elm::AbstractClass {
+class AbstractType: public rtti::AbstractClass {
 public:
 	static AbstractType& T_VOID;
 	AbstractType(CString name, AbstractType *base = &T_VOID);
@@ -174,17 +174,26 @@ public:
 template <class T>
 class Class: public AbstractType {
 public:
-	inline Class(CString name): AbstractType(name) { };
+	inline Class(CString name, AbstractType *extend = 0)
+		: AbstractType(name), _extend(extend) { };
 	
 	virtual void *instantiate(void) { return new T; }; 
 	
 	virtual void unserialize(Unserializer& unserializer, void *object) {
-		__unserialize(unserializer, *static_cast<T *>(object));
+		if(_extend)
+			_extend->unserialize(unserializer, object);
+		static_cast<T *>(object)->__visit(unserializer);
 	}
 	
 	virtual void serialize(Serializer& serializer, const void *object) {
-		__serialize(serializer, *static_cast<const T *>(object));
+		if(_extend)
+			_extend->serialize(serializer, object);
+		// TODO use static_cast<> and maintain const modifier
+		((T *)object)->__visit(serializer);
 	}
+
+private:
+	AbstractType *_extend;
 };
 
 
@@ -228,6 +237,7 @@ public:
 // AbstractEnum class
 class AbstractEnum: public AbstractType {
 public:
+	typedef elm::rtti::Enum::Value value_t;
 	inline AbstractEnum(CString name, value_t *values)
 		: AbstractType(name), _values(values) { } 
 	inline CString nameOf(int v) {
@@ -270,7 +280,7 @@ template <class T> Enum<T> Enum<T>::type;
 
 
 // Enum inlines
-template <class T>
+/*template <class T>
 inline AbstractType& from_enum<T>::type(void) {
 	return Enum<T>::type;
 }
@@ -278,16 +288,16 @@ inline AbstractType& from_enum<T>::type(void) {
 template <class T>
 inline AbstractType& from_enum<T>::type(const T& v) {
 	return Enum<T>::type;
-}
+}*/
 
 template <class T>
 inline void from_enum<T>::serialize(Serializer& s, const T& v) {
-	s.onEnum(&v, v, Enum<T>::type);
+	s.onEnum(&v, v, type_of<T>().asEnum() /*Enum<T>::type*/);
 }
 
 template <class T>
 inline void from_enum<T>::unserialize(Unserializer& s, T& v) {
-	v = (T)s.onEnum(Enum<T>::type);
+	v = (T)s.onEnum(type_of<T>().asEnum() /*Enum<T>::type*/);
 }
 
 

@@ -133,9 +133,9 @@ void XOMElementSerializer::beginObject(AbstractType& clazz, const void *object) 
 			
 			
 		} else {	
-			CString name = clazz.name();	
+			string name = clazz.name();
 			cout << "LA CLASSE C EST: " << name << "\n";
-			xom::Attribute *attr  = new xom::Attribute("class", name);	
+			xom::Attribute *attr  = new xom::Attribute("class", &name);
 			ctx.elem->addAttribute(attr);
 		}	
 	
@@ -213,8 +213,8 @@ void XOMElementSerializer::endCompound(const void *object) {
 
 /**
  */
-void XOMElementSerializer::onEnum(const void *address, int value, AbstractEnum& clazz) {
-	ctx.elem->appendChild(clazz.nameOf(value));	
+void XOMElementSerializer::onEnum(const void *address, int value, const rtti::Enum& clazz) {
+	ctx.elem->appendChild(clazz.nameFor(value));
 }
 
 

@@ -27,6 +27,13 @@
 
 namespace elm { namespace serial2 {
 
+const cstring
+	XOMUnserializer::id_tag		= "id",
+	XOMUnserializer::ref_tag	= "ref",
+	XOMUnserializer::null_tag	= "NULL",
+	XOMUnserializer::class_tag	= "class";
+
+
 /**
  * @class XOMUnserializer
  * This class an unserializer for XML files using XOM module.
@@ -184,7 +191,7 @@ void XOMUnserializer::flush(void) {
 		todo.push(doc->getRootElement());
 		while(todo) {
 			xom::Element *elem = todo.pop();
-			Option<xom::String> id = elem->getAttributeValue("id");
+			Option<xom::String> id = elem->getAttributeValue(id_tag);
 			if(id)
 				elems.put(*id, elem);
 			for(int i = 0; i < elem->getChildCount(); i++) {
@@ -197,7 +204,7 @@ void XOMUnserializer::flush(void) {
 		// look in references
 		while(pending) {
 			Pair<cstring, ref_t *> pair = pending.pop();
-			if(!pair.snd->ptr) {
+			if(!pair.snd->isRecorded()) {
 
 				// look for the element
 				xom::Element *elem = elems.get(pair.fst, 0);
@@ -231,7 +238,7 @@ void XOMUnserializer::embed(AbstractType& clazz, void **ptr) {
 
 	// Find the class
 	string clazz_name = clazz.name();
-	Option<xom::String> name = ctx.elem->getAttributeValue("class");
+	Option<xom::String> name = ctx.elem->getAttributeValue(class_tag);
 	if(name) {
 		clazz_name = name;
 		uclass = AbstractType::getType(&clazz_name);
@@ -261,11 +268,11 @@ string XOMUnserializer::xline(xom::Element *element) {
  */
 void XOMUnserializer::onPointer(AbstractType& clazz, void **ptr) {
 
-	// Is there a reference ?
-	Option<xom::String> id = ctx.elem->getAttributeValue("ref");
+	// is there a reference ?
+	Option<xom::String> id = ctx.elem->getAttributeValue(ref_tag);
 
 	if(id) {
-		if (id == "NULL")
+		if (id == null_tag)
 			*ptr = NULL;
 		else {
 			ref_t *ref = refs.get(id, 0);
@@ -277,7 +284,8 @@ void XOMUnserializer::onPointer(AbstractType& clazz, void **ptr) {
 			ref->put(ptr);
 		}
 	}
-	// Else it should be embedded
+
+	// else it must be embedded
 	else
 		embed(clazz, ptr);
 }
@@ -285,18 +293,25 @@ void XOMUnserializer::onPointer(AbstractType& clazz, void **ptr) {
 
 /**
  */
-void XOMUnserializer::beginObject(AbstractType& type, void *ptr) {
-	Option<xom::String> id = ctx.elem->getAttributeValue("id");
+void XOMUnserializer::lookupID(AbstractType& type, void *ptr) {
+	Option<xom::String> id = ctx.elem->getAttributeValue(id_tag);
 	if(id) {
 		ref_t *ref = refs.get(id, 0);
-		if(ref)
-			ref->record(ptr);
-		else {
-			if(refs.get(id, 0))
+		if(ref) {
+			if(ref->isRecorded())
 				throw io::IOException(_ << "XML identifier \"" << *id << "\" used multiple times");
-			refs.put(id, new ref_t(type, ptr));
+			ref->record(ptr);
 		}
+		else
+			refs.put(id, new ref_t(type, ptr));
 	}
+}
+
+
+/**
+ */
+void XOMUnserializer::beginObject(AbstractType& type, void *ptr) {
+	lookupID(type, ptr);
 }
 
 
@@ -380,9 +395,9 @@ int XOMUnserializer::countItems(void) {
 
 /**
  */
-int XOMUnserializer::onEnum(AbstractEnum& clazz) {
+int XOMUnserializer::onEnum(const rtti::Enum& clazz) {
 	xom::String text = ctx.elem->getValue();
-	int result = clazz.valueOf(text);
+	int result = clazz.valueFor(text);
 	if(result < 0) {
 		String name = text;
 		text.free();

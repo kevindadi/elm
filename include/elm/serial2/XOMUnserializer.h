@@ -41,6 +41,8 @@ namespace serial2 {
 // XOMUnserializer class
 class XOMUnserializer: public Unserializer {
 public:
+	const static cstring id_tag, ref_tag, null_tag, class_tag;
+
 	XOMUnserializer(xom::Element *element);
 	XOMUnserializer(const char *path);
 	XOMUnserializer(cstring path);
@@ -60,7 +62,7 @@ public:
 	virtual int countItems(void);
 	virtual bool nextItem(void);
 	virtual void endCompound(void*);
-	virtual int onEnum(AbstractEnum& clazz);
+	virtual int onEnum(const rtti::Enum & clazz);
 	virtual void onValue(bool& v);
 	virtual void onValue(signed int& v);
 	virtual void onValue(unsigned int& v);
@@ -93,6 +95,7 @@ private:
 		inline ref_t(AbstractType& type, void *_ptr = 0) : t(type), ptr(_ptr), patches(0) { };
 		void put(void **_ptr);
 		void record(void *_ptr);
+		inline bool isRecorded(void) const { return ptr; }
 	} ref_t;
 
 	typedef struct context_t {
@@ -111,6 +114,7 @@ private:
 	void init(cstring path);
 	void embed(AbstractType& clazz, void **ptr);
 	string xline(xom::Element *element);
+	void lookupID(AbstractType& type, void *ptr);
 };
 
 } } // elm::serial2
