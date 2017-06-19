@@ -31,16 +31,16 @@ template <class T, class M> class Vector;
 namespace serial2 {
 
 template <class C, class T>
-class DataSerializer: public AbstractType {
+class DataSerializer: public rtti::Type {
 
 public:
 	static DataSerializer __type;
 
-	static inline AbstractType& type(void) { return __type; }
-	static inline AbstractType& type(const C& v) { return __type; }
+	static inline rtti::Type& type(void) { return __type; }
+	static inline rtti::Type& type(const C& v) { return __type; }
 
-	inline DataSerializer(void): AbstractType("data") { }
-	virtual void *instantiate(void) { return new C(); };
+	inline DataSerializer(void): rtti::Type("") { }
+	virtual void *instantiate(void) const { return new C(); };
 
 	virtual void unserialize(Unserializer& unserializer, void *object) {
 		C &coll = *static_cast<C *>(object);

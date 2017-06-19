@@ -50,14 +50,14 @@ public:
 
 	// XOMUnserializer overload
 	virtual void flush(void);
-	virtual void beginObject(AbstractType& clazz, const void *object);
-	virtual void endObject(AbstractType& clazz, const void *object);
+	virtual void beginObject(const rtti::Type& clazz, const void *object);
+	virtual void endObject(const rtti::Type& clazz, const void *object);
 	virtual void beginField(CString name);
 	virtual void endField(void);
-	virtual void onPointer(AbstractType& clazz, const void *object);
+	virtual void onPointer(const rtti::Type& clazz, const void *object);
 	virtual void beginCompound(const void*);
 	virtual void endCompound(const void*);
-	virtual void onEnum(const void *address, int value, const rtti::Enum& clazz);
+	virtual void onEnum(const void *address, int value, const rtti::Type& clazz);
 	virtual void onValue(const bool& v);
 	virtual void onValue(const signed int& v);
 	virtual void onValue(const unsigned int& v);
@@ -81,7 +81,7 @@ private:
 	genstruct::HashTable<const void*, bool> seen;
 	genstruct::HashTable<const void*, xom::Element*> done;
 	genstruct::HashTable<const void*, int> idmap;	
-	elm::genstruct::VectorQueue<Pair<AbstractType* ,const void*> > toprocess;	
+	elm::genstruct::VectorQueue<Pair<const rtti::Type* ,const void*> > toprocess;
 	
 	typedef struct context_t {
 		xom::Element *elem;

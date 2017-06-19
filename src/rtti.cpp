@@ -21,6 +21,7 @@
 
 #include <elm/data/HashMap.h>
 #include <elm/rtti.h>
+#include <elm/serial2/serial.h>
 
 /**
  * @defgroup rtti  Run-Time Type Information
@@ -56,6 +57,73 @@ public:
 	PointerType(const Type *t): Type(t->name() + "*") { }
 	virtual bool isPointer(void) const { return true; }
 };
+
+/**
+ * @class Enumerable
+ * This interface is provided by type supporting enumerated data.
+ * @ingroup rtti
+ */
+
+/**
+ */
+Enumerable::~Enumerable(void) {
+}
+
+/**
+ * @fn const Type& Enumerable::type(void) const;
+ * Get the type corresponding to this enumerable interface.
+ * @return	Corresponding type.
+ */
+
+/**
+ * @fn int Enumerable::valueFor(cstring text) const;
+ * @param text	Text of the value for.
+ * @return		Found value or -1 if not found.
+ */
+
+/**
+ * @fn cstring Enumerable::nameFor(int value) const;
+ * Find the name corresponding to the gi en enumerated
+ * value.
+ * @param value	Value to look text for.
+ * @return		If found, corresponding name or empty string.
+ */
+
+
+/**
+ * @class Serializable
+ * This interface is provided by types supporting serializable
+ * facilities.
+ * @ingroup rtti
+ */
+
+/**
+ */
+Serializable::~Serializable(void) {
+}
+
+/**
+ * @fn const Type& Serializable::type(void) const;
+ * Get the type corresponding to this enumerable interface.
+ * @return	Corresponding type.
+ */
+
+/**
+ * @fn void Serializable::serialize(serial2::Serializer& ser, const void *data);
+ * Serialize the data passed in parameter that must be of type corresponding
+ * to the interface.
+ * @param ser	Serializer to use.
+ * @param data	Pointer to data to serialize.
+ */
+
+/**
+ * @fn void Serializable::unserialize(serial2::Unserializer& uns, void *data);
+ * Unserialize the coming data from the unserializer to the place pointed by data.
+ * This place must be of the same type as the serializable type.
+ * @param uns	Unserializer to get data from.
+ * @param data	Pointer to place to unserialize in.
+ */
+
 
 /**
  * @class Type
@@ -121,6 +189,15 @@ bool Type::canCast(const Type *t) const {
 }
 
 /**
+ * Test if the type is void.
+ * Default implementation returns false.
+ * @return	True if the type is void, false else.
+ */
+bool Type::isVoid(void) const {
+	return false;
+}
+
+/**
  * Test if the type is a boolean.
  * @return	True if the type is boolean, false else.
  */
@@ -166,9 +243,9 @@ bool Type::isClass(void) const {
  * If the type is not a class, an assertion failure is raised.
  * @return	Corresponding class instance.
  */
-const AbstractClass *Type::asClass(void) const {
+const AbstractClass& Type::asClass(void) const {
 	ASSERTP(false, "type " << name() << " is not a class!");
-	return 0;
+	return *null<AbstractClass>();
 }
 
 /**
@@ -185,20 +262,48 @@ bool Type::isEnum(void) const {
  * If the type is not enumerated, an assertion failure is raised.
  * @return	Corresponding class instance.
  */
-const Enum& Type::asEnum(void) const {
+const Enumerable& Type::asEnum(void) const {
 	ASSERTP(false, "type " << name() << " is not enumerated!");
-	return *null<Enum>();
+	return *null<Enumerable>();
+}
+
+/**
+ * Test if the type is serializable. Default implementation
+ * return false.
+ * @return	True if the type is serializable, false else.
+ */
+bool Type::isSerial(void) const {
+	return false;
+}
+
+/**
+ * Return the serializable instance of this type.
+ * @warning Will raise assertion failure if the type
+ * is not serializable.
+ * @return	Serializable instance.
+ */
+const Serializable& Type::asSerial(void) const {
+	ASSERTP(false, "type " << name() << " is not serializable!");
+	return *null<Serializable>();
 }
 
 
 /**
  */
 template <class T>
-class IntType: public Type {
+class IntType: public Type, public Serializable {
 public:
 	IntType(void): Type(type_info<T>::name()) { }
 	virtual bool isInt(void) const { return true; }
 	virtual bool canCast(const Type *t) const { return t->isBool() || t->isInt() || t->isFloat(); }
+	virtual bool isSerial(void) const { return true; }
+	virtual const Serializable& asSerial(void) const { return *this; }
+
+	// Serializable interface
+	virtual const Type& type(void) const { return *this; }
+	virtual void *instantiate(void) const { return new T; }
+	virtual void serialize(serial2::Serializer& ser, const void *data) const { ser.onValue(*static_cast<const T *>(data)); }
+	virtual void unserialize(serial2::Unserializer& uns, void *data) const { uns.onValue(*static_cast<T *>(data)); }
 };
 
 /**
@@ -254,11 +359,19 @@ const Type& uint64_type = Single<IntType<t::uint64> >::_;
  * Type class for floating-point reals.
  */
 template <class T>
-class FloatType: public Type {
+class FloatType: public Type, public Serializable {
 public:
 	FloatType(void): Type(type_info<T>::name()) { }
 	virtual bool isFloat(void) const { return true; }
 	virtual bool canCast(const Type *t) const { return t->isBool() || t->isInt() || t->isFloat(); }
+	virtual bool isSerial(void) const { return true; }
+	virtual const Serializable& asSerial(void) const { return *this; }
+
+	// Serializable interface
+	virtual const Type& type(void) const { return *this; }
+	virtual void *instantiate(void) const { return new T; }
+	virtual void serialize(serial2::Serializer& ser, const void *data) const { ser.onValue(*static_cast<const T *>(data)); }
+	virtual void unserialize(serial2::Unserializer& uns, void *data) const { uns.onValue(*static_cast<T *>(data)); }
 };
 
 /**
@@ -281,11 +394,19 @@ const Type& long_double_type = Single<FloatType<long double> >::_;
 
 /**
  */
-class BoolType: public Type {
+class BoolType: public Type, public Serializable {
 public:
 	BoolType(void): Type("boo") { }
 	virtual bool canCast(const Type *t) const { return t == this || t->isInt(); }
 	virtual bool isBool(void) const { return true; }
+	virtual bool isSerial(void) const { return true; }
+	virtual const Serializable& asSerial(void) const { return *this; }
+
+	// Serializable interface
+	virtual const Type& type(void) const { return *this; }
+	virtual void *instantiate(void) const { return new bool(false); }
+	virtual void serialize(serial2::Serializer& ser, const void *data) const { ser.onValue(*static_cast<const bool *>(data)); }
+	virtual void unserialize(serial2::Unserializer& uns, void *data) const { uns.onValue(*static_cast<bool *>(data)); }
 };
 
 /**
@@ -296,10 +417,19 @@ const Type& bool_type = Single<BoolType>::_;
 
 /**
  */
-class StringType: public Type {
+class StringType: public Type, public Serializable {
 public:
 	StringType(void): Type("string") { }
+	virtual bool isSerial(void) const { return true; }
+	virtual const Serializable& asSerial(void) const { return *this; }
+
+	// Serializable interface
+	virtual const Type& type(void) const { return *this; }
+	virtual void *instantiate(void) const { return new string; }
+	virtual void serialize(serial2::Serializer& ser, const void *data) const { ser.onValue(*static_cast<const string *>(data)); }
+	virtual void unserialize(serial2::Unserializer& uns, void *data) const { uns.onValue(*static_cast<string *>(data)); }
 };
+
 
 /**
  * Type for strings.
@@ -308,10 +438,34 @@ public:
 const Type& string_type = Single<StringType>::_;
 
 /**
+ * Class to representd void type.
+ * @ingroup rtti
  */
-class CStringType: public Type {
+class VoidType: public Type {
+public:
+	VoidType(void): Type("void") { }
+	virtual bool isVoid(void) const { return true; }
+};
+
+/**
+ * Void type representation.
+ */
+const Type& void_type = Single<VoidType>::_;
+
+
+/**
+ */
+class CStringType: public Type, public Serializable {
 public:
 	CStringType(void): Type("cstring") { }
+	virtual bool isSerial(void) const { return true; }
+	virtual const Serializable& asSerial(void) const { return *this; }
+
+	// Serializable interface
+	virtual const Type& type(void) const { return *this; }
+	virtual void *instantiate(void) const { return new cstring; }
+	virtual void serialize(serial2::Serializer& ser, const void *data) const { ser.onValue(*static_cast<const cstring *>(data)); }
+	virtual void unserialize(serial2::Unserializer& uns, void *data) const { uns.onValue(*static_cast<cstring *>(data)); }
 };
 
 /**
@@ -335,7 +489,7 @@ const Type& cstring_type = Single<CStringType>::_;
  * @param name	Class named (fully qualified).
  * @param base	Base class (default none).
  */
-AbstractClass::AbstractClass(CString name, AbstractClass *base): rtti::Type(name), _base(base) {
+AbstractClass::AbstractClass(CString name, const AbstractClass& base): rtti::Type(name), _base(base) {
 }
 
 /**
@@ -359,11 +513,11 @@ AbstractClass::AbstractClass(CString name, AbstractClass *base): rtti::Type(name
  * @param clazz		Class to test.
  * @return			True if this class is a base class, false else.
  */
-bool AbstractClass::baseOf(AbstractClass *clazz) {
+bool AbstractClass::baseOf(const AbstractClass *clazz) {
 	while(clazz) {
 		if(clazz == this)
 			return true;
-		clazz = clazz->base();
+		clazz = &clazz->base();
 	}
 	return false;
 }
@@ -376,9 +530,93 @@ bool AbstractClass::isClass(void) const {
 
 /**
  */
-const AbstractClass *AbstractClass::asClass(void) const {
-	return this;
+const AbstractClass& AbstractClass::asClass(void) const {
+	return *this;
 }
+
+/**
+ * Cast a pointer from the current to the base type
+ * of this type. Default implementation is the identity.
+ * @param ptr	Pointer to the current type.
+ * @return		Pointer to the base type.
+ */
+void *AbstractClass::upCast(void *ptr) const {
+	return ptr;
+}
+
+/**
+ * Cast a pointer from the base type to the current type.
+ * Default implementation is the identity.
+ * @param ptr	Pointer to the base type.
+ * @return		Pointer to the current type.
+ */
+void *AbstractClass::downCast(void *ptr) const {
+	return ptr;
+}
+
+/**
+ * Convert ptr, pointer to the current type, to
+ * a pointer of type cls. Raise an assertion
+ * failure if cls is not a base class of the current class.
+ * @param ptr	Current class pointer.
+ * @param cls	Base class of the current class, to cast to.
+ * @return	cls class pointer.
+ */
+void *AbstractClass::upCast(void *ptr, const AbstractClass& cls) const {
+	const AbstractClass *cur = this;
+	while(cur != &cls) {
+		ASSERT(cur != &object_type);
+		ptr = cur->upCast(ptr);
+		cur = &cur->base();
+	}
+	return ptr;
+}
+
+
+/**
+ * Down cast a pointer in the current type to a pointer in cls type.
+ * If the current class is not a base class of the class cls,
+ * raises an assertion failure.
+ * @param ptr	Pointer to the current type.
+ * @param cls	Child class of the current class, to cast to.
+ * @return		Pointer to class cls.
+ */
+void *AbstractClass::downCast(void *ptr, const AbstractClass& cls) const {
+
+	// build back the list if bases
+	Vector<const AbstractClass *> bases;
+	const AbstractClass *cur = &cls;
+	while(cur != this) {
+		bases.add(cur);
+		ASSERT(cur != &object_type);
+		cur = &cur->base();
+	}
+
+	// cast in reverse order
+	for(int i = bases.count() - 1; i >= 9; i--)
+		ptr = bases[i]->downCast(ptr);
+	return ptr;
+}
+
+
+/**
+ * Base class of RTTI objects.
+ * @ingroup rtti
+ */
+class ObjectType: public AbstractClass {
+public:
+	ObjectType(void): AbstractClass("elm::Object", static_cast<const AbstractClass &>(object_type)) { }
+	virtual bool isClass(void) const { return true; }
+	virtual const AbstractClass& asClass(void) const { return *this; }
+	virtual void *instantiate(void) const { return new Object(); }
+};
+
+
+/**
+ * Type for top-level Object class.
+ * @ingroup rtti
+ */
+Type& object_type = Single<ObjectType>::_;
 
 
 /**
@@ -426,43 +664,45 @@ const AbstractClass *AbstractClass::asClass(void) const {
  */
 
 /**
- * @class Enum::value
- * Class representing a value of an enumerated type.
+ * @class AbstractEnum::value
+ * Abstract class representing a value of an enumerated type.
+ * The corresponding concrete class, Enum, provides support
+ * depending on the enumerated type itself.
  */
 
 /**
- * @fn Enum::value::value(cstring name, int value);
+ * @fn AbstractEnum::value::value(cstring name, int value);
  * Build a value.
  * @param name	Value name.
  * @param value	Value.
  */
 
 /**
- * @fn cstring Enum::value::name(void) const;
+ * @fn cstring AbstractEnum::value::name(void) const;
  * Get the value name.
  * @return	Value name.
  */
 
 /**
- * @fn int Enum::value::value(void) const;
+ * @fn int AbstractEnum::value::value(void) const;
  * Get the value.
  * @return	Value.
  */
 
 /**
- * @class Enum::make
+ * @class AbstractEnum::make
  * Maker to build an enumerated value @ref Enum.
  */
 
 /**
- * @fn make& Enum::make::value(cstring name, int value);
+ * @fn make& AbstractEnum::make::value(cstring name, int value);
  * Add a value.
  * @param name	Value name.
  * @param value	Value itself.
  */
 
 /**
- * @fn make& Enum::make::alias(cstring name, int value);
+ * @fn make& AbstractEnum::make::alias(cstring name, int value);
  * @param name	Alias name.
  * @param value	Value itself.
  */
@@ -470,7 +710,7 @@ const AbstractClass *AbstractClass::asClass(void) const {
 /**
  *
  */
-Enum::Enum(const make& make): Type(make._name), _values(make._values) {
+AbstractEnum::AbstractEnum(const make& make): Type(make._name), _values(make._values) {
 	_map.addAll(make._values);
 	_map.addAll(make._aliases);
 }
@@ -480,7 +720,7 @@ Enum::Enum(const make& make): Type(make._name), _values(make._values) {
  * @param name		Full-qualified enumerated name.
  * @param values	Values of the enumerated type.
  */
-Enum::Enum(cstring name, const Value values[]): Type(name) {
+AbstractEnum::AbstractEnum(cstring name, const Value values[]): Type(name) {
 	for(int i = 0; values[i].name(); i++) {
 		_values.add(values[i]);
 		_map.add(values[i]);
@@ -488,11 +728,15 @@ Enum::Enum(cstring name, const Value values[]): Type(name) {
 }
 
 /**
- * Get the value for a text.
- * @param text	Text of the value for.
- * @return		Found value or -1 if not found.
  */
-int Enum::valueFor(cstring text) const {
+const Type& AbstractEnum::type(void) const {
+	return *this;
+}
+
+/**
+ * Get the value for a text.
+ */
+int AbstractEnum::valueFor(cstring text) const {
 	for(Vector<Value>::Iter i = _map; i; i++)
 		if((*i).name() == text)
 			return (*i).value();
@@ -500,12 +744,8 @@ int Enum::valueFor(cstring text) const {
 }
 
 /**
- * Find the name corresponding to the gi en enumerated
- * value.
- * @param value	Value to look text for.
- * @return		If found, corresponding name or empty string.
  */
-cstring Enum::nameFor(int value) const {
+cstring AbstractEnum::nameFor(int value) const {
 	for(Iter i = values(); i; i++)
 		if((*i).value() == value)
 			return (*i).name();
@@ -514,27 +754,44 @@ cstring Enum::nameFor(int value) const {
 
 
 /**
- * @fn Enum::Iter Enum::values(void) const;
+ * @fn AbstractEnum::Iter AbstractEnum::values(void) const;
  * Get the list of values.
  * @return	List of values.
  */
 
 /**
  */
-bool Enum::canCast(const Type *t) const {
+bool AbstractEnum::canCast(const Type *t) const {
 	return t == this || t->isInt();
 }
 
 /**
  */
-bool Enum::isEnum(void) const {
+bool AbstractEnum::isEnum(void) const {
 	return true;
 }
 
 /**
  */
-const Enum& Enum::asEnum(void) const {
+const Enumerable& AbstractEnum::asEnum(void) const {
 	return *this;
 }
+
+/**
+ * @class Enum
+ * Concrete representation of an enumerated type.
+ * @ingroup rtti
+ */
+
+/**
+ * @fn Enum::Enum(const make& make);
+ * Constructor using a make object.
+ * @param make	Object providing enumeration description.
+ */
+
+/**
+ * @fn Enum::Enum(cstring name, const Value values[]);
+ * Old-style constructor only provided for backward compatibility.
+ */
 
 } }	// elm::rtti

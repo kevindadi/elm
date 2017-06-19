@@ -13,7 +13,7 @@ typedef enum my_enum_t {
 DECLARE_ENUM(my_enum_t);
 
 
-Enum my_enum_t_type(Enum::make("my_enum_t")
+Enum<my_enum_t> my_enum_t_type(AbstractEnum::make("my_enum_t")
 	.value("A", A)
 	.value("B", B)
 	.value("C", C)

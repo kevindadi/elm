@@ -21,6 +21,8 @@
 #ifndef ELM_RTTI_ENUM_H_
 #define ELM_RTTI_ENUM_H_
 
+#include <elm/serial2/Serializer.h>
+#include <elm/serial2/Unserializer.h>
 #include <elm/data/Vector.h>
 #include "Type.h"
 
@@ -28,7 +30,7 @@ namespace elm { namespace rtti {
 
 // value_t structure
 
-class Enum: public Type {
+class AbstractEnum: public Type, public Enumerable, public Serializable {
 public:
 
 	class Value {
@@ -44,7 +46,7 @@ public:
 	};
 
 	class make {
-		friend class Enum;
+		friend class AbstractEnum;
 	public:
 		inline make(cstring name): _name(name) { }
 		inline make& value(cstring name, int value) { _values.add(Value(name, value)); return *this; }
@@ -55,21 +57,37 @@ public:
 		Vector<Value> _aliases;
 	};
 
-	Enum(const make& make);
-	Enum(cstring name, const Value values[]);
-	int valueFor(cstring text) const;
-	cstring nameFor(int value) const;
+	AbstractEnum(const make& make);
+	AbstractEnum(cstring name, const Value values[]);
 
 	typedef Vector<Value>::Iter Iter;
 	inline Iter values(void) const { return Iter(_values); }
 
+	// Enumerable interface
+	virtual const Type& type(void) const;
+	virtual int valueFor(cstring text) const;
+	virtual cstring nameFor(int value) const;
+
+	// Type interface
 	virtual bool canCast(const Type *t) const;
 	virtual bool isEnum(void) const;
-	virtual const Enum& asEnum(void) const;
+	virtual const Enumerable& asEnum(void) const;
 
 private:
 	Vector<Value> _values;
 	Vector<Value> _map;
+};
+
+template <class T>
+class Enum: public AbstractEnum {
+public:
+	Enum(const make& make): AbstractEnum(make) { }
+	Enum(cstring name, const Value values[]): AbstractEnum(name, values) { }
+
+	// Serialize interface
+	virtual void *instantiate(void) const { return new T(T(0)); }
+	virtual void serialize(serial2::Serializer& ser, const void *data) const { ser.onEnum(data, int(*static_cast<const T *>(data)), *this); }
+	virtual void unserialize(serial2::Unserializer& uns, void *data) const { *static_cast<T *>(data) = T(uns.onEnum(*this)); }
 };
 
 } }		// elm::rtti

@@ -25,21 +25,6 @@ namespace elm { namespace serial2 {
  * @param type		Type of the object.
  * @param object	Current object.
  */
-void TextSerializer::prefix(AbstractType& type, const void *object) {
-	_out << '*' << t::intptr(object);
-	objects.put(object, true);
-	if(!level)
-		_out << ':' << type.name();
-	_out << '=';
-	level++;
-}
-
-
-/**
- * Display prefix information.
- * @param type		Type of the object.
- * @param object	Current object.
- */
 void TextSerializer::prefix(const rtti::Type& type, const void *object) {
 	_out << '*' << t::intptr(object);
 	objects.put(object, true);
@@ -64,7 +49,7 @@ void TextSerializer::flush(void) {
 	while(to_process) {
 		delay_t delayed = to_process.get();
 		if(!objects.get(delayed.fst, false))
-			delayed.snd->serialize(*this, delayed.fst);
+			delayed.snd->asSerial().serialize(*this, delayed.fst);
 	}
 	objects.clear();
 }
@@ -72,7 +57,7 @@ void TextSerializer::flush(void) {
 
 /**
  */
-void TextSerializer::beginObject(AbstractType& type, const void *object) {
+void TextSerializer::beginObject(const rtti::Type& type, const void *object) {
 	prefix(type, object);
 	_out << "{";
 }
@@ -80,7 +65,7 @@ void TextSerializer::beginObject(AbstractType& type, const void *object) {
 
 /**
  */
-void TextSerializer::endObject(AbstractType& type, const void *object) {
+void TextSerializer::endObject(const rtti::Type& type, const void *object) {
 	suffix();
 	_out << "}";
 }
@@ -101,7 +86,7 @@ void TextSerializer::endField(void) {
 
 /**
  */
-void TextSerializer::onPointer(AbstractType& type, const void *object) {
+void TextSerializer::onPointer(const rtti::Type& type, const void *object) {
 	_out << "&" << t::intptr(object) << ';';
 	if(object && !objects.exists(object)) {
 		to_process.put(pair(object, &type));
@@ -113,7 +98,7 @@ void TextSerializer::onPointer(AbstractType& type, const void *object) {
 /**
  */
 void TextSerializer::onValue(const bool& v) {
-	prefix(type<bool>(), &v);
+	prefix(type_of<bool>(), &v);
 	_out << (v ? "true" : "false") << ';';
 	suffix();
 }
@@ -122,7 +107,7 @@ void TextSerializer::onValue(const bool& v) {
 /**
  */
 void TextSerializer::onValue(const signed int& v) {
-	prefix(type<signed int>(), &v);
+	prefix(type_of<signed int>(), &v);
 	_out << v << ';';
 	suffix();
 }
@@ -131,7 +116,7 @@ void TextSerializer::onValue(const signed int& v) {
 /**
  */
 void TextSerializer::onValue(const unsigned int& v) {
-	prefix(type<unsigned int>(), &v);
+	prefix(type_of<unsigned int>(), &v);
 	_out << v << ';';
 	suffix();
 }
@@ -140,7 +125,7 @@ void TextSerializer::onValue(const unsigned int& v) {
 /**
  */
 void TextSerializer::onValue(const signed char& v) {
-	prefix(type<signed char>(), &v);
+	prefix(type_of<signed char>(), &v);
 	_out << (signed int)v << ';';
 	suffix();
 }
@@ -149,7 +134,7 @@ void TextSerializer::onValue(const signed char& v) {
 /**
  */
 void TextSerializer::onValue(const unsigned char& v) {
-	prefix(type<unsigned char>(), &v);
+	prefix(type_of<unsigned char>(), &v);
 	_out << (unsigned int)v << ';';
 	suffix();
 }
@@ -158,7 +143,7 @@ void TextSerializer::onValue(const unsigned char& v) {
 /**
  */
 void TextSerializer::onValue(const signed short& v) {
-	prefix(type<signed short>(), &v);
+	prefix(type_of<signed short>(), &v);
 	_out << v << ';';
 	suffix();
 }
@@ -167,7 +152,7 @@ void TextSerializer::onValue(const signed short& v) {
 /**
  */
 void TextSerializer::onValue(const unsigned short& v) {
-	prefix(type<unsigned short>(), &v);
+	prefix(type_of<unsigned short>(), &v);
 	_out << v << ';';
 	suffix();
 }
@@ -176,7 +161,7 @@ void TextSerializer::onValue(const unsigned short& v) {
 /**
  */
 void TextSerializer::onValue(const signed long& v) {
-	prefix(type<signed long>(), &v);
+	prefix(type_of<signed long>(), &v);
 	_out << v << ';';
 	suffix();
 }
@@ -185,7 +170,7 @@ void TextSerializer::onValue(const signed long& v) {
 /**
  */
 void TextSerializer::onValue(const unsigned long& v) {
-	prefix(type<unsigned long>(), &v);
+	prefix(type_of<unsigned long>(), &v);
 	_out << v << ';';
 	suffix();
 }
@@ -194,7 +179,7 @@ void TextSerializer::onValue(const unsigned long& v) {
 /**
  */
 void TextSerializer::onValue(const signed long long& v) {
-	prefix(type<signed long long>(), &v);
+	prefix(type_of<t::int64>(), &v);
 	_out << v << ';';
 	suffix();
 }
@@ -203,7 +188,7 @@ void TextSerializer::onValue(const signed long long& v) {
 /**
  */
 void TextSerializer::onValue(const unsigned long long& v) {
-	prefix(type<unsigned long long>(), &v);
+	prefix(type_of<t::uint64>(), &v);
 	_out << v << ';';
 	suffix();
 }
@@ -212,7 +197,7 @@ void TextSerializer::onValue(const unsigned long long& v) {
 /**
  */
 void TextSerializer::onValue(const float& v) {
-	prefix(type<float>(), &v);
+	prefix(type_of<float>(), &v);
 	_out << v << ';';
 	suffix();
 }
@@ -221,7 +206,7 @@ void TextSerializer::onValue(const float& v) {
 /**
  */
 void TextSerializer::onValue(const double& v) {
-	prefix(type<double>(), &v);
+	prefix(type_of<double>(), &v);
 	_out << v << ';';
 	suffix();
 }
@@ -230,7 +215,7 @@ void TextSerializer::onValue(const double& v) {
 /**
  */
 void TextSerializer::onValue(const long double& v) {
-	prefix(type<long double>(), &v);
+	prefix(type_of<long double>(), &v);
 	/* !! TODO !! */
 	_out << (double)v << ';';
 	suffix();
@@ -240,7 +225,7 @@ void TextSerializer::onValue(const long double& v) {
 /**
  */
 void TextSerializer::onValue(const CString& v) {
-	prefix(type<signed int>(), &v);
+	prefix(type_of<signed int>(), &v);
 	_out << '"' << v << "\";";
 	suffix();
 }
@@ -249,7 +234,7 @@ void TextSerializer::onValue(const CString& v) {
 /**
  */
 void TextSerializer::onValue(const String& v) {
-	prefix(type<signed int>(), &v);
+	prefix(type_of<signed int>(), &v);
 	_out << '"' << v << "\";";
 	suffix();
 }
@@ -257,10 +242,9 @@ void TextSerializer::onValue(const String& v) {
 
 /**
  */
-void TextSerializer::onEnum(const void *address, int value, const rtti::Enum& clazz)
-{
-	prefix(clazz, address);
-	CString name = clazz.nameFor(value);
+void TextSerializer::onEnum(const void *address, int value, const rtti::Type& type) {
+	prefix(type, address);
+	CString name = type.asEnum().nameFor(value);
 	ASSERTP(name, "empty class name");
 	_out << name;
 	suffix(); 

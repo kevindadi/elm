@@ -24,15 +24,15 @@ public:
 	virtual void flush(void);
 
 	// Complex type serializers
-	virtual void beginObject(AbstractType& clazz, const void *object);
-	virtual void endObject(AbstractType& clazz, const void *object);
+	virtual void beginObject(const rtti::Type& clazz, const void *object);
+	virtual void endObject(const rtti::Type& clazz, const void *object);
 	virtual void beginField(CString name);
 	virtual void endField(void);
-	virtual void onPointer(AbstractType& clazz, const void *object);
+	virtual void onPointer(const rtti::Type& clazz, const void *object);
 	virtual void beginCompound(const void*);
 	virtual void onItem(void);
 	virtual void endCompound(const void*);
-	virtual void onEnum(const void *address, int value, const rtti::Enum& clazz);
+	virtual void onEnum(const void *address, int value, const rtti::Type& clazz);
 
 	// Base value serializers
 	virtual void onValue(const bool& v);
@@ -53,12 +53,11 @@ public:
 	virtual void onValue(const String& v);
 
 private:
-	typedef Pair<const void *, AbstractType *> delay_t;
+	typedef Pair<const void *, const rtti::Type *> delay_t;
 	HashTable<const void *, bool> objects;
 	VectorQueue<delay_t> to_process;
 	int level;
 	io::Output& _out;
-	void prefix(AbstractType& type, const void *object);
 	void prefix(const rtti::Type& type, const void *object);
 	void suffix(void);
 };

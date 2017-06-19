@@ -11,8 +11,6 @@
 
 namespace elm { namespace serial2 {
 
-class AbstractType;
-
 // Unserializer class
 class Unserializer {
 public:
@@ -20,16 +18,16 @@ public:
 	virtual void flush(void) = 0;
 
 	// Complex type serializers
-	virtual void beginObject(AbstractType& clazz, void *object) = 0;
-	virtual void endObject(AbstractType& clazz, void *object) = 0;
+	virtual void beginObject(const rtti::Type& clazz, void *object) = 0;
+	virtual void endObject(const rtti::Type& clazz, void *object) = 0;
 	virtual bool beginField(CString name) = 0;
 	virtual void endField(void) = 0;
-	virtual void onPointer(AbstractType& clazz, void **object) = 0;
+	virtual void onPointer(const rtti::Type& clazz, void **object) = 0;
 	virtual bool beginCompound(void*) = 0;
 	virtual bool nextItem(void) = 0;
 	virtual int countItems(void) = 0;
 	virtual void endCompound(void*) = 0;
-	virtual int onEnum(const rtti::Enum& clazz) = 0;
+	virtual int onEnum(const rtti::Type& clazz) = 0;
 
 	// Base value serializers
 	virtual void onValue(bool& v) = 0;

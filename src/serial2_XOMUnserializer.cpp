@@ -233,23 +233,27 @@ void XOMUnserializer::flush(void) {
  * @param clazz		Type of embedded object.
  * @param ptr		Pointer to the clazz pointer.
  */
-void XOMUnserializer::embed(AbstractType& clazz, void **ptr) {
-	AbstractType *uclass = &clazz;
+void XOMUnserializer::embed(const rtti::Type& clazz, void **ptr) {
+	const rtti::Type *uclass = &clazz;
 
 	// Find the class
 	string clazz_name = clazz.name();
 	Option<xom::String> name = ctx.elem->getAttributeValue(class_tag);
 	if(name) {
 		clazz_name = name;
-		uclass = AbstractType::getType(&clazz_name);
+		uclass = rtti::Type::get(&clazz_name);
 		if(!uclass)
 			throw io::IOException(_ << "no class " << clazz_name);
+		if(!uclass->isClass())
+			throw io::IOException(_ << uclass->name() << " is not a class type");
+		if(!uclass->isSerial())
+			throw io::IOException(_ << uclass->name() << " is not serializable");
 	}
 
 	// Build the object
-	*ptr = uclass->instantiate();
+	*ptr = uclass->asSerial().instantiate();
 	beginObject(*uclass, *ptr);
-	uclass->unserialize(*this, *ptr);
+	uclass->asSerial().unserialize(*this, *ptr);
 	endObject(clazz, ptr);
 }
 
@@ -266,7 +270,7 @@ string XOMUnserializer::xline(xom::Element *element) {
 
 /**
  */
-void XOMUnserializer::onPointer(AbstractType& clazz, void **ptr) {
+void XOMUnserializer::onPointer(const rtti::Type& clazz, void **ptr) {
 
 	// is there a reference ?
 	Option<xom::String> id = ctx.elem->getAttributeValue(ref_tag);
@@ -293,7 +297,7 @@ void XOMUnserializer::onPointer(AbstractType& clazz, void **ptr) {
 
 /**
  */
-void XOMUnserializer::lookupID(AbstractType& type, void *ptr) {
+void XOMUnserializer::lookupID(const rtti::Type& type, void *ptr) {
 	Option<xom::String> id = ctx.elem->getAttributeValue(id_tag);
 	if(id) {
 		ref_t *ref = refs.get(id, 0);
@@ -310,14 +314,14 @@ void XOMUnserializer::lookupID(AbstractType& type, void *ptr) {
 
 /**
  */
-void XOMUnserializer::beginObject(AbstractType& type, void *ptr) {
+void XOMUnserializer::beginObject(const rtti::Type& type, void *ptr) {
 	lookupID(type, ptr);
 }
 
 
 /**
  */
-void XOMUnserializer::endObject(AbstractType& type, void *object) {
+void XOMUnserializer::endObject(const rtti::Type& type, void *object) {
 }
 
 
@@ -395,9 +399,9 @@ int XOMUnserializer::countItems(void) {
 
 /**
  */
-int XOMUnserializer::onEnum(const rtti::Enum& clazz) {
+int XOMUnserializer::onEnum(const rtti::Type& type) {
 	xom::String text = ctx.elem->getValue();
-	int result = clazz.valueFor(text);
+	int result = type.asEnum().valueFor(text);
 	if(result < 0) {
 		String name = text;
 		text.free();

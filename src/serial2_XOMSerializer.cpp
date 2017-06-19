@@ -91,13 +91,13 @@ XOMElementSerializer::~XOMElementSerializer(void) {
  */
 void XOMElementSerializer::flush(void) {
 	while(!toprocess.isEmpty()) {
-		Pair<AbstractType *, const void*> obj = toprocess.get();
+		Pair<const rtti::Type *, const void*> obj = toprocess.get();
 		if (!done.hasKey(obj.snd)) {
 			ctx.elem = top;
 			xom::Element *current = new xom::Element("dyn-obj");
 			ctx.elem->appendChild(current);
 			ctx.elem = current; 
-			obj.fst->serialize(*this, obj.snd);
+			obj.fst->asSerial().serialize(*this, obj.snd);
 			done.put(obj.snd, ctx.elem);
 		}
 	}
@@ -105,7 +105,7 @@ void XOMElementSerializer::flush(void) {
 
 /**
  */
-void XOMElementSerializer::beginObject(AbstractType& clazz, const void *object) {
+void XOMElementSerializer::beginObject(const rtti::Type& clazz, const void *object) {
 	
 	// object already processed?
 	if(done.hasKey(object)) {
@@ -148,7 +148,7 @@ void XOMElementSerializer::beginObject(AbstractType& clazz, const void *object) 
 
 /**
  */
-void XOMElementSerializer::endObject(AbstractType& type, const void *object) {
+void XOMElementSerializer::endObject(const rtti::Type& type, const void *object) {
 	done.put(object, ctx.elem);
 }
 
@@ -172,7 +172,7 @@ void XOMElementSerializer::endField(void) {
 
 /**
  */
-void XOMElementSerializer::onPointer(AbstractType& clazz, const void *object) {
+void XOMElementSerializer::onPointer(const rtti::Type& clazz, const void *object) {
 	String id = _ << refGet(object); 
 	xom::String *xom_id = new xom::String(id.toCString());
 	
@@ -213,8 +213,8 @@ void XOMElementSerializer::endCompound(const void *object) {
 
 /**
  */
-void XOMElementSerializer::onEnum(const void *address, int value, const rtti::Enum& clazz) {
-	ctx.elem->appendChild(clazz.nameFor(value));
+void XOMElementSerializer::onEnum(const void *address, int value, const rtti::Type& type) {
+	ctx.elem->appendChild(type.asEnum().nameFor(value));
 }
 
 

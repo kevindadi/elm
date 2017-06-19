@@ -111,7 +111,7 @@ namespace elm { namespace serial2 {
  * by hand and that contains very few serialization-systems items.
  *
  * ELM provides serializer / unserializer for usual types (like scalars, strings
- * or data collections). Yet, to serializer custom classes, the user has to
+ * or data collections). Yet, to serialize custom classes, the user has to
  * add some information about the fields to work with. In our example, we use
  * the following declaration for MyClass in MyClass.h:
  *
@@ -202,7 +202,7 @@ namespace elm { namespace serial2 {
  * @li @ref TextSerializer (serializer only).
  * @li @ref XOMSerializer / @ref XOMUnserializer.
  *
- * More will be added as the library will evolve.
+ * More will be added in future versions.
  *
  * @par Enumeration Serialization
  *
@@ -449,72 +449,6 @@ namespace elm { namespace serial2 {
 
 
 /**
- * Storage of all available classes.
- */
-static HashTable<string, AbstractType *> types;
-
-
-/**
- * Initializer hook
- */
-static Initializer<AbstractType> initializer;
-
-
-/**
- * @class AbstractType
- * Objects representing a type in the serialization module.
- * @ingroup serial
- */
-
-
-/**
- * Build an abstract type.
- * @param name	Type name (full name path with namespaces).
- * @param base	Base type for a class.
- */
-AbstractType::AbstractType(CString name, AbstractType *base)
-: rtti::AbstractClass(name, base) {
-	initializer.record(this);
-}
-
-
-/**
- * For internal use only.
- */
-void AbstractType::initialize(void) {
-	types.add(name(), this);
-}
-
-
-/**
- * Find a type by its name.
- * @param name	Type name.
- * @return		Found type or NULL.
- */
-AbstractType *AbstractType::getType(CString name) {
-	return types.get(name, 0);
-}
-
-
-/**
- */
-class VoidType: public AbstractType {
-public:
-	VoidType(void): AbstractType("<void>") { }
-	virtual void *instantiate(void) { return 0; } 
-	virtual void unserialize(Unserializer& unserializer, void *object) { }
-	virtual void serialize(Serializer& serializer, const void *object) { }
-};
-static VoidType void_type;
-
-
-/**
- * Void type representation.
- */
-AbstractType& AbstractType::T_VOID = void_type;
-
-
-/**
  * @class ExternalSolver
  * The external solver is used by @ref Serializer and @ref Unserializer classes
  * to solve reference to object out of the scope the currently serialized / unserialized
@@ -584,14 +518,14 @@ string ExternalSolver::ref(void *object) {
  */
 
 /**
- * @fn void Serializer::beginObject(AbstractType& clazz, const void *object);
+ * @fn void Serializer::beginObject(const rtti::Type& clazz, const void *object);
  * Called to start the serialization of a new object.
  * @param clazz		Object class descriptor.
  * @param object	Serialized object.
  */
 
 /**
- * @fn void Serializer::endObject(AbstractType& clazz, const void *object);
+ * @fn void Serializer::endObject(const rtti::Type& clazz, const void *object);
  * Called to finish the serialization of a new object. This function call is always
  * preceded by a call to beginObject().
  * @param clazz		Object class descriptor.
@@ -621,7 +555,7 @@ string ExternalSolver::ref(void *object) {
  */
 
 /**
- * @fn void Serializer::onPointer(AbstractType& clazz, const void *object);
+ * @fn void Serializer::onPointer(const rtti::Type& clazz, const void *object);
  * This function is called to serialize a pointer to an object.
  *
  * A special caution must be devoted to serialize pointer because of
@@ -659,7 +593,7 @@ string ExternalSolver::ref(void *object) {
  */
 
 /**
- * @fn void Serializer::onEnum(const void *address, int value, AbstractEnum& clazz);
+ * @fn void Serializer::onEnum(const void *address, int value, const rtti::Type& clazz);
  * Called when a value of type enumerate has to be serialized.
  * @param address	Address of the value.
  * @param value		Value to serialzie.
@@ -778,14 +712,14 @@ string ExternalSolver::ref(void *object) {
  */
 
 /**
- * @fn void Unserializer::beginObject(AbstractType& clazz, void *object);
+ * @fn void Unserializer::beginObject(const rtti::Type& clazz, void *object);
  * Called to start the unserialization of a new object.
  * @param clazz		Object class descriptor.
  * @param object	Unserialized object.
  */
 
 /**
- * @fn void Unserializer::endObject(AbstractType& clazz, void *object);
+ * @fn void Unserializer::endObject(const rtti::Type& clazz, void *object);
  * Called to finish the unserialization of an object. This function call is always
  * preceded by a call to beginObject().
  * @param clazz		Object class descriptor.
@@ -850,7 +784,7 @@ string ExternalSolver::ref(void *object) {
  */
 
 /**
- * @fn void Unserializer::onPointer(AbstractType& clazz, void **object);
+ * @fn void Unserializer::onPointer(const rtti::Type& clazz, void **object);
  * This function is called to unserialize a pointer to an object.
  *
  * @param clazz		Class of the pointed object.

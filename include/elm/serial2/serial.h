@@ -30,20 +30,59 @@
 
 namespace elm { namespace serial2 {
 
+class AbstractSerializableClass: public rtti::AbstractClass, public rtti::Serializable {
+public:
+	inline AbstractSerializableClass(CString name, const rtti::AbstractClass& base)
+		: rtti::AbstractClass(name, base) { }
+
+	virtual bool isSerial(void) const { return true; }
+	virtual const Serializable& asSerial(void) const { return *this; }
+	virtual const rtti::Type& type(void) const { return *this; }
+};
+
+// SerializableClass class
+template <class T, class B = rtti::Object>
+class SerializableClass: public AbstractSerializableClass {
+public:
+	inline SerializableClass(CString name, const rtti::AbstractClass& base = type_of<B>().asClass())
+		: AbstractSerializableClass(name, base) { };
+
+	virtual void *instantiate(void) const { return new T(); }
+
+	// Serializable interface
+	virtual void serialize(elm::serial2::Serializer& ser, const void *data) const {
+		const T *obj = static_cast<const T *>(data);
+		bool leaf = obj->__actual_class() == *this;
+		if(leaf)
+			ser.beginObject(*this, data);
+		if(base().isSerial())
+			base().asSerial().serialize(ser, upCast(data));
+		static_cast<const T *>(data)->__visit(ser);
+		if(leaf)
+			ser.endObject(*this, data);
+	}
+
+	virtual void unserialize(Unserializer& uns, void *data) const {
+		const T *obj = static_cast<const T *>(data);
+		bool leaf = obj->__actual_class() == *this;
+		if(leaf)
+			uns.beginObject(*this, data);
+		if(base().isSerial())
+			base().asSerial().unserialize(uns, upCast(data));
+		static_cast<T *>(data)->__visit(uns);
+		if(leaf)
+			uns.endObject(*this, data);
+	}
+
+};
+
+
 // Class information
 template <class T> struct from_class {
-	static inline AbstractType& type(void) { return T::__class; }
-	static inline AbstractType& type(const T& v) { return v.__getSerialClass(); }
-	static inline void serialize(Serializer& s, const T& v) {
-		s.beginObject(T::__class, &v);
-		v.__getSerialClass().serialize(s, &v);
-		s.endObject(T::__class, &v);
-	}
-	static inline void unserialize(Unserializer& s, T& v) {
-		s.beginObject(T::__class, &v);
-		v.__getSerialClass().unserialize(s, &v);
-		s.endObject(T::__class, &v);
-	}
+	static inline void serialize(Serializer& s, const T& v)
+		{ v.__actual_class().serialize(s, &v); }
+	static inline void unserialize(Unserializer& s, T& v)
+		{ v.__actual_class().unserialize(s, &v); }
 };
 
 
@@ -51,8 +90,6 @@ template <class T> struct from_class {
 
 // Type information
 template <class T> struct from_type {
-	inline static AbstractType& type(void);
-	inline static AbstractType& type(const T& v);
 	static inline void serialize(Serializer& s, const T& v) { s.onValue(v); }
 	static inline void unserialize(Unserializer& s, T& v) { s.onValue(v); }
 };
@@ -60,37 +97,18 @@ template <class T> struct from_type {
 
 // Enum information
 template <class T> struct from_enum {
-	//inline static AbstractType& type(void);
-	//inline static AbstractType& type(const T& v);
 	static inline void serialize(Serializer& s, const T& v);
 	static inline void unserialize(Unserializer& s, T& v);
 };
 
-// Implementation
-
-
-template <class T> inline AbstractType& type(void) {
-	return _if<type_info<T>::is_class, from_class<T>,
-				typename _if<type_info<T>::is_enum, from_enum<T>, from_type<T> >::_
-			>::_::type();
-}
-
-template <class T> inline AbstractType& type(const T& v) {
-	return _if<type_info<T>::is_class, from_class<T>,
-				typename _if<type_info<T>::is_enum, from_enum<T>, from_type<T> >::_
-			>::_::type();
-}
-
-
-// Serialization
-
+// serialization
 template <class T>
 inline void __serialize(Serializer& s, T *v) {
-	s.onPointer(type<T>(), v);
+	s.onPointer(type_of<T>(), v);
 }
 template <class T>
 inline void __serialize(Serializer& s, const T *v) {
-	s.onPointer(type<T>(), v);
+	s.onPointer(type_of<T>(), v);
 }
 template <class T>
 inline void __serialize(Serializer& s, const T& v) {
@@ -110,14 +128,14 @@ inline Serializer& operator<<(Serializer& serializer, const T& data) {
 }
 
 
-// Unserialization
+// unserialization
 template <class T>
 inline void __unserialize(Unserializer& s, T *&v) {
-	s.onPointer(type<T>(), (void **)&v);
+	s.onPointer(type_of<T>(), (void **)&v);
 }
 template <class T>
 inline void __unserialize(Unserializer& s, const T *&v) {
-	s.onPointer(type<T>(), (void **)&v);
+	s.onPointer(type_of<T>(), (void **)&v);
 }
 template <class T>
 inline void __unserialize(Unserializer& s, T& v) {
@@ -157,73 +175,6 @@ inline Unserializer& operator>>(Unserializer &s, const DefaultField<T>& field) {
 }
 
 
-// AbstractType class
-class AbstractType: public rtti::AbstractClass {
-public:
-	static AbstractType& T_VOID;
-	AbstractType(CString name, AbstractType *base = &T_VOID);
-	void initialize(void);
-	static AbstractType *getType(CString name);
-
-	virtual void unserialize(Unserializer& unserializer, void *object) = 0;
-	virtual void serialize(Serializer& serializer, const void *object) = 0;
-};
-
-
-// Class<T> class
-template <class T>
-class Class: public AbstractType {
-public:
-	inline Class(CString name, AbstractType *extend = 0)
-		: AbstractType(name), _extend(extend) { };
-	
-	virtual void *instantiate(void) { return new T; }; 
-	
-	virtual void unserialize(Unserializer& unserializer, void *object) {
-		if(_extend)
-			_extend->unserialize(unserializer, object);
-		static_cast<T *>(object)->__visit(unserializer);
-	}
-	
-	virtual void serialize(Serializer& serializer, const void *object) {
-		if(_extend)
-			_extend->serialize(serializer, object);
-		// TODO use static_cast<> and maintain const modifier
-		((T *)object)->__visit(serializer);
-	}
-
-private:
-	AbstractType *_extend;
-};
-
-
-// Type<T> class
-template <class T>
-class Type: public AbstractType {
-public:
-	inline Type(CString name = ""): AbstractType(type_info<T>::name()) { };
-	
-	virtual void *instantiate(void) { return new T; }; 
-	
-	virtual void unserialize(Unserializer& unserializer, void *object) {
-		unserializer.onValue(*static_cast<T *>(object));
-	}
-	
-	virtual void serialize(Serializer& serializer, const void *object) {
-		serializer.onValue(*static_cast<const T *>(object));
-	}
-
-	static Type<T> type;
-};
-template <class T> Type<T> Type<T>::type;
-template <class T> AbstractType& from_type<T>::type(void) {
-	return Type<T>::type;
-}
-template <class T> AbstractType& from_type<T>::type(const T& v) {
-	return Type<T>::type;
-}
-
-
 // ExternalSolver class
 class ExternalSolver {
 public:
@@ -233,71 +184,14 @@ public:
 	string ref(void *object);
 };
 
-
-// AbstractEnum class
-class AbstractEnum: public AbstractType {
-public:
-	typedef elm::rtti::Enum::Value value_t;
-	inline AbstractEnum(CString name, value_t *values)
-		: AbstractType(name), _values(values) { } 
-	inline CString nameOf(int v) {
-		for(value_t *vals = _values; vals->name(); vals++)
-			if(vals->value() == v)
-				return vals->name();
-		return "";
-	}
-	inline int valueOf(CString name) {
-		for(value_t *vals = _values; vals->name(); vals++)
-			if(vals->name() == name)
-				return vals->value();
-		return -1;
-	}
-private:
-	value_t *_values;
-};
-
-
-// Enum<T> class
-template <class T>
-class Enum: public AbstractEnum {
-public:
-	inline Enum(void)
-		: AbstractEnum(type_info<T>::name(), type_info<T>::values()) { }
-	
-	virtual void *instantiate(void) { return new T; }; 
-	
-	virtual void unserialize(Unserializer& unserializer, void *object) {
-		//unserializer.onValue(object, *static_cast<T *>(object), name(), );
-	}
-	
-	virtual void serialize(Serializer& serializer, const void *object) {
-		//serializer.onValue(*static_cast<const T *>(object));
-	}
-
-	static Enum<T> type;
-};
-template <class T> Enum<T> Enum<T>::type;
-
-
-// Enum inlines
-/*template <class T>
-inline AbstractType& from_enum<T>::type(void) {
-	return Enum<T>::type;
-}
-
-template <class T>
-inline AbstractType& from_enum<T>::type(const T& v) {
-	return Enum<T>::type;
-}*/
-
 template <class T>
 inline void from_enum<T>::serialize(Serializer& s, const T& v) {
-	s.onEnum(&v, v, type_of<T>().asEnum() /*Enum<T>::type*/);
+	s.onEnum(&v, v, type_of<T>());
 }
 
 template <class T>
 inline void from_enum<T>::unserialize(Unserializer& s, T& v) {
-	v = (T)s.onEnum(type_of<T>().asEnum() /*Enum<T>::type*/);
+	v = (T)s.onEnum(type_of<T>());
 }
 
 
@@ -341,9 +235,6 @@ inline void __unserialize(Unserializer& s, const DefaultField<T>& field) {
 	else
 		field.value() = field.defaultValue();
 }
-
-
-
 
 } } // elm::serial2
 	

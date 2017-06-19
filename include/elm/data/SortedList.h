@@ -103,6 +103,7 @@ protected:
 };
 
 
+#	if 0
 template <class T, class M = CompareManager<T> >
 class ListSet: public SortedList<T, M> {
 public:
@@ -121,7 +122,6 @@ public:
 };
 template <class T, class M> const ListSet<T, M> ListSet<T, M>::null;
 
-#	if 0
 template <class K, class T, class M = CompareManager<K> >
 class ListMap {
 public:

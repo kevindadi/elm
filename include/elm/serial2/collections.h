@@ -18,18 +18,18 @@ namespace elm { namespace serial2 {
 template <class T> class Vector;
 
 template <class C, class T>
-class CollectionSerializer: public AbstractType {
+class CollectionSerializer: public rtti::Type, public rtti::Serializable {
 
 public:
 	static CollectionSerializer __type;
 
-	static inline AbstractType& type(void) { return __type; }
-	static inline AbstractType& type(const C& v) { return __type; }
+	static inline rtti::Type& type(void) { return __type; }
+	static inline rtti::Type& type(const C& v) { return __type; }
 
-	inline CollectionSerializer(void): AbstractType("Collection") { }
-	virtual void *instantiate(void) { return new C(); };
+	inline CollectionSerializer(void): rtti::Type("") { }
+	virtual void *instantiate(void) const { return new C(); };
 
-	virtual void unserialize(Unserializer& unserializer, void *object) {
+	virtual void unserialize(Unserializer& unserializer, void *object) const {
 		C &coll = *static_cast<C *>(object);
 		int cnt = unserializer.countItems();
 		unserializer.beginCompound(&coll);
@@ -41,7 +41,7 @@ public:
 		unserializer.endCompound(&coll);
 	}
 
-	virtual void serialize(Serializer& serializer, const void *object) {
+	virtual void serialize(Serializer& serializer, const void *object) const {
 		const C &coll = *static_cast<const C *>(object);
 		serializer.beginCompound(&coll);
 		for (typename C::Iter iter(coll); iter; iter++) {
@@ -111,15 +111,15 @@ void __unserialize(Unserializer& serializer, genstruct::AllocatedTable<T>& tab) 
 
 // common template
 template <template <class I> class Coll, class T>
-class CollecAC: public AbstractType {
+class CollecAC: public rtti::Type {
 
 public:
 	static CollecAC __type;
 	
-	static inline AbstractType& type(void) { return __type; }
-	static inline AbstractType& type(const Coll<T>& v) { return __type; }
+	static inline rtti::Type& type(void) { return __type; }
+	static inline rtti::Type& type(const Coll<T>& v) { return __type; }
 
-	inline CollecAC() : AbstractType("Collection") {
+	inline CollecAC(): rtti::Type("Collection") {
 	};
 	
 	virtual void *instantiate(void) { return new Coll<T>(); }; 

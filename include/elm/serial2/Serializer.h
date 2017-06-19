@@ -21,12 +21,16 @@
 #ifndef ELM_SERIAL2_SERIALIZER_H
 #define ELM_SERIAL2_SERIALIZER_H
 
-#include <elm/rtti.h>
+namespace elm {
 
-namespace elm { namespace serial2 {
+namespace rtti {
+	class Type;
+};
 
-class AbstractType;
-class AbstractEnum;
+namespace serial2 {
+
+/*class AbstractType;
+class AbstractEnum;*/
 
 // Serializer class
 class Serializer {
@@ -35,15 +39,15 @@ public:
 	virtual void flush(void) = 0;
 
 	// Complex type serializers
-	virtual void beginObject(AbstractType& clazz, const void *object) = 0;
-	virtual void endObject(AbstractType& clazz, const void *object) = 0;
+	virtual void beginObject(const rtti::Type& clazz, const void *object) = 0;
+	virtual void endObject(const rtti::Type& clazz, const void *object) = 0;
 	virtual void beginField(CString name) = 0;
 	virtual void endField(void) = 0;
-	virtual void onPointer(AbstractType& clazz, const void *object) = 0;
+	virtual void onPointer(const rtti::Type& clazz, const void *object) = 0;
 	virtual void beginCompound(const void *object) = 0;
 	virtual void onItem(void) = 0;
 	virtual void endCompound(const void*) = 0;
-	virtual void onEnum(const void *address, int value, const rtti::Enum& clazz) = 0;
+	virtual void onEnum(const void *address, int value, const rtti::Type& clazz) = 0;
 
 	// Base value serializers
 	virtual void onValue(const bool& v) = 0;

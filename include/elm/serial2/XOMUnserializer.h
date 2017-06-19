@@ -53,16 +53,16 @@ public:
 
 	// XOMUnserializer overload
 	virtual void flush(void);
-	virtual void beginObject(AbstractType& clazz, void *object);
-	virtual void endObject(AbstractType& clazz, void *object);
+	virtual void beginObject(const rtti::Type& clazz, void *object);
+	virtual void endObject(const rtti::Type& clazz, void *object);
 	virtual bool beginField(CString name);
 	virtual void endField(void);
-	virtual void onPointer(AbstractType& clazz, void **object);
+	virtual void onPointer(const rtti::Type& clazz, void **object);
 	virtual bool beginCompound(void*);
 	virtual int countItems(void);
 	virtual bool nextItem(void);
 	virtual void endCompound(void*);
-	virtual int onEnum(const rtti::Enum & clazz);
+	virtual int onEnum(const rtti::Type & clazz);
 	virtual void onValue(bool& v);
 	virtual void onValue(signed int& v);
 	virtual void onValue(unsigned int& v);
@@ -89,10 +89,10 @@ private:
 	} patch_t;
 
 	typedef struct ref_t {
-		AbstractType& t;
+		const rtti::Type& t;
 		void *ptr;
 		patch_t *patches;
-		inline ref_t(AbstractType& type, void *_ptr = 0) : t(type), ptr(_ptr), patches(0) { };
+		inline ref_t(const rtti::Type& type, void *_ptr = 0) : t(type), ptr(_ptr), patches(0) { };
 		void put(void **_ptr);
 		void record(void *_ptr);
 		inline bool isRecorded(void) const { return ptr; }
@@ -112,9 +112,9 @@ private:
 	ExternalSolver *_solver;
 
 	void init(cstring path);
-	void embed(AbstractType& clazz, void **ptr);
+	void embed(const rtti::Type& clazz, void **ptr);
 	string xline(xom::Element *element);
-	void lookupID(AbstractType& type, void *ptr);
+	void lookupID(const rtti::Type& type, void *ptr);
 };
 
 } } // elm::serial2

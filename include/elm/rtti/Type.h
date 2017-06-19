@@ -25,10 +25,34 @@
 #include <elm/string.h>
 #include <elm/util/Initializer.h>
 
-namespace elm { namespace rtti {
+namespace elm {
+
+namespace serial2 {
+	class Serializer;
+	class Unserializer;
+};
+
+namespace rtti {
 
 class AbstractClass;
-class Enum;
+class Type;
+
+class Enumerable {
+public:
+	virtual ~Enumerable(void);
+	virtual const Type& type(void) const = 0;
+	virtual int valueFor(cstring text) const = 0;
+	virtual cstring nameFor(int value) const = 0;
+};
+
+class Serializable {
+public:
+	virtual ~Serializable(void);
+	virtual const Type& type(void) const = 0;
+	virtual void *instantiate(void) const = 0;
+	virtual void serialize(serial2::Serializer& ser, const void *data) const = 0;
+	virtual void unserialize(serial2::Unserializer& uns, void *data) const = 0;
+};
 
 class Type {
 public:
@@ -38,15 +62,23 @@ public:
 	inline string name(void) const { return _name; }
 	const Type *pointer(void) const;
 	virtual bool canCast(const Type *t) const;
+
+	virtual bool isVoid(void) const;
 	virtual bool isBool(void) const;
 	virtual bool isInt(void) const;
 	virtual bool isFloat(void) const;
 	virtual bool isPtr(void) const;
+
 	virtual bool isClass(void) const;
-	virtual const AbstractClass *asClass(void) const;
+	virtual const AbstractClass& asClass(void) const;
 	virtual bool isEnum(void) const;
-	virtual const Enum& asEnum(void) const;
+	virtual const Enumerable& asEnum(void) const;
+	virtual bool isSerial(void) const;
+	virtual const Serializable& asSerial(void) const;
+
 	void initialize(void);
+	inline bool operator==(const Type& t) const { return this == &t; }
+	inline bool operator!=(const Type& t) const { return !operator==(t); }
 private:
 	string _name;
 	mutable UniquePtr<Type>_pointer;

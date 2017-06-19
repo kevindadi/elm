@@ -21,31 +21,38 @@
 #ifndef ELM_RTTI_CLASS_H_
 #define ELM_RTTI_CLASS_H_
 
-#include "Type.h"
+#include "type_of.h"
 
 namespace elm { namespace rtti {
 
-// AbstractClass class
 class AbstractClass: public rtti::Type {
 public:
-	AbstractClass(CString name, AbstractClass *base);
-	inline AbstractClass *base(void) const { return _base; };
-	virtual void *instantiate(void) = 0;
-	bool baseOf(AbstractClass *clazz);
+	AbstractClass(CString name, const AbstractClass& base);
+	inline const AbstractClass& base(void) const { return _base; };
+	virtual void *instantiate(void) const = 0;
+	bool baseOf(const AbstractClass *clazz);
 	virtual bool isClass(void) const;
-	virtual const AbstractClass *asClass(void) const;
+	virtual const AbstractClass& asClass(void) const;
+	virtual void *upCast(void *ptr) const;
+	inline const void *upCast(const void *ptr) const { return upCast(const_cast<void *>(ptr)); }
+	virtual void *downCast(void *ptr) const;
+	inline const void *downCast(const void *ptr) const { return downCast(const_cast<void *>(ptr)); }
+	virtual void *upCast(void *ptr, const AbstractClass& cls) const;
+	inline const void *upCast(const void *ptr, const AbstractClass& cls) const { return upCast(const_cast<void *>(ptr), cls); }
+	virtual void *downCast(void *ptr, const AbstractClass& cls) const;
+	inline const void *downCast(const void *ptr, const AbstractClass& cls) const { return downCast(const_cast<void *>(ptr), cls); }
 private:
-	AbstractClass *_base;
+	const AbstractClass& _base;
 };
 
 
-// Class class
-template <class T>
+template <class T, class B = Object>
 class Class: public AbstractClass {
 public:
-	inline Class(CString name, AbstractClass *base = 0)
-		: AbstractClass(name, base) { };
-	virtual void *instantiate(void) { return new T; };
+	inline Class(CString name, const AbstractClass& base = type_of<B>()): AbstractClass(name, base) { };
+	virtual void *instantiate(void) const { return new T; };
+	virtual void *upCast(void *ptr) const { return static_cast<B *>(static_cast<T *>(ptr)); }
+	virtual void *downCast(void *ptr) const { return static_cast<T *>(static_cast<B *>(ptr)); }
 };
 
 } }	// elm::rtti
