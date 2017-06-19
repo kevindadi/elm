@@ -77,6 +77,20 @@ public:
 };
 
 
+template <class T>
+class Enum: public rtti::Enum {
+public:
+	Enum(const make& make): rtti::Enum(make) { }
+	Enum(cstring name, const Value values[]): rtti::Enum(name, values) { }
+
+	// Serialize interface
+	virtual void *instantiate(void) const { return new T(T(0)); }
+	virtual void serialize(serial2::Serializer& ser, const void *data) const { ser.onEnum(data, int(*static_cast<const T *>(data)), *this); }
+	virtual void unserialize(serial2::Unserializer& uns, void *data) const { *static_cast<T *>(data) = T(uns.onEnum(*this)); }
+};
+
+
+
 // Class information
 template <class T> struct from_class {
 	static inline void serialize(Serializer& s, const T& v)

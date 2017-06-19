@@ -26,6 +26,11 @@
 
 namespace elm {
 
+namespace t {
+	typedef void *ptr;
+	typedef const void *const_ptr;
+};
+
 template <class T>
 class Single {
 public:

@@ -26,24 +26,6 @@
 
 namespace elm {
 
-inline rtti::AbstractEnum::Value value(cstring name, int value) {
-	return rtti::AbstractEnum::Value(name, value);
-}
-
-// New support for enumeration
-#define ELM_DECLARE_ENUM(name) \
-	namespace elm { namespace rtti { template <> const Type& _type<name>::_(void); } } \
-	elm::io::Output& operator<<(io::Output& out, name value) { out << elm::type_of<name>().asEnum().nameFor(value); return out; }
-
-#define ELM_DEFINE_ENUM(type, desc) \
-		namespace elm { namespace rtti { template <> const Type& _type<type>::_(void) { return desc; } } }
-
-#ifndef ELM_NO_SHORTCUT
-#	define DECLARE_ENUM(name) 		ELM_DECLARE_ENUM(name)
-#	define DEFINE_ENUM(type, desc)	ELM_DEFINE_ENUM	(type, desc)
-#endif
-
-
 // Field class
 template <class V>
 class Field {
@@ -75,35 +57,6 @@ inline DefaultField<T> field(CString name, T& value, const T& def)
 template <class T>
 inline DefaultField<T> field(CString name, const T& value, const T& def)
 	{ return DefaultField<T>(name, const_cast<T&>(value), def); }
-
-
-// Enumerations
-#define ELM_ENUM(type) \
-	namespace elm { \
-		template <> struct type_info<type>: public enum_t { \
-			static elm::rtti::AbstractEnum::Value __vals[]; \
-			static inline CString name(void) { return "<enum " #type ">"; } \
-			static inline elm::rtti::AbstractEnum::Value *values(void) { return __vals; } \
-		}; \
-		namespace rtti { template <> inline const Type& _type<type>::_(void); } \
-		elm::io::Output& operator<<(io::Output& out, type value) { out << elm::type_of<type>().asEnum().nameFor(value); return out; } \
-	}
-#define ELM_ENUM_BEGIN(type) \
-	namespace elm { \
-		namespace rtti { template <> inline const Type& _type<type>::_(void) { static Enum<type> _("", elm::type_info<type>::__vals); return _; };  } \
-		elm::rtti::AbstractEnum::Value type_info<type>::__vals[] = {
-#define ELM_ENUM_END \
-			, value("", 0) \
-		}; \
-	}
-#define ELM_VALUE(name) elm::value(elm::_unqualify(#name), name)
-
-#ifndef ELM_NO_SHORTCUT
-#	define ENUM(type) ELM_ENUM(type)
-#	define VALUE(name) ELM_VALUE(name)
-#	define ENUM_BEGIN(type) ELM_ENUM_BEGIN(type)
-#	define ENUM_END ELM_ENUM_END
-#endif
 
 
 // _unqualify function

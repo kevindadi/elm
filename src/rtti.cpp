@@ -593,30 +593,41 @@ void *AbstractClass::downCast(void *ptr, const AbstractClass& cls) const {
 	}
 
 	// cast in reverse order
-	for(int i = bases.count() - 1; i >= 9; i--)
+	for(int i = bases.count() - 1; i >= 0; i--)
 		ptr = bases[i]->downCast(ptr);
 	return ptr;
 }
 
 
 /**
+ * @class ObjectType
  * Base class of RTTI objects.
  * @ingroup rtti
  */
-class ObjectType: public AbstractClass {
-public:
-	ObjectType(void): AbstractClass("elm::Object", static_cast<const AbstractClass &>(object_type)) { }
-	virtual bool isClass(void) const { return true; }
-	virtual const AbstractClass& asClass(void) const { return *this; }
-	virtual void *instantiate(void) const { return new Object(); }
-};
+
+/**
+ */
+ObjectType::ObjectType(void): AbstractClass("elm::Object", static_cast<const AbstractClass &>(object_type)) {
+}
+
+/**
+ */
+bool ObjectType::isClass(void) const { return true; }
+
+/**
+ */
+const AbstractClass& ObjectType::asClass(void) const { return *this; }
+
+/**
+ */
+void *ObjectType::instantiate(void) const { return new Object(); }
 
 
 /**
  * Type for top-level Object class.
  * @ingroup rtti
  */
-Type& object_type = Single<ObjectType>::_;
+ObjectType& object_type = Single<ObjectType>::_;
 
 
 /**
@@ -664,45 +675,45 @@ Type& object_type = Single<ObjectType>::_;
  */
 
 /**
- * @class AbstractEnum::value
+ * @class Enum::value
  * Abstract class representing a value of an enumerated type.
  * The corresponding concrete class, Enum, provides support
  * depending on the enumerated type itself.
  */
 
 /**
- * @fn AbstractEnum::value::value(cstring name, int value);
+ * @fn Enum::value::value(cstring name, int value);
  * Build a value.
  * @param name	Value name.
  * @param value	Value.
  */
 
 /**
- * @fn cstring AbstractEnum::value::name(void) const;
+ * @fn cstring Enum::value::name(void) const;
  * Get the value name.
  * @return	Value name.
  */
 
 /**
- * @fn int AbstractEnum::value::value(void) const;
+ * @fn int Enum::value::value(void) const;
  * Get the value.
  * @return	Value.
  */
 
 /**
- * @class AbstractEnum::make
+ * @class Enum::make
  * Maker to build an enumerated value @ref Enum.
  */
 
 /**
- * @fn make& AbstractEnum::make::value(cstring name, int value);
+ * @fn make& Enum::make::value(cstring name, int value);
  * Add a value.
  * @param name	Value name.
  * @param value	Value itself.
  */
 
 /**
- * @fn make& AbstractEnum::make::alias(cstring name, int value);
+ * @fn make& Enum::make::alias(cstring name, int value);
  * @param name	Alias name.
  * @param value	Value itself.
  */
@@ -710,7 +721,7 @@ Type& object_type = Single<ObjectType>::_;
 /**
  *
  */
-AbstractEnum::AbstractEnum(const make& make): Type(make._name), _values(make._values) {
+Enum::Enum(const make& make): Type(make._name), _values(make._values) {
 	_map.addAll(make._values);
 	_map.addAll(make._aliases);
 }
@@ -720,7 +731,7 @@ AbstractEnum::AbstractEnum(const make& make): Type(make._name), _values(make._va
  * @param name		Full-qualified enumerated name.
  * @param values	Values of the enumerated type.
  */
-AbstractEnum::AbstractEnum(cstring name, const Value values[]): Type(name) {
+Enum::Enum(cstring name, const Value values[]): Type(name) {
 	for(int i = 0; values[i].name(); i++) {
 		_values.add(values[i]);
 		_map.add(values[i]);
@@ -729,14 +740,14 @@ AbstractEnum::AbstractEnum(cstring name, const Value values[]): Type(name) {
 
 /**
  */
-const Type& AbstractEnum::type(void) const {
+const Type& Enum::type(void) const {
 	return *this;
 }
 
 /**
  * Get the value for a text.
  */
-int AbstractEnum::valueFor(cstring text) const {
+int Enum::valueFor(cstring text) const {
 	for(Vector<Value>::Iter i = _map; i; i++)
 		if((*i).name() == text)
 			return (*i).value();
@@ -745,7 +756,7 @@ int AbstractEnum::valueFor(cstring text) const {
 
 /**
  */
-cstring AbstractEnum::nameFor(int value) const {
+cstring Enum::nameFor(int value) const {
 	for(Iter i = values(); i; i++)
 		if((*i).value() == value)
 			return (*i).name();
@@ -754,26 +765,26 @@ cstring AbstractEnum::nameFor(int value) const {
 
 
 /**
- * @fn AbstractEnum::Iter AbstractEnum::values(void) const;
+ * @fn Enum::Iter AbstractEnum::values(void) const;
  * Get the list of values.
  * @return	List of values.
  */
 
 /**
  */
-bool AbstractEnum::canCast(const Type *t) const {
+bool Enum::canCast(const Type *t) const {
 	return t == this || t->isInt();
 }
 
 /**
  */
-bool AbstractEnum::isEnum(void) const {
+bool Enum::isEnum(void) const {
 	return true;
 }
 
 /**
  */
-const Enumerable& AbstractEnum::asEnum(void) const {
+const Enumerable& Enum::asEnum(void) const {
 	return *this;
 }
 

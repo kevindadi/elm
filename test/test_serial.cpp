@@ -97,7 +97,6 @@ public:
 	SimpleClass(void): ref(0), x(111), c('a'), f(0.1), str("ok"), en(VAL1) { }
 	virtual ~SimpleClass(void) { }
 };
-//CString values[] = { "VAL1", "VAL2", "VAL3", "" };
 ENUM(SimpleClass::enum_t);
 
 ENUM_BEGIN(SimpleClass::enum_t)
@@ -105,16 +104,6 @@ ENUM_BEGIN(SimpleClass::enum_t)
 	VALUE(SimpleClass::VAL2),
 	VALUE(SimpleClass::VAL3)
 ENUM_END
-
-/*rtti::Enum enum_t_type(rtti::Enum::make("SimpleClass:enum_t")
-	.value("VAL1", SimpleClass::VAL1)
-	.value("VAL2", SimpleClass::VAL2)
-	.value("VAL3", SimpleClass::VAL3)
-	.alias("SimpleClass::VAL1", SimpleClass::VAL1)
-	.alias("SimpleClass::VAL2", SimpleClass::VAL2)
-	.alias("SimpleClass::VAL3", SimpleClass::VAL3));
-template <> inline const elm::rtti::Type& elm::rtti::_type<SimpleClass::enum_t>::_(void) { return enum_t_type; }*/
-
 
 // Entry point
 TEST_BEGIN(serial)

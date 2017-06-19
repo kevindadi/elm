@@ -21,8 +21,6 @@
 #ifndef ELM_RTTI_ENUM_H_
 #define ELM_RTTI_ENUM_H_
 
-#include <elm/serial2/Serializer.h>
-#include <elm/serial2/Unserializer.h>
 #include <elm/data/Vector.h>
 #include "Type.h"
 
@@ -30,7 +28,7 @@ namespace elm { namespace rtti {
 
 // value_t structure
 
-class AbstractEnum: public Type, public Enumerable, public Serializable {
+class Enum: public Type, public Enumerable {
 public:
 
 	class Value {
@@ -46,7 +44,7 @@ public:
 	};
 
 	class make {
-		friend class AbstractEnum;
+		friend class Enum;
 	public:
 		inline make(cstring name): _name(name) { }
 		inline make& value(cstring name, int value) { _values.add(Value(name, value)); return *this; }
@@ -57,8 +55,8 @@ public:
 		Vector<Value> _aliases;
 	};
 
-	AbstractEnum(const make& make);
-	AbstractEnum(cstring name, const Value values[]);
+	Enum(const make& make);
+	Enum(cstring name, const Value values[]);
 
 	typedef Vector<Value>::Iter Iter;
 	inline Iter values(void) const { return Iter(_values); }
@@ -78,17 +76,21 @@ private:
 	Vector<Value> _map;
 };
 
-template <class T>
-class Enum: public AbstractEnum {
-public:
-	Enum(const make& make): AbstractEnum(make) { }
-	Enum(cstring name, const Value values[]): AbstractEnum(name, values) { }
+inline rtti::Enum::Value value(cstring name, int value)
+	{ return rtti::Enum::Value(name, value); }
 
-	// Serialize interface
-	virtual void *instantiate(void) const { return new T(T(0)); }
-	virtual void serialize(serial2::Serializer& ser, const void *data) const { ser.onEnum(data, int(*static_cast<const T *>(data)), *this); }
-	virtual void unserialize(serial2::Unserializer& uns, void *data) const { *static_cast<T *>(data) = T(uns.onEnum(*this)); }
-};
+// New support for enumeration
+#define ELM_DECLARE_ENUM(name) \
+	namespace elm { namespace rtti { template <> const Type& _type<name>::_(void); } } \
+	elm::io::Output& operator<<(io::Output& out, name value) { out << elm::type_of<name>().asEnum().nameFor(value); return out; }
+
+#define ELM_DEFINE_ENUM(type, desc) \
+		namespace elm { namespace rtti { template <> const Type& _type<type>::_(void) { return desc; } } }
+
+#ifndef ELM_NO_SHORTCUT
+#	define DECLARE_ENUM(name) 		ELM_DECLARE_ENUM(name)
+#	define DEFINE_ENUM(type, desc)	ELM_DEFINE_ENUM	(type, desc)
+#endif
 
 } }		// elm::rtti
 
