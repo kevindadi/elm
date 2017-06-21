@@ -23,6 +23,21 @@
 #include <elm/rtti.h>
 #include <elm/serial2/serial.h>
 
+namespace elm {
+
+/**
+ * @fn const Type& elm::type_of<T>();
+ * Get the instance type corresponding to the given type.
+ * Retrieve automatically the type for scalar and pointer
+ * or for any specialization of type_of(). For class types,
+ * look for the static `__type` member.
+ * @param T		Type an instance is looked for.
+ * @return		Corresponding type instance.
+ * @ingroup rtti
+ */
+
+namespace rtti {
+
 /**
  * @defgroup rtti  Run-Time Type Information
  *
@@ -40,10 +55,112 @@
  * * casting information,
  * * list of attributes,
  * * list of methods and constructors.
+ *
+ * This module provides several specializations for the different
+ * possible types:
+ * * Enum for enumeration type,
+ * * Class for classes.
+ *
+ * Additionally, you can use the @ref type_of<T>() function to get
+ * the RTTI type instance representing a type.
+ *
+ * RTTI for a Class
+ * ================
+ *
+ * Basically, it is as easy as declaring a global variable for the class
+ * and linking it to the @ref type_of<T>() function:
+ *
+ * @code
+ * // in the header
+ * #include <elm/rtti.h>
+ *
+ * class MyClass {
+ * 	...
+ * };
+ *
+ * extern Class<MyClass> MyClass_type;
+ * namespace elm { template <> const Type& type<MyClass>(void) { return MyClass_type; } }
+ *
+ * // in the source
+ * Class<MyClass> MyClass_type("MyClass");
+ * @endcode
+ *
+ * To avoid the ugly line, you can declare type instance as a static member of the class
+ * (the @ref elm::type_of() function will find it automatically):
+ * @code
+ * // in the header
+ * #include <elm/rtti.h>
+ *
+ * class MyClass {
+ * public:
+ * 	static Class<MyClass> __type;
+ * 	...
+ * };
+ *
+ * // in the source
+ * Class<MyClass> MyClass::__type("MyClass");
+ * @endcode
+ *
+ * Another possibility is to use the integrated macros of RTTI system:
+ * @code
+ * // in the header
+ * #include <elm/rtti.h>
+ *
+ * CLASS(MyClass)
+ * 	...
+ * END_CLASS
+ *
+ * // in the source
+ * IMPLEMENT(MyClass)
+ * @endcode
+ *
+ * If your class is extending another RTTI class, you will use instead:
+ * @code
+ * // in the header
+ * #include <elm/rtti.h>
+ *
+ * CLASS_EXTEND(MyClass, MyBaseClass)
+ * 	...
+ * END_CLASS
+ *
+ * // in the source
+ * IMPLEMENT(MyClass)
+ * @endcode
+ * And that's it.
+ *
+ * RTTI for Enumeration
+ * ====================
+ *
+ * Providing RTTI for enumration provides several benefits:
+ * * for automatic serialization / unserialization function,
+ * * for automatic output or input function,
+ * * provide aliases to some enumeration values.
+ *
+ * In the header file, you have to declare your enumeration
+ * following by a call to macro @ref DECLARE_ENUM:
+ * @code
+ * #include <elm/rtti.h>
+ *
+ * typedef enum my_enum_t {
+ * 	A = 0,
+ * 	B = 1,
+ * 	C = 2
+ * } my_enum_t;
+ * DECLARE_ENUM(my_enum_t);
+ * @endcode
+ *
+ * Then you have to create in the source the instance of type
+ * representing the enumeration followed by a call to macro
+ * @ref DEFINE_ENUM:
+ * @code
+ * Enum my_enum_t_type(Enum::make("my_enum_t")
+ * 	.value("A", A)
+ * 	.value("B", B)
+ * 	.value("C", C)
+ * 	.alias("AA", A));
+ * DEFINE_ENUM(my_enum_t, my_enum_t_type);
+ * @endcode
  */
-
-namespace elm { namespace rtti {
-
 
 /**
  * Map of available types.
@@ -441,14 +558,16 @@ const Type& string_type = Single<StringType>::_;
  * Class to representd void type.
  * @ingroup rtti
  */
-class VoidType: public Type {
+class VoidType: public AbstractClass {
 public:
-	VoidType(void): Type("void") { }
+	VoidType(void): AbstractClass("void",  static_cast<const AbstractClass &>(void_type)) { }
 	virtual bool isVoid(void) const { return true; }
+	virtual void *instantiate(void) const { ASSERTP(false, "void type cannot be instantiated!"); return 0; }
 };
 
 /**
  * Void type representation.
+ * @ingroup rtti
  */
 const Type& void_type = Single<VoidType>::_;
 
@@ -565,7 +684,7 @@ void *AbstractClass::downCast(void *ptr) const {
 void *AbstractClass::upCast(void *ptr, const AbstractClass& cls) const {
 	const AbstractClass *cur = this;
 	while(cur != &cls) {
-		ASSERT(cur != &object_type);
+		ASSERT(cur != &void_type);
 		ptr = cur->upCast(ptr);
 		cur = &cur->base();
 	}
@@ -588,7 +707,7 @@ void *AbstractClass::downCast(void *ptr, const AbstractClass& cls) const {
 	const AbstractClass *cur = &cls;
 	while(cur != this) {
 		bases.add(cur);
-		ASSERT(cur != &object_type);
+		ASSERT(cur != &void_type);
 		cur = &cur->base();
 	}
 
@@ -607,27 +726,27 @@ void *AbstractClass::downCast(void *ptr, const AbstractClass& cls) const {
 
 /**
  */
-ObjectType::ObjectType(void): AbstractClass("elm::Object", static_cast<const AbstractClass &>(object_type)) {
-}
+/*ObjectType::ObjectType(void): AbstractClass("elm::Object", static_cast<const AbstractClass &>(object_type)) {
+}*/
 
 /**
  */
-bool ObjectType::isClass(void) const { return true; }
+//bool ObjectType::isClass(void) const { return true; }
 
 /**
  */
-const AbstractClass& ObjectType::asClass(void) const { return *this; }
+//const AbstractClass& ObjectType::asClass(void) const { return *this; }
 
 /**
  */
-void *ObjectType::instantiate(void) const { return new Object(); }
+//void *ObjectType::instantiate(void) const { return new Object(); }
 
 
 /**
  * Type for top-level Object class.
  * @ingroup rtti
  */
-ObjectType& object_type = Single<ObjectType>::_;
+//ObjectType& object_type = Single<ObjectType>::_;
 
 
 /**
@@ -803,6 +922,88 @@ const Enumerable& Enum::asEnum(void) const {
 /**
  * @fn Enum::Enum(cstring name, const Value values[]);
  * Old-style constructor only provided for backward compatibility.
+ */
+
+/**
+ * @def IS_CLASS_EXTEND(name, base)
+ * Generate the content of a class to record it in the RTTI database.
+ * @param name	Name of the class.
+ * @param base	Base of the class.
+ * @ingroup rtti
+ */
+
+/**
+ * @def IS_CLASS(name, base)
+ * Generate the content of a class to record it in the RTTI database.
+ * @param name	Name of the class.
+ * @ingroup rtti
+ */
+
+/**
+ * @def CLASS_EXTEND(name, base)
+ * All-in-one declaration macro for a class recorded in RTTI.
+ * It substitutes to the `class` keyword and the class definition
+ * must be ended by @ref END_CLASS.
+ * @param name	Name of the class.
+ * @param base	Base class.
+ * @ingroup rtti
+ */
+
+/**
+ * @def CLASS(name, base)
+ * All-in-one declaration macro for a class recorded in RTTI.
+ * It substitutes to the `class` keyword and the class definition
+ * must be ended by @ref END_CLASS.
+ * @param name	Name of the class.
+ * @ingroup rtti
+ */
+
+/**
+ * @def END_CLASS
+ * Ends the declaration of a RTTI class declared by
+ * @ref CLASS or @ref CLASS_EXTEND.
+ * @ingroup rtti
+ */
+
+/**
+ * @def IMPLEMENT(name)
+ * Provide the implementation of a RTTI class. Must be put in the source
+ * file of the class.
+ * @param name	Name of the class.
+ * @ingroup rtti
+ */
+
+/**
+ * @def DECLARE_ENUM(name)
+ * Declare an enumeration as supported by RTTI. Must be put just
+ * after the enumeration declaration in the header file.
+ * @param name	Enumeration type name.
+ * @ingroup rtti
+ */
+
+/**
+ * @def DEFINE_ENUM(type, desc)
+ * Define the instance of type for an enumeration type.
+ * Must be put in a source file.
+ * @param type	The enumeration type.
+ * @param desc	The instance of type describing the enumeration type.
+ * @ingroup rtti.
+ */
+
+/**
+ * @def BEGIN_ENUM(type)
+ * Build the type instance representing an enumeration type.
+ * Must be followed by the declaration of values of the type
+ * and aliases as in @ref Enum::make and ended by @ref END_ENUM.
+ * @param type	Enumeration type itself.
+ * @ingroup rtti
+ */
+
+/**
+ * @def END_ENUM
+ * End the definition of the type instance of an enumeration type.
+ * Must follow a @ref BEGIN_ENUM.
+ * @ingroup rtti
  */
 
 } }	// elm::rtti

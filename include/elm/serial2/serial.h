@@ -30,9 +30,9 @@
 
 namespace elm { namespace serial2 {
 
-class AbstractSerializableClass: public rtti::AbstractClass, public rtti::Serializable {
+class AbstractClass: public rtti::AbstractClass, public rtti::Serializable {
 public:
-	inline AbstractSerializableClass(CString name, const rtti::AbstractClass& base)
+	inline AbstractClass(CString name, const rtti::AbstractClass& base)
 		: rtti::AbstractClass(name, base) { }
 
 	virtual bool isSerial(void) const { return true; }
@@ -41,39 +41,22 @@ public:
 };
 
 // SerializableClass class
-template <class T, class B = rtti::Object>
-class SerializableClass: public AbstractSerializableClass {
+template <class T, class B = void>
+class Class: public AbstractClass {
 public:
-	inline SerializableClass(CString name, const rtti::AbstractClass& base = type_of<B>().asClass())
-		: AbstractSerializableClass(name, base) { };
+	inline Class(CString name, const rtti::AbstractClass& base = type_of<B>().asClass())
+		: AbstractClass(name, base) { };
 
 	virtual void *instantiate(void) const { return new T(); }
 
 	// Serializable interface
 	virtual void serialize(elm::serial2::Serializer& ser, const void *data) const {
-		const T *obj = static_cast<const T *>(data);
-		bool leaf = obj->__actual_class() == *this;
-		if(leaf)
-			ser.beginObject(*this, data);
-		if(base().isSerial())
-			base().asSerial().serialize(ser, upCast(data));
-		static_cast<const T *>(data)->__visit(ser);
-		if(leaf)
-			ser.endObject(*this, data);
+		__serialize(ser, *static_cast<const T *>(data));
 	}
 
 	virtual void unserialize(Unserializer& uns, void *data) const {
-		const T *obj = static_cast<const T *>(data);
-		bool leaf = obj->__actual_class() == *this;
-		if(leaf)
-			uns.beginObject(*this, data);
-		if(base().isSerial())
-			base().asSerial().unserialize(uns, upCast(data));
-		static_cast<T *>(data)->__visit(uns);
-		if(leaf)
-			uns.endObject(*this, data);
+		__unserialize(uns, *static_cast<T *>(data));
 	}
-
 };
 
 
@@ -92,14 +75,34 @@ public:
 
 
 // Class information
+template <class T>
+inline void __serialize_body(Serializer& s, const T *v) {
+	//__serialize_body(s, static_cast<const typename rtti::__base<T>::_ *>(v));
+	__serialize_body(s, static_cast<const typename T::__base *>(v));
+	v->__visit(s);
+}
+template <> inline void __serialize_body(Serializer& s, const void *v) { }
+
+template <class T>
+inline void __unserialize_body(Unserializer& s, T *v) {
+	//__unserialize_body(s, static_cast<typename rtti::__base<T>::_ *>(v));
+	__unserialize_body(s, static_cast<typename T::__base *>(v));
+	v->__visit(s);
+}
+template <> inline void __unserialize_body(Unserializer& s, void *v) { }
+
 template <class T> struct from_class {
-	static inline void serialize(Serializer& s, const T& v)
-		{ v.__actual_class().serialize(s, &v); }
-	static inline void unserialize(Unserializer& s, T& v)
-		{ v.__actual_class().unserialize(s, &v); }
+	static inline void serialize(Serializer& s, const T& v) {
+		s.beginObject(type_of<T>(), &v);
+		__serialize_body(s, &v);
+		s.endObject(type_of<T>(), &v);
+	}
+	static inline void unserialize(Unserializer& s, T& v) {
+		s.beginObject(type_of<T>(), &v);
+		__unserialize_body(s, &v);
+		s.endObject(type_of<T>(), &v);
+	}
 };
-
-
 
 
 // Type information

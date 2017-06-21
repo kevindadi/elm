@@ -35,6 +35,7 @@ typedef struct default_t {
 	enum { is_ref = 0 };
 	enum { is_deep = 0 };
 	enum { is_virtual = 0 };
+	enum { is_void = 0 };
 } default_t;
 
 // asis_t info
@@ -108,6 +109,12 @@ template <> struct type_info<bool>: public scalar_t, public asis_t<bool> {
 	static const bool max = true;
 	static const bool null = false;
 	static inline CString name(void) { return "bool"; }
+};
+
+
+// void specialization
+template <> struct type_info<void> {
+	enum { is_void = 1 };
 };
 
 

@@ -13,12 +13,14 @@ typedef enum my_enum_t {
 DECLARE_ENUM(my_enum_t);
 
 
-Enum my_enum_t_type(Enum::make("my_enum_t")
+//Enum my_enum_t_type(Enum::make("my_enum_t")
+BEGIN_ENUM(my_enum_t)
 	.value("A", A)
 	.value("B", B)
 	.value("C", C)
-	.alias("AA", A));
-DEFINE_ENUM(my_enum_t, my_enum_t_type);
+	.alias("AA", A)
+END_ENUM
+//DEFINE_ENUM(my_enum_t, my_enum_t_type);
 
 class AA {
 public:
@@ -26,40 +28,40 @@ public:
 	int x;
 };
 
-class BB {
+CLASS(BB)
 public:
-	static rtti::Class<BB> __type;
 	BB(void): y(111) { }
 	int y;
-};
+END_CLASS
 
 class CC: public AA, public BB {
+	IS_CLASS_EXTEND(CC, BB)
 public:
-	static rtti::Class<CC, BB> __type;
 	CC(void): z(0) { }
 	int z;
 };
 
-class DD: public CC {
-public:
-	static rtti::Class<DD, CC> __type;
-};
+CLASS_EXTEND(DD, CC)
+END_CLASS
 
-rtti::Class<BB> BB::__type("BB");
-rtti::Class<CC, BB> CC::__type("CC");
-rtti::Class<DD, CC> DD::__type("DD");
+IMPLEMENT(BB);
+IMPLEMENT(CC);
+IMPLEMENT(DD);
 
 TEST_BEGIN(rtti)
-
-	CHECK_EQUAL(&int8_type, &type_of<t::int8>());
-	CHECK_EQUAL(static_cast<const Type *>(&my_enum_t_type), &type_of<my_enum_t>());
-	CHECK_EQUAL(my_enum_t_type.valueFor("A"), int(A));
-	CHECK_EQUAL(my_enum_t_type.valueFor("B"), int(B));
-	CHECK_EQUAL(my_enum_t_type.valueFor("C"), int(C));
-	CHECK_EQUAL(my_enum_t_type.valueFor("AA"), int(A));
-	CHECK_EQUAL(my_enum_t_type.nameFor(A), cstring("A"));
-	CHECK_EQUAL(my_enum_t_type.nameFor(B), cstring("B"));
-	CHECK_EQUAL(my_enum_t_type.nameFor(C), cstring("C"));
+	{
+		CHECK_EQUAL(&int8_type, &type_of<t::int8>());
+		const Type& t = type_of<my_enum_t>();
+		CHECK_EQUAL(t.name(), string("my_enum_t"));
+		const Enumerable& et = t.asEnum();
+		CHECK_EQUAL(et.valueFor("A"), int(A));
+		CHECK_EQUAL(et.valueFor("B"), int(B));
+		CHECK_EQUAL(et.valueFor("C"), int(C));
+		CHECK_EQUAL(et.valueFor("AA"), int(A));
+		CHECK_EQUAL(et.nameFor(A), cstring("A"));
+		CHECK_EQUAL(et.nameFor(B), cstring("B"));
+		CHECK_EQUAL(et.nameFor(C), cstring("C"));
+	}
 
 	{
 		DD o;

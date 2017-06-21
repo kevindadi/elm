@@ -58,13 +58,13 @@ public:
 
 // Item2Class
 class Item2Class: public ItemClass {
-	SERIALIZABLE(Item2Class, x)
+	SERIALIZABLE_EXTEND(Item2Class, ItemClass, x)
 public:
 	virtual int getX(void) { return 666; };
 	virtual ~Item2Class(void) { }
 	int x;
 };
-
+//EXTEND(Item2Class, ItemClass);
 
 // SimpleClass
 class SimpleClass {

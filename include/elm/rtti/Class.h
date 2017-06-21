@@ -48,29 +48,13 @@ private:
 };
 
 
-class ObjectType: public AbstractClass {
-public:
-	typedef void *ptr_t;
-	typedef const void *const_ptr_t;
-	ObjectType(void);
-	virtual bool isClass(void) const;
-	virtual const AbstractClass& asClass(void) const;
-	virtual void *instantiate(void) const;
-};
-extern ObjectType& object_type;
-template <> inline const Type& _type<Object>::_(void) { return object_type; }
-
-template <class T> struct is_object { enum { _ = 0 }; };
-template <> struct is_object<Object> { enum { _ = 1 }; };
-
-template <class T, class B = Object>
+template <class T, class B = void>
 class Class: public AbstractClass {
-	typedef typename _if<is_object<B>::_, void, B>::_ base_t;
 public:
 	inline Class(CString name, const AbstractClass& base = type_of<B>().asClass()): AbstractClass(name, base) { };
 	virtual void *instantiate(void) const { return new T; };
-	virtual void *upCast(void *ptr) const { return static_cast<base_t *>(static_cast<T *>(ptr)); }
-	virtual void *downCast(void *ptr) const { return static_cast<T *>(static_cast<base_t *>(ptr)); }
+	virtual void *upCast(void *ptr) const { return static_cast<B *>(static_cast<T *>(ptr)); }
+	virtual void *downCast(void *ptr) const { return static_cast<T *>(static_cast<B *>(ptr)); }
 
 	inline void *upCast(void *ptr, const AbstractClass& cls) const { return AbstractClass::upCast(const_cast<void *>(ptr), cls); }
 	inline void *downCast(void *ptr, const AbstractClass& cls) const { return AbstractClass::downCast(const_cast<void *>(ptr), cls); }
@@ -79,6 +63,40 @@ public:
 	inline const void *upCast(const void *ptr, const AbstractClass& cls) const { return AbstractClass::upCast(ptr, cls); }
 	inline const void *downCast(const void *ptr, const AbstractClass& cls) const { return AbstractClass::downCast(ptr, cls); }
 };
+
+#define ELM_IS_CLASS_EXTEND(name, base) \
+	public: \
+		typedef base __base; \
+		static elm::rtti::Class<name, base> __type; \
+	private:
+
+#define ELM_CLASS_EXTEND(name, base) \
+	class name: public base { \
+	ELM_IS_CLASS_EXTEND(name, base)
+
+#define ELM_IS_CLASS(name) \
+	public: \
+		typedef void __base; \
+		static elm::rtti::Class<name, void> __type; \
+	private:
+
+#define ELM_CLASS(name) \
+	class name { \
+	ELM_IS_CLASS(name)
+
+#define ELM_END_CLASS	};
+
+#define ELM_IMPLEMENT(name) \
+	elm::rtti::Class<name, typename name::__base> name::__type(#name)
+
+#ifndef ELM_NO_SHORTCUT
+#	define IS_CLASS_EXTEND(name, base)	ELM_IS_CLASS_EXTEND(name, base)
+#	define CLASS_EXTEND(name, base)		ELM_CLASS_EXTEND(name, base)
+#	define IS_CLASS(name)				ELM_IS_CLASS(name)
+#	define CLASS(name)					ELM_CLASS(name)
+#	define END_CLASS					ELM_END_CLASS
+#	define IMPLEMENT(name)				ELM_IMPLEMENT(name)
+#endif
 
 } }	// elm::rtti
 

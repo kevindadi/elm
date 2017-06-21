@@ -82,14 +82,26 @@ inline rtti::Enum::Value value(cstring name, int value)
 // New support for enumeration
 #define ELM_DECLARE_ENUM(name) \
 	namespace elm { namespace rtti { template <> const Type& _type<name>::_(void); } } \
-	elm::io::Output& operator<<(io::Output& out, name value) { out << elm::type_of<name>().asEnum().nameFor(value); return out; }
+	inline elm::io::Output& operator<<(io::Output& out, name value) { out << elm::type_of<name>().asEnum().nameFor(value); return out; }
 
 #define ELM_DEFINE_ENUM(type, desc) \
-		namespace elm { namespace rtti { template <> const Type& _type<type>::_(void) { return desc; } } }
+	namespace elm { namespace rtti { template <> const Type& _type<type>::_(void) { return desc; } } }
+
+#define ELM_BEGIN_ENUM(type) \
+	namespace elm { namespace rtti { template <> const Type& _type<type>::_(void) { \
+		static Enum _(Enum::make(#type)
+
+#define ELM_END_ENUM \
+		); \
+		return _; \
+	} } }
+
 
 #ifndef ELM_NO_SHORTCUT
 #	define DECLARE_ENUM(name) 		ELM_DECLARE_ENUM(name)
 #	define DEFINE_ENUM(type, desc)	ELM_DEFINE_ENUM	(type, desc)
+#	define BEGIN_ENUM(type)			ELM_BEGIN_ENUM(type)
+#	define END_ENUM					ELM_END_ENUM
 #endif
 
 } }		// elm::rtti
