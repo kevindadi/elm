@@ -32,8 +32,12 @@ namespace elm {
 template <class T, class E = Equiv<T>, class A = DefaultAllocator>
 class EquivManager {
 public:
+	typedef E equiv_t;
+	typedef A alloc_t;
+
 	inline EquivManager(E& e = Single<E>::_, A& a = A::DEFAULT): eq(e), alloc(a) { }
 
+	inline bool equals(const T& v1, const T& v2) const { return eq.isEqual(v1, v2); }
 	inline void *allocate(t::size size) const { return alloc.allocate(size); }
 	inline void free(t::ptr p) const { alloc.free(p); }
 

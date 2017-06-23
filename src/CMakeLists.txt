@@ -30,6 +30,7 @@ set(LIBELM_LA_SOURCES
 	"data_ArrayList.cpp"
 	"data_BiDiList.cpp"
 	"data_HashTable.cpp"
+	"data_FragTable.cpp"
 	"data_List.cpp"
 	"data_ListQueue.cpp"
 	"data_Range.cpp"
