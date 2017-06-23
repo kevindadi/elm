@@ -1,8 +1,8 @@
 /*
- *	SortedList class interface
+ *	ListSet class interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2012, IRIT UPS.
+ *	Copyright (c) 2017, IRIT UPS.
  *
  *	ELM is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -38,11 +38,11 @@ public:
 	inline void insert(const T& v)
 		{ if(!base_t::contains(v)) base_t::add(v); }
 
-	inline void join(const self_t& set) {
+	void join(const self_t& set) {
 		typename base_t::list_t::PrecIter i(base_t::list);
 		typename base_t::Iter j(set);
 		while(i && j) {
-			int c =  base_t::_man.compare(*i, *j);
+			int c =  base_t::manager().compare(*i, *j);
 			if(c == 0) { i++; j++; }
 			else if(c < 0) i++;
 			else { base_t::list.addBefore(i, *j); j++; }
@@ -50,11 +50,11 @@ public:
 		while(j) { base_t::list.addBefore(i, *j); j++; }
 	}
 
-	inline void meet(const self_t& set) {
+	void meet(const self_t& set) {
 		typename base_t::list_t::PrecIter i(base_t::list);
 		typename base_t::Iter j(set);
 		while(i && j) {
-			int c =  base_t::_man.compare(*i, *j);
+			int c =  base_t::manager().compare(*i, *j);
 			if(c == 0) { i++; j++; }
 			else if(c < 0) base_t::list.remove(i);
 			else j++;
@@ -62,20 +62,16 @@ public:
 		while(i) base_t::list.remove(i);
 	}
 
-	inline void diff(const self_t& set) {
+	void diff(const self_t& set) {
 		typename base_t::list_t::PrecIter i(base_t::list);
 		typename base_t::Iter j(set);
 		while(i && j) {
-			int c =  base_t::_man.compare(*i, *j);
+			int c =  base_t::manager().compare(*i, *j);
 			if(c == 0) { base_t::list.remove(i); j++; }
 			else if(c < 0) i++;
 			else j++;
 		}
 	}
-
-	inline self_t operator+=(const T& val) { insert(val); return *this; }
-	inline self_t operator-=(const T& val) { base_t::remove(val); return *this; }
-	inline bool operator%(const T& val) const { return base_t::contains(val); }
 
 	inline self_t& operator+=(const self_t& set) { join(set); return *this; }
 	inline self_t& operator|=(const self_t& set) { join(set); return *this; }
@@ -89,12 +85,15 @@ public:
 	inline self_t& operator&(const self_t& set) { self_t res = *this; res.meet(set); return res; }
 	inline self_t& operator-(const self_t& set) { self_t res = *this; res.diff(set); return res; }
 
-	// MutableCollection concept
+	// MutableCollection concept fix
 	inline void add(const T& v) { insert(v); }
+	inline self_t operator+=(const T& val) { insert(val); return *this; }
+	inline self_t operator-=(const T& val) { base_t::remove(val); return *this; }
+
 };
 
 template <class T, class M>
-inline bool operator%(const T& val, const ListSet<T, M>& set) { return set.contains(val); }
+inline bool operator<=(const T& val, const ListSet<T, M>& set) { return set.contains(val); }
 
 }	// elm
 

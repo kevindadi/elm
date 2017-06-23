@@ -343,13 +343,12 @@ public:
 	/**
 	 * Same as insert().
 	 */
-	Set& operator+=(const T& item);
+	MutableCollection<T>& operator+=(const T& item);
 
 	/**
 	 * Same as remove().
 	 */
-	Set& operator-=(const T& item);
-
+	MutableCollection<T>& operator-=(const T& item);
 
 };
 
@@ -359,6 +358,12 @@ public:
  * provides efficient way to look for, insert or remove items and contains
  * only one version of each item.
  * 
+ * Additionally, this concept must support an external operation "is in":
+ * @code
+ * bool operator<=(const T& val, const Set<T>& set);
+ * @endcode
+ * That just call the contains() function.
+ *
  * @par Implemented by:
  * @li @ref HashSet
  * @li @ref ListSet

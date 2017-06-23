@@ -39,8 +39,8 @@ class List {
 		T val;
 		inline Node *next(void) const { return nextNode(); }
 		inline Node *nextNode(void) const { return static_cast<Node *>(SLNode::next()); }
-		inline static void *operator new(size_t s, M& a) { return a.alloc.allocate(s); }
-		inline void free(M& a) { this->~Node(); a.alloc.free(this); }
+		inline static void *operator new(size_t s, M& a) { return a.allocate(s); }
+		inline void free(M& a) { this->~Node(); a.free(this); }
 	private:
 		inline ~Node(void) { }
 	};
@@ -51,6 +51,7 @@ public:
 	inline List(const List<T, M>& list): _man(list._man) { copy(list); }
 	inline List(M& man): _man(man) { }
 	inline ~List(void) { clear(); }
+	inline M& manager(void) const { return _man; }
 
 	void copy(const List<T, M>& list) {
 		clear(); Iter item(list); if(!item) return; addFirst(*item); Node *cur = firstNode();
@@ -134,9 +135,9 @@ public:
 	template <class C> inline void removeAll(const C& items)
 		{ for(typename C::iter iter(items); iter; iter++) remove(iter);	}
 	void remove(const T& value) {
-		if(isEmpty()) return; else if(_man.eq.equals(first(), value)) removeFirst(); else
+		if(isEmpty()) return; else if(_man.equals(first(), value)) removeFirst(); else
 		for(Node *prev = firstNode(), *cur = prev->nextNode(); cur; prev = cur, cur = cur->nextNode())
-		if(_man.eq.equals(cur->val, value)) { prev->removeNext(); cur->free(_man); return; }
+		if(_man.equals(cur->val, value)) { prev->removeNext(); cur->free(_man); return; }
 	}
 	inline T& at(const Iter& i) { return i.node->val; }
 	inline void remove(PrecIter &iter) { remove(iter.prev, iter.node); }

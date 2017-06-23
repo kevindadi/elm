@@ -162,4 +162,96 @@ namespace elm { namespace genstruct {
  * Go to the next item.
  */
 
+
+/**
+ * @class ListSet
+ * Set implemented as a sorted list.
+ *
+ * The performances for a set of N elements are:
+ * * access time: O(N/2) on average, O(N) worst case
+ * * addition time: O(N/2) on average, O(N) worst case
+ * * removal time: O(N/2) on average, O(N) worst case
+ * * set operation time: O(N + M)
+ *
+ * For set operation, M is the size of the second operand set.
+ *
+ * @param T		Type of values in the set.
+ * @param M		Manager for allocation and comparison operations.
+ * @ingroup data
+ */
+
+/**
+ * @fn ListSet::ListSet(void);
+ * Default constructor.
+ */
+
+/**
+ * @fn ListSet::ListSet(const M& man);
+ * Build a set with a specific manager.
+ * @param man	Manager to use.
+ */
+
+/**
+ * @fn ListSet::ListSet(const self_t& set);
+ * Clone the given set.
+ * @param set	Set to clone.
+ */
+
+/**
+ * @fn void ListSet::insert(const T& v);
+ * Insert a value in the set. This adds the value
+ * only if it is not already in the set.
+ * @param v		Added value.
+ */
+
+/**
+ * @fn void ListSet::join(const self_t& set);
+ * Join the values of the given set in the current set.
+ * @param set	Set of values to join in.
+ */
+
+/**
+ * @fn void ListSet::meet(const self_t& set);
+ * Keeps only values that are also in the given.
+ * @param set	Set of values to keep.
+ */
+
+/**
+ * @fn void ListSet::diff(const self_t& set);
+ * Remove the current set the values of the given set.
+ * @param set	Set of values to return.
+ */
+
+
+/**
+ * @class ListMapManager
+ * Manager for ListMap data structure class.
+ * To obtain a specialized implementation, replace one of
+ * the default optional template parameter by the customied argument.
+ *
+ * @param K		Type of keys.
+ * @param T		Type of values.
+ * @param KC	Comparator for keys (default to Comparator<K>).
+ * @param ET	Equivalence for values (default to Equiv<K>).
+ * @param A		Allocator (default to DefaultAllocator).
+ * @ingroup data
+ */
+
+
+/**
+ * @class ListMap
+ * Map implemented as a list of sorted pairs. This class is relatively
+ * cheap but should not be used with a big number of entries
+ * (without enduring severe performances degradation).
+ *
+ * For a map of size N, the complexity are:
+ * * retrieve time: O(N/2) on average, O(N) worst case.
+ * * insertion time: O(N/2) on average, O(N) worst case.
+ *
+ * @param K		Type of keys.
+ * @param T		Type of values.
+ * @param M		Manager type (default to ListMapManager).
+ * @ingroup data
+ */
+
 } // elm

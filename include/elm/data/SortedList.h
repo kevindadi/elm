@@ -35,11 +35,13 @@ class SortedList {
 protected:
 	typedef List<T, M> list_t;
 public:
+	typedef T t;
 	typedef SortedList<T, M> self_t;
 
-	inline SortedList(void): _man(Single<M>::_) { }
-	inline SortedList(M& man): _man(man) { }
-	SortedList(const SortedList<T, M> &l): list(l.list), _man(l._man) { }
+	inline SortedList(void) { }
+	inline SortedList(M& man): list(man) { }
+	SortedList(const SortedList<T, M> &l): list(l.list) { }
+	inline M& manager(void) const { return list.manager(); }
 
 	inline void removeFirst(void) { list.removeFirst(); }
 	inline void removeLast(void) { list.removeLast(); }
@@ -65,12 +67,40 @@ public:
 	inline Iter begin(void) const { return items(); }
 	inline Iter end(void) const { return Iter(); }
 
+
+	bool equals(const SortedList<T, M>& l) const {
+		Iter i = *this, j = *l;
+		for(; i && j; i++, j++)
+			if(!list.manager().equals(*i, *j))
+				return false;
+		return !i && !j;
+	}
+	inline bool operator==(const SortedList<T, M>& l) const { return equals(l); }
+	inline bool operator!=(const SortedList<T, M>& l) const { return !equals(l); }
+
+	bool contains(const SortedList<T, M>& l) const {
+		Iter i = *this, j = *l;
+		for(; i && j; i++) {
+			int cmp = list.manager().compare(*i, *j);
+			if(cmp > 0)
+				return false;
+			if(cmp == 0)
+				j++;
+		}
+		return !j;
+	}
+	inline bool operator<=(const SortedList<T, M>& l) const { return l.contains(*this); }
+	inline bool operator<(const SortedList<T, M>& l) const { return l.contains(*this) && !equals(l); }
+	inline bool operator>=(const SortedList<T, M>& l) const { return contains(l); }
+	inline bool operator>(const SortedList<T, M>& l) const { return contains(l) && !equals(l); }
+
+
 	// MutableCollection concept
 	inline void clear(void) { list.clear(); }
 
 	void add(const T &value) {
 		for(typename list_t::PrecIter current(list); current; current++)
-			if(_man.compare(value,  *current) < 0) {
+			if(list.manager().compare(value,  *current) < 0) {
 				list.addBefore(current, value);
 				return;
 			}
@@ -82,112 +112,26 @@ public:
 	inline void remove(const T &item) { list.remove(item); }
 	template <template <class _> class CC> inline void removeAll(const CC<T> &items)
 		{ list.removeAll(items); }
-	void remove(const Iter &iter) { list.remove(iter); }
+	inline void remove(const Iter &iter) { list.remove(*iter); }
+	inline SortedList<T, M>& operator+=(const T& v) { add(v); return *this; }
+	inline SortedList<T, M>& operator-=(const T& v) { remove(v); return *this; }
 
 	// List concept
 	inline const T& first(void) const { return list.first(); }
 	inline const T& last(void) const { return list.last(); }
-	inline Iter find(const T& item, const Iter& iter) const {
+	Iter find(const T& item, const Iter& iter) const {
 		Iter i = iter; for(; i; i++) {
-			int cmp = _man.compare(item, *i);
+			int cmp = list.manager().compare(item, *i);
 			if(cmp > 0) continue; else if(!cmp) return i; else return end();
 		}
 		return i;
 	}
-	inline Iter find(const T& item) const
-		{ return find(item, begin()); }
+	inline Iter find(const T& item) const { return find(item, begin()); }
 
 protected:
+	inline void set(Iter i, const T& val) { list.set(i, val); }
 	list_t list;
-	M& _man;
 };
-
-
-#	if 0
-template <class T, class M = CompareManager<T> >
-class ListSet: public SortedList<T, M> {
-public:
-	inline ListSet(void): SortedList<T, M>() { }
-	inline ListSet(M& man): SortedList<T, M>(man) { }
-	ListSet(const ListSet &l): SortedList<T, M>(static_cast<SortedList<T,M> >(l)) { }
- 
-	void add(const T &value) {
-		if(SortedList<T, M>::contains(value))
-			return;
-		SortedList<T, M>::add(value);
-	}
-	template <template <class _> class CC> inline void addAll (const CC<T> &items)
-	{ for(typename CC<T>::Iter item(items); item; item++) add(item); }
-	static const ListSet<T, M> null;
-};
-template <class T, class M> const ListSet<T, M> ListSet<T, M>::null;
-
-template <class K, class T, class M = CompareManager<K> >
-class ListMap {
-public:
-	typedef ListMap<K, T, M> self_t;
-private:
-	typedef Pair<K, T> pair_t;
-	typedef PairAdapter<K, T> adapter_t;
-	typedef SortedList<pair_t, M, adapter_t> list_t;
-
-	struct equals {
-		const self_t& m;
-		const T& v;
-		inline equals(const self_t& map, const T& val): m(map), v(val) { }
-		inline bool operator()(const T& vp) const { return m.man.isEqual(v, vp); };
-	};
-
-public:
-
-	inline ListMap(const M& m = Single<M>::_): man(m) { }
-	inline ListMap(const self_t& l, const M& m = Single<M>::_): list(l.list), man(m) { }
-
-	// Collection concept
-	class Iter: public PreIterator<Iter, T> {
-	public:
-		inline Iter(void) { }
-		inline Iter(const self_t& l): i(l.list) { }
-		inline bool ended(void) const { return i.ended(); }
-		inline void next(void) { i++; }
-		inline const T& item(void) const { return PairAdapter<K, T>::value(*i); }
-	private:
-		typename list_t::Iter i;
-	};
-
-	inline int count(void) const { return list.count(); }
-	inline bool contains(const T& val) const { return elm::exists(*this, equals(*this, val)); }
-
-	// Map concept
-	inline void put(const K& key, const T& val) { list.add(pair(key, val)); }
-
-	inline bool contains(const T& val)
-		{ for(Iter i(*this); i; i++) if() return true; return false; }
-
-	class KeyIter: public PreIterator<KeyIter, K> {
-	public:
-		inline KeyIter(const self_t& m): i(m) { }
-	private:
-		typename base_t::Iter i;
-	};
-
-	inline Option<T> get(const K& k)
-		{ typename base_t::Iter i = base_t::find(k); if(i) return some(*i); else return none; }
-	inline const T& get(const K& k, const T& d)
-		{ typename base_t::Iter i = base_t::find(k); if(i) return *i; else return d; }
-	inline bool hasKey(const K& k)
-		{ typename base_t::Iter i = base_t::find(k); return !i.ended(); }
-
-	inline void put(const K& k, const T& v)
-		{ base_t::add(pair(k, v)); }
-	inline void remove(const K& k)
-		{ typename base_t::Iter i = find(k); if(i) remove(*i); }
-
-private:
-	list_t list;
-	const M& man;
-};
-#endif
 
 }	// elm
 
