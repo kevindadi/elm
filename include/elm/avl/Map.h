@@ -118,6 +118,6 @@ private:
 	tree_t tree;
 };
 
-} }		// elm::genstruct
+} }		// elm::avl
 
-#endif /* ELM_GENSTRUCT_AVLMAP_CPP_ */
+#endif /* ELM_AVL_AVLMAP_CPP_ */

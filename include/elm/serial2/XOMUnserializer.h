@@ -21,8 +21,8 @@
 #ifndef ELM_SERIAL2_XOM_UNSERIALIZER_H
 #define ELM_SERIAL2_XOM_UNSERIALIZER_H
 
-#include <elm/genstruct/HashTable.h>
-#include <elm/genstruct/Vector.h>
+#include <elm/data/HashMap.h>
+#include <elm/data/Vector.h>
 #include <elm/serial2/serial.h>
 #include <elm/serial2/Unserializer.h>
 #include <elm/sys/Path.h>
@@ -106,9 +106,9 @@ private:
 	xom::Document *doc;
 	context_t ctx;
 	elm::io::Input in;
-	elm::genstruct::HashTable<CString,  ref_t *> refs;
-	elm::genstruct::Vector<context_t> stack;
-	elm::genstruct::Vector<Pair<cstring, ref_t *> > pending;
+	HashMap<CString,  ref_t *> refs;
+	elm::Vector<context_t> stack;
+	elm::Vector<Pair<cstring, ref_t *> > pending;
 	ExternalSolver *_solver;
 
 	void init(cstring path);

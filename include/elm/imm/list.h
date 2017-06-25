@@ -25,7 +25,7 @@
 #include <elm/alloc/DefaultAllocator.h>
 #include <elm/alloc/BlockAllocatorWithGC.h>
 #include <elm/compare.h>
-#include <elm/genstruct/SLList.h>
+#include <elm/data/List.h>
 
 namespace elm { namespace imm {
 
@@ -52,12 +52,12 @@ private:
 	class GC: public BlockAllocatorWithGC<node_t> {
 	public:
 		virtual void collect(void)
-			{ for(typename genstruct::SLList<Collector *>::Iterator coll(colls); coll; coll++) coll->collect(); }
+			{ for(typename List<Collector *>::Iter coll(colls); coll; coll++) coll->collect(); }
 		inline void add(Collector& coll) { colls.add(&coll); coll.gc = this; }
 		inline void remove(Collector& coll) { colls.remove(&coll); }
 		inline bool mark(node_t *node) { return BlockAllocatorWithGC<node_t>::mark(node); }
 	private:
-		genstruct::SLList<Collector *> colls;
+		List<Collector *> colls;
 	};
 	static GC gc;
 

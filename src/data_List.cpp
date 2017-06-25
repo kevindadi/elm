@@ -23,16 +23,6 @@
 
 namespace elm {
 
-namespace genstruct {
-
-/**
- * @class SLList
- * @deprecated Please use otawa::SLList <otawa/data/SLList.h> instead.
- * @ingroup gen_datastruct
- */
-
-} // genstruct
-
 /**
  * @class List
  * This class provides a generic implementation of single-link lists.

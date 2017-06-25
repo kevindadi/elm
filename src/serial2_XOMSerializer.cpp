@@ -28,8 +28,6 @@
 #include <elm/serial2/serial.h>
 #include <elm/serial2/XOMSerializer.h> 
 
-using namespace elm::genstruct;
-
 namespace elm { namespace serial2 {
 
 /**

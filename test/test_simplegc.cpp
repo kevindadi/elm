@@ -1,4 +1,5 @@
 #include <elm/alloc/SimpleGC.h>
+#include <elm/data/Vector.h>
 #include <elm/sys/System.h>
 #include "../include/elm/test.h"
 
@@ -17,7 +18,7 @@ typedef struct block_t {
 	char *base;
 	int size;
 } block_t;
-genstruct::Vector<block_t> blocks;
+Vector<block_t> blocks;
 static int allocated_size = 0;
 
 class MyGC: public SimpleGC {

@@ -22,7 +22,6 @@
 #define ELM_STREE_TREE_H_
 
 #include <elm/compare.h>
-#include <elm/genstruct/AVLTree.h>
 
 namespace elm { namespace stree {
 
@@ -33,7 +32,7 @@ class Tree {
 
 public:
 	typedef struct node_t {
-		inline node_t(void) { }
+		inline node_t(void): ll(0), rl(0) { }
 		inline node_t(struct node_t s[], int _ll, int _rl)
 			: lb(s[_ll].lb), ub(s[_rl].ub), ll(_ll), rl(_rl) { }
 		inline node_t(const K& _lb, const K& _ub)

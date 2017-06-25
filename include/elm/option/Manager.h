@@ -23,7 +23,7 @@
 #define ELM_OPTION_MANAGER_H
 
 #include <elm/ptr.h>
-#include <elm/genstruct/SortedBinMap.h>
+#include <elm/data/ListMap.h>
 #include <elm/data/Vector.h>
 #include <elm/option/Option.h>
 #include <elm/option/SwitchOption.h>
@@ -98,8 +98,8 @@ private:
 	void addShort(char cmd, Option *option) throw(OptionException);
 	void addLong(cstring cmd, Option *option) throw(OptionException);
 	void addCommand(string cmd, Option *option) throw(OptionException);
-	genstruct::SortedBinMap<char, Option *> shorts;
-	genstruct::SortedBinMap<string, Option *> cmds;
+	ListMap<char, Option *> shorts;
+	ListMap<string, Option *> cmds;
 	UniquePtr<SwitchOption> _help_opt, _version_opt;
 };
 

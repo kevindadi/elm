@@ -110,7 +110,7 @@ SimpleGC::~SimpleGC(void) {
  * Reset the allocator.
  */
 void SimpleGC::clear(void) {
-	for(genstruct::SLList<chunk_t *>::Iterator c(chunks); c; c++)
+	for(List<chunk_t *>::Iter c(chunks); c; c++)
 		delete *c;
 	free_list = 0;
 }
@@ -206,7 +206,7 @@ void SimpleGC::beginGC(void) {
 
 	// build the data structure
 	stree::SegmentBuilder<void *, chunk_t *> builder(0);
-	for(genstruct::SLList<chunk_t *>::Iterator c(chunks); c; c++) {
+	for(List<chunk_t *>::Iter c(chunks); c; c++) {
 		builder.add(c->buffer, c->buffer + csize, c);
 		c->bits = new BitVector(csize / sizeof(block_t));
 	}
@@ -234,7 +234,7 @@ void SimpleGC::endGC(void) {
 	free_list = 0;
 
 	// build the list of free blocks
-	for(genstruct::SLList<chunk_t *>::Iterator c(chunks); c; c++) {
+	for(List<chunk_t *>::Iter c(chunks); c; c++) {
 
 		// traverse the bits
 		int i = 0, b = -1, cs = csize / sizeof(block_t);
@@ -264,7 +264,7 @@ void SimpleGC::endGC(void) {
 	}
 
 	// free the GC resources
-	for(genstruct::SLList<chunk_t *>::Iterator c(chunks); c; c++) {
+	for(List<chunk_t *>::Iter c(chunks); c; c++) {
 		delete c->bits;
 		c->bits = 0;
 	}

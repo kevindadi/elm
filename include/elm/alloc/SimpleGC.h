@@ -23,8 +23,8 @@
 
 #include <elm/util/BitVector.h>
 #include <elm/stree/Tree.h>
-#include <elm/genstruct/SLList.h>
-#include <elm/genstruct/DLList.h>
+#include <elm/data/List.h>
+#include <elm/data/BiDiList.h>
 #include <elm/alloc/DefaultAllocator.h>
 
 namespace elm {
@@ -86,7 +86,7 @@ private:
 		t::uint8 buffer[0];
 	} chunk_t;
 
-	genstruct::SLList<chunk_t *> chunks;
+	List<chunk_t *> chunks;
 	t::size csize;
 	block_t *free_list;
 	inhstruct::DLList temps;

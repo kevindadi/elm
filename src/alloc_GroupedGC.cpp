@@ -169,7 +169,7 @@ GroupedGC::~GroupedGC(void) {
  * Reset the allocator.
  */
 void GroupedGC::clear(void) {
-	for(genstruct::SLList<chunk_t *>::Iterator c(chunks); c; c++)
+	for(List<chunk_t *>::Iter c(chunks); c; c++)
 		delete *c;
 	free_list[0] = 0;
 }
@@ -385,7 +385,7 @@ bool GroupedGC::mark(void *data, t::size size) {
 void GroupedGC::beginGC(void) {
 	// build the data structure
 	stree::SegmentBuilder<void *, chunk_t *> builder(0);
-	for(genstruct::SLList<chunk_t *>::Iterator c(chunks); c; c++) {
+	for(List<chunk_t *>::Iter c(chunks); c; c++) {
 		builder.add(c->buffer, c->buffer + csize, c);
 		c->bits = new BitVector(csize / (sizeof(block_t) * c->index));
 	}
@@ -424,7 +424,7 @@ void GroupedGC::endGC(void) {
 
 
 	// build the list of free blocks
-	for(genstruct::SLList<chunk_t *>::Iterator c(chunks); c; c++) {
+	for(List<chunk_t *>::Iter c(chunks); c; c++) {
 		if(c->init > 0) {
 			continue;
 		}
@@ -474,7 +474,7 @@ void GroupedGC::endGC(void) {
 	} // end of each chunk
 
 	// free the GC resources
-	for(genstruct::SLList<chunk_t *>::Iterator c(chunks); c; c++) {
+	for(List<chunk_t *>::Iter c(chunks); c; c++) {
 		delete c->bits;
 		c->bits = 0;
 	}

@@ -20,18 +20,9 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <elm/genstruct/SortedSLList.h>
+#include <elm/data/SortedList.h>
 
-namespace elm { namespace genstruct {
-
-
-/**
- * @class SortedSLList
- * @author C. Ballabriga <ballabri@irit.fr>
- * @deprecated 	Use @ref SortedList in place.
- */
-
-}	// genstruct
+namespace elm {
 
 /**
  * @class SortedList

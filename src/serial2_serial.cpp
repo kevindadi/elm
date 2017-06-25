@@ -19,10 +19,8 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #include <elm/serial2/serial.h>
-#include <elm/genstruct/HashTable.h>
+#include <elm/data/HashMap.h>
 #include <elm/util/Initializer.h>
-
-using namespace elm::genstruct;
 
 namespace elm { namespace serial2 {
 

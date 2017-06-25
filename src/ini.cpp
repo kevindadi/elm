@@ -156,7 +156,7 @@ File::File(void) {
 /**
  */
 File::~File(void) {
-	for(genstruct::AssocList<string, Section *>::Iterator s(sects); s; s++)
+	for(ListMap<string, Section *>::Iter s = sects.items(); s; s++)
 		delete *s;
 }
 

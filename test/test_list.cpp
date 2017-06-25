@@ -90,7 +90,7 @@ TEST_BEGIN(list)
 		v.add(1);
 		v.add(2);
 		v.add(3);
-		genstruct::SLList<int> l;
+		List<int> l;
 		l.addAll(v);
 		CHECK(l.contains(1));
 		CHECK(l.contains(2));
@@ -113,11 +113,6 @@ TEST_BEGIN(list)
 			if(*i % 2 == 0)
 				pairs++;
 		CHECK_EQUAL(pairs, 0);
-	}
-
-	// test for null
-	{
-		CHECK(genstruct::SLList<int>::null.isEmpty());
 	}
 
 	// sub-list iterator
@@ -249,9 +244,9 @@ TEST_BEGIN(list)
 		l += 0;
 		l += 1;
 		l += 2;
-		CHECK(1 % l);
+		CHECK(1 <= l);
 		l -= 1;
-		CHECK(!(1 % l));
+		CHECK(!(1 <= l));
 	}
 
 #if 0

@@ -22,7 +22,7 @@
 #define ELM_INI_H_
 
 #include <elm/string.h>
-#include <elm/genstruct/AssocList.h>
+#include <elm/data/ListMap.h>
 #include <elm/data/Vector.h>
 #include <elm/sys/Path.h>
 
@@ -35,7 +35,7 @@ public:
 
 class Section {
 	friend class File;
-	typedef genstruct::AssocList<string, string> map_t;
+	typedef ListMap<string, string> map_t;
 	inline Section(const string& name): _name(name) { }
 
 public:
@@ -47,11 +47,9 @@ public:
 	int getInt(const string& key, int def);
 	void getList(const string& key, Vector<string>& list);
 
-	class Iterator: public map_t::PairIterator {
+	class Iterator: public map_t::PairIter {
 	public:
-		inline Iterator(Section *s): map_t::PairIterator(s->values) { }
-		inline Iterator(const Iterator& i): map_t::PairIterator(i) { }
-		inline Iterator& operator=(const Iterator& i) { map_t::PairIterator::operator=(i); return *this; }
+		inline Iterator(Section *s): map_t::PairIter(s->values.pairs()) { }
 		inline const string& key(void) const { return item().fst; }
 		inline const string& value(void) const { return item().snd; }
 	};
@@ -63,7 +61,7 @@ private:
 
 class File {
 	File(void);
-	typedef genstruct::AssocList<string, Section *> map_t;
+	typedef ListMap<string, Section *> map_t;
 
 public:
 	static File *load(const sys::Path& path) throw(Exception);
@@ -73,11 +71,9 @@ public:
 	inline Section *get(const string& name) const { return sects.get(name, 0); }
 	inline Section *operator[](const string& name) const { return get(name); }
 
-	class Iterator: public map_t::Iterator {
+	class Iterator: public map_t::Iter {
 	public:
-		inline Iterator(File *file): map_t::Iterator(file->sects) { }
-		inline Iterator(const Iterator& i): map_t::Iterator(i) { }
-		inline Iterator operator=(const Iterator& i) { map_t::Iterator::operator=(i); return *this; }
+		inline Iterator(File *file): map_t::Iter(file->sects) { }
 	};
 
 private:

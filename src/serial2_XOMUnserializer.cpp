@@ -186,7 +186,7 @@ void XOMUnserializer::flush(void) {
 	if(pending) {
 
 		// build ID dictionary
-		genstruct::HashTable<CString, xom::Element *> elems;
+		HashMap<CString, xom::Element *> elems;
 		Vector<xom::Element *> todo;
 		todo.push(doc->getRootElement());
 		while(todo) {

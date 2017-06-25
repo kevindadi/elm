@@ -25,7 +25,7 @@
 #include <elm/PreIterator.h>
 #include <elm/adapter.h>
 #include <elm/array.h>
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 
 namespace elm { namespace avl {
 

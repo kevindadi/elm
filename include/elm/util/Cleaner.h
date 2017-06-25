@@ -23,7 +23,7 @@
 #define ELM_UTIL_CLEANER_H
 
 #include <elm/util/LockPtr.h>
-#include <elm/genstruct/SLList.h>
+#include <elm/data/List.h>
 
 namespace elm {
 
@@ -70,7 +70,7 @@ public:
 		{ add(new Deletor<T>(object)); return object; } 
 
 private:
-	typedef genstruct::SLList<Cleaner *> list_t;
+	typedef List<Cleaner *> list_t;
 	list_t list;
 };
 

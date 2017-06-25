@@ -21,9 +21,9 @@
 #ifndef ELM_SERIAL2_XOM_SERIALIZER_H
 #define ELM_SERIAL2_XOM_SERIALIZER_H
 
-#include <elm/genstruct/HashTable.h>
-#include <elm/genstruct/Vector.h>
-#include <elm/genstruct/VectorQueue.h>
+#include <elm/data/HashMap.h>
+#include <elm/data/Vector.h>
+#include <elm/data/VectorQueue.h>
 #include <elm/serial2/Serializer.h>
 #include <elm/util/Pair.h>
 #include <elm/sys/Path.h>
@@ -78,17 +78,17 @@ public:
 	virtual void onItem (void);
 
 private:
-	genstruct::HashTable<const void*, bool> seen;
-	genstruct::HashTable<const void*, xom::Element*> done;
-	genstruct::HashTable<const void*, int> idmap;	
-	elm::genstruct::VectorQueue<Pair<const rtti::Type* ,const void*> > toprocess;
+	HashMap<const void*, bool> seen;
+	HashMap<const void*, xom::Element*> done;
+	HashMap<const void*, int> idmap;
+	VectorQueue<Pair<const rtti::Type* ,const void*> > toprocess;
 	
 	typedef struct context_t {
 		xom::Element *elem;
 		bool firstItem;
 	} context_t;
 	context_t ctx;
-	elm::genstruct::Vector<context_t> stack;	
+	elm::Vector<context_t> stack;
 	int ref_current;
 	
 	int refGet(const void* object) {		

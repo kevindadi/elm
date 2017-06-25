@@ -131,9 +131,9 @@ public:
 		{ while(!_list.isEmpty()) { Node *node = firstNode(); _list.removeFirst(); node->free(_man); } }
 	inline void add(const T& value) { addFirst(value); }
 	template <class C> inline void addAll(const C& items)
-		{ for(typename C::iter iter(items); iter; iter++) add(iter); }
+		{ for(typename C::Iter i(items); i; i++) add(i); }
 	template <class C> inline void removeAll(const C& items)
-		{ for(typename C::iter iter(items); iter; iter++) remove(iter);	}
+		{ for(typename C::Iter i(items); i; i++) remove(i);	}
 	void remove(const T& value) {
 		if(isEmpty()) return; else if(_man.equals(first(), value)) removeFirst(); else
 		for(Node *prev = firstNode(), *cur = prev->nextNode(); cur; prev = cur, cur = cur->nextNode())
@@ -201,6 +201,6 @@ private:
 
 template <class T, class E> List<T, E> List<T, E>::null;
 
-} // elm::genstruct
+} // elm
 
-#endif // ELM_DATA_SLLIST_H
+#endif // ELM_DATA_LIST_H

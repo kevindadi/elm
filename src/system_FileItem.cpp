@@ -28,7 +28,7 @@
 #include <elm/sys/FileItem.h>
 #include <elm/sys/File.h>
 #include <elm/sys/Directory.h>
-#include <elm/genstruct/HashTable.h>
+#include <elm/data/HashMap.h>
 #include <elm/sys/SystemException.h>
 #include <elm/util/strong_type.h>
 
@@ -44,20 +44,20 @@ namespace elm {
 STRONG_TYPE(inode_t, ino_t);
 
 #if defined(__WIN32) || defined(__WIN64)
-	static genstruct::HashTable<String, sys::FileItem *> *files = 0;
+	static HashMap<String, sys::FileItem *> *files = 0;
 #else
 // inode_t hash key
 	template <>
 	class HashKey<inode_t> {
 	public:
-		static t::hash hash(inode_t v)
+		t::hash computeHash(inode_t v)
 			{ return t::hash(v); }
-		static bool equals(inode_t key1, inode_t key2)
+		bool isEqual(inode_t key1, inode_t key2)
 			{ return key1 == key2; }
 	};
 
 	// Used for retrieving files by name.
-	static genstruct::HashTable<inode_t, sys::FileItem *> *files = 0;
+	static HashMap<inode_t, sys::FileItem *> *files = 0;
 #endif
 
 
@@ -73,7 +73,7 @@ namespace sys {
 
 /**
  */ 
-FileItem::FileItem(Path path, ino_t inode):	usage(0), _path(path), ino(inode) {
+FileItem::FileItem(Path path, ino_t inode):	usage(0), parent(0), _path(path), ino(inode) {
 	ASSERTP(path, "null path");
 }
 
@@ -98,9 +98,9 @@ FileItem *FileItem::get(Path path) throw(SystemException) {
 	// Need to initialize ?
 	if(!files)
 #		if defined(__WIN32) || defined(__WIN64)
-			files = new genstruct::HashTable<string, FileItem *>;
+			files = new HashMap<string, FileItem *>;
 #		else
-			files = new genstruct::HashTable<inode_t, FileItem *>;
+			files = new HashMap<inode_t, FileItem *>;
 #		endif
 	
 	 // Look at stat

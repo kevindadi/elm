@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	VectorQueue class interface
  *
  *	This file is part of OTAWA
@@ -19,13 +18,13 @@
  *	along with OTAWA; if not, write to the Free Software 
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_GENSTRUCT_VECTORQUEUE_H
-#define ELM_GENSTRUCT_VECTORQUEUE_H
+#ifndef ELM_DATA_VECTORQUEUE_H
+#define ELM_DATA_VECTORQUEUE_H
 
 #include <elm/assert.h>
 #include "../equiv.h"
 
-namespace elm { namespace genstruct {
+namespace elm {
 	
 // VectorQueue class
 template <class T, class E = Equiv<T> >
@@ -141,7 +140,7 @@ template <class T, class E> inline T& VectorQueue<T, E>::operator*(void) const {
 	return head();
 }
 
-} } // elm::genstruct
+} // elm
 
-#endif // ELM_GENSTRUCT_VECTORQUEUE_H
+#endif // ELM_DATA_VECTORQUEUE_H
 

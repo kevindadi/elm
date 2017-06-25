@@ -885,9 +885,8 @@ public:
  * This concept defines collections of items retrievable by an assigned key.
  * @par
  * Implemented by:
- * @li @ref elm::genstruct::AVLMap
- * @li @ref elm::genstruct::HashTable
- * @li @ref elm::genstruct::SortedBinMap
+ * @li @ref elm::HashMap
+ * @li @ref elm::ListMap
  * @par
  * @ingroup concepts
  */
@@ -961,9 +960,8 @@ public:
  * A map that may be modified.
  * @par
  * Implemented by:
- * @li @ref elm::genstruct::AVLMap
- * @li @ref elm::genstruct::HashTable
- * @li @ref elm::genstruct::SortedBinMap
+ * @li @ref elm::HashMap
+ * @li @ref elm::ListMap
  * @par
  * @ingroup concepts
  */
@@ -997,8 +995,8 @@ public:
  * concept but the iterator traverse the list in the sequence of the items.
  *
  * @par Implemented by:
- * @ref elm::genstruct::DLList
- * @ref elm::genstruct::SLList
+ * @ref elm::List
+ * @ref elm::BiDiList
  * 
  * @ingroup concepts
  */
@@ -1040,8 +1038,8 @@ public:
  * concept but the iterator traverse the list in the sequence of the items.
  *
  * @par Implemented by:
- * @ref elm::genstruct::DLList
- * @ref elm::genstruct::SLList
+ * @ref elm::BiDiList
+ * @ref elm::List
  * 
  * @ingroup concepts
  */
@@ -1100,7 +1098,7 @@ public:
  * back traversal.
  * 
  * @par Implemented by:
- * @ref elm::genstruct::DLList
+ * @ref elm::BiDiList
  * 
  * @ingroup concepts
  */

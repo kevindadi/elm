@@ -488,7 +488,7 @@ void Manager::removeOption(Option *option) {
  */
 void Manager::addShort(char cmd, Option *option) throw(OptionException) {
 	string str = _ << '-' << cmd;
-	ASSERTP(!cmds.contains(str), "command '" << cmd << "' already used");
+	ASSERTP(!cmds.hasKey(str), "command '" << cmd << "' already used");
 	cmds.put(str, option);
 	shorts.put(cmd, option);
 }
@@ -501,7 +501,7 @@ void Manager::addShort(char cmd, Option *option) throw(OptionException) {
  */
 void Manager::addLong(cstring cmd, Option *option) throw(OptionException) {
 	string str = _ << "--" << cmd;
-	ASSERTP(!cmds.contains(str), _ << "long command \"" << str << "\" already used");
+	ASSERTP(!cmds.hasKey(str), _ << "long command \"" << str << "\" already used");
 	cmds.put(str, option);
 }
 
@@ -512,7 +512,7 @@ void Manager::addLong(cstring cmd, Option *option) throw(OptionException) {
  * @param option	Option to add.
  */
 void Manager::addCommand(string cmd, Option *option) throw(OptionException) {
-	ASSERTP(!cmds.contains(cmd), "command \"" << cmd << "\" already used");
+	ASSERTP(!cmds.hasKey(cmd), "command \"" << cmd << "\" already used");
 	cmds.put(cmd, option);
 }
 
@@ -649,8 +649,8 @@ void Manager::displayHelp(void) {
 
 	// display the arguments
 	Vector<Option *> done;
-	typedef genstruct::SortedBinMap<string, Option *>::PairIterator iter;
-	for(iter cmd(cmds); cmd; cmd++) {
+	typedef ListMap<string, Option *>::PairIter iter;
+	for(iter cmd = cmds.pairs(); cmd; cmd++) {
 
 		// already done?
 		Option *option = (*cmd).snd;

@@ -9,13 +9,11 @@
 
 #include <elm/io.h>
 #include <elm/serial2/Serializer.h>
-#include <elm/genstruct/HashTable.h>
-#include <elm/genstruct/VectorQueue.h>
+#include <elm/data/HashMap.h>
+#include <elm/data/VectorQueue.h>
 #include <elm/util/Pair.h>
 
 namespace elm { namespace serial2 {
-
-using namespace genstruct;
 
 // TextSerializer class
 class TextSerializer: public Serializer {
@@ -54,7 +52,7 @@ public:
 
 private:
 	typedef Pair<const void *, const rtti::Type *> delay_t;
-	HashTable<const void *, bool> objects;
+	HashMap<const void *, bool> objects;
 	VectorQueue<delay_t> to_process;
 	int level;
 	io::Output& _out;

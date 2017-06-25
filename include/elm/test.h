@@ -10,7 +10,7 @@
 #include <elm/string.h>
 #include <elm/io.h>
 #include <elm/util/Initializer.h>
-#include <elm/genstruct/SLList.h>
+#include <elm/data/List.h>
 
 namespace elm {
 
@@ -46,16 +46,15 @@ public:
 
 	void perform(void);
 
-	class Iterator: public genstruct::SLList<TestCase *>::Iterator {
+	class Iterator: public List<TestCase *>::Iter {
 	public:
-		inline Iterator(const TestSet& set): genstruct::SLList<TestCase *>::Iterator(set.cases) { }
-		inline Iterator(const Iterator& iter): genstruct::SLList<TestCase *>::Iterator(iter) { }
+		inline Iterator(const TestSet& set): List<TestCase *>::Iter(set.cases) { }
 	};
 
 private:
 	friend class TestCase;
 	void add(TestCase *tcase);
-	genstruct::SLList<TestCase *> cases;
+	List<TestCase *> cases;
 };
 
 

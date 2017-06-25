@@ -54,7 +54,7 @@ namespace elm { namespace imm {
  *
  * @code
  * list<int> first_list;
- * genstruct::Vector<list<int> > lists;
+ * Vector<list<int> > lists;
  *
  * class MyCollector: public list<int>::Collector {
  * protected:

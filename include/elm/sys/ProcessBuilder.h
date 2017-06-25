@@ -21,7 +21,7 @@
 #ifndef ELM_SYS_PROCESS_BUILDER_H
 #define ELM_SYS_PROCESS_BUILDER_H
 
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 #include <elm/sys/Path.h>
 #include <elm/sys/System.h>
 #include <elm/sys/SystemIO.h>
@@ -44,7 +44,7 @@ public:
 	Process *run(void) throw(SystemException);
 
 private:
-	genstruct::Vector<string> args;
+	Vector<string> args;
 	SystemInStream *in;
 	SystemOutStream *out, *err;
 	bool new_session;

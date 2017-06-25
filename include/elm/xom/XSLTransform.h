@@ -24,8 +24,8 @@
 
 #include <elm/util/ErrorHandler.h>
 #include <elm/xom/Nodes.h>
-#include <elm/genstruct/Vector.h>
-#include <elm/genstruct/AssocList.h>
+#include <elm/data/Vector.h>
+#include <elm/data/ListMap.h>
 
 namespace elm { namespace xom {
 
@@ -57,7 +57,7 @@ private:
 	static void handle_error(void *ctx, const char *msg, ...);
 	Document *ss;
 	NodeFactory *fact;
-	genstruct::AssocList<string, string> params;
+	ListMap<string, string> params;
 };
 
 } }		// elm::xom
