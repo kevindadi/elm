@@ -87,7 +87,7 @@ public:
 	inline AllocArray(int count, T *buffer): Array<T>(count, buffer) { }
 	inline AllocArray(int count): Array<T>(count, new T[count]) { }
 	inline AllocArray(int count, const T& val): Array<T>(count, new T[count]) { fill(val); }
-	inline AllocArray(const Array<T>& t): Array<T>(t.cnt, new T[t.cnt]) { Array<T>::copy(t); }
+	inline AllocArray(const Array<T>& t): Array<T>(t.count(), new T[t.count()]) { Array<T>::copy(t); }
 	inline AllocArray(const AllocArray<T>& t): Array<T>(t.cnt, new T[t.cnt]) { Array<T>::copy(t); }
 	inline ~AllocArray(void) { if(this->buf) delete [] this->buf; }
 

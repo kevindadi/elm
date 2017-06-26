@@ -137,6 +137,8 @@ public:
 		{ Iter i(p); while(i && !_man.eq.isEquals(*i, v)) i++; return i; }
 
 	// MutableList concept
+	inline T& first(void) { ASSERT(cnt > 0); return tab[0]; }
+	inline T& last(void) { ASSERT(cnt > 0); return tab[cnt - 1]; }
 	inline void addFirst(const T &v) { insert(0, v); }
 	inline void addLast(const T &v) { add(v); }
 	inline void removeFirst(void) { removeAt(0); }
@@ -146,6 +148,7 @@ public:
 
 	// Stack concept
 	inline const T &top(void) const { return last(); }
+	inline T &top(void) { return last(); }
 	inline T pop(void) { ASSERTP(cnt > 0, "no more data to pop"); cnt--; return tab[cnt]; }
 	inline void push(const T &v) { add(v); }
 	inline void reset(void) { clear(); }
