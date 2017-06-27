@@ -79,6 +79,7 @@ set(TEST_SOURCES
 	"test_vector.cpp"
 	"test_vector_queue.cpp"
 	"test_sorted_bintree.cpp"
+	"test_tree.cpp"
 	"test_type_info.cpp"
 	"test_thread.cpp"
 	"test_utf8.cpp"

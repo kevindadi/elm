@@ -35,6 +35,7 @@ set(LIBELM_LA_SOURCES
 	"data_ListQueue.cpp"
 	"data_Range.cpp"
 	"data_SortedList.cpp"
+	"data_Tree.cpp"
 	"data_Vector.cpp"
 	"debug.cpp"
 	"dyndata_Collection.cpp"
@@ -132,10 +133,8 @@ set(LIBELM_LA_SOURCES
 	"genstruct_DAGNode.cpp"
 	"genstruct_SortedBinMap.cpp"
 	"genstruct_SortedBinTree.cpp"
-	"genstruct_Tree.cpp"
 	"genstruct_VectorQueue.cpp"
 	"genstruct_Table.cpp"
-	"genstruct_Tree.cpp"
 	)
 
 

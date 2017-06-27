@@ -1,22 +1,19 @@
 #include <elm/inhstruct/Tree.h>
-#include <elm/genstruct/Tree.h>
+#include <elm/data/Tree.h>
 #include "../include/elm/test.h"
 
 using namespace elm;
-using namespace elm::inhstruct;
 
-int main(void) {
-	
 	// simple tree
-	CHECK_BEGIN("inhstruct_Tree")
+TEST_BEGIN(tree)
 	{
-		Tree *t1 = new Tree;
-		Tree *t2 = new Tree;
-		Tree *t3 = new Tree;
+		inhstruct::Tree *t1 = new inhstruct::Tree;
+		inhstruct::Tree *t2 = new inhstruct::Tree;
+		inhstruct::Tree *t3 = new inhstruct::Tree;
 		t1->add(t2);
 		t1->add(t3);
 		CHECK(!t1->isEmpty());
-		Tree::Iterator child(t1);
+		inhstruct::Tree::Iterator child(t1);
 		CHECK(child == true); 
 		CHECK(child == t3);
 		child++;
@@ -28,12 +25,10 @@ int main(void) {
 		t1->remove(t2);
 		CHECK(t1->isEmpty());
 	}
-	CHECK_END
 
 	// generic tree
-	CHECK_BEGIN("genstruct::Tree")
 	{
-		typedef genstruct::Tree<string> tree_t;
+		typedef elm::Tree<string> tree_t;
 		tree_t *t1 = new tree_t("1");
 		tree_t *t2 = new tree_t("2");
 		tree_t *t3 = new tree_t("3");
@@ -52,6 +47,5 @@ int main(void) {
 		t1->remove(t2);
 		CHECK(t1->isEmpty());
 	}
-	CHECK_END
 
-}
+TEST_END

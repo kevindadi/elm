@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	Tree class implementation
  *
  *	This file is part of OTAWA
@@ -20,9 +19,9 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <elm/genstruct/Tree.h>
+#include <elm/data/Tree.h>
 
-namespace elm { namespace genstruct {
+namespace elm {
 
 /**
  * @class Tree
@@ -81,4 +80,4 @@ namespace elm { namespace genstruct {
  * @return	Next sibling.
  */
 	
-} } // elm:genstruct
+} // elm
