@@ -128,6 +128,13 @@ public:
 	}
 	inline Iter find(const T& item) const { return find(item, begin()); }
 
+	// operators
+	inline SortedList<T, M>& operator=(const SortedList<T, M>& sl) { list.copy(sl.list); return *this; }
+	inline bool operator&(const T& e) const { return list.contains(e); }
+	inline T& operator[](int k) { return list[k]; }
+	inline const T& operator[](int k) const { return list[k]; }
+
+
 protected:
 	inline void set(Iter i, const T& val) { list.set(i, val); }
 	list_t list;
