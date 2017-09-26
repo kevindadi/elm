@@ -22,6 +22,7 @@
 #define ELM_TYPE_INFO_H_
 
 #include <elm/string/String.h>
+#include <elm/int.h>
 
 namespace elm {
 
@@ -126,6 +127,7 @@ struct signed_info: public scalar_t, public asis_t<I> {
 	static const I min = I(-1) << (size - 1);
 	static const I max = ~min;
 	static const I null = 0;
+	static const int shift = 0;
 };
 template <class I> const I signed_info<I>::null;
 template <class I> const I signed_info<I>::min;
@@ -137,22 +139,21 @@ struct unsigned_info: public scalar_t, public asis_t<I> {
 	static const I min = 0;
 	static const I max = I(-1);
 	static const I null = 0;
+	static const int shift = 0;
 };
 template <class I> const I unsigned_info<I>::null;
 template <class I> const I unsigned_info<I>::min;
 template <class I> const I unsigned_info<I>::max;
 
-template <> struct type_info<signed int>: public signed_info<signed int> { static cstring name(void); };
-template <> struct type_info<unsigned int>: public unsigned_info<unsigned int> { static cstring name(void); };
-template <> struct type_info<char>: public signed_info<char> { static cstring name(void); };
-template <> struct type_info<signed char>: public signed_info<signed char> { static cstring name(void); };
-template <> struct type_info<unsigned char>: public unsigned_info<unsigned char>  { static cstring name(void); };
-template <> struct type_info<signed short>: public signed_info<signed short> { static cstring name(void); };
-template <> struct type_info<unsigned short>: public unsigned_info<unsigned short> { static cstring name(void); };
-template <> struct type_info<signed long>: public signed_info<signed long> { static cstring name(void); };
-template <> struct type_info<unsigned long>: public unsigned_info<unsigned long> { static cstring name(void); };
-template <> struct type_info<signed long long>: public signed_info<signed long long> { static cstring name(void); };
-template <> struct type_info<unsigned long long>: public unsigned_info<unsigned long long> { static cstring name(void); };
+template <> struct type_info<char>: public signed_info<char> { static cstring name(void); static const int shift = 0; };
+template <> struct type_info<t::int8>: public signed_info<t::int8> { static cstring name(void); static const int shift = 0; };
+template <> struct type_info<t::uint8>: public unsigned_info<t::uint8>  { static cstring name(void); static const int shift = 0; };
+template <> struct type_info<t::int16>: public signed_info<t::int16> { static cstring name(void); static const int shift = 1; };
+template <> struct type_info<t::uint16>: public unsigned_info<t::uint16> { static cstring name(void); static const int shift = 1; };
+template <> struct type_info<t::int32>: public signed_info<t::int32> { static cstring name(void); static const int shift = 2; };
+template <> struct type_info<t::uint32>: public unsigned_info<t::uint32> { static cstring name(void); static const int shift = 2; };
+template <> struct type_info<t::int64>: public signed_info<t::int64> { static cstring name(void); static const int shift = 3; };
+template <> struct type_info<t::uint64>: public unsigned_info<t::uint64> { static cstring name(void); static const int shift = 3; };
 
 	
 // float specialization

@@ -82,6 +82,13 @@ namespace array {
  * @ingroup array
  */
 
+/**
+ * @fn void reverse(T *a, int n);
+ * Reverse the elements of the given array.
+ * @param a		Array to reverse.
+ * @param n		Number of elements in a.
+ */
+
 }	// array
 
 /**

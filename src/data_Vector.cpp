@@ -52,6 +52,22 @@ namespace elm {
  */
 
 /**
+ * @fn Array<const T>& Vector::asArray(void) const;
+ * Return the vector as an array.
+ * @return	Array corresponding to the vector.
+ * @warning The array only stays valid (pointing to actual memory)
+ * until the corresponding vector is modified or deleted!
+ */
+
+/**
+ * @fn Array<T>& Vector::asArray(void);
+ * Return the vector as an array.
+ * @return	Array corresponding to the vector.
+ * @warning The array only stays valid (pointing to actual memory)
+ * until the corresponding vector is modified or deleted!
+ */
+
+/**
  * @fn int Vector::capacity(void) const;
  * Get the capacity of the vector.
  * @return	Capacity.

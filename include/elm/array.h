@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	Fast array utilities.
  *
  *	This file is part of OTAWA
@@ -27,6 +26,7 @@
 #include <string.h>
 #include <elm/meta.h>
 #include <elm/type_info.h>
+#include <elm/util/misc.h>
 
 namespace elm {
 
@@ -81,6 +81,10 @@ template <class T> inline void construct(T *t, int size)
 	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::_::construct(t, size); }
 template <class T> inline void destruct(T *t, int size)
 	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::_::destruct(t, size); }
+
+// other useful operations
+template <class T> void reverse(T *a, int n)
+	{ for(int i = 0; i < n / 2; i++) swap(a[i], a[n - 1 - i]); }
 
 } }	// elm::array
 

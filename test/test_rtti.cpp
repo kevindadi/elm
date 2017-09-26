@@ -1,9 +1,15 @@
 #include "../include/elm/test.h"
 #include <elm/rtti.h>
+#include <elm/data/Vector.h>
 #include <elm/util/Variant.h>
 
 using namespace elm;
 using namespace elm::rtti;
+
+// EXPERIMENTAL
+namespace elm { namespace rtti {
+
+} }
 
 typedef enum my_enum_t {
 	A = 0,
@@ -48,6 +54,31 @@ IMPLEMENT(BB);
 IMPLEMENT(CC);
 IMPLEMENT(DD);
 
+// light rtti
+namespace elm { namespace rtti { class AbstractClass; } }
+
+class X {
+public:
+	static rtti::AbstractClass& __type;
+	X(void) { cout << "X()\n"; }
+	X(int x) { cout << "X(" << x << ")\n"; }
+
+	static X *f(void) { static X x; cerr << "f()\n"; return &x; }
+	static void g(int x) { cout << x << io::endl; }
+
+	void m1(void) { }
+	void m2(int i) { }
+};
+
+rtti::Class<X> __type(make("X")
+	.construct<X>("X")
+	.construct<X, int>("X")
+	.op<X *>("f", X::f)
+	.op<void>("g", X::g)
+	.op<void>("m1", &X::m1)
+	.op<void>("m2", &X::m2));
+rtti::AbstractClass& X::__type = __type;
+
 TEST_BEGIN(rtti)
 	{
 		CHECK_EQUAL(&int8_type, &type_of<t::int8>());
@@ -81,6 +112,35 @@ TEST_BEGIN(rtti)
 
 		CHECK_EQUAL(t::ptr(pb), DD::__type.upCast(pd, BB::__type));
 		CHECK_EQUAL(t::ptr(pd), BB::__type.downCast(pb, DD::__type));
+	}
+
+	// Variant test
+	{
+		Variant v1(666);
+		CHECK_EQUAL(v1.as<int>(), 666);
+		int x;
+		Variant v2(&x);
+		CHECK_EQUAL(v2.as<int *>(), &x);
+		cstring s1 = "ok";
+		Variant v3(s1);
+		CHECK_EQUAL(v3.as<cstring>(), s1);
+		string s2 = "ko";
+		Variant v4(s2);
+		CHECK_EQUAL(v4.as<string>(), s2);
+	}
+
+	// RTTI constructor
+	{
+		/*Vector<Variant> args;
+		X *p = make0.call(args).as<X *>();
+		CHECK(p != 0);
+		delete p;
+		args.add(Variant(666));
+		p = make1.call(args).as<X *>();
+		CHECK(p != 0);
+		delete p;
+		p = make2.call(args).as<X *>();
+		CHECK(p != 0);*/
 	}
 
 TEST_END

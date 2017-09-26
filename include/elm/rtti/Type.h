@@ -41,7 +41,7 @@ class Enumerable {
 public:
 	virtual ~Enumerable(void);
 	virtual const Type& type(void) const = 0;
-	virtual int valueFor(cstring text) const = 0;
+	virtual int valueFor(string text) const = 0;
 	virtual cstring nameFor(int value) const = 0;
 };
 
@@ -60,7 +60,7 @@ public:
 	Type(string name = "unknown");
 	virtual ~Type(void);
 	inline string name(void) const { return _name; }
-	const Type *pointer(void) const;
+	const Type& pointer(void) const;
 	virtual bool canCast(const Type *t) const;
 
 	virtual bool isVoid(void) const;

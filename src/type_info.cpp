@@ -245,17 +245,14 @@ const string type_info<string>::null = "";
 
 
 // type_info<integer types>
-cstring type_info<signed int>::name(void) { return "int"; }
-cstring type_info<unsigned int>::name(void) { return "unsigned"; }
-cstring type_info<char>::name(void) { return "char"; }
-cstring type_info<signed char>::name(void) { return "signed char"; }
-cstring type_info<unsigned char>::name(void) { return "unsigned char"; }
-cstring type_info<signed short>::name(void) { return "short"; }
-cstring type_info<unsigned short>::name(void) { return "unsigned short"; }
-cstring type_info<signed long>::name(void) { return "long"; }
-cstring type_info<unsigned long>::name(void) { return "unsigned long"; }
-cstring type_info<signed long long>::name(void) { return "long long"; }
-cstring type_info<unsigned long long>::name(void) { return "unsigned long long"; }
+cstring type_info<t::int8>::name(void) { return "char"; }
+cstring type_info<t::uint8>::name(void) { return "unsigned char"; }
+cstring type_info<t::int16>::name(void) { return "short"; }
+cstring type_info<t::uint16>::name(void) { return "unsigned short"; }
+cstring type_info<t::int32>::name(void) { return "long"; }
+cstring type_info<t::uint32>::name(void) { return "unsigned long"; }
+cstring type_info<t::int64>::name(void) { return "long long"; }
+cstring type_info<t::uint64>::name(void) { return "unsigned long long"; }
 
 
 // type_info<float>

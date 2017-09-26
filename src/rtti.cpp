@@ -285,10 +285,10 @@ Type::~Type(void) { }
  * Obtain pointer type on the current type.
  * @return	Corresponding pointer type.
  */
-const Type *Type::pointer(void) const {
+const Type& Type::pointer(void) const {
 	if(!_pointer)
 		_pointer = new PointerType(this);
-	return _pointer;
+	return *_pointer;
 }
 
 /**
@@ -555,7 +555,7 @@ public:
 const Type& string_type = Single<StringType>::_;
 
 /**
- * Class to representd void type.
+ * Class to represent void type.
  * @ingroup rtti
  */
 class VoidType: public AbstractClass {
@@ -609,6 +609,21 @@ const Type& cstring_type = Single<CStringType>::_;
  * @param base	Base class (default none).
  */
 AbstractClass::AbstractClass(CString name, const AbstractClass& base): rtti::Type(name), _base(base) {
+}
+
+/**
+ * Build a class using the maker.
+ * @param m		Maker to use.
+ */
+AbstractClass::AbstractClass(const make& m): rtti::Type(m._name), _base(*m._base) {
+}
+
+/**
+ * Build a class using the maker.
+ * @param m		Maker to use.
+ * @param base	Base class.
+ */
+AbstractClass::AbstractClass(const make& m, const AbstractClass& base): rtti::Type(m._name), _base(base) {
 }
 
 /**
@@ -865,8 +880,9 @@ const Type& Enum::type(void) const {
 
 /**
  * Get the value for a text.
+ * @param text	Text to lookup.
  */
-int Enum::valueFor(cstring text) const {
+int Enum::valueFor(string text) const {
 	for(Vector<Value>::Iter i = _map; i; i++)
 		if((*i).name() == text)
 			return (*i).value();
@@ -1005,5 +1021,55 @@ const Enumerable& Enum::asEnum(void) const {
  * Must follow a @ref BEGIN_ENUM.
  * @ingroup rtti
  */
+
+
+/**
+ * @class Operation
+ */
+
+/**
+ */
+Operation::Operation(kind_t kind, cstring name, const Type& rtype)
+: _kind(kind), _name(name), _rtype(rtype) {
+}
+
+/**
+ */
+Operation::Operation(kind_t kind, cstring name, const List<Parameter>& pars, const Type& rtype)
+: _kind(kind), _name(name), _pars(pars), _rtype(rtype) {
+}
+
+/**
+ */
+Operation::~Operation(void) {
+}
+
+/**
+ * @fn kind_t Operation::kind(void) const;
+ */
+
+/**
+ * @fn cstring Operation::name(void) const;
+ */
+
+/**
+ * @fn const Type& Operation::returnType(void) const;
+ */
+
+/**
+ * @fn const List<Parameter>& Operation::parameters(void) const;
+ */
+
+/**
+ */
+Variant Operation::call(Vector<Variant>& args) const throw(Exception) {
+	throw MessageException("not implemented");
+}
+
+/**
+ */
+void Operation::add(const Parameter& param) {
+	_pars.addLast(param);
+}
 
 } }	// elm::rtti

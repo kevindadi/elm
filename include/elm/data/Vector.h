@@ -43,6 +43,8 @@ public:
 	inline Vector(const Vector<T>& vec): _man(vec._man), tab(0), cap(0), cnt(0) { copy(vec); }
 	inline ~Vector(void) { if(tab) free(tab, cap); }
 	inline M& manager(void) const { return _man; }
+	inline Array<const T>& asArray(void) const { return Array<const T>(count, tab); }
+	inline Array<T>& asArray(void) { return Array<T>(count, tab); }
 
 	// Iterator
 	class Iter: public PreIterator<Iter, const T&> {

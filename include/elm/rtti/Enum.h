@@ -63,7 +63,7 @@ public:
 
 	// Enumerable interface
 	virtual const Type& type(void) const;
-	virtual int valueFor(cstring text) const;
+	virtual int valueFor(string text) const;
 	virtual cstring nameFor(int value) const;
 
 	// Type interface
@@ -81,15 +81,17 @@ inline rtti::Enum::Value value(cstring name, int value)
 
 // New support for enumeration
 #define ELM_DECLARE_ENUM(name) \
-	namespace elm { namespace rtti { template <> const Type& _type<name>::_(void); } } \
-	inline elm::io::Output& operator<<(io::Output& out, name value) { out << elm::type_of<name>().asEnum().nameFor(value); return out; }
+	namespace elm { namespace rtti { template <> const elm::rtti::Type& _type<name>::_(void); } } \
+	inline elm::io::Output& operator<<(elm::io::Output& out, name value) { out << elm::type_of<name>().asEnum().nameFor(value); return out; } \
+	inline elm::io::Input& operator>>(elm::io::Input& in, name& value) \
+		{ value = static_cast<name>(elm::type_of<name>().asEnum().valueFor(in.scanWord())); return in; }
 
 #define ELM_DEFINE_ENUM(type, desc) \
-	namespace elm { namespace rtti { template <> const Type& _type<type>::_(void) { return desc; } } }
+	namespace elm { namespace rtti { template <> const elm::rtti::Type& _type<type>::_(void) { return desc; } } }
 
 #define ELM_BEGIN_ENUM(type) \
-	namespace elm { namespace rtti { template <> const Type& _type<type>::_(void) { \
-		static Enum _(Enum::make(#type)
+	namespace elm { namespace rtti { template <> const elm::rtti::Type& _type<type>::_(void) { \
+		static elm::rtti::Enum _(Enum::make(#type)
 
 #define ELM_END_ENUM \
 		); \
