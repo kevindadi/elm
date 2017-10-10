@@ -18,7 +18,8 @@
 	<list3>
 		<item ref="id0"/>
 		<item><x>1</x></item>
-		<item class="Item2Class"><x>2</x></item>
+		<item id="ok" class="Item2Class"><x>2</x></item>
+		<item ref="ok"/>
 	</list3>
 	<en>VAL2</en>
 </SimpleClass>

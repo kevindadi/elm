@@ -46,7 +46,7 @@
 
 #define ELM_FIELD(name) elm::field(#name, name)
 #define ELM_DFIELD(name, def) elm::field(#name, name, def)
-#define ELM_BASE(name) ((name&)*this)
+#define ELM_BASE(name) elm::serial2::Base<name>(static_cast<const name *>(this))
 
 
 #define ELM_ENUM(type) \

@@ -58,7 +58,7 @@ public:
 
 // Item2Class
 class Item2Class: public ItemClass {
-	SERIALIZABLE_EXTEND(Item2Class, ItemClass, x)
+	SERIALIZABLE_EXTEND(Item2Class, ItemClass, BASE(ItemClass) & x)
 public:
 	virtual int getX(void) { return 666; };
 	virtual ~Item2Class(void) { }
@@ -137,13 +137,15 @@ TEST_BEGIN(serial)
 		CHECK_EQUAL(res.list2[0].x, 0);
 		CHECK_EQUAL(res.list2[1].x, 1);
 		CHECK_EQUAL(res.list2[2].x, 2);
-		CHECK_EQUAL(res.list3.count(), 3);
+		CHECK_EQUAL(res.list3.count(), 4);
 		CHECK(res.list3[0]);
 		CHECK_EQUAL(res.list3[0]->x, 0);
 		CHECK(res.list3[1]);
 		CHECK_EQUAL(res.list3[1]->x, 1);
 		CHECK(res.list3[2]);
 		CHECK_EQUAL(res.list3[2]->x, 2);
+		CHECK(res.list3[3]);
+		CHECK_EQUAL(res.list3[2], res.list3[3]);
 		CHECK_EQUAL(res.ref, &res.list2[1]);
 	}
 	catch(Exception& exn) {

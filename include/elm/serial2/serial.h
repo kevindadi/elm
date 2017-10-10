@@ -30,6 +30,17 @@
 
 namespace elm { namespace serial2 {
 
+// for ascending compatibility only
+template <class T>
+class Base {
+public:
+	inline Base(T *p): ptr(p) { }
+	inline Base(const T *p): ptr(const_cast<T *>(p)) { }
+	T *ptr;
+};
+
+
+// AbstractClass class
 class AbstractClass: public rtti::AbstractClass, public rtti::Serializable {
 public:
 	inline AbstractClass(CString name, const rtti::AbstractClass& base)
@@ -77,7 +88,6 @@ public:
 // Class information
 template <class T>
 inline void __serialize_body(Serializer& s, const T *v) {
-	//__serialize_body(s, static_cast<const typename rtti::__base<T>::_ *>(v));
 	__serialize_body(s, static_cast<const typename T::__base *>(v));
 	v->__visit(s);
 }
@@ -85,7 +95,6 @@ template <> inline void __serialize_body(Serializer& s, const void *v) { }
 
 template <class T>
 inline void __unserialize_body(Unserializer& s, T *v) {
-	//__unserialize_body(s, static_cast<typename rtti::__base<T>::_ *>(v));
 	__unserialize_body(s, static_cast<typename T::__base *>(v));
 	v->__visit(s);
 }
@@ -252,6 +261,24 @@ inline void __unserialize(Unserializer& s, const DefaultField<T>& field) {
 	else
 		field.value() = field.defaultValue();
 }
+
+
+// for ascending compatibility
+template <class T>
+inline Unserializer& operator&(Unserializer& s, const Base<T>& base)
+	{ __unserialize_body(s, base.ptr); return s; }
+
+template <class T>
+inline Unserializer& operator>>(Unserializer& s, const Base<T>& base)
+	{ __unserialize_body(s, base.ptr); return s; }
+
+template <class T>
+inline Serializer& operator&(Serializer& s, const Base<T>& base)
+	{ __serialize_body(s, base.ptr); return s; }
+
+template <class T>
+inline Serializer& operator<<(Serializer& s, const Base<T>& base)
+	{ __serialize_body(s, base.ptr); return s; }
 
 } } // elm::serial2
 	

@@ -70,14 +70,14 @@ public:
 	void m2(int i) { }
 };
 
-rtti::Class<X> __type(make("X")
+/*rtti::Class<X> __type(make("X")
 	.construct<X>("X")
 	.construct<X, int>("X")
 	.op<X *>("f", X::f)
 	.op<void>("g", X::g)
 	.op<void>("m1", &X::m1)
 	.op<void>("m2", &X::m2));
-rtti::AbstractClass& X::__type = __type;
+rtti::AbstractClass& X::__type = __type;*/
 
 TEST_BEGIN(rtti)
 	{

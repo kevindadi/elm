@@ -212,9 +212,10 @@ void XOMUnserializer::flush(void) {
 					void *obj = _solver->solve(pair.fst);
 					if(!obj)
 						throw io::IOException(_ << "unresolved reference \"" << pair.fst << "\"");
-					else
+					else {
 						// TODO	Add type checking.
 						pair.snd->record(obj);
+					}
 				}
 				ctx.elem = elem;
 
@@ -252,9 +253,9 @@ void XOMUnserializer::embed(const rtti::Type& clazz, void **ptr) {
 
 	// Build the object
 	*ptr = uclass->asSerial().instantiate();
-	beginObject(*uclass, *ptr);
+	//beginObject(*uclass, *ptr);
 	uclass->asSerial().unserialize(*this, *ptr);
-	endObject(clazz, ptr);
+	//endObject(clazz, ptr);
 }
 
 
@@ -321,7 +322,7 @@ void XOMUnserializer::beginObject(const rtti::Type& type, void *ptr) {
 
 /**
  */
-void XOMUnserializer::endObject(const rtti::Type& type, void *object) {
+void XOMUnserializer::endObject(const rtti::Type& type, void *ptr) {
 }
 
 

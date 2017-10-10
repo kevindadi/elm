@@ -107,7 +107,7 @@ message(STATUS "crash handler is " ${CRASH_HANDLER})
 
 #process subdirectories
 add_subdirectory(src)
-if(ELM_TEST)
+if(WITH_TEST)
 	add_subdirectory(test)
 endif()
 

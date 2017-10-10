@@ -24,6 +24,7 @@
 #include <elm/data/List.h>
 #include <elm/data/Vector.h>
 #include <elm/util/Variant.h>
+#include "light.h"
 #include "type_of.h"
 
 namespace elm { namespace rtti {

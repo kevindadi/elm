@@ -63,18 +63,6 @@ template <class T> struct _type<T *>
 template <class T> inline const rtti::Type& type_of(void) { return rtti::_type<T>::_(); }
 template <class T> inline const rtti::Type& type_of(const T& v) { return rtti::_type<T>::_(); }
 
-#define ELM_DECLARE_CLASS(clazz) \
-	namespace elm { namespace rtti { template <> const Type& _type<clazz>::_(void); } }
-
-#define ELM_DEFINE_CLASS(clazz, desc) \
-		namespace elm { namespace rtti { template <> const Type& _type<clazz>::_(void) { return desc; } } }
-
-#ifndef ELM_NO_SHORTCUT
-#	define DECLARE_CLASS(name) 		ELM_DECLARE_CLASS(name)
-#	define DEFINE_CLASS(type, desc)	ELM_DEFINE_CLASS(type, desc)
-#endif
-
-
 }		// elm
 
 #endif /* ELM_RTTI_TYPE_OF_H_ */
