@@ -87,7 +87,7 @@ public:
 	inline int count(void) const { return base_t::count(); }
 	inline bool contains(const T& v) const
 		{ for(Iter i = begin(); i; i++) if(manager().equals(*i, v)) return true; return false; }
-	template <class C> inline bool contains(const C& c) const
+	template <class C> inline bool containsAll(const C& c) const
 		{ for(typename C::Iter i = c.items(); i; i++) if(!contains(*i)) return false; return true; }
 	inline bool isEmpty(void) const { return base_t::isEmpty(); }
 	inline operator bool(void) const { return !isEmpty(); }

@@ -57,12 +57,12 @@ endif()
 
 # GCC flags
 if(CMAKE_BUILD_TYPE MATCHES Release)
-	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
+	add_definitions(-DNDEBUG)
 endif()
 add_compile_options(-Wall)
-#if(${CMAKE_COMPILER_IS_GNUCXX})
-#	add_compile_options(-Wno-misleading-indentation)
-#endif()
+if(NOT ELM_NO_CPP_11)
+	add_compile_options(--std=c++11)
+endif()
 
 
 # libraries libxml2 and libxslt

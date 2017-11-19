@@ -5,7 +5,7 @@
  * test/test_avl.cpp -- AVLTree class test.
  */
 
-#define ELM_DEBUG_AVL
+#define ELM_AVL_CHECK
 
 #include "../include/elm/test.h"
 #include <elm/genstruct/Vector.h>
@@ -27,7 +27,82 @@ static const int _count = 100000;
 
 // Entry point
 TEST_BEGIN(avl)
-	
+
+	// small tree
+	{
+		avl::Set<int> set;
+		CHECK(set.__invariant());
+		set.add(10);
+		CHECK(set.__invariant());
+		CHECK(set.contains(10));
+		CHECK(!set.contains(5));
+		CHECK(!set.contains(15));
+		set.add(5);
+		CHECK(set.__invariant());
+		CHECK(set.contains(10));
+		CHECK(set.contains(5));
+		CHECK(!set.contains(15));
+		set.add(15);
+		CHECK(set.__invariant());
+		CHECK(set.contains(10));
+		CHECK(set.contains(5));
+		CHECK(set.contains(15));
+	}
+
+	// worst case on right
+	{
+		avl::Set<int> set;
+		for(int i = 0; i < 20; i++)
+			set.add(i);
+		CHECK(set.__invariant());
+		bool all = true;
+		for(int i = 0; i < 20; i++)
+			all = all || set.contains(i);
+		CHECK_EQUAL(set.count(), 20);
+
+		// test iterator
+		bool ok = true;
+		int n = 0;
+		for(auto i = set.begin(); i; i++, n++)
+			ok = ok || *i == n;
+		CHECK(ok);
+	}
+
+	// worst case on left
+	{
+		avl::Set<int> set;
+		for(int i = 20; i > 0; i--)
+			set.add(i);
+		CHECK(set.__invariant());
+		bool all = true;
+		for(int i = 0; i < 20; i++)
+			all = all || set.contains(i);
+		CHECK_EQUAL(set.count(), 20);
+
+		// test iterator
+		bool ok = true;
+		int n = 1;
+		for(auto i = set.begin(); i; i++, n++)
+			ok = ok || *i == n;
+		CHECK(ok);
+	}
+
+	// failing use case
+	{
+		avl::Set<int> set;
+		set.add(1);
+		set.remove(1);
+		set.add(2);
+		set.remove(2);
+		set.add(6);
+		CHECK(!set.contains(7));
+		set.add(7);
+		CHECK(set.contains(7));
+		set.remove(7);
+		CHECK(!set.contains(7));
+	}
+
+#if 0
 	// unit test
 	{
 		Set<int> tree;
@@ -82,7 +157,7 @@ TEST_BEGIN(avl)
 			int a = sys::System::random(maxv * 3);
 
 			// remove
-			if(a < 2 * maxv && ints.count()) {
+			/*if(a < 2 * maxv && ints.count()) {
 				int n = ints[a % ints.count()];
 				LOG(cerr << "removing " << ints[a % ints._count()] << io::endl;)
 				ints.remove(n);
@@ -92,7 +167,7 @@ TEST_BEGIN(avl)
 			}
 
 			// insert
-			else if(a < maxv) {
+			else*/ if(a < 3 * maxv) {
 				int n = a % maxv;
 				LOG(cerr << "adding " << n << io::endl;)
 				if(!ints.contains(n))
@@ -203,6 +278,7 @@ TEST_BEGIN(avl)
 		CHECK(map.get(3) == 3);
 		CHECK(map.get(4) == 0);
 	}
+#endif
 
 TEST_END
 

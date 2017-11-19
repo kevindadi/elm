@@ -23,224 +23,212 @@
 #include <elm/avl/Set.h>
 #include <elm/avl/Map.h>
 #include <elm/data/Vector.h>
+#include <elm/compare.h>
 
 namespace elm { namespace avl {
 
-/**
+using namespace elm;
+
+/*
+ * Let T supporting a partial-order (T, ≤),
+ * AVLTree(T) = node(val: T, bal: ℤ, left: AVLTree(T), right: AVLTree(T)) | nil
+ *
+ * Invariant — let t ∈ AVLTree(T),
+ * left_sorted(nil) = ⊤
+ * left_sorted(node(x, _, l, r)) =
+ * 		(∀ y ∈ values(l) ⇒ y < x) ∧ left_sorted(l) ∧ left_sorted(r)
+ * right_sorted(nil) = ⊤
+ * right_sorted(node(x, _, l, r)) =
+ * 		(∀ y ∈ values(l) ⇒ x < y) ∧ right_sorted(l) ∧ right_sorted(r)
+ * balanced(nil) = ⊤
+ * balanced(node(_, b, l, r) =
+ * 		b = h(r) - h(l) ∧ -1 ≤ b ≤ 1 ∧ balanced(l) ∧ balanced(r)
+ * invariant(t) = left_sorted(t) ∧ right_sorted(t) ∧ balanced(t)
+ *
+ * Reference:
+ * http://interactivepython.org/runestone/static/pythonds/Trees/AVLTreeImplementation.html
  */
-void AbstractTree::insert(unsigned char da[], int dir, Node *node, Node *q, Node *y, Node *z) {
-	int k;
-	Node *p;
-	
-	// Link it
-	cnt++;
-	q->links[dir] = node;
-	if(!y)
-		return;
-	
-	// update balance factors
-	for(p = y, k = 0; p != node; p = p->links[da[k]], k++)
-		if (da[k] == 0)
-      		p->balance--;
-		else
-			p->balance++;
-	
-	// rebalancing
-	Node *w;
-	if(y->balance == -2) {
-		Node *x = y->links[0];
-		if(x->balance == -1) {
-			w = x;
-			y->links[0] = x->links[1];
-			x->links[1] = y;
-			x->balance = y->balance = 0;
-		}
-		else {
-			w = x->links[1];
-			x->links[1] = w->links[0];
-			w->links[0] = x ;
-			y->links[0] = w->links[1];
-			w->links[1] = y;
-			if(w->balance == -1) x->balance = 0, y->balance = +1;
-			else if(w->balance == 0) x->balance = y->balance = 0;
-			else x->balance = -1, y->balance = 0;
-			w->balance = 0;
-		}
-	}
-	else if(y->balance == + 2) {
-		Node *x = y->links[1];
-		if(x->balance == +1) {
-			w = x;
-			y->links[1] = x->links[0];
-			x->links[0] = y;
-			x->balance = y->balance = 0;				
-		}
-		else {
-			w = x->links[0];
-			x->links[0] = w->links[1];
-			w->links[1] = x ;
-			y->links[1] = w->links[0];
-			w->links[0] = y;
-			if(w->balance == +1) x->balance = 0, y->balance = -1;
-			else if(w->balance == 0) x->balance = y->balance = 0;
-			else x->balance = +1, y->balance = 0;
-			w->balance = 0;
-		}
-	}
+
+
+/**
+ * Get the link to the pointer of the top-node corresponding
+ * to the followed path (basically used to relink nodes).
+ * @param s	Stack to the concerned node.
+ */
+AbstractTree::Node **AbstractTree::link(const Stack& s) {
+	if(s.empty())
+		return &_root;
+	else if(s.topDir() == LEFT)
+		return &s.topNode()->_left;
 	else
-		return;
-	z->links[y != z->links[0]] = w;
+		return &s.topNode()->_right;
 }
 
 
 /**
+ * Exchange two nodes values (does not update the parent link).
+ * @param n		First node.
+ * @param m		Second node.
  */
-void AbstractTree::remove(Node *pa[], unsigned char da[], int k, Node *p) {
+void AbstractTree::exchange(Node *n, Node *m) {
+	auto nl = n->_left;
+	auto nr = n->_right;
+	auto nb = n->_bal;
+	n->_left = m->_left;
+	n->_right = m->_right;
+	n->_bal = m->_bal;
+	m->_left = nl;
+	m->_right = nr;
+	m->_bal = nb;
 
-	// remove the item
-	if(p->links[1] == 0) {
-		if(!k)
-			this->root = p->links[0];
+}
+
+
+/**
+ * Perform right-balancing of the node at the top of the stack.
+ * @param s		Stack which top-node must be balanced.
+ */
+void AbstractTree::rotateRight(Stack& s) {
+	Node *r = s.topNode();
+	s.pop();
+	Node *nr = r->_left;
+
+	// relink
+	//set(s, nr);
+	*link(s) = nr;
+	r->_left = nr->_right;
+	nr->_right = r;
+
+	// udpate balance
+	r->_bal = r->_bal + 1 - min(int(nr->_bal), 0);
+	nr->_bal = nr->_bal + 1 + max(int(r->_bal), 0);
+}
+
+
+/**
+ * Perform left-balancing of the node at the top of the stack.
+ * @param s		Stack which top-node must be balanced.
+ */
+void AbstractTree::rotateLeft(Stack& s) {
+	Node *r = s.topNode();
+	s.pop();
+	Node *nr = r->_right;
+
+	// relink
+	//set(s, nr);
+	*link(s) = nr;
+	r->_right = nr->_left;
+	nr->_left = r;
+
+	// udpate balance
+	r->_bal = r->_bal - 1 - max(int(nr->_bal), 0);
+	nr->_bal = nr->_bal - 1 + min(int(r->_bal), 0);
+}
+
+
+/**
+ * Perform actual insertion and re-balancing of a new value.
+ * @param s		Tree traversal stack.
+ * @param node	Added node.
+ */
+void AbstractTree::insert(Stack& s, Node *node) {
+	_cnt++;
+
+	// empty tree
+	if(_root == nullptr) {
+		_root = node;
+		return;
+	}
+
+	// insert the node
+	//set(s, node);
+	*link(s) = node;
+
+	// update the balance factor and find the unbalancing point
+	while(!s.empty()) {
+
+		// consume current node
+		int dir = s.topDir();
+		Node *n = s.topNode();
+
+		// fix the balance
+		if(dir == LEFT)
+			n->_bal -= 1;
 		else
-			pa[k - 1]->links[da[k - 1]] = p->links[0];
-	}
-	else {
-		Node *r = p->links[1];
-		if(r->links[0] == 0) {
-			r->links[0] = p->links[0];
-			r->balance = p->balance;
-			pa[k - 1]->links[da[k - 1]] = r ;
-			da[k] = 1;
-			pa[k++] = r ;
-		}
- 		else {
-			Node *s;
-			int j = k++;
-			for (;;) {
-				da[k] = 0;
-				pa[k ++] = r;
-				s = r->links[0];
-				if(s->links[0] == 0)
-					break;
-				r = s;
-			}
-			s->links[0] = p->links[0];
-			r->links[0] = s->links[1];
-			s->links[1] = p->links[1];
-			s->balance = p->balance;
-			pa[j - 1]->links[da[j - 1]] = s;
-			da[j] = 1;
-			pa[j] = s;
- 		}
-	}
-	
-	// update the balance factors and rebalance
-	while(--k > 0) {
-		Node *y = pa[k];
-		if(da[k] == 0) {
-			// Update y’s balance factor after left-side AVL deletion 172 
-			y->balance++;
-			if(y->balance == +1)
-				break;
-			else if(y->balance == +2) {
-				Node *x = y->links[1];
-				if(x->balance == -1) {
-					// Left-side rebalancing case 1 in AVL deletion 174
-					Node *w ;
+			n->_bal += 1;
 
-					// Rotate right at x then left at y in AVL tree 159
-					w = x->links[0];
-					x->links[0] = w->links[1];
-					w->links[1] = x ;
-					y->links[1] = w->links[0];
-					w->links[0] = y;
-					if(w->balance == +1)
-						x->balance = 0, y->balance = -1;
-					else if(w->balance == 0)
-						x->balance = y->balance = 0;
-					else
-						x->balance = +1, y->balance = 0;
-					w->balance = 0;
-											
-					pa[k - 1]->links[da[k - 1]] = w;
-				}
-				else {
-					// Left-side rebalancing case 2 in AVL deletion 175
-					y->links[1] = x->links[0];
-					x->links[0] = y;
-					pa[k - 1]->links[da[k - 1]] = x ;
-					if(x->balance == 0) {
-						x->balance = -1;
-						y->balance = +1;
-  						break;
-					}
-					else
-						x->balance = y->balance = 0;
-				}
+		// balanced!
+		if(n->_bal == 0)
+			return;
+
+		// too high on left
+		else if(n->_bal < -1) {
+			if(n->_left->_bal > 0) {
+				s.push(n->_left, LEFT);
+				rotateLeft(s);
 			}
+			rotateRight(s);
+			return;
 		}
-		else {
-			//  Update y’s balance factor after right-side AVL deletion 177 
-			y->balance--;
-			if(y->balance == -1)
-				break;
-			else if(y->balance == -2) {
-				Node *x = y->links[0];
-				if(x->balance == +1) {
-					Node *w ;
-					
-					// Rotate left at x then right at y in AVL tree 156
-					w = x->links[1];
-					x->links[1] = w->links[0];
-					w->links[0] = x;
-					y->links[0] = w->links[1];
-					w->links[1] = y;
-					if(w->balance == -1)
-						x->balance = 0, y->balance = +1;
-					else if(w->balance == 0)
-						x->balance = y->balance = 0;
-					else
-						x->balance = -1, y->balance = 0;
-					w->balance = 0;						
-					
-					pa[k-1]->links[da[k - 1]] = w ;
-				}
-				else {
-					y->links[0] = x->links[1];
-					x->links[1] = y;
-					pa[k - 1]->links[da[k - 1]] = x;
-					if(x->balance == 0) {
-						x->balance = +1;
-						y->balance = -1;
-						break;
-					}
-					else
-						x->balance = y->balance = 0;
-				}
+
+		// too high on right
+		else if(+1 < n->_bal) {
+			if(n->_right->_bal < 0) {
+				s.push(n->_right, RIGHT);
+				rotateRight(s);
 			}
+			rotateLeft(s);
+			return;
 		}
+
+		// propagate addition
+		s.pop();
 	}
 }
 
 
 /**
+ * Perform removal and rebalance operation.
+ * @param s		Stack of parents of removed node.
+ * @param n		Replacing node.
+ */
+void AbstractTree::remove(Stack& s, Node *n) {
+
+	// relink
+	_cnt--;
+	*link(s) = n;
+
+	// propagate the balance update
+	while(!s.empty()) {
+
+		// propagate modificiation
+		Node *n = s.topNode();
+		dir_t d = s.topDir();
+		s.pop();
+		if(d == LEFT)
+			n->_bal++;
+		else
+			n->_bal--;
+
+		// left unbalanced?
+		if(n->_bal < -1) {
+			return;
+		}
+
+		// right unbalanced?
+		else if(n->_bal > +1) {
+			return;
+		}
+
+	}
+}
+
+
+/**
+ * @fn int AbstractTree::count(void) const;
  * Count the number of nodes.
  * @return	Number of nodes.
  */
-int AbstractTree::count(void) const {
-	int cnt = 0;
-	Vector<Node *> s;
-	s.push(root);
-	while(s) {
-		Node *node = s.pop();
-		cnt++;
-		if(node->links[0])
-			s.push(node->links[0]);
-		if(node->links[1])
-			s.push(node->links[1]);
-	}
-	return cnt;
-}
 
 
 /**
