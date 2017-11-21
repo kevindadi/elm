@@ -34,7 +34,7 @@ Activating the test compilation:
 
 Testing:
 	cd test
-	./test			launch all automated tests
+	./dotest		launch all automated tests
 	./test-thread	thread classes
 
 Under Windows:

@@ -55,13 +55,17 @@ if(INSTALL_TYPE MATCHES ".*doc.*")
 endif()
 
 
-# GCC flags
+# C++ flags
 if(CMAKE_BUILD_TYPE MATCHES Release)
 	add_definitions(-DNDEBUG)
 endif()
 add_compile_options(-Wall)
-if(NOT ELM_NO_CPP_11)
+if(CMAKE_VERSION LESS "3.1")
 	add_compile_options(--std=c++11)
+	message(STATUS "C++11 set using cflags")
+else()
+	set(CMAKE_CXX_STANDARD 11)
+	message(STATUS "C++ set using CMAKE_CXX_STANDARD")
 endif()
 
 

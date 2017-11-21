@@ -94,8 +94,8 @@ endif()
 include_directories("../include")
 include_directories(".")
 
-add_executable(test ${TEST_SOURCES})
-target_link_libraries(test elm)
+add_executable(dotest ${TEST_SOURCES})
+target_link_libraries(dotest elm)
 
 add_executable(test_io "test_io.cpp")
 target_link_libraries(test_io elm)
