@@ -104,6 +104,7 @@ private:
 	} context_t;
 
 	xom::Document *doc;
+	bool opened;
 	context_t ctx;
 	elm::io::Input in;
 	HashMap<CString,  ref_t *> refs;

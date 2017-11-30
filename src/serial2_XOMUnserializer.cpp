@@ -106,8 +106,9 @@ void XOMUnserializer::ref_t::record(void *_ptr) {
  * @param element	XOM element to use.
  */
 XOMUnserializer::XOMUnserializer(xom::Element *element)
-: doc(0), _solver(&ExternalSolver::null) {
+: doc(nullptr), opened(false), _solver(&ExternalSolver::null) {
 	ctx.elem = element;
+	doc = element->getDocument();
 }
 
 
@@ -116,7 +117,7 @@ XOMUnserializer::XOMUnserializer(xom::Element *element)
  * @param path	Path document to unserialize from.
  */
 XOMUnserializer::XOMUnserializer(const char *path)
-: doc(0), _solver(&ExternalSolver::null) {
+: doc(0), opened(false), _solver(&ExternalSolver::null) {
 	init(path);
 }
 
@@ -126,7 +127,7 @@ XOMUnserializer::XOMUnserializer(const char *path)
  * @param path	Path document to unserialize from.
  */
 XOMUnserializer::XOMUnserializer(cstring path)
-: doc(0), _solver(&ExternalSolver::null) {
+: doc(0), opened(false), _solver(&ExternalSolver::null) {
 	init(path);
 }
 
@@ -136,7 +137,7 @@ XOMUnserializer::XOMUnserializer(cstring path)
  * @param path	Path document to unserialize from.
  */
 XOMUnserializer::XOMUnserializer(sys::Path path)
-: doc(0), _solver(&ExternalSolver::null) {
+: doc(0), opened(false), _solver(&ExternalSolver::null) {
 	init(path.toString().toCString());
 }
 
@@ -146,11 +147,12 @@ XOMUnserializer::XOMUnserializer(sys::Path path)
  * @param path	Path name.
  */
 void XOMUnserializer::init(cstring path) {
-	ctx.elem = 0;
+	ctx.elem = nullptr;
 	xom::Builder builder;
 	doc = builder.build(path);
-	if(!doc)
+	if(doc == nullptr)
 		throw io::IOException(_ << "cannot open \"" << path << "\"");
+	opened = true;
 	ctx.elem = doc->getRootElement();
 	ASSERT(ctx.elem);
 }
@@ -159,8 +161,7 @@ void XOMUnserializer::init(cstring path) {
 /**
  */
 XOMUnserializer::~XOMUnserializer(void) {
-	flush();
-	if(doc)
+	if(opened)
 		delete doc;
 }
 
@@ -210,8 +211,10 @@ void XOMUnserializer::flush(void) {
 				xom::Element *elem = elems.get(pair.fst, 0);
 				if(!elem) {
 					void *obj = _solver->solve(pair.fst);
-					if(!obj)
+					if(!obj) {
+						pending.clear();
 						throw io::IOException(_ << "unresolved reference \"" << pair.fst << "\"");
+					}
 					else {
 						// TODO	Add type checking.
 						pair.snd->record(obj);
