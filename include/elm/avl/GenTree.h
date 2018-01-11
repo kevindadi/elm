@@ -113,7 +113,7 @@ protected:
 		inline void fillLeft(Node *n)
 			{ push(n); while(top()->left()) push(top()->left()); }
 		inline Node *createLeft(Node *n)
-			{ Node *r = new Node(n); push(r); for(Node *p= r; n != nullptr; n = n->left()) { p->_left = new Node(n); p = p->_left; push(p); }; return r; }
+			{ Node *r = new Node(n); push(r); for(Node *p= r; n != nullptr; n = n->left()) { p->_left = new Node(n); p = static_cast<Node *>(p->_left); push(p); }; return r; }
 	private:
 		Node *_stack[MAX_HEIGHT], **_sp;
 	};
