@@ -1058,6 +1058,48 @@ IntFormat byte(t::uint8 b) {
  * Build a formatted string.
  */
 
+/**
+ * @class Printable
+ *
+ * This class is used to make easier the display of values controlled by a manager.
+ * This concerns values that are not self-contained to be displayed (usually because
+ * of memory place issues). The print() function is delegated to a manager object that
+ * needs to be referenced in the display of the value. This class embeds together
+ * the value and the manager to involve them in operator << display. The best usage
+ * of this class is the function @ref elm::io::p() that avoids to manage all the type
+ * stuff as below:
+ * @code
+ * class Value {
+ * 	...
+ * };
+ *
+ * class Manager {
+ * 	...
+ * 	void print(const Value& val, io::Output& out);
+ * 	...
+ * };
+ * ...
+ * Manager m;
+ * Value v;
+ * cout << io::p(v, m) << io::endl;
+ * @endcode
+ *
+ * Notice thatthe manager class has to provide a print() function taking the value
+ * as first parameter and the output stream as second parameter.
+ *
+ * @param T		Type of values.
+ * @param M		Type of manager.
+ * @ingroup	io
+ */
+
+/**
+ * @fn Printable<T, M> p(const T& data, const M& man);
+ * Fast building of a managed printable.
+ * Look to @ref Printable for more details.
+ * @param data	Data to print.
+ * @param man	Manager of the data.
+ */
+
 } // io
 
 /**

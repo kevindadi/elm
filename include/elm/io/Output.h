@@ -296,6 +296,25 @@ inline StringFormat fmt(string 		s)	{ return StringFormat(s); }
 inline StringFormat fmt(cstring 	s)	{ return StringFormat(s); }
 inline StringFormat fmt(const char *s)	{ return StringFormat(s); }
 
+// output with manager
+template <class T, class M>
+class Printable {
+public:
+	inline Printable(const T& data, const M& man): _data(data), _man(man) { }
+	inline const T& data(void) const { return _data; }
+	inline const M& man(void) const { return _man; }
+private:
+	const T& _data;
+	const M& _man;
+};
+
+template <class T, class M>
+inline io::Output& operator<<(io::Output& out, const Printable<T, M>& p)
+	{ p.man().print(p.data(), out);  return out; }
+
+template <class T, class M>
+inline Printable<T, M> p(const T& data, const M& man) { return Printable<T, M>(data, man); }
+
 } } // elm::io
 
 #endif	// ELM_IO_OUTPUT_H
