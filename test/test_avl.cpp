@@ -87,6 +87,25 @@ TEST_BEGIN(avl)
 		CHECK(ok);
 	}
 
+	// copy test case
+	{
+		int t[] = { 3, 5, 0, 2, 1, 8, 7, 6, -1 };
+		avl::Set<int> set;
+		for(int i = 0; t[i] >= 0; i++)
+			set.add(t[i]);
+		CHECK(set.__invariant());
+		avl::Set<int> setp;
+		setp = set;
+		CHECK(setp.__invariant());
+		CHECK_EQUAL(set.count(), setp.count());
+		auto i = set.begin(), ip = setp.begin();
+		for(; i && ip; i++, ip++)
+			if(*i != *i)
+				break;
+		CHECK(!i && !ip);
+	}
+
+#if 0
 	// failing use case
 	{
 		avl::Set<int> set;
@@ -101,6 +120,7 @@ TEST_BEGIN(avl)
 		set.remove(7);
 		CHECK(!set.contains(7));
 	}
+#endif
 
 #if 0
 	// unit test

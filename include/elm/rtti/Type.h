@@ -21,6 +21,7 @@
 #ifndef ELM_RTTI_TYPE_H_
 #define ELM_RTTI_TYPE_H_
 
+#include <elm/data/HashMap.h>
 #include <elm/ptr.h>
 #include <elm/string.h>
 #include <elm/util/Initializer.h>
@@ -54,21 +55,27 @@ public:
 	virtual void unserialize(serial2::Unserializer& uns, void *data) const = 0;
 };
 
+class PointerType;
+
 class Type {
 public:
+	typedef HashMap<string, const Type *>::Iter TypeIter;
 	static const Type *get(string name);
-	Type(string name = "unknown");
+	static TypeIter types(void);
+
+	Type(string name = "");
 	virtual ~Type(void);
 	inline string name(void) const { return _name; }
-	const Type& pointer(void) const;
+	const PointerType& pointer(void) const;
 	virtual bool canCast(const Type *t) const;
 
 	virtual bool isVoid(void) const;
 	virtual bool isBool(void) const;
 	virtual bool isInt(void) const;
 	virtual bool isFloat(void) const;
-	virtual bool isPtr(void) const;
 
+	virtual bool isPtr(void) const;
+	virtual const PointerType& asPtr(void) const;
 	virtual bool isClass(void) const;
 	virtual const AbstractClass& asClass(void) const;
 	virtual bool isEnum(void) const;
@@ -81,9 +88,21 @@ public:
 	inline bool operator!=(const Type& t) const { return !operator==(t); }
 private:
 	string _name;
-	mutable UniquePtr<Type>_pointer;
+	mutable UniquePtr<PointerType>_pointer;
 	static Initializer<Type> _init;
 };
+
+class PointerType: public Type {
+public:
+	PointerType(const Type& to);
+	virtual bool isPtr(void) const override;
+	virtual const PointerType& asPtr(void) const override;
+	const Type& to(void) const { return _to; }
+private:
+	const Type& _to;
+};
+
+io::Output& operator<<(io::Output& out, const Type& type);
 
 } }		// otawa::rtti
 

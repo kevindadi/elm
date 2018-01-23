@@ -76,7 +76,7 @@ private:
 template <class T>
 class Constructor0: public Operation {
 public:
-	Constructor0(cstring name): Operation(CONSTRUCTOR, name, T::__type.pointer()) { }
+	Constructor0(cstring name): Operation(CONSTRUCTOR, name, type_of<T>().pointer()) { }
 	virtual Variant call(const Vector<Variant>& args) { return new T(); }
 };
 
@@ -194,7 +194,7 @@ public:
 private:
 	cstring _name;
 	const AbstractClass *_base;
-	List<const Operation *> _ops;
+	List<Operation *> _ops;
 };
 
 class AbstractClass: public rtti::Type {
@@ -221,7 +221,7 @@ public:
 	inline const void *upCast(const void *ptr, const AbstractClass& cls) const { return upCast(const_cast<void *>(ptr), cls); }
 	inline const void *downCast(const void *ptr, const AbstractClass& cls) const { return downCast(const_cast<void *>(ptr), cls); }
 
-	inline const List<Operation *> operations(void) const { return _ops; }
+	inline const List<Operation *>& operations(void) const { return _ops; }
 private:
 	const AbstractClass& _base;
 	List<Operation *> _ops;

@@ -35,6 +35,7 @@ set(LIBELM_LA_SOURCES
 	"data_ListQueue.cpp"
 	"data_Range.cpp"
 	"data_SortedList.cpp"
+	"data_StaticStack.cpp"
 	"data_Tree.cpp"
 	"data_Vector.cpp"
 	"debug.cpp"

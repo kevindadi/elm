@@ -25,6 +25,7 @@
 #include <elm/PreIterator.h>
 #include <elm/adapter.h>
 #include <elm/array.h>
+#include <elm/data/StaticStack.h>
 #include <elm/data/Vector.h>
 
 namespace elm { namespace avl {
@@ -85,7 +86,7 @@ protected:
 	class Node: public AbstractTree::Node {
 	public:
 		inline Node(const T& item): data(item) { }
-		inline Node(const Node *node): data(node->data) { }
+		inline Node(const Node *node): data(node->data) { _bal = node->_bal; }
 		inline Node *left(void) { return static_cast<Node *>(_left); }
 		inline Node *right(void) { return static_cast<Node *>(_right); }
 		inline const typename K::key_t& key(void) const { return K::key(data); }
@@ -99,23 +100,14 @@ protected:
 		inline Node *topNode(void) const { return static_cast<Node *>(AbstractTree::Stack::topNode()); }
 	};
 
-	class VisitStack {
+	class VisitStack: public StaticStack<Node *, MAX_HEIGHT> {
 	public:
-		VisitStack(void): _sp(_stack) { }
-		inline void push(Node *n) { *_sp = n; _sp++; }
-		inline Node *pop(void) { _sp--; return *_sp; }
-		inline Node *top(void) const { return _sp[-1]; }
-		inline bool empty(void) const { return _sp == _stack; }
-		inline bool equals(const VisitStack& v) const
-			{ 	Node *s1 = _stack, *s2 = v._stack;
-				while( s1 < _sp && s2 < v._sp) { if(*s1 != *s2) return false; s1++; s2++; }
-				return s1 == _sp && s2 == v._sp; }
-		inline void fillLeft(Node *n)
-			{ push(n); while(top()->left()) push(top()->left()); }
-		inline Node *createLeft(Node *n)
-			{ Node *r = new Node(n); push(r); for(Node *p= r; n != nullptr; n = n->left()) { p->_left = new Node(n); p = static_cast<Node *>(p->_left); push(p); }; return r; }
-	private:
-		Node *_stack[MAX_HEIGHT], **_sp;
+		inline VisitStack(void) { }
+		inline VisitStack(Node *n) { this->push(n); }
+		inline void copyLeft(VisitStack& s)
+			{ s.top()->_left = new Node(this->top()->left()); s.push(s.top()->left()); this->push(this->top()->left()); }
+		inline void copyRight(VisitStack& s)
+			{ s.top()->_right = new Node(this->top()->right()); s.push(s.top()->right()); this->push(this->top()->right()); }
 	};
 
 public:
@@ -146,7 +138,7 @@ public:
 		inline Iterator(void) { }
 		inline Iterator(const GenTree<T, K, C>& tree)
 			{ if(tree.root()) visit(tree.root()); }
-		inline bool ended(void) const { return s.empty(); }
+		inline bool ended(void) const { return s.isEmpty(); }
 		void next(void) {
 			while(true) {
 				Node *last = s.pop();
@@ -178,26 +170,42 @@ public:
 	void clear(void) {
 		VisitStack s;
 		if(root() != nullptr)
-			s.fillLeft(root());
-		while(!s.empty()) {
+			s.push(root());
+		while(!s.isEmpty()) {
 			Node *n = s.pop();
-			if(!s.empty() && n == s.top()->right())
-				s.fillLeft(s.top()->right());
-			else
-				delete n;
+			if(n->left() != nullptr)
+				s.push(n->left());
+			if(n->right() != nullptr)
+				s.push(n->right());
+			delete n;
 		}
 		_root = nullptr;
+		_cnt = 0;
 	}
 
 	void copy(const GenTree<T, K, C>& tree) {
 		clear();
-		VisitStack s;
-		if(tree.root() != nullptr)
-			_root = s.createLeft(root());
-		while(!s.empty()) {
-			Node *n = s.pop();
-			if(!s.empty() && s.top()->right() == n)
-				s.top()->_right = s.createLeft(s.top()->right());
+		if(!tree._root)
+			return;
+		_root = new Node(tree.root());
+		_cnt = tree._cnt;
+		VisitStack ss(tree.root()), st(root());
+		while(!ss.isEmpty()) {
+			if(ss.top()->left() != nullptr)
+				ss.copyLeft(st);
+			else {
+				while(ss.top()->right() == nullptr) {
+					Node *prv;
+					do {
+						prv = ss.pop();
+						st.pop();
+						if(ss.isEmpty())
+							return;
+					}
+					while(ss.top()->right() == prv);
+				}
+				ss.copyRight(st);
+			}
 		}
 	}
 	inline GenTree<T, K, C>& operator=(const GenTree<T, K, C>& tree) { copy(tree); return *this; }
@@ -267,25 +275,29 @@ public:
 	inline bool operator!=(const GenTree<T, K, C>& tree) const { return !equals(tree); }
 
 #	ifdef ELM_AVL_CHECK
-		bool __left_sorted(Node *n)
+		bool __left_sorted(void) const { return __left_sorted(root()); }
+		bool __left_sorted(Node *n) const
 			{ return n == nullptr
 				  || ((n->_left == nullptr || compare(n->left()->key(), n->key()) < 0) && __left_sorted(n->left()) && __left_sorted(n->right())); }
-		bool __right_sorted(Node *n)
+		bool __right_sorted(void) const { return __right_sorted(root()); }
+		bool __right_sorted(Node *n) const
 			{ return n == nullptr
 				  || ((n->_right == nullptr || compare(n->key(), n->right()->key()) < 0) && __right_sorted(n->left()) && __right_sorted(n->right())); }
-		bool __balanced(Node *n)
+		bool __balanced(void) const { return __balanced(root()); }
+		bool __balanced(Node *n) const
 			{	return n == nullptr ||
 				(n->_bal == __height(n->right()) - __height(n->left()) && -1 <= n->_bal && n->_bal <= 1); }
-		int __height(Node *n)
+		int __height(Node *n) const
 			{ return n == nullptr ? 0 : (1 + max(__height(n->left()), __height(n->right()))); }
-		bool __invariant(void) { return __left_sorted(root()) && __right_sorted(root()) && __balanced(root()); }
-		void dump(Node *n, int t = 0)
+		bool __invariant(void) const { return __left_sorted(root()) && __right_sorted(root()) && __balanced(root()); }
+		void dump(Node *n, int t = 0) const
 			{	if(n == nullptr) return; dump(n->left(), t+1); for(int i = 0; i < t; i++) cout << "  ";
 				cout << n->data << io::endl; dump(n->right(), t+1); }
-		void dump(void) { if(root() == nullptr) cout << "empty\n"; else dump(root()); }
+		void dump(void) const { if(root() == nullptr) cout << "empty\n"; else dump(root()); }
 #	endif
 
 private:
+
 	inline int compare(const typename K::key_t& k1, const typename K::key_t& k2) const
 		{ return C::compare(k1, k2); }
 

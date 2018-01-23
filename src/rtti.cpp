@@ -167,13 +167,33 @@ namespace rtti {
  */
 static HashMap<string, const Type *> type_map;
 
+
+/**
+ * @class PointerType;
+ * Type representing a pointer to another type.
+ */
+
 /**
  */
-class PointerType: public Type {
-public:
-	PointerType(const Type *t): Type(t->name() + "*") { }
-	virtual bool isPointer(void) const { return true; }
-};
+PointerType::PointerType(const Type& to): _to(to) {
+}
+
+/**
+ */
+bool PointerType::isPtr(void) const {
+	return true;
+}
+
+const PointerType& PointerType::asPtr(void) const {
+	return *this;
+}
+
+/**
+ * @fn const Type& to(void) const;
+ * Get the pointed type.
+ * @return	Pointed type.
+ */
+
 
 /**
  * @class Enumerable
@@ -264,7 +284,8 @@ Type::Type(string name): _name(name) {
  * For internal use only. Do not call it.
  */
 void Type::initialize(void) {
-	type_map.put(name(), this);
+	if(name())
+		type_map.put(name(), this);
 }
 
 /**
@@ -278,6 +299,15 @@ const Type *Type::get(string name) {
 }
 
 /**
+ * Get the list of existing types.
+ * @return	Iterator on types.
+ */
+Type::TypeIter Type::types(void) {
+	_init.startup();
+	return *type_map;
+}
+
+/**
  */
 Type::~Type(void) { }
 
@@ -285,9 +315,9 @@ Type::~Type(void) { }
  * Obtain pointer type on the current type.
  * @return	Corresponding pointer type.
  */
-const Type& Type::pointer(void) const {
+const PointerType& Type::pointer(void) const {
 	if(!_pointer)
-		_pointer = new PointerType(this);
+		_pointer = new PointerType(*this);
 	return *_pointer;
 }
 
@@ -364,6 +394,17 @@ const AbstractClass& Type::asClass(void) const {
 	ASSERTP(false, "type " << name() << " is not a class!");
 	return *null<AbstractClass>();
 }
+
+/**
+ * Get the class description corresponding to this type.
+ * If the type is not a pointer, an assertion failure is raised.
+ * @return	Corresponding pointer instance.
+ */
+const PointerType& Type::asPtr(void) const {
+	ASSERTP(false, "type " << name() << " is not a pointer!");
+	return *null<PointerType>();
+}
+
 
 /**
  * Test if the type is enumerated. Default implementation
@@ -616,6 +657,7 @@ AbstractClass::AbstractClass(CString name, const AbstractClass& base): rtti::Typ
  * @param m		Maker to use.
  */
 AbstractClass::AbstractClass(const make& m): rtti::Type(m._name), _base(*m._base) {
+	_ops = m._ops;
 }
 
 /**
@@ -624,6 +666,7 @@ AbstractClass::AbstractClass(const make& m): rtti::Type(m._name), _base(*m._base
  * @param base	Base class.
  */
 AbstractClass::AbstractClass(const make& m, const AbstractClass& base): rtti::Type(m._name), _base(base) {
+	_ops = m._ops;
 }
 
 /**
@@ -1070,6 +1113,19 @@ Variant Operation::call(Vector<Variant>& args) const throw(Exception) {
  */
 void Operation::add(const Parameter& param) {
 	_pars.addLast(param);
+}
+
+/**
+ * Print the given type.
+ * @param out	Output stream.
+ * @param type	Type to print.
+ */
+io::Output& operator<<(io::Output& out, const Type& type) {
+	if(type.isPtr())
+		out << type.asPtr() << '*';
+	else
+		out << type.name();
+	return out;
 }
 
 } }	// elm::rtti
