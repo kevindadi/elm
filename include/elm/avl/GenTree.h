@@ -52,19 +52,13 @@ protected:
 		balance_t _bal;
 	};
 
-	class Stack {
+	class Stack: public StaticStack<Pair<Node *, dir_t>, MAX_HEIGHT> {
 	public:
-		inline Stack(void): _top(0) { }
+		inline Stack(void) { }
 		inline void push(Node *node, dir_t dir)
-			{ _nodes[_top] = node; _dirs[_top] = dir; _top++; }
-		inline void pop(void) { _top--; }
-		inline bool empty(void) const { return _top == 0; }
-		inline dir_t topDir(void) const { return _dirs[_top - 1]; }
-		inline Node *topNode(void) const { return _nodes[_top - 1]; }
-	private:
-		int _top;
-		Node *_nodes[MAX_HEIGHT];
-		dir_t _dirs[MAX_HEIGHT];
+			{ StaticStack<Pair<Node *, dir_t>, MAX_HEIGHT>::push(pair(node, dir)); }
+		inline dir_t topDir(void) const { return this->top().snd; }
+		inline Node *topNode(void) const { return this->top().fst; }
 	};
 
 	Node **link(const Stack& s);
@@ -73,6 +67,7 @@ protected:
 	void rotateRight(Stack& s);
 	void rotateLeft(Stack& s);
 	void remove(Stack& stack, Node *n);
+	Node *leftMost(Stack& s);
 
 	Node *_root;
 	int _cnt;
@@ -222,40 +217,26 @@ public:
 	}
 
 	void remove(const typename K::key_t& item) {
+
+		// find the node
 		Stack s;
-		Node *n = root();
-		while(n) {
-			int cmp = compare(item, n->key());
-			if(cmp < 0) {
-				n = n->left();
-				s.push(n, LEFT);
-			}
-			else if(cmp > 0) {
-				n = n->right();
-				s.push(n, RIGHT);
-			}
-			else {
-				if(n->left() == nullptr) {
-					AbstractTree::remove(s, n->right());
-					break;
-				}
-				else if(n->right() == nullptr) {
-					AbstractTree::remove(s, n->left());
-					break;
-				}
-				else {
-					Node *p = n->right();
-					while(p->left())
-						p = p->left();
-					*link(s) = p;
-					exchange(p, n);
-					n = p->right();
-					s.push(p, RIGHT);
-				}
-			}
+		Node *n = loopup(s, item);
+		if(n == nullptr)
+			return;
+
+		// simple leaf cases
+		if(n->left() == nullptr)
+			AbstractTree::remove(s, n->right());
+		else if(n->right() == nullptr)
+			AbstractTree::remove(s, n->left());
+
+		// in middle case
+		else {
+			s.push(n->right(), RIGHT);
+			Node *p = static_cast<Node *>(leftMost(s));
+			exchange(p, n);
+			// TODO
 		}
-		if(n)
-			delete n;
 	}
 
 	inline void remove(const Iterator& iter) { remove(iter.item()); }
@@ -332,6 +313,12 @@ private:
 		return nullptr;
     }
 
+	void exchange(Node *n, Node *p) {
+		AbstractTree::exchange(p, n);
+		auto t = p->data;
+		p->data = n->data;
+		n->data = t;
+	}
 };
 
 } }	// elm::avl

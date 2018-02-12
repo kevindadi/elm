@@ -659,11 +659,19 @@ void Manager::displayHelp(void) {
 		done.add(option);
 
 		// display commands
-		cerr << (*cmd).fst;
-		iter ocmd = cmd;
-		for(ocmd++; ocmd; ocmd++)
-			if((*ocmd).snd == option)
-				cerr << ", " << (*ocmd).fst;
+		bool comma = false;
+		for(int longCommands = 0; longCommands <= 1; longCommands++) {
+			// first iterate with short, then with long commands
+			for(iter ocmd = cmd; ocmd; ocmd++)
+				if((*ocmd).snd == option)
+					if(    ((*ocmd).fst[1] == '-' && longCommands)
+					 	|| ((*ocmd).fst[1] != '-' && !longCommands) ) {
+						if(comma)
+							cerr << ", ";
+						cerr << (*ocmd).fst;
+						comma = true;
+					}
+		}
 
 		// display argument
 		switch(option->usage()) {

@@ -56,7 +56,7 @@ using namespace elm;
  * @param s	Stack to the concerned node.
  */
 AbstractTree::Node **AbstractTree::link(const Stack& s) {
-	if(s.empty())
+	if(s.isEmpty())
 		return &_root;
 	else if(s.topDir() == LEFT)
 		return &s.topNode()->_left;
@@ -145,7 +145,7 @@ void AbstractTree::insert(Stack& s, Node *node) {
 	*link(s) = node;
 
 	// update the balance factor and find the unbalancing point
-	while(!s.empty()) {
+	while(!s.isEmpty()) {
 
 		// consume current node
 		int dir = s.topDir();
@@ -199,7 +199,7 @@ void AbstractTree::remove(Stack& s, Node *n) {
 	*link(s) = n;
 
 	// propagate the balance update
-	while(!s.empty()) {
+	while(!s.isEmpty()) {
 
 		// propagate modificiation
 		Node *n = s.topNode();
@@ -221,6 +221,18 @@ void AbstractTree::remove(Stack& s, Node *n) {
 		}
 
 	}
+}
+
+
+/**
+ * Find the left node starting at this point.
+ * @param s		Stack to fillled to reach the leftmost node.
+ * @return		Leftmost node.
+ */
+AbstractTree::Node *AbstractTree::leftMost(Stack& s) {
+	while(s.topNode()->_left != nullptr)
+		s.push(s.topNode()->_left, LEFT);
+	return s.topNode();
 }
 
 
