@@ -26,11 +26,11 @@
 namespace elm {
 
 // quick sort
-template <class T, template <class> class A, class C>
-void quicksort(A<T>& array, const C& c = Comparator<C>()) {
+template <class A, class C = Comparator<typename A::t> >
+void quicksort(A& array, const C& c = Comparator<typename A::t>()) {
 	static const int max = 300;
 	int beg[max], end[max], i = 0, L, R, swap;
-	T piv;
+	typename A::t piv;
 
 	beg[0] = 0; end[0] = array.count();
 	while(i >= 0) {
@@ -50,11 +50,6 @@ void quicksort(A<T>& array, const C& c = Comparator<C>()) {
 		else
 			i--;
 	}
-}
-
-template <class T, template <class> class A>
-void quicksort(A<T>& array) {
-	quicksort<T, A, Comparator<T> >(array, Comparator<T>());
 }
 
 } // elm

@@ -262,6 +262,13 @@ bool Path::isAbsolute(void) const {
 
 
 /**
+ * @fn bool Path::isEmpty(void) const;
+ * Test if the path is empty.
+ * @return True if the path is empty, false else.
+ */
+
+
+/**
  * Test if the path is relative.
  * @return	True if it is relative, false else.
  */

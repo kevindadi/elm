@@ -20,14 +20,14 @@
  */
 
 #include <elm/data/quicksort.h>
-#include <elm/genstruct/Vector.h>
+#include <elm/data/Vector.h>
 #include "../include/elm/test.h"
 
 using namespace elm;
 
 TEST_BEGIN(quicksort)
 
-	genstruct::Vector<int> v;
+	Vector<int> v;
 	v.add(4);
 	v.add(0);
 	v.add(2);

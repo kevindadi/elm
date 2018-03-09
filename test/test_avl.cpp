@@ -1,12 +1,23 @@
 /*
- * $Id$
- * Copyright (c) 2004, IRIT-UPS.
+ *	avl module test
  *
- * test/test_avl.cpp -- AVLTree class test.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2013, IRIT UPS.
+ *
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
-#define ELM_AVL_CHECK
-
 #include "../include/elm/test.h"
 #include <elm/genstruct/Vector.h>
 #include <elm/avl/Set.h>
@@ -18,12 +29,90 @@
 using namespace elm;
 using namespace elm::avl;
 
-#ifdef ELM_DEBUG_AVL
-#	define LOG(cmd)	// cmd
-#endif
-
 static const int maxv = 10000;
-static const int _count = 100000;
+static const int _count = 100;
+
+
+
+// Invariant definition
+namespace elm { namespace avl {
+
+template <class T>
+class Debug {
+	typedef typename GenTree<T>::Node Node;
+	typedef GenTree<T> Tree;
+public:
+
+	static bool leftSorted(const Tree& t, Node *n) {
+		return n == nullptr
+			|| (	(n->left() == nullptr || t.compare(n->left()->key(), n->key()) < 0)
+				&&	leftSorted(t, n->left())
+				&&	leftSorted(t, n->right()));
+	}
+
+	static bool rightSorted(const Tree& t, Node *n) {
+		return n == nullptr
+			|| (	(n->right() == nullptr || t.compare(n->key(), n->right()->key()) < 0)
+				&&	rightSorted(t, n->left())
+				&&	rightSorted(t, n->right()));
+	}
+
+	static bool balanced(Node *n) {
+		return n == nullptr
+			|| 		(n->_bal == height(n->right()) - height(n->left())
+				&&	-1 <= n->_bal && n->_bal <= 1);
+	}
+
+	static int height(Node *n) {
+		return n == nullptr ? 0 : (1 + max(height(n->left()), height(n->right())));
+	}
+
+	static bool invariant(const GenTree<T>& tree) {
+		return leftSorted(tree, tree.root())
+			&& rightSorted(tree, tree.root())
+			&& balanced(tree.root());
+	}
+
+	static void dump(Node *n, int t = 0) {
+		for(int i = 0; i < t; i++)
+			cout << "  ";
+		if(n == nullptr)
+			cout << "-\n";
+		else {
+			cout << n->data << " (" << (void *)n << ") (" << n->_bal << ")" << io::endl;
+			if(n->left() != nullptr || n->right() != nullptr) {
+				dump(n->left(), t+1);
+				dump(n->right(), t+1);
+			}
+		}
+	}
+
+	static void dump(const GenTree<T>& tree) {
+		if(tree.root() == nullptr)
+			cout << "empty\n";
+		else
+			dump(tree.root());
+	}
+
+	static void checkLoop(Node *n, Vector<Node *> s) {
+		if(n == nullptr)
+			return;
+		for(auto i = *s; i; i++)
+			ASSERT(*i != n);
+		s.push(n);
+		checkLoop(n->left(), s);
+		checkLoop(n->right(), s);
+		s.pop();
+	}
+
+	static void checkLoop(Tree& t) {
+		Vector<Node *> s;
+		checkLoop(t.root(), s);
+	}
+};
+
+} };
+
 
 // Entry point
 TEST_BEGIN(avl)
@@ -31,19 +120,19 @@ TEST_BEGIN(avl)
 	// small tree
 	{
 		avl::Set<int> set;
-		CHECK(set.__invariant());
+		CHECK(Debug<int>::invariant(set));
 		set.add(10);
-		CHECK(set.__invariant());
+		CHECK(Debug<int>::invariant(set));
 		CHECK(set.contains(10));
 		CHECK(!set.contains(5));
 		CHECK(!set.contains(15));
 		set.add(5);
-		CHECK(set.__invariant());
+		CHECK(Debug<int>::invariant(set));
 		CHECK(set.contains(10));
 		CHECK(set.contains(5));
 		CHECK(!set.contains(15));
 		set.add(15);
-		CHECK(set.__invariant());
+		CHECK(Debug<int>::invariant(set));
 		CHECK(set.contains(10));
 		CHECK(set.contains(5));
 		CHECK(set.contains(15));
@@ -54,7 +143,7 @@ TEST_BEGIN(avl)
 		avl::Set<int> set;
 		for(int i = 0; i < 20; i++)
 			set.add(i);
-		CHECK(set.__invariant());
+		CHECK(Debug<int>::invariant(set));
 		bool all = true;
 		for(int i = 0; i < 20; i++)
 			all = all || set.contains(i);
@@ -73,7 +162,7 @@ TEST_BEGIN(avl)
 		avl::Set<int> set;
 		for(int i = 20; i > 0; i--)
 			set.add(i);
-		CHECK(set.__invariant());
+		CHECK(Debug<int>::invariant(set));
 		bool all = true;
 		for(int i = 0; i < 20; i++)
 			all = all || set.contains(i);
@@ -93,10 +182,10 @@ TEST_BEGIN(avl)
 		avl::Set<int> set;
 		for(int i = 0; t[i] >= 0; i++)
 			set.add(t[i]);
-		CHECK(set.__invariant());
+		CHECK(Debug<int>::invariant(set));
 		avl::Set<int> setp;
 		setp = set;
-		CHECK(setp.__invariant());
+		CHECK(Debug<int>::invariant(set));
 		CHECK_EQUAL(set.count(), setp.count());
 		auto i = set.begin(), ip = setp.begin();
 		for(; i && ip; i++, ip++)
@@ -105,7 +194,6 @@ TEST_BEGIN(avl)
 		CHECK(!i && !ip);
 	}
 
-#if 0
 	// failing use case
 	{
 		avl::Set<int> set;
@@ -120,9 +208,7 @@ TEST_BEGIN(avl)
 		set.remove(7);
 		CHECK(!set.contains(7));
 	}
-#endif
 
-#if 0
 	// unit test
 	{
 		Set<int> tree;
@@ -163,9 +249,35 @@ TEST_BEGIN(avl)
 
 	}
 
+	{
+		Set<int> set;
+		set.add(7);
+		set.add(9);
+		set.add(4);
+		set.add(3);
+		set.remove(4);
+		//Debug<int>::dump(set);
+		set.remove(7);
+		//Debug<int>::dump(set);
+		CHECK(set.contains(3));
+		CHECK(set.contains(9));
+		CHECK(!set.contains(7));
+	}
+
+	{
+		Set<int> set;
+		set.add(20); 	// adding 2299
+		set.add(10);	// adding 1780
+		set.add(8);		// adding 832
+		set.add(90);	// adding 9819
+		//Debug<int>::dump(set);
+		set.remove(8);	// removing 832
+	}
+
+#ifndef OK
 	// check AVLTree
 	{
-		genstruct::Vector<int> ints;
+		Vector<int> ints;
 		Set<int> tree;
 		bool intensive = true;
 		
@@ -173,13 +285,12 @@ TEST_BEGIN(avl)
 			ins_cnt = 0,
 			chk_cnt = 0;
 		for(int i = 0; intensive && i < _count; i++) {
-			LOG(tree.dump(cerr); cerr << io::endl;)
-			int a = sys::System::random(maxv * 3);
+			int a = sys::System::random(maxv * 2);
 
 			// remove
-			/*if(a < 2 * maxv && ints.count()) {
+			if(a < maxv && ints.count()) {
 				int n = ints[a % ints.count()];
-				LOG(cerr << "removing " << ints[a % ints._count()] << io::endl;)
+				cerr << "removing " << ints[a % ints.count()] << io::endl;
 				ints.remove(n);
 				tree.remove(n);
 				intensive = !tree.contains(n);
@@ -187,9 +298,9 @@ TEST_BEGIN(avl)
 			}
 
 			// insert
-			else*/ if(a < 3 * maxv) {
+			else {
 				int n = a % maxv;
-				LOG(cerr << "adding " << n << io::endl;)
+				cerr << "adding " << n << io::endl;
 				if(!ints.contains(n))
 					ints.add(n);
 				tree.add(n);
@@ -198,21 +309,26 @@ TEST_BEGIN(avl)
 			}
 
 			// check
-			else {
-				bool ok = true;
-				for(int i = 0; i < ints.count(); i++)
-					if(!tree.contains(ints[i]))
-						ok = false;
-				intensive = ok;
-				chk_cnt++;
+			Debug<int>::checkLoop(tree);
+			Debug<int>::dump(tree);
+			bool ok = Debug<int>::invariant(tree);
+			if(!ok) {
+				cerr << "invariant failure!";
+				return;
 			}
+			for(int i = 0; i < ints.count(); i++)
+				if(!tree.contains(ints[i]))
+					ok = false;
+			intensive = ok;
+			chk_cnt++;
 		}
 		cerr << "INFO: rem_cnt = " << rem_cnt
 			 <<     ", ins_cnt = " << ins_cnt
 			 <<     ", chk_cnt = " << chk_cnt << io::endl;
 		CHECK(intensive);
 	}
-	
+
+#ifdef KO
 	// AVLMap
 	{
 		Map<string, int> map;
@@ -265,6 +381,8 @@ TEST_BEGIN(avl)
 		}
 		CHECK(map_intensive);
 	}
+#endif
+#endif
 
 	// Map::PairIterator test
 	{
@@ -298,7 +416,6 @@ TEST_BEGIN(avl)
 		CHECK(map.get(3) == 3);
 		CHECK(map.get(4) == 0);
 	}
-#endif
 
 TEST_END
 

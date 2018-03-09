@@ -64,7 +64,7 @@ public:
 		typename tab_t::Iter i;
 	};
 
-	class KeyIter: public PreIterator<KeyIter, T> {
+	class KeyIter: public PreIterator<KeyIter, K> {
 	public:
 		inline KeyIter(const self_t& htab): i(htab._tab) { };
 		inline bool ended(void) const { return i.ended(); }
@@ -83,6 +83,7 @@ public:
 	private:
 		typename tab_t::Iter i;
 	};
+	inline PairIter pairs(void) const { return PairIter(*this); }
 
 	inline bool contains(const T& item)
 		{ for(Iter i(*this); i; i++) if(*i == item) return true; return false; }
@@ -97,6 +98,9 @@ public:
 	inline StrictMapDelegate<self_t> operator[](const K& key) { return StrictMapDelegate<self_t>(*this, key); }
 	inline const T& operator[](const Iter& i) const { const typename tab_t::data_t *r = _tab.get(i.key()); ASSERT(r); return (*r).snd; }
 	inline StrictMapDelegate<self_t> operator[](const Iter& i) { return StrictMapDelegate<self_t>(*this, i.key()); }
+
+	template <class C> void putAll(const C& c)
+		{ for(auto p = c.pairs(); p; p++) put((*p).fst, (*p).snd); }
 
 #	ifdef ELM_STAT
 		int minEntry(void) const { return _tab.minEntry(); }

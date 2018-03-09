@@ -189,50 +189,76 @@ void AbstractTree::insert(Stack& s, Node *node) {
 
 /**
  * Perform removal and rebalance operation.
- * @param s		Stack of parents of removed node.
+ * @param s		Parent stack.
  * @param n		Replacing node.
  */
 void AbstractTree::remove(Stack& s, Node *n) {
 
 	// relink
+	//cerr << "n = " << (void *)n << io::endl;
 	_cnt--;
-	*link(s) = n;
+	*link(s) = nullptr;
 
 	// propagate the balance update
 	while(!s.isEmpty()) {
 
-		// propagate modificiation
-		Node *n = s.topNode();
+		// propagate modification
+		Node *p = s.topNode();
 		dir_t d = s.topDir();
-		s.pop();
+		//cerr << "top = " << (void *)s.topNode() << io::endl;
+		//cerr << "dir = " << (void *)s.topDir() << io::endl;
 		if(d == LEFT)
-			n->_bal++;
+			p->_bal++;
 		else
-			n->_bal--;
+			p->_bal--;
+		if(p->_bal == -1 || p->_bal == +1)
+			return;
+		//cerr << "bal = " << p->_bal;
 
 		// left unbalanced?
-		if(n->_bal < -1) {
+		if(p->_bal < -1) {
+			if(p->_left->_bal > 0) {
+				cerr << "double right\n";
+				s.push(p->_left, LEFT);
+				rotateLeft(s);
+			}
+			else
+				cerr << "single right\n";
+			rotateRight(s);
 			return;
 		}
 
 		// right unbalanced?
-		else if(n->_bal > +1) {
+		else if(p->_bal > +1) {
+			if(p->_right->_bal < 0) {
+				cerr << "double left\n";
+				s.push(p->_right, RIGHT);
+				rotateRight(s);
+			}
+			else
+				cerr << "single left\n";
+			rotateLeft(s);
 			return;
 		}
 
+		// propagate to parent
+		s.pop();
 	}
 }
 
 
 /**
  * Find the left node starting at this point.
- * @param s		Stack to fillled to reach the leftmost node.
+ * @param s		Stack containing parents of n and to fill with parent of leftmost node.
+ * @param n		Current node.
  * @return		Leftmost node.
  */
-AbstractTree::Node *AbstractTree::leftMost(Stack& s) {
-	while(s.topNode()->_left != nullptr)
-		s.push(s.topNode()->_left, LEFT);
-	return s.topNode();
+AbstractTree::Node *AbstractTree::leftMost(Stack& s, Node *n) {
+	while(n->_left) {
+		s.push(n, LEFT);
+		n = n->_left;
+	}
+	return n;
 }
 
 

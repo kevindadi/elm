@@ -30,6 +30,8 @@
 
 namespace elm { namespace avl {
 
+template <class T> class Debug;
+
 // Private class
 class AbstractTree {
 public:
@@ -67,7 +69,7 @@ protected:
 	void rotateRight(Stack& s);
 	void rotateLeft(Stack& s);
 	void remove(Stack& stack, Node *n);
-	Node *leftMost(Stack& s);
+	Node *leftMost(Stack& s, Node *n);
 
 	Node *_root;
 	int _cnt;
@@ -76,6 +78,7 @@ protected:
 // GenAVLTree class
 template <class T, class K = IdAdapter<T>, class C = elm::Comparator<typename K::key_t> >
 class GenTree: public AbstractTree {
+	friend class Debug<T>;
 protected:
 
 	class Node: public AbstractTree::Node {
@@ -109,7 +112,7 @@ public:
 
 	GenTree(void) { }
 	GenTree(const GenTree<T>& tree) { copy(tree); }
-	~GenTree(void) { clear(); }
+	~GenTree(void) { /*clear();*/ }
 
 	inline T *get(const typename K::key_t& key)
 		{ Node *node = find(key); if(!node) return 0; else return &node->data; }
@@ -220,7 +223,7 @@ public:
 
 		// find the node
 		Stack s;
-		Node *n = loopup(s, item);
+		Node *n = lookup(s, item);
 		if(n == nullptr)
 			return;
 
@@ -232,10 +235,11 @@ public:
 
 		// in middle case
 		else {
-			s.push(n->right(), RIGHT);
-			Node *p = static_cast<Node *>(leftMost(s));
+			s.push(n, RIGHT);
+			Node *p = static_cast<Node *>(leftMost(s, n->right()));
+			cerr << "p = " << (void *)p  << io::endl;
 			exchange(p, n);
-			// TODO
+			AbstractTree::remove(s, p->right());
 		}
 	}
 
@@ -254,28 +258,6 @@ public:
 	}
 	inline bool operator==(const GenTree<T, K, C>& tree) const { return equals(tree); }
 	inline bool operator!=(const GenTree<T, K, C>& tree) const { return !equals(tree); }
-
-#	ifdef ELM_AVL_CHECK
-		bool __left_sorted(void) const { return __left_sorted(root()); }
-		bool __left_sorted(Node *n) const
-			{ return n == nullptr
-				  || ((n->_left == nullptr || compare(n->left()->key(), n->key()) < 0) && __left_sorted(n->left()) && __left_sorted(n->right())); }
-		bool __right_sorted(void) const { return __right_sorted(root()); }
-		bool __right_sorted(Node *n) const
-			{ return n == nullptr
-				  || ((n->_right == nullptr || compare(n->key(), n->right()->key()) < 0) && __right_sorted(n->left()) && __right_sorted(n->right())); }
-		bool __balanced(void) const { return __balanced(root()); }
-		bool __balanced(Node *n) const
-			{	return n == nullptr ||
-				(n->_bal == __height(n->right()) - __height(n->left()) && -1 <= n->_bal && n->_bal <= 1); }
-		int __height(Node *n) const
-			{ return n == nullptr ? 0 : (1 + max(__height(n->left()), __height(n->right()))); }
-		bool __invariant(void) const { return __left_sorted(root()) && __right_sorted(root()) && __balanced(root()); }
-		void dump(Node *n, int t = 0) const
-			{	if(n == nullptr) return; dump(n->left(), t+1); for(int i = 0; i < t; i++) cout << "  ";
-				cout << n->data << io::endl; dump(n->right(), t+1); }
-		void dump(void) const { if(root() == nullptr) cout << "empty\n"; else dump(root()); }
-#	endif
 
 private:
 
@@ -314,7 +296,6 @@ private:
     }
 
 	void exchange(Node *n, Node *p) {
-		AbstractTree::exchange(p, n);
 		auto t = p->data;
 		p->data = n->data;
 		n->data = t;

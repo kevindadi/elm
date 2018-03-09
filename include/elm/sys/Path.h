@@ -62,6 +62,7 @@ public:
 	sys::Path dirPart(void) const;
 	Path basePart(void) const;
 	String extension(void) const;
+	bool isEmpty(void) const { return buf == ""; }
 	bool isAbsolute(void) const;
 	bool isRelative(void) const;
 	bool isHomeRelative(void) const;
