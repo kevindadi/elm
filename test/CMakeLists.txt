@@ -38,6 +38,7 @@ set(TEST_SOURCES
 	"test_char.cpp"
 	"test_compare.cpp"
 	"test_data.cpp"
+	"test_dyndata.cpp"
 	"test_dllist.cpp"
 	"test_enum_info.cpp"
 	"test_file.cpp"

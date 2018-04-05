@@ -1,0 +1,28 @@
+
+syntax: regexp
+^autodoc$
+syntax: regexp
+^CMakeFiles$
+
+autodoc
+xml
+.*/CMakeFiles
+\.cproject
+\.project
+CMakeCache.txt
+Makefile
+doxygen.log
+config.h
+cmake_install.cmake
+install_manifest.txt
+.*.so
+test/dotest
+test/socket/client
+test/socket/server
+test/test_bgc
+test/test_io
+test/test_io_output
+test/test_sw
+test/test_thread
+tools/elm-plugin
+

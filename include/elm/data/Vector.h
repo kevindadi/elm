@@ -84,7 +84,8 @@ public:
 		{ for(typename C<T>::Iter item(items); item; item++) if(!contains(item)) return false; return true; }
 	inline bool isEmpty(void) const { return cnt == 0; }
 	inline operator bool(void) const { return cnt != 0; }
-	inline Iter operator*(void) const { return Iter(*this); }
+	inline Iter items(void) const { return Iter(*this); }
+	inline Iter operator*(void) const { return items(); }
 
 	// MutableCollection concept
 	inline void clear(void) { cnt = 0; }

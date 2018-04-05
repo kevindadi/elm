@@ -23,12 +23,13 @@
 #define ELM_DYNDATA_ABSTRACTCOLLECTION_H
 
 #include <elm/PreIterator.h>
+#include <elm/ptr.h>
 
 namespace elm { namespace dyndata {
 
 // IteratorInst class
 template <class T>
-class AbstractIter {
+class AbstractIter: public Lock {
 public:
 	virtual ~AbstractIter(void) { }
 	virtual bool ended(void) const = 0;
@@ -41,16 +42,16 @@ public:
 template <class T>
 class Iter: public PreIterator<Iter<T>, T> {
 public:
-	inline Iter(AbstractIter<T> *_iter): iter(_iter) { }
-	inline AbstractIter<T> *instance(void) const { return iter; }
-	inline ~Iter(void) { delete iter; }
-	inline bool ended(void) const { return iter->ended(); }
-	inline T item(void) const { return iter->item(); }
-	inline void next(void) { iter->next(); }
+	inline Iter(AbstractIter<T> *iter): i(iter) { }
+	inline Iter(const Iter<T>& iter): i(iter.i) { }
+	inline AbstractIter<T> *instance(void) const { return &i; }
+	inline bool ended(void) const { return i->ended(); }
+	inline T item(void) const { return i->item(); }
+	inline void next(void) { i->next(); }
+	inline Iter<T>& operator=(const Iter<T>& iter) { i = iter.i; return *this; }
 protected:
-	AbstractIter<T> *iter;
+	LockPtr<AbstractIter<T> > i;
 };
-
 
 // AbstractCollection class
 template <class T>
@@ -61,7 +62,8 @@ public:
 	virtual bool contains(const T& item) const = 0;
 	virtual bool isEmpty(void) const = 0;
 	inline operator bool(void) const { return !isEmpty(); }
-	virtual AbstractIter<T> *iterator(void) const = 0;
+	virtual Iter<T> items(void) const = 0;
+	inline Iter<T> operator*(void) const { return items(); }
 };
 
 // MutableAbstractCollection class
@@ -74,7 +76,7 @@ public:
 	virtual void addAll(const AbstractCollection<T>& items) = 0;
 	virtual void remove(const T& item) = 0;
 	virtual void removeAll(const AbstractCollection<T>& items) = 0;
-	virtual void remove(const AbstractIter<const T&>& iter) = 0;
+	virtual void remove(const Iter<T>& iter) = 0;
 };
 
 } } // elm::dyndata
