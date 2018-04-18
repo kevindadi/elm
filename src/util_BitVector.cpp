@@ -590,21 +590,41 @@ void BitVector::doRotateLeft(int n, word_t *tbits) const {
 		n = n % _size;
 	if(n == 0)
 		return;
+
+	/*
+	 *	Operation: v <<< k
+	 *
+	 *	 B-1                            Bs    BS-1   0
+	 *	+-----+-----+-----+-----+-----+-----+-----+-----+
+	 *	|     |     |     |     |     |     |     |     |
+	 *	+-----+-----+-----+-----+-----+-----+-----+-----+
+	 *	  ^							  |  ^              ^
+	 *	  | eb                        |  |----- k ------|
+	 *	                              ^  ^   ^          ^
+	 *	                              |rs|bs-|--- Bs ---|
+	 */
+
 	int B = wcount();
 	int bs = bindex(n);
 	int Bs = windex(n);
 	int eb = bindex(_size);
+	int rs = wsize() - bs;		// bs + rs == wsize
 	word_t S[Bs + 1];
 
-	// compute header words
-	if(eb != 0) {
-		if(bs <= eb)
-			S[Bs] = (bits[0] << bs) | (bits[B - 1] >> (wsize() - bs));
-		else
-			S[Bs] = (bits[0] << bs) | (bits[B - 1] << (bs - eb)) | (bits[B - 2] >> (wsize() - (bs - eb)));
-	}
+
+	// build the word at vector limit
+	if(eb == 0)				// end of word aligned
+		S[Bs] = (bits[B - 1] << bs) | (bits[0] >> rs);
+	else if(bs <= eb)		// enough shift in last
+		S[Bs] = (bits[0] << bs) | (bits[B - 1] >> (eb - bs));
+	else					// not enough shift in last word ==> aggregate last two words end
+		S[Bs] = (bits[0] << bs) | (bits[B - 1] << (bs - eb)) | (bits[B - 2] >> (wsize() - (bs - eb)));
+
+	// CHECK the following
+
+	// build other overlapping words
 	for(int i = 0; i < Bs; i++)
-		S[i] = (bits[B - i] << bs) | (bits[B - i - 1] >> (wsize() - bs));
+		S[i] = (bits[B - Bs + i - 1] << bs) | (bits[B - i - 1] >> (wsize() - bs));
 
 	// shift the bits
 	for(int i = B - 1; i > Bs; i--)
@@ -612,29 +632,10 @@ void BitVector::doRotateLeft(int n, word_t *tbits) const {
 	mask();
 
 	// copy the headers
-	for(int i = 0; i < Bs; i++)
+	for(int i = 0; i <= Bs; i++)
 		tbits[i] = S[i];
 	if(eb != 0)
 		tbits[Bs] = S[Bs];
-
-	// re-entering bits
-	/*word_t reenter;
-	if(bs <= eb)
-		reenter = bits[B - 1] >> (eb - bs);
-	else
-		reenter = (bits[B - 1] << (eb - bs)) | (bits[B - 2] >> (wsize() - (eb - bs)));*/
-
-	// shift bits
-	/*for(int i = B - 1; i > 0; i--)
-		tbits[i] = (bits[i] << bs) | (bits[i - 1] >> (wsize() - bs));
-	tbits[0] = (bits[0] << bs) | reenter;
-
-	// shift words
-	if(Bs) {
-		array::reverse(tbits, B);
-		array::reverse(tbits, Bs);
-		array::reverse(tbits + Bs, B - Bs);
-	}*/
 }
 
 

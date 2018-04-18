@@ -22,13 +22,13 @@
 #ifndef ELM_IO_OUTPUT_H
 #define ELM_IO_OUTPUT_H
 
-#include <elm/types.h>
-#include <elm/sys/SystemIO.h>
-#include <elm/util/VarArg.h>
-#include <elm/string/String.h>
-#include <elm/string/CString.h>
 #include <elm/enum_info.h>
 #include <elm/meta.h>
+#include <elm/string/CString.h>
+#include <elm/string/String.h>
+#include <elm/sys/SystemIO.h>
+#include <elm/types.h>
+#include <elm/util/VarArg.h>
 
 namespace elm { namespace io {
 
@@ -39,7 +39,6 @@ typedef enum alignment_t {
 	CENTER,
 	RIGHT
 } alignment_t;
-
 
 // IntFormat class
 class IntFormat {
@@ -80,20 +79,20 @@ public:
 	inline IntFormat operator()(t::int64	value) { IntFormat f = *this; f._val = value; return f; }
 	inline IntFormat operator()(t::uint64	value) { IntFormat f = *this; f._val = value; return f; }
 
-	inline IntFormat base(int b) { _base = b; return *this; }
-	inline IntFormat bin(void) { _base = 2; _sign = false; return *this; }
-	inline IntFormat oct(void) { _base = 8; _sign = false; return *this; }
-	inline IntFormat dec(void) { _base = 10; return *this; }
-	inline IntFormat hex(void) { _base = 16; _sign = false; return *this; }
-	inline IntFormat width(int w) { _width = w; return *this; }
-	inline IntFormat align(alignment_t a) { _align = a; return *this; }
-	inline IntFormat left(void) { _align = LEFT; return *this; }
-	inline IntFormat center(void) { _align = CENTER; return *this; }
-	inline IntFormat right(void) { _align = RIGHT; return *this; }
-	inline IntFormat upper(void) { _upper = true; return *this; }
-	inline IntFormat lower(void) { _upper = false; return *this; }
-	inline IntFormat sign(void) { _displaySign = true; return *this; }
-	inline IntFormat pad(char p) { _pad = p; return *this; }
+	inline IntFormat& base(int b) { _base = b; return *this; }
+	inline IntFormat& bin(void) { _base = 2; _sign = false; return *this; }
+	inline IntFormat& oct(void) { _base = 8; _sign = false; return *this; }
+	inline IntFormat& dec(void) { _base = 10; return *this; }
+	inline IntFormat& hex(void) { _base = 16; _sign = false; return *this; }
+	inline IntFormat& width(int w) { _width = w; return *this; }
+	inline IntFormat& align(alignment_t a) { _align = a; return *this; }
+	inline IntFormat& left(void) { _align = LEFT; return *this; }
+	inline IntFormat& center(void) { _align = CENTER; return *this; }
+	inline IntFormat& right(void) { _align = RIGHT; return *this; }
+	inline IntFormat& upper(void) { _upper = true; return *this; }
+	inline IntFormat& lower(void) { _upper = false; return *this; }
+	inline IntFormat& sign(void) { _displaySign = true; return *this; }
+	inline IntFormat& pad(char p) { _pad = p; return *this; }
 
 	t::int64 _val;
 	unsigned char _base;
@@ -123,19 +122,19 @@ public:
 	inline FloatFormat operator()(float val) { FloatFormat f = *this; f._val = val; return f; }
 	inline FloatFormat operator()(double val) { FloatFormat f = *this; f._val = val; return f; }
 
-	inline FloatFormat width(int w) { _width = w; return *this; }
-	inline FloatFormat width(int w, int d) { _width = w; _decw = d; return *this; }
-	inline FloatFormat style(style_t s) { _style = s; return *this; }
-	inline FloatFormat shortest(void) { _style = SHORTEST; return *this; }
-	inline FloatFormat decimal(void) { _style = DECIMAL; return *this; }
-	inline FloatFormat scientific(void) { _style = SCIENTIFIC; return *this; }
-	inline FloatFormat align(alignment_t a) { _align = a; return *this; }
-	inline FloatFormat left(void) { _align = LEFT; return *this; }
-	inline FloatFormat center(void) { _align = CENTER; return *this; }
-	inline FloatFormat right(void) { _align = RIGHT; return *this; }
-	inline FloatFormat upper(void) { _upper = true; return *this; }
-	inline FloatFormat lower(void) { _upper = false; return *this; }
-	inline FloatFormat pad(char p) { _pad = p; return *this; }
+	inline FloatFormat& width(int w) { _width = w; return *this; }
+	inline FloatFormat& width(int w, int d) { _width = w; _decw = d; return *this; }
+	inline FloatFormat& style(style_t s) { _style = s; return *this; }
+	inline FloatFormat& shortest(void) { _style = SHORTEST; return *this; }
+	inline FloatFormat& decimal(void) { _style = DECIMAL; return *this; }
+	inline FloatFormat& scientific(void) { _style = SCIENTIFIC; return *this; }
+	inline FloatFormat& align(alignment_t a) { _align = a; return *this; }
+	inline FloatFormat& left(void) { _align = LEFT; return *this; }
+	inline FloatFormat& center(void) { _align = CENTER; return *this; }
+	inline FloatFormat& right(void) { _align = RIGHT; return *this; }
+	inline FloatFormat& upper(void) { _upper = true; return *this; }
+	inline FloatFormat& lower(void) { _upper = false; return *this; }
+	inline FloatFormat& pad(char p) { _pad = p; return *this; }
 
 	double _val;
 	unsigned char _width;
@@ -164,12 +163,12 @@ public:
 	StringFormat(string str): s(str) { init(); }
 
 	inline StringFormat& operator()(string str)	{ s = str; return *this; }
-	inline StringFormat width(int w) 			{ _width = w; return *this; }
-	inline StringFormat align(alignment_t a)	{ _align = a; return *this; }
-	inline StringFormat left(void) 				{ _align = LEFT; return *this; }
-	inline StringFormat center(void) 			{ _align = CENTER; return *this; }
-	inline StringFormat right(void) 			{ _align = RIGHT; return *this; }
-	inline StringFormat pad(char p) 			{ _pad = p; return *this; }
+	inline StringFormat& width(int w) 			{ _width = w; return *this; }
+	inline StringFormat& align(alignment_t a)	{ _align = a; return *this; }
+	inline StringFormat& left(void) 			{ _align = LEFT; return *this; }
+	inline StringFormat& center(void) 			{ _align = CENTER; return *this; }
+	inline StringFormat& right(void) 			{ _align = RIGHT; return *this; }
+	inline StringFormat& pad(char p) 			{ _pad = p; return *this; }
 
 	string s;
 	unsigned char _width;
@@ -186,13 +185,14 @@ private:
 
 // Output class
 class Output {
-	OutStream *strm;
-	char *horner(char *p, t::uint64 val, int base, char enc = 'a');
 public:
-	inline Output(void): strm(&out) { };
-	inline Output(OutStream& stream): strm(&stream) { };
+	Output(void);
+	Output(OutStream& stream);
+	Output(OutStream *out, bool free = true, bool buf = true);
+	Output(string path, bool buf = true);
+	~Output(void);
 	inline OutStream& stream(void) const { return *strm; };
-	inline void setStream(OutStream& stream) { strm = &stream; };
+	void setStream(OutStream& stream);
 	void flush(void);
 
 	void print(bool value);
@@ -213,6 +213,12 @@ public:
 	void print(t::uint32 value);
 	void print(t::int64 value);
 	void print(t::uint64 value);
+private:
+	OutStream *strm;
+	void *_flist;
+	void add(OutStream *out);
+	void clean(void);
+	char *horner(char *p, t::uint64 val, int base, char enc = 'a');
 };
 
 

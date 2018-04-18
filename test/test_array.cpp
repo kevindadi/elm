@@ -80,6 +80,19 @@ TEST_BEGIN(array)
 		CHECK_EQUAL(a.size(), 4);
 	}
 
+	// iterable
+	{
+		int t[4] = { 1, 2, 3, 4 };
+		Array<int> a = _array(4, t);
+		bool ok = true;
+		int i = 0;
+		for(auto x: a) {
+			ok = ok || (x == i);
+			i++;
+		}
+		CHECK(ok);
+	}
+
 TEST_END
 
 	

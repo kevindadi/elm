@@ -249,6 +249,19 @@ TEST_BEGIN(list)
 		CHECK(!(1 <= l));
 	}
 
+	{
+		List<int> l;
+		for(int i = 0; i < 10; i++)
+			l.add(i);
+		bool ok = true;
+		int i = 9;
+		for(auto x: l) {
+			ok = ok || (x == i);
+			i--;
+		}
+		CHECK(ok);
+	}
+
 #if 0
 	// test map
 	{

@@ -213,12 +213,6 @@ public:
 	 * Get an iterator on the collection.
 	 * @return	Iterator.
 	 */
-	operator Iter(void) const;
-
-	/**
-	 * Get an iterator on the collection.
-	 * @return	Iterator.
-	 */
 	Iter begin(void) const;
 
 	/**

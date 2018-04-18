@@ -32,44 +32,78 @@ template <class T>
 class Array {
 public:
 	typedef T t;
+	typedef Array<T> self_t;
 
 	inline Array(void): cnt(0), buf(0) { }
 	inline Array(int count, T *buffer): cnt(count), buf(buffer) { }
-	static const Array<T> null;
 
-	inline int count(void) const { return cnt; }
 	inline const T *buffer(void) const { return buf; }
 	inline T *buffer(void) { return buf; }
 	inline int size(void) const { return count(); }
+	inline void set(int count, T *buffer) { cnt = count; buf = buffer; }
+	inline void set(const Array<T>& t) { cnt = t.cnt; buf = t.buf; }
+	inline void copy(const Array& t) { cnt = min(cnt, t.cnt); array::copy(buf, t.buf, cnt); }
+	inline void fill(const T& val) { array::set(buf, cnt, val); }
+	inline const T *operator()(void) const { return buffer(); }
+	inline T *operator()(void) { return buffer(); }
+	inline Array<T>& operator=(const Array<T>& t) { set(t); return *this; }
 
 	class Iter: public PreIterator<Iter, T> {
 	public:
 		inline Iter(void): p(0), t(0) { }
 		inline Iter(const Array<T>& table): p(table.buffer()), t(table.buffer() + table.count()) { }
+		inline Iter(const Array<T>& table, bool end): p(table.buffer() + (end ? table.count() : 0)), t(table.buffer() + table.count()) { }
 		inline bool ended(void) const { return p >= t; }
 		inline const T& item(void) const { ASSERT(p < t); return *p; }
 		inline void next(void) { p++; }
+		inline bool operator==(const Iter& i) const { return p == i.p && t == i.t; }
+		inline bool operator!=(const Iter& i) const { return !operator==(i); }
 	private:
 		const T *p, *t;
 	};
+
+	// Collection concept
+	static const Array<T> null;
 	inline Iter items(void) const { return Iter(*this); }
-	inline void set(const Iter& i, const T& val) { ASSERT(buf <= i.p && i.p < buf + cnt); *i.p = val; }
-
-	inline void set(int count, T *buffer) { cnt = count; buf = buffer; }
-	inline void set(const Array<T>& t) { cnt = t.cnt; buf = t.buf; }
-	inline void copy(const Array& t) { cnt = min(cnt, t.cnt); array::copy(buf, t.buf, cnt); }
-	inline void fill(const T& val) { array::set(buf, cnt, val); }
-	inline const T& get(int idx) const { ASSERT(0 <= idx && idx < cnt); return buf[idx]; }
-	inline T& get(int idx) { ASSERT(0 <= idx && idx < cnt); return buf[idx]; }
-	inline void set(int idx, const T& val) { ASSERT(0 <= idx && idx < cnt); buf[idx] = val; }
-
-	inline const T *operator()(void) const { return buffer(); }
-	inline T *operator()(void) { return buffer(); }
-	inline const T& operator[](int idx) const { return get(idx); }
-	inline T& operator[](int idx) { return get(idx); }
-	inline Array<T>& operator=(const Array<T>& t) { set(t); return *this; }
-	inline operator Iter(void) const { return items(); }
 	inline Iter operator*(void) const { return items(); }
+	inline Iter begin(void) const { return items(); }
+	inline Iter end(void) const { return Iter(*this, true); }
+
+	inline int count(void) const { return cnt; }
+	inline bool contains(const T& item)
+		{ for(auto x: *this) if(x == item) return true; return false; }
+	template <class C> inline bool containsAll(const C& c)
+		{ for(auto x: c) if(!contains(x)) return false; return true; }
+	inline bool isEmpty(void) const { return cnt == 0; }
+	inline operator bool(void) const { return !isEmpty(); }
+	inline bool equals(const Array<T>& a) {
+		if(cnt != a.cnt) return false;
+		for(auto i = begin(), j = a.begin(); i; ++i, ++j)
+			if(*i != *j) return false;
+		return true;
+	}
+	inline bool operator==(const Array<T>& a) const { return equals(a); }
+	inline bool operator!=(const Array<T>& a) const { return !equals(a); }
+	inline bool operator<=(const Array<T>& a) const { return a.containsAll(*this); }
+	inline bool operator<(const Array<T>& a) const { return a.containsAll(*this) && !equals(a); }
+	inline bool operator>=(const Array<T>& a) const { return containsAll(a); }
+	inline bool operator>(const Array<T>& a) const { return containsAll(a) && !equals(a); }
+
+	// Array concept
+	inline int length(void) const { return count(); }
+	inline const T& get(int idx) const { ASSERT(0 <= idx && idx < cnt); return buf[idx]; }
+	inline int indexOf(const T& v, int i = 0) const
+		{ for(; i < count(); i++) if(v == get(i)) return i; return -1; }
+	inline int lastIndexOf(const T& v, int i = -1) const
+		{ if(i < 0) i = count() - 1; for(; i >= 0; i--) if(v == get(i)) return i; return -1; }
+	inline const T& operator[](int idx) const { return get(idx); }
+
+	// MutableArray concept
+	inline void set(int idx, const T& val) { ASSERT(0 <= idx && idx < cnt); buf[idx] = val; }
+	inline void set(const Iter& i, const T& val) { ASSERT(buf <= i.p && i.p < buf + cnt); *i.p = val; }
+	inline T& get(int idx) { ASSERT(0 <= idx && idx < cnt); return buf[idx]; }
+	inline T& operator[](int idx) { return get(idx); }
+
 
 protected:
 	int cnt;

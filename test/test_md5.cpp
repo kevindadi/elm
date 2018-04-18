@@ -28,9 +28,9 @@ using namespace elm;
 using namespace elm::checksum;
 
 #ifdef __unix
-#	define	INPUT	"test"
+#	define	INPUT	"dotest"
 #elif defined(__WIN32) || defined(__WIN64)
-#	define	INPUT	"test.exe"
+#	define	INPUT	"dotest.exe"
 #else
 #	error "Unsupported architecture !"
 #endif

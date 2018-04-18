@@ -78,7 +78,7 @@ public:
 	inline Iter items(void) const { return Iter(*this); }
 	inline Iter operator*(void) const { return items(); }
 	inline operator Iter(void) const { return items(); }
-	inline Iter begin(void) const { return items; }
+	inline Iter begin(void) const { return items(); }
 	inline Iter end(void) const { return Iter(); }
 
 	// PrecIter class

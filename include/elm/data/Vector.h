@@ -50,11 +50,13 @@ public:
 	class Iter: public PreIterator<Iter, const T&> {
 	public:
 		friend class Vector;
-		inline Iter(const Vector& vec): _vec(vec), i(0) { }
+		inline Iter(const Vector& vec, int idx = 0): _vec(vec), i(idx) { }
 		inline bool ended(void) const { return i >= _vec.length(); }
 		inline const T& item(void) const { return _vec[i]; }
 		inline void next(void) { i++; }
 		inline int index(void) const { return i; }
+		inline bool operator==(const Iter& it) const { return &_vec == &it._vec && i == it.i; }
+		inline bool operator!=(const Iter& it) const { return !operator==(it); }
 	private:
 		const Vector<T>& _vec;
 		int i;
@@ -86,6 +88,8 @@ public:
 	inline operator bool(void) const { return cnt != 0; }
 	inline Iter items(void) const { return Iter(*this); }
 	inline Iter operator*(void) const { return items(); }
+	inline Iter begin(void) const { return Iter(*this); }
+	inline Iter end(void) const { return Iter(*this, count()); }
 
 	// MutableCollection concept
 	inline void clear(void) { cnt = 0; }

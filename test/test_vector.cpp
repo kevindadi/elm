@@ -177,6 +177,20 @@ TEST_BEGIN(vector)
 		CHECK(i.ended());
 	}
 
+	// vector iterator
+	{
+		Vector<int> v;
+		for(int i = 0; i < 10; i++)
+			v.add(i);
+		bool ok = true;
+		int i = 0;
+		for(int x: v) {
+			ok = ok || (i == x);
+			i++;
+		}
+		CHECK(ok);
+	}
+
 TEST_END
 
 

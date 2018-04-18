@@ -25,28 +25,34 @@
 #include <errno.h>
 #include <stdio.h>
 #include <math.h>
+
+#include <elm/io/BufferedOutStream.h>
 #include <elm/io/io.h>
 #include <elm/compare.h>
+#include <elm/data/List.h>
+#include <elm/sys/System.h>
 
 namespace elm { namespace io {
 
 /**
  * @class Output
- * Formatted output class.
  *
- * @par Formatting Integers
+ * Class providing formatted output.
  *
- * Formatting integers is maded using the class @ref IntFormat that embeds
- * the value to display and the format configuration. Then the result object
- * is passed to the @ref Output object that will perform the actual formatting
- * of the output as in the example below.
+ * Beside a set of print() functions, this class also supports
+ * a collection of format configuration classes:
+ *	* @ref elm::io::IntFormat
+ *	* @ref elm::io;;FloatFormat
+ *	* @ref elm::io::StringFormat
  *
+ * Below is an example of the use of these classes:
  * @code
  * 	void *p;
- * 	cout << io::right(io::pad('0', io::width(32, io::hex(o)))) << io::endl;
+ * 	cout << "pointer = " << io::fmt(t::uint64(p)).right().pad('0').width(32) << io::endl;
  * @endcode
  *
- *
+ * Additionally, this class provides simple facilities to output to a file and to
+ * manage release of created streams.
  *
  * @ingroup ios
  */
@@ -86,20 +92,101 @@ char *Output::horner(char *p, t::uint64 val, int base, char enc) {
 
 
 /**
- * @fn Output::Output(void);
  * Build a formatted output on the standard output.
  */
+Output::Output(void): strm(&out), _flist(nullptr) {
+}
 
 /**
- * @fn Output::Output(OutStream& stream);
  * Build a formatted output on the given stream.
  */
+Output::Output(OutStream& stream): strm(&stream), _flist(nullptr) {
+}
 
 /**
  * @fn OutStream& Output::stream(void) const;
  * Get the stream used by the output.
  * @return Output stream.
  */
+
+/**
+ * Build an output from the given stream. If the parameter
+ * free is true, the output will be in charge of deleting
+ * the output string when it will be destructed.
+ *
+ * The free facility is useful when the stream is produced
+ * by file opening method of @ref elm::sys::System.
+ *
+ * @param out	Output stream to use.
+ * @param free	If true, this object will delete the stream
+ * 				when it will destructed itself.
+ * 	@param buf	If true, allocate a buffer stream to speed up the output.
+ */
+Output::Output(OutStream *out, bool free, bool buf): strm(out), _flist(nullptr) {
+	if(free)
+		add(out);
+	if(buf) {
+		strm = new BufferedOutStream(*strm);
+		add(strm);
+	}
+}
+
+
+/**
+ * Build an output using as stream a file created with the given path.
+ * @param path			Path to the file to create.
+ * @param buf			If true, create a buffer to speed up the output.
+ * @throws IOException	If the file cannot be created.
+ */
+Output::Output(string path, bool buf): strm(nullptr), _flist(nullptr) {
+	try {
+		strm = sys::System::createFile(path);
+		add(strm);
+		if(buf) {
+			strm = new BufferedOutStream(*strm);
+			add(strm);
+		}
+	}
+	catch(sys::SystemException& e) {
+		throw io::IOException(e.message());
+	}
+}
+
+
+/**
+ */
+Output::~Output(void) {
+	clean();
+}
+
+/**
+ */
+void Output::add(OutStream *out) {
+	if(_flist == nullptr)
+		_flist = new List<OutStream *>();
+	static_cast<List<OutStream *> *>(_flist)->add(out);
+}
+
+/**
+ */
+void Output::clean(void) {
+	if(_flist != nullptr) {
+		List<OutStream *> *l = static_cast<List<OutStream *> *>(_flist);
+		for(auto o = **l; o; o++)
+			delete *o;
+		delete l;
+		_flist = nullptr;
+	}
+}
+
+/**
+ * Change the output stream of the current output object.
+ * @param stream	New stream to use.
+ */
+void Output::setStream(OutStream& stream) {
+	clean();
+	strm = &stream;
+}
 
 /**
  * Print a boolean value, 'true' or 'false'.
@@ -1084,7 +1171,7 @@ IntFormat byte(t::uint8 b) {
  * cout << io::p(v, m) << io::endl;
  * @endcode
  *
- * Notice thatthe manager class has to provide a print() function taking the value
+ * Notice that the manager class has to provide a print() function taking the value
  * as first parameter and the output stream as second parameter.
  *
  * @param T		Type of values.

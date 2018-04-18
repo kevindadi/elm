@@ -31,6 +31,7 @@ message(STATUS ${CMAKE_CURRENT_SOURCE_DIR})
 set(TEST_SOURCES
 	"test.cc"
 	"test_array.cpp"
+	"test_array_list.cpp"
 	"test_avl.cpp"
 	"test_autostr.cpp"
 	"test_bidilist.cpp"

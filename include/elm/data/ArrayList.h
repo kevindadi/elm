@@ -37,25 +37,17 @@ class ArrayList {
 
 public:
 
-	inline ArrayList(int n): _csize(1 << n), _size(0), _avail(0), _fst(0), _lst(0) { }
+	inline ArrayList(int n = 6): _csize(1 << n), _size(0), _avail(0), _fst(0), _lst(0) { }
 	inline ~ArrayList(void) { clear(); }
 
-	// Collection concept
-	inline int count(void) const { return _size; }
-	bool contains(const T &item)
-		{ for(iter i(*this); i; i++) if(E::equals(item, *i)) return true; return false; }
-	template<template< class _ > class C>
-	inline bool containsAll(const C<T> &coll)
-		{ for(typename C<T>::iter i(coll); i; i++) if(!contains(*i)) return false; return true; }
-	inline bool isEmpty(void) const { return !_fst; }
-	inline operator bool(void) const { return !isEmpty(); }
-
-	class iter: public PreIterator<iter, T> {
+	class Iter: public PreIterator<Iter, T> {
 		friend class ArrayList;
 	public:
-		inline iter(const ArrayList& array): a(array), i(0), c(_fst) { }
-		inline iter(const ArrayList& array, int start): a(array)
+		inline Iter(const ArrayList<T>& array): a(array), i(0), c(_fst) { }
+		inline Iter(const ArrayList<T>& array, int start): a(array)
 			{ ASSERT(start <= a._size); c = a.chunk(start); i = start; }
+		inline Iter(const ArrayList<T>& array, bool end)
+			: a(array), i(end ? a._size : 0), c(end ? a._lst : a._fst) {  }
 		inline bool ended(void) const { return i < a._size; }
 		inline const T& item(void) const { return c->items[a.offset(i)]; }
 		inline void next(void) { i++; if(!offset(i)) c = c->next; }
@@ -66,6 +58,16 @@ public:
 		chunk_t *c;
 	};
 
+	// Collection concept
+	inline int count(void) const { return _size; }
+	bool contains(const T &item)
+		{ for(Iter i(*this); i; i++) if(E::equals(item, *i)) return true; return false; }
+	template<template< class _ > class C>
+	inline bool containsAll(const C<T> &coll)
+		{ for(typename C<T>::iter i(coll); i; i++) if(!contains(*i)) return false; return true; }
+	inline bool isEmpty(void) const { return !_fst; }
+	inline operator bool(void) const { return !isEmpty(); }
+
 	// MutableCollection concept
 	void clear(void)
 		{ for(chunk_t *c = _fst, *n = 0; c; n = c) { n = c->next; delete n; }
@@ -75,58 +77,42 @@ public:
 	template <template <class _> class C>
 	void addAll (const C<T> &items) { for(typename C<T>::iter i; i;i++) add(*i); }
 	void remove(const T &item)
-		{ for(iter i(*this); i; i++) if(E::equals(*i, item)) { remove(i); break; }; }
+		{ for(Iter i(*this); i; i++) if(E::equals(*i, item)) { remove(i); break; }; }
 	template <template <class _> class C>
 	void removeAll (const C<T> &items) { for(typename C<T>::iter i; i;i++) remove(*i); }
-	void remove(iter i)
-		{ mutable_iter mi(*this, i); for(i++; i; i++, mi++) *mi = *i; _size--;
-		if(!offset(_size)) { mi.c->next = 0; _lst = mi.c; delete i.c; } }
-
-	class mutable_iter: public PreIterator<iter, T> {
-		friend class ArrayList;
-	public:
-		inline mutable_iter(ArrayList& array): a(array), i(0), c(_fst) { }
-		inline mutable_iter(ArrayList& array, const iter& it): a(array), i(it.i), c(it.c)
-			{ ASSERT(&a == &it.a); }
-		inline bool ended(void) const { return i < a._size; }
-		inline T& item(void) const { return c->items[a.offset(i)]; }
-		inline void next(void) { i++; if(!offset(i)) c = c->next; }
-		inline int index(void) const { return i; }
-	private:
-		ArrayList& a;
-		int i;
-		chunk_t *c;
-	};
+	void remove(Iter i)
+		{ /*mutable_iter mi(*this, i); for(i++; i; i++, mi++) *mi = *i; _size--;
+		if(!offset(_size)) { mi.c->next = 0; _lst = mi.c; delete i.c; }*/ }
 
 	// Array concept
 	inline int length(void) const { return _size; }
 	inline const T &get(int index) const
 		{ ASSERT(index < _size); return chunk(index)->items[offset(index)]; }
 	int indexOf(const T &value, int start = 0) const
-		{ for(iter i(*this, start); i; i++) if(E::equals(*i, value)) return i.index(); return -1; }
+		{ for(Iter i(*this, start); i; i++) if(E::equals(*i, value)) return i.index(); return -1; }
 	int lastIndexOf(const T &value, int start = -1) const
-		{ int r = -1; for(iter i(*this, start); i && i.index() <= start; i++) if(E::equals(*i, value)) r =  i.index();  return r; }
+		{ int r = -1; for(Iter i(*this, start); i && i.index() <= start; i++) if(E::equals(*i, value)) r =  i.index();  return r; }
 	inline const T &operator[](int index) const { return get(index); }
 
 	// MutableArray concept
 	inline void shrink (int length)
 		{ _lst = chunk(length); for(chunk_t *c = _lst, *n; c; c = n) { n = c->next; delete c; } _size = length; }
 	inline void set(int index, const T &item) { chunk(index)->items[offset(index)] = item; }
-	inline void set(const iter &it, const T &item) { mutable_iter(*this, it); *it = item; }
+	inline void set(const Iter &it, const T &item) { mutable_iter(*this, it); *it = item; }
 	inline T &get(int index) { return chunk(index)->items[offset(index)]; }
 	inline T &operator[](int index) { return get(index); }
 	inline void insert(int index, const T &item) { insert(iter(*this, index)); }
-	void insert(const iter &it, T item)
-		{ mutable_iter mi(*this, it); while(mi) { T x = *mi; *mi = item; item = x; }
-		_size++; if(!offset(_size)) { extend(); _lst->items[0] = item; } else *mi = item; }
+	void insert(const Iter &it, T item)
+		{ /*mutable_iter mi(*this, it); while(mi) { T x = *mi; *mi = item; item = x; }
+		_size++; if(!offset(_size)) { extend(); _lst->items[0] = item; } else *mi = item;*/ }
 	inline void removeAt(int index) { removeAt(iter(*this, index)); }
-	inline void removeAt(const iter &it) { remove(it); }
+	inline void removeAt(const Iter &it) { remove(it); }
 
 	// List concept
 	inline const T &first(void) const { ASSERT(_fst); return _fst->items[0]; }
 	inline const T &last(void) const { ASSERT(_lst); return _lst->items[offset(_size) - 1]; }
-	inline iter find(const T &item) { return find(iter(*this)); }
-	inline iter find(const T &item, iter start)const
+	inline Iter find(const T &item) { return find(iter(*this)); }
+	inline Iter find(const T &item, Iter start)const
 		{ while(start && !E::equals(item, *start)) start++; return start; }
 
 	// MutableList concept
@@ -134,8 +120,8 @@ public:
 	void addLast(const T &item) { if(!offset(_lst)) extend(); _lst->items[offset(_size)] = item; _size++; }
 	inline void removeFirst(void) { removeAt(0); }
 	inline void removeLast(void) { removeAt(_size - 1); }
-	inline void addAfter(const iter &pos, const T &item) { insert(pos.index() + 1, item); }
-	inline void addBefore (const iter &pos, const T &item) { insert(pos.index() - 1, item); }
+	inline void addAfter(const Iter &pos, const T &item) { insert(pos.index() + 1, item); }
+	inline void addBefore (const Iter &pos, const T &item) { insert(pos.index() - 1, item); }
 
 private:
 
