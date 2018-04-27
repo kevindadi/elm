@@ -76,6 +76,23 @@ TEST_BEGIN(frag_table)
 		}	
 	CHECK(test_set);
 	
+
+	// test C++ for
+	{
+		FragTable<int> t;
+		const int l = 10;
+		for(int i = 0; i < l; i++)
+			t.add(i);
+		int i = 0;
+		bool ok = true;
+		for(auto x: t) {
+			ok = ok && (x == i);
+			i++;
+		}
+		CHECK(ok);
+		CHECK(i == 10);
+	}
+
 	// Test mutable table
 	/*i = 0;
 	for(FragTable<int>::MutableIterator iter(tab); iter; iter++, i++)

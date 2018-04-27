@@ -14,13 +14,13 @@ TEST_BEGIN(tree)
 		t1->add(t3);
 		CHECK(!t1->isEmpty());
 		inhstruct::Tree::Iterator child(t1);
-		CHECK(child == true); 
-		CHECK(child == t3);
+		CHECK(!child.ended());
+		CHECK(*child == t3);
 		child++;
-		CHECK(child == true); 
-		CHECK(child == t2);
+		CHECK(!child.ended());
+		CHECK(*child == t2);
 		child++;	
-		CHECK(child == false); 
+		CHECK(child.ended());
 		t1->remove(t3);
 		t1->remove(t2);
 		CHECK(t1->isEmpty());
@@ -42,7 +42,7 @@ TEST_BEGIN(tree)
 		CHECK(child == true); 
 		CHECK(child == "2");
 		child++;	
-		CHECK(child == false); 
+		CHECK(child.ended());
 		t1->remove(t3);
 		t1->remove(t2);
 		CHECK(t1->isEmpty());

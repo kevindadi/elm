@@ -64,12 +64,11 @@ public:
 	public:
 		inline Iter(void): node(0) { }
 		inline Iter(const List& _list): node(_list.firstNode()) { }
-		inline bool operator==(const Iter& i) { return node == i.node; }
-		inline bool operator!=(const Iter& i) { return node != i.node; }
 
 		inline bool ended(void) const { return !node; }
 		inline const T& item(void) const { ASSERT(node); return node->val; }
 		inline void next(void) { ASSERT(node); node = node->next(); }
+		inline bool equals(const Iter& i) { return node == i.node; }
 
 	private:
 		friend class prec_iter;

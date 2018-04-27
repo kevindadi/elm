@@ -108,7 +108,6 @@ set(LIBELM_LA_SOURCES
 	"util_BitVector.cpp"
 	"util_Cleaner.cpp"
 	"util_Comparator.cpp"
-	"util_delegate.cpp"
 	"util_Equiv.cpp"
 	"util_ErrorHandler.cpp"
 	"util_Formatter.cpp"

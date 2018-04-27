@@ -47,6 +47,13 @@ public:
 		{ return ((I *)this)->item(); }
 	inline T operator->(void)
 		{ return ((I *)this)->item(); }
+
+	// C++ iterator support (including new for form)
+	inline bool operator==(const I& i)
+		{ return ((I *)this)->equals(i); }
+	inline bool operator!=(const I& i)
+		{ return !((I *)this)->equals(i); }
+
 };
 
 } // elm

@@ -8,6 +8,7 @@
 #include <elm/data/HashMap.h>
 #include <elm/data/HashSet.h>
 #include <elm/data/Vector.h>
+#include <elm/util/BitVector.h>
 #include "../include/elm/test.h"
 
 using namespace elm;
@@ -159,6 +160,41 @@ TEST_BEGIN(hashtable)
 		set.removeAll(v);
 		CHECK(set.isEmpty());
 		CHECK_EQUAL(set.count(), 0);
+	}
+
+	// C++ for statement
+	{
+		HashMap<int, int> map;
+		const int N = 10;
+		for(int i = 0; i < N; i++)
+			map.put(i, i);
+
+		BitVector bv(N);
+		for(auto x: map)
+			bv.set(x);
+		CHECK(bv.countBits() == N);
+
+		bv.clear();
+		for(auto x: map.keys())
+			bv.set(x);
+		CHECK(bv.countBits() == N);
+
+		bv.clear();
+		for(auto x: map.pairs())
+			bv.set(x.snd);
+		CHECK(bv.countBits() == N);
+	}
+
+	{
+		HashSet<int> set;
+		const int N = 10;
+		for(int i = 0; i < N; i++)
+			set.add(i);
+
+		BitVector bv(N);
+		for(auto x: set)
+			bv.set(x);
+		CHECK(bv.countBits() == N);
 	}
 
 TEST_END

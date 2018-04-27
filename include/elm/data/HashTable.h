@@ -59,8 +59,11 @@ private:
 
 	struct InternIterator {
 		inline InternIterator(const self_t& _htab): htab(&_htab) { i = 0; step(); }
+		inline InternIterator(const self_t& _htab, bool end): htab(&_htab)
+			{ if(end) { i = htab->_size; node = nullptr; } else { i = 0; step(); } }
 		inline bool ended(void) const { return i >= htab->_size; }
 		inline void next(void) { node = node->next; if(!node) { i++; step(); }  }
+		inline bool equals(const InternIterator& it) const { return node == it.node && i == it.i && htab == it.htab; }
 	protected:
 		node_t *node;
 	private:
@@ -119,6 +122,7 @@ public:
 	class Iter: public InternIterator, public PreIterator<Iter, T> {
 	public:
 		inline Iter(const self_t& htab): InternIterator(htab) { };
+		inline Iter(const self_t& htab, bool end): InternIterator(htab, end) { };
 		inline const data_t& item(void) const { return this->node->data; }
 		inline const key_t& key(void) const { return A::key(this->node->data); };
 	};

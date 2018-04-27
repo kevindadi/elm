@@ -38,12 +38,16 @@ public:
 	class Iter: public PreIterator<Iter, T> {
 	public:
 		inline Iter(const HashSet& set): i(set._tab) { }
+		inline Iter(const HashSet& set, bool end): i(set._tab, end) { }
 		inline bool ended(void) const { return i.ended(); }
 		inline const T& item(void) const { return i.item(); }
 		inline void next(void) { i.next(); }
+		inline bool equals(const Iter& it) const { return i.equals(it.i); }
 	private:
 		typename tab_t::Iter i;
 	};
+	inline Iter begin(void) const { return Iter(*this); }
+	inline Iter end(void) const { return Iter(*this, true); }
 
 	inline int count(void) const { return _tab.count(); }
 	inline bool contains(const T& val) { return _tab.hasKey(val); }

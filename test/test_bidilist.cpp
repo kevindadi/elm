@@ -144,5 +144,21 @@ TEST_BEGIN(bidilist)
 		BiDiList<int, EquivManager<Eq> > l;
 	}
 
+	// C++ for iterator
+	{
+		BiDiList<int> l;
+		const int s = 10;
+		for(int i = 0; i < s; i++)
+			l.add(i);
+		bool ok = true;
+		int i = s - 1;
+		for(auto x: l) {
+			ok = ok && (x == i);
+			i--;
+		}
+		CHECK(ok);
+		CHECK(i == -1);
+	}
+
 TEST_END
 

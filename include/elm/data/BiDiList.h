@@ -55,15 +55,14 @@ public:
 		inline Iter(void): n(_(null._list.first())) { }
 		inline Iter(const BiDiList& l): n(_(l._list.first())) { }
 		inline Iter(const BackIter& i) { if(i) n = i; else n = i.n->next(); }
+		inline Iter(const BiDiList& l, bool end): n(static_cast<const Node *>(end ? l._list.tail() : l._list.first())) { }
 		inline bool ended(void) const { return n->atEnd(); }
 		inline const T& item(void) const { return n->val; }
 		inline void next(void) { n = _(n->next()); }
+		inline bool equals(const Iter& i) const { return i.n == n; }
 	private:
-		Node *n;
+		const Node *n;
 	};
-	inline Iter items(void) const { return Iter(*this); }
-	inline Iter operator*(void) const { return items(); }
-	inline operator Iter(void) const { return items(); }
 
 	class BackIter: public PreIterator<T, BackIter> {
 		friend class BiDiList;
@@ -89,6 +88,10 @@ public:
 		{ Iter i1(*this), i2(l); while(i1 && i2) { if(!_man.eq.isEqual(*i1, *i2)) return false; i1++; i2++; } return !i1 && !i2; }
 	bool includes(const BiDiList<T>& l) const
 		{ Iter i1(*this), i2(l); while(i1 && i2) { if(_man.eq.isEqual(*i1, *i2)) i2++; i1++; } ; return !i2; }
+	inline Iter begin(void) const { return Iter(*this); }
+	inline Iter end(void) const { return Iter(*this, true); }
+	inline Iter operator*(void) const { return begin(); }
+	inline operator Iter(void) const { return begin(); }
 
 	// MutableCollection concept
 	void copy(const BiDiList<T>& l) { clear(); for(Iter i(l); i; i++) addLast(*i); }
@@ -100,7 +103,7 @@ public:
 	template <class C> inline void removeAll(const C& items)
 		{ for(typename C::Iter iter(items); iter; iter++) remove(iter);	}
 	inline void remove(const T& v) { Iter i = find(v); if(i) remove(i); }
-	inline void remove(Iter &i) { Node *n = _(i.n->next()); i.n->remove(); i.n = n; }
+	inline void remove(Iter &i) { ASSERT(i); const Node *n = _(i.n->next()); ((Node *)i.n)->remove(); i.n = n; }
 
 	// List concept
 	inline T& first(void) { return _(_list.first())->val; }
@@ -109,7 +112,7 @@ public:
 	inline const T& last(void) const { return _(_list.first())->val; }
 	inline Iter nth(int n) { Iter i(*this); while(n) { ASSERT(i); i++; n--; } ASSERT(i); return i; };
 	Iter find(const T& item) const
-		{ Iter i; for(i = items(); i; i++) if(_man.eq.isEqual(item, i)) break; return i; }
+		{ Iter i; for(i = begin(); i; i++) if(_man.eq.isEqual(item, i)) break; return i; }
 	Iter find(const T& item, const Iter& pos) const
 		{ Iter i = pos; for(i++; i; i++) if(_man.eq.isEqual(item, i)) break; return i; }
 

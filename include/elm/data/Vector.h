@@ -55,8 +55,7 @@ public:
 		inline const T& item(void) const { return _vec[i]; }
 		inline void next(void) { i++; }
 		inline int index(void) const { return i; }
-		inline bool operator==(const Iter& it) const { return &_vec == &it._vec && i == it.i; }
-		inline bool operator!=(const Iter& it) const { return !operator==(it); }
+		inline bool equals(const Iter& it) const { return &_vec == &it._vec && i == it.i; }
 	private:
 		const Vector<T>& _vec;
 		int i;

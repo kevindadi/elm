@@ -56,8 +56,7 @@ public:
 		inline bool ended(void) const { return p >= t; }
 		inline const T& item(void) const { ASSERT(p < t); return *p; }
 		inline void next(void) { p++; }
-		inline bool operator==(const Iter& i) const { return p == i.p && t == i.t; }
-		inline bool operator!=(const Iter& i) const { return !operator==(i); }
+		inline bool equals(const Iter& i) const { return p == i.p && t == i.t; }
 	private:
 		const T *p, *t;
 	};

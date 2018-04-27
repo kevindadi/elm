@@ -50,6 +50,7 @@ public:
 		inline void next(void) { ASSERT(i < len); i++; }
 		inline const T& item(void) const { return arr->get(i); }
 		inline bool ended(void) const { return i >= len; }
+		inline bool equals(const Iter& it) const { return arr == it.arr && i == it.i; }
 	protected:
 		friend class FragTable;
 		const FragTable<T, M> *arr;
@@ -68,7 +69,7 @@ public:
  	inline Iter operator*(void) const { return items(); }
  	inline operator Iter(void) const { return items(); }
  	inline Iter begin(void) const { return items(); }
- 	inline Iter end(void) const { return Iter(); }
+ 	inline Iter end(void) const { return Iter(*this, count()); }
  	inline bool equals(const self_t& t) const
  		{ Iter i = begin(), j = t.begin(); for(; i && j; i++, j++) if(*i != *j) return false; return !i && !j; }
  	inline bool operator==(const self_t& t) const { return equals(t); }

@@ -56,34 +56,65 @@ public:
 	class Iter: public PreIterator<Iter, T> {
 	public:
 		inline Iter(const self_t& htab): i(htab._tab) { };
+		inline Iter(const self_t& htab, bool end): i(htab._tab, end) { };
 		inline bool ended(void) const { return i.ended(); }
 		inline const T& item(void) const { return i.item().snd; }
 		inline void next(void) { i.next(); }
 		inline const K& key(void) const { return i.item().fst; }
+		inline bool equals(const Iter& it) const { return i.equals(it.i); }
 	private:
 		typename tab_t::Iter i;
 	};
+	inline Iter begin(void) const { return Iter(*this); }
+	inline Iter end(void) const { return Iter(*this, true); }
 
 	class KeyIter: public PreIterator<KeyIter, K> {
 	public:
 		inline KeyIter(const self_t& htab): i(htab._tab) { };
+		inline KeyIter(const self_t& htab, bool end): i(htab._tab, end) { };
 		inline bool ended(void) const { return i.ended(); }
 		inline const K& item(void) const { return i.item().fst; }
 		inline void next(void) { i.next(); }
+		inline bool equals(const KeyIter& it) const { return i.equals(it.i); }
 	private:
 		typename tab_t::Iter i;
 	};
+	inline KeyIter beginKeys(void) const { return KeyIter(*this); }
+	inline KeyIter endKeys(void) const { return KeyIter(*this, true); }
+
+	class KeyAccess {
+	public:
+		inline KeyAccess(const self_t& self): _self(self) { }
+		inline KeyIter begin(void) const { return _self.beginKeys(); }
+		inline KeyIter end(void) const { return _self.endKeys(); }
+	private:
+		const self_t& _self;
+	};
+	inline KeyAccess keys(void) const { return KeyAccess(*this); }
 
 	class PairIter: public PreIterator<PairIter, Pair<K, T> > {
 	public:
 		inline PairIter(const self_t& htab): i(htab._tab) { };
+		inline PairIter(const self_t& htab, bool end): i(htab._tab, end) { };
 		inline bool ended(void) const { return i.ended(); }
 		inline const Pair<K, T>& item(void) const { return i.item(); }
 		inline void next(void) { i.next(); }
+		inline bool equals(const PairIter& it) const { return i.equals(it.i); }
 	private:
 		typename tab_t::Iter i;
 	};
-	inline PairIter pairs(void) const { return PairIter(*this); }
+	inline PairIter beginPairs(void) const { return PairIter(*this); }
+	inline PairIter endPairs(void) const { return PairIter(*this, true); }
+
+	class PairAccess {
+	public:
+		inline PairAccess(const self_t& self): _self(self) { }
+		inline PairIter begin(void) const { return _self.beginPairs(); }
+		inline PairIter end(void) const { return _self.endPairs(); }
+	private:
+		const self_t& _self;
+	};
+	inline PairAccess pairs(void) const { return PairAccess(*this); }
 
 	inline bool contains(const T& item)
 		{ for(Iter i(*this); i; i++) if(*i == item) return true; return false; }
@@ -92,7 +123,7 @@ public:
 		{ for(typename C::Iter i(c); c; i++) if(!contains(*i)) return false; return true; }
 	inline void remove(Iter& i) const { const K& key = i.key(); i++; remove(i.key()); }
 
-	inline Iter operator*(void) const { return Iter(*this); }
+	inline Iter operator*(void) const { return begin(); }
 	inline operator bool(void) const { return !isEmpty(); }
 	inline const T& operator[](const K& key) const { const typename tab_t::data_t *r = _tab.get(key); ASSERT(r); return (*r).snd; }
 	inline StrictMapDelegate<self_t> operator[](const K& key) { return StrictMapDelegate<self_t>(*this, key); }
