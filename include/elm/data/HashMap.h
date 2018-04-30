@@ -131,7 +131,7 @@ public:
 	inline StrictMapDelegate<self_t> operator[](const Iter& i) { return StrictMapDelegate<self_t>(*this, i.key()); }
 
 	template <class C> void putAll(const C& c)
-		{ for(auto p = c.pairs(); p; p++) put((*p).fst, (*p).snd); }
+		{ for(auto p: c.pairs()) put(p.fst, p.snd); }
 
 #	ifdef ELM_STAT
 		int minEntry(void) const { return _tab.minEntry(); }
