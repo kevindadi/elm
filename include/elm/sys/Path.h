@@ -21,15 +21,15 @@
 #ifndef ELM_SYS_PATH_H
 #define ELM_SYS_PATH_H
 
-#include <elm/string.h>
 #include <elm/io.h>
 #include <elm/PreIterator.h>
+#include <elm/string.h>
+#include <elm/sys/SystemException.h>
 
 namespace elm { namespace sys {
 
 // Path class
 class Path {
-	String buf;
 public:
 #	if defined(__WIN32) || defined(__WIN64)
 		static const char SEPARATOR = '\\';
@@ -54,7 +54,9 @@ public:
 	Path append(Path path) const;
 	Path parent(void) const;
 	Path setExtension(CString new_extension) const;
+	inline Path setExt(cstring ext) const { return setExtension(ext); }
 	Path relativeTo(Path base) const;
+	Path withoutExt(void) const;
 
 	// Accessors
 	inline const String& toString(void) const { return buf; }
@@ -83,6 +85,13 @@ public:
 	bool isWritable(void) const;
 	bool isExecutable(void) const;
 
+	// file handling
+	void remove(void) throw(SystemException);
+	void makeDir(void) throw(SystemException);
+	io::InStream *read(void) throw(SystemException);
+	io::OutStream *write(void) throw(SystemException);
+	io::OutStream *append(void) throw(SystemException);
+
 	// Operator
 	inline Path& operator=(const char *str) { buf = str; return *this; }
 	inline Path& operator=(CString str) { buf = str; return *this; }
@@ -98,17 +107,55 @@ public:
 
 	// Path iterator
 	class PathIter: public PreIterator<PathIter, string> {
+		friend class Path;
 	public:
-		inline PathIter(const string& str);
-		inline PathIter(const PathIter& iter);
-		inline bool ended(void) const;
-		inline Path item(void) const;
-		inline void next(void);
+		inline PathIter(void): p(0), n(-1) { }
+		inline PathIter(string paths): s(paths), p(0), n(-1) { look(); }
+		inline bool ended(void) const { return p >= s.length(); }
+		inline Path item(void) const { return s.substring(p, n - p); }
+		inline void next(void) { p = n; if(p < s.length()) { p++; look(); } }
+		inline bool equals(const PathIter& i) const { return s == i.s && p == i.p; }
 	private:
-		inline void look(void);
-		const string& s;
+		inline PathIter(string paths, int p): s(paths), p(p), n(-1) { look(); }
+		void look(void);
+		string s;
 		int p, n;
 	};
+
+	class PathSplit {
+	public:
+		inline PathSplit(string p): _p(p) { }
+		inline PathIter begin(void) const { return PathIter(_p); }
+		inline PathIter end(void) const { return PathIter(_p, _p.length()); }
+	private:
+		string _p;
+	};
+	inline static PathSplit splitPaths(string paths) { return PathSplit(paths); }
+
+	// directory reading
+	class DirIter: public PreIterator<DirIter, cstring> {
+	public:
+		inline DirIter(void): _dir(nullptr) { }
+		DirIter(Path path) throw(SystemException);
+		inline bool ended(void) const { return _dir == nullptr; }
+		inline cstring item(void) const { return _cur; }
+		void next(void);
+		inline bool equals(const DirIter& i) const { return _dir == i._dir && _cur == i._cur; }
+	private:
+		void *_dir;
+		cstring _cur;
+	};
+
+	class DirReader {
+	public:
+		inline DirReader(const Path& p): _p(p) { }
+		inline DirIter begin(void) throw(SystemException) { return DirIter(_p); }
+		inline DirIter end(void) { return DirIter(); }
+	private:
+		const Path& _p;
+	};
+
+	inline DirReader readDir(void) const throw(SystemException) { return DirReader(*this); }
 
 	// deprecated
 	inline bool contains(const Path& path) const { return path.subPathOf(*this); }
@@ -116,6 +163,7 @@ public:
 private:
 	int nextSeparator(int start = 0) const;
 	int lastSeparator(void) const;
+	String buf;
 };
 
 inline io::Output& operator<<(io::Output& out, const Path& path)
@@ -124,36 +172,6 @@ inline io::Output& operator<<(io::Output& out, const Path& path)
 }	// system
 
 typedef elm::sys::Path Path;
-
-Path::PathIter::PathIter(const string& str)
-: s(str), p(0), n(-1) {
-	look();
-}
-
-Path::PathIter::PathIter(const PathIter& iter)
-: s(iter.s), p(iter.p), n(iter.n) {
-}
-
-bool Path::PathIter::ended(void) const {
-	return p >= s.length();
-}
-
-Path Path::PathIter::item(void) const {
-	return s.substring(p, n - p);
-}
-
-void Path::PathIter::next(void) {
-	p = n + 1;
-	look();
-}
-
-void Path::PathIter::look(void) {
-	if(p >= s.length())
-		return;
-	n = s.indexOf(Path::PATH_SEPARATOR, n + 1);
-	if(n < 0)
-		n = s.length();
-}
 
 } // elm
 

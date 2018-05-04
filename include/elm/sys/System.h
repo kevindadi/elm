@@ -21,10 +21,11 @@
 #ifndef ELM_SYS_SYSTEM_H
 #define ELM_SYS_SYSTEM_H
 
-#include <elm/util/Pair.h>
+#include <elm/data/Vector.h>
 #include <elm/sys/Path.h>
 #include <elm/sys/SystemIO.h>
 #include <elm/sys/SystemException.h>
+#include <elm/util/Pair.h>
 
 namespace elm { namespace io {
 	class InStream;
@@ -57,10 +58,14 @@ public:
 	static string getPluginFileName(const string& name);
 	static void makeDir(const sys::Path& path) throw(SystemException);
 	static void removeDir(const sys::Path& path) throw(SystemException);
+	static void removeFile(const Path& path) throw(SystemException);
+	static void remove(const Path& path) throw(SystemException);
 	static sys::Path getTempFile(void) throw(SystemException);
 	static sys::Path getTempDir(void) throw(SystemException);
 	static int coreCount(void);
 	static void exit(int code = 0);
+	static Path::DirReader contentOf(const sys::Path& dir) throw(SystemException);
+
 };
 
 } } // elm::system

@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <dirent.h>
 
 #include <elm/data/Vector.h>
 #include <elm/sys/Path.h>
@@ -495,6 +496,28 @@ Path Path::setExtension(CString new_extension) const {
 
 
 /**
+ * @fn Path Path::setExt(cstring ext) const;
+ * Change the extension if there is some one or add the given extension.
+ * @param ext	New extension to put in.
+ * @return		New path with extension set.
+ */
+
+
+/**
+ * Return the path with the last component extension removed.
+ * @return	Path without the extension of the last component.
+ */
+Path Path::withoutExt(void) const {
+	int lsep = lastSeparator();
+	int pos = buf.lastIndexOf('.');
+	if(pos <= lsep)
+		return *this;
+	else
+		return buf.substring(0, pos);
+}
+
+
+/**
  * Test if the path matches a file, a directory or any file system object.
  * @return	True if it exists (or is not accessible), false else.
  */
@@ -558,6 +581,121 @@ bool Path::isExecutable(void) const {
 	return res == 0;
 }
 
+/**
+ * Remove the file or the directory corresponding to this path.
+ * If this is a non-empty directory, remove its content
+ * recursively. No error is issued if the path does not
+ * exist.
+ *
+ * @throw SystemException	Thrown if there is an IO error during operation.
+ */
+void Path::remove(void) throw(SystemException) {
+	sys::System::remove(*this);
+}
+
+/**
+ * Build the directory corresponding to this path.
+ *
+ * @throw SystemException	Thrown if there is an IO error during operation.
+ */
+void Path::makeDir(void) throw(SystemException) {
+	sys::System::makeDir(*this);
+}
+
+/**
+ * Open for reading the file corresponding to this path.
+ *
+ * @return	Opened file.
+ * @throw	SystemException	Thrown if there is an IO error during operation.
+ */
+io::InStream *Path::read(void) throw(SystemException) {
+	return sys::System::readFile(*this);
+}
+
+
+/**
+ * Create a file with this path or overwrite an existing one.
+ *
+ * @return	Opened file.
+ * @throw	SystemException	Thrown if there is an IO error during operation.
+ */
+io::OutStream *Path::write(void) throw(SystemException) {
+	return sys::System::createFile(*this);
+}
+
+
+/**
+ * Open or create a file with this path and write by appending
+ * to the content.
+ *
+ * @return	Opened file.
+ * @throw	SystemException	Thrown if there is an IO error during operation.
+ */
+io::OutStream *Path::append(void) throw(SystemException) {
+	return sys::System::appendFile(*this);
+}
+
+
+/**
+ * @fn DirReader Path::readDir(void) const throw(SystemException);
+ * Allow to read the content of a directory.
+ * @return	Reader of the directory.
+ * @throw SystemException	If the path is not a directory or can not be accessed.
+ */
+
+
+/**
+ * @fn PathSplit splitPaths(string paths) { return PathSplit(paths);
+ * Split the given string as a list of paths (separated by @ref Path::PATH_SEPARATOR).
+ * The result can be iterated.
+ *
+ * @param paths		Path list to split.
+ * @return			Iterable split list of paths.
+ */
+
+
+/**
+ * @class Path::PathSplit
+ * Handle to read the list of paths coming from a path list split.
+ */
+
+
+/**
+ * @class Path::DirIter
+ * Iterator on the content of a directory.
+ */
+
+
+/**
+ */
+Path::DirIter::DirIter(Path path) throw(SystemException) {
+	_dir = opendir(&path.toString().toCString());
+	if(_dir == NULL)
+		throw SystemException(errno, _ << "cannot read directory " << path);
+	next();
+}
+
+
+/**
+ */
+void Path::DirIter::next(void) {
+	do {
+		struct dirent *n = readdir(static_cast<DIR *>(_dir));
+
+		// check for end
+		if(n == NULL) {
+			_cur = "";
+			closedir(static_cast<DIR *>(_dir));
+			_dir = nullptr;
+			break;
+		}
+
+		// record the new content
+		_cur = n->d_name;
+
+	} while(_cur == "." || _cur == "..");
+}
+
 
 /**
  * @class Path::PathIter
@@ -592,7 +730,24 @@ bool Path::isExecutable(void) const {
 
 
 /**
- * @fn void Path::PathIter::look(void);
  */
+void Path::PathIter::look(void) {
+	if(p >= s.length())
+		return;
+	n = s.indexOf(Path::PATH_SEPARATOR, n + 1);
+	if(n < 0)
+		n = s.length();
+}
+
+
+/**
+ * Separator character for the components of a path.
+ */
+const char Path::SEPARATOR;
+
+/**
+ * Separator character for a list of paths.
+ */
+const char Path::PATH_SEPARATOR;
 
 } } // elm::sys

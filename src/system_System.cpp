@@ -28,6 +28,7 @@
 #endif
 #include <elm/io/io.h>
 #include <elm/io/WinInStream.h>
+#include <elm/data/List.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <stdio.h>
@@ -639,6 +640,73 @@ void System::removeDir(const sys::Path& path) throw(SystemException) {
 		if(r)
 			throw SystemException(r, _ << "cannot remove " << path << ": " << strerror(errno));
 #	endif
+}
+
+/**
+ * Remove a file.
+ * @param path	Path of the file to remove.
+ */
+void System::removeFile(const Path& path) throw(SystemException) {
+#	if defined(__WIN32) || defined(__WIN64)
+		if(!DeleteFile(&path.toString().toCString()))
+			throw SystemException(0, _ << "cannot remove " << path << ": " << win::getLastErrorMessage()));
+#	else
+		int r = ::remove(&path.toString().toCString());
+		if(r)
+			throw SystemException(r, _ << "cannot remove " << path << ": " << strerror(errno));
+#	endif
+}
+
+
+/**
+ * Remove a file or a directory. If the directory is not empty,
+ * remove recursivelly its content.
+ */
+void System::remove(const Path& path) throw(SystemException) {
+	List<sys::Path> wl;
+	wl.push(path);
+
+	while(wl) {
+		sys::Path p = wl.top();
+
+		// is it existing?
+		if(!p.exists())
+			continue;
+
+		// file case
+		if(p.isFile()) {
+			wl.pop();
+			removeFile(p);
+		}
+
+		// empty directory case
+		else {
+
+			// push directory sub-files
+			bool one = false;
+			for(auto f: p.readDir()) {
+				one = true;
+				ASSERT(f != "." && f != "..");
+				wl.push(p / f);
+			}
+
+			// nothing pushed: remove the directory
+			if(!one) {
+				wl.pop();
+				removeDir(p);
+			}
+		}
+	}
+}
+
+/**
+ * Return a descriptor of a content of a directory path.
+ *
+ * @param dir	Directory to look in.
+ * @return 		Descriptor of the content of the directory content.
+ */
+Path::DirReader System::contentOf(const sys::Path& dir) throw(SystemException) {
+	return dir.readDir();
 }
 
 

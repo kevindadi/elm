@@ -26,44 +26,75 @@ using namespace elm;
 
 TEST_BEGIN(path)
 
-// parent test
-{
-	sys::Path p = sys::Path("a") / "b" / "c";
-	CHECK_EQUAL(p.namePart(), string("c"));
-	p = p.parent();
-	CHECK_EQUAL(p.namePart(), string("b"));
-	p = p.parent();
-	CHECK_EQUAL(p.namePart(), string("a"));
-	p = p.parent();
-	CHECK_EQUAL(p, sys::Path("."));
-}
+	// parent test
+	{
+		sys::Path p = sys::Path("a") / "b" / "c";
+		CHECK_EQUAL(p.namePart(), string("c"));
+		p = p.parent();
+		CHECK_EQUAL(p.namePart(), string("b"));
+		p = p.parent();
+		CHECK_EQUAL(p.namePart(), string("a"));
+		p = p.parent();
+		CHECK_EQUAL(p, sys::Path("."));
+	}
 
-// subPathOf/prefixedBy test
-{
-	sys::Path b = sys::Path("a") / "b";
-	sys::Path f = b / "c";
-	CHECK(!b.subPathOf(f));
-	CHECK(f.subPathOf(b));
-	CHECK(f.prefixedBy(b));
-	CHECK(!b.prefixedBy(f));
-	CHECK(!f.isPrefixOf(b));
-	CHECK(b.isPrefixOf(f));
+	// subPathOf/prefixedBy test
+	{
+		sys::Path b = sys::Path("a") / "b";
+		sys::Path f = b / "c";
+		CHECK(!b.subPathOf(f));
+		CHECK(f.subPathOf(b));
+		CHECK(f.prefixedBy(b));
+		CHECK(!b.prefixedBy(f));
+		CHECK(!f.isPrefixOf(b));
+		CHECK(b.isPrefixOf(f));
 
-	sys::Path g = sys::Path("a") / "bb";
-	CHECK(!b.isPrefixOf(g));
-}
+		sys::Path g = sys::Path("a") / "bb";
+		CHECK(!b.isPrefixOf(g));
+	}
 
-// relativeTo test
-{
-	sys::Path b = sys::Path("a") / "b";
-	sys::Path f = sys::Path("a") / "b" / "c";
-	sys::Path g = b / "d";
-	CHECK_EQUAL(f.relativeTo(b).toString(), string("c"));
-	CHECK_EQUAL(b.relativeTo(f).toString(), string(".."));
-	CHECK_EQUAL(g.relativeTo(f).toString(), string("../d"));
+	// relativeTo test
+	{
+		sys::Path b = sys::Path("a") / "b";
+		sys::Path f = sys::Path("a") / "b" / "c";
+		sys::Path g = b / "d";
+		CHECK_EQUAL(f.relativeTo(b).toString(), string("c"));
+		CHECK_EQUAL(b.relativeTo(f).toString(), string(".."));
+		CHECK_EQUAL(g.relativeTo(f).toString(), string("../d"));
 
-	sys::Path rb = b.relativeTo(b);
-	CHECK_EQUAL(rb, sys::Path("."));
-}
+		sys::Path rb = b.relativeTo(b);
+		CHECK_EQUAL(rb, sys::Path("."));
+	}
+
+	// withoutExt
+	{
+		CHECK_EQUAL(sys::Path("ok.coucou").withoutExt(), sys::Path("ok"));
+		CHECK_EQUAL(sys::Path("/a/b/c/d.ok").withoutExt(), sys::Path("/a/b/c/d"));
+		CHECK_EQUAL(sys::Path("/a/b.ok/c/d.ok").withoutExt(), sys::Path("/a/b.ok/c/d"));
+	}
+
+	// PathIter test
+	{
+		string cs[] = { "/a/b/c", ".", "b/c" };
+		string p;
+		for(auto c: cs) {
+			if(p == "")
+				p = c;
+			else
+				p = _ << p << Path::PATH_SEPARATOR << c;
+		}
+		int i = 0;
+		for(auto c: Path::splitPaths(p)) {
+			cerr << "next\n";
+			CHECK_EQUAL(c, cs[i++]);
+		}
+	}
+
+	// read the directory content
+	{
+		sys::Path p = ".";
+		for(auto c: p.readDir())
+			cerr << "DEBUG: " << c << io::endl;
+	}
 
 TEST_END
