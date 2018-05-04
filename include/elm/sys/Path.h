@@ -156,6 +156,7 @@ public:
 	};
 
 	inline DirReader readDir(void) const throw(SystemException) { return DirReader(*this); }
+	void makeDirs(void) const;
 
 	// deprecated
 	inline bool contains(const Path& path) const { return path.subPathOf(*this); }

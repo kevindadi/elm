@@ -57,6 +57,7 @@ public:
 	static string getLibraryFileName(const string& name);
 	static string getPluginFileName(const string& name);
 	static void makeDir(const sys::Path& path) throw(SystemException);
+	static void makeDirs(const sys::Path& path)  throw(SystemException);
 	static void removeDir(const sys::Path& path) throw(SystemException);
 	static void removeFile(const Path& path) throw(SystemException);
 	static void remove(const Path& path) throw(SystemException);

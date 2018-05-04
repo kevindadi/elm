@@ -59,4 +59,25 @@ TEST_BEGIN(system)
 		CHECK(!p.exists());
 	}
 
+	// test makeDirs
+	{
+		Path p("system.dir/a/b/c");
+		FAIL_ON_EXCEPTION(sys::SystemException,
+			p.makeDirs());
+		CHECK(Path("system.dir").isDir());
+		CHECK(Path("system.dir/a").isDir());
+		CHECK(Path("system.dir/a/b").isDir());
+		CHECK(Path("system.dir/a/b/c").isDir());
+		FAIL_ON_EXCEPTION(sys::SystemException,
+			p.makeDirs());
+		Path("system.dir").remove();
+	}
+
+	// test makeDirs() on a file
+	{
+		Path p("test_system.cpp/a");
+		CHECK_EXCEPTION(sys::SystemException,
+			p.makeDirs());
+	}
+
 TEST_END

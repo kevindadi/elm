@@ -42,6 +42,14 @@ namespace elm { namespace sys {
 /**
  * @class Path
  * This class represents a file path in the current file system.
+ *
+ * It provides facilities to:
+ *	* build and manage paths and list of paths,
+ *	* test paths for existence and type and accessebility checking,
+ *	* read directories content,
+ *	* shortcuts to read and write files
+ *	* shortcuts to read and create directories.
+ *
  * @ingroup system
  */
 
@@ -652,6 +660,16 @@ io::OutStream *Path::append(void) throw(SystemException) {
  * @param paths		Path list to split.
  * @return			Iterable split list of paths.
  */
+
+
+/**
+ * Create the directory given by this path and missing parent directories.
+ * Does nothing if the directory already exists.
+ * @throw SystemException	If there is an OS error or if a file with same name exist.
+ */
+void Path::makeDirs(void) const {
+	System::makeDirs(*this);
+}
 
 
 /**

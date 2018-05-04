@@ -660,7 +660,7 @@ void System::removeFile(const Path& path) throw(SystemException) {
 
 /**
  * Remove a file or a directory. If the directory is not empty,
- * remove recursivelly its content.
+ * remove recursively its content.
  */
 void System::remove(const Path& path) throw(SystemException) {
 	List<sys::Path> wl;
@@ -671,10 +671,10 @@ void System::remove(const Path& path) throw(SystemException) {
 
 		// is it existing?
 		if(!p.exists())
-			continue;
+			wl.pop();
 
 		// file case
-		if(p.isFile()) {
+		else if(p.isFile()) {
 			wl.pop();
 			removeFile(p);
 		}
@@ -817,6 +817,32 @@ int System::coreCount(void) {
  */
 void System::exit(int code) {
 	::exit(code);
+}
+
+
+/**
+ * Create the directory given by the path and missing parent directories.
+ * Does nothing if the directory already exists.
+ * @param path				Path of the directory to create.
+ * @throw SystemException	If there is an OS error or if a file with same name exist.
+ */
+void System::makeDirs(const sys::Path& path)  throw(SystemException) {
+	List<Path> wl;
+	Path p = path;
+
+	// pop directories to create
+	while(p && !p.exists()) {
+		wl.push(p);
+		p = p.parent();
+	}
+
+	// is it a directory?
+	if(p && !p.isDir())
+		throw SystemException(SystemException::BAD_PATH, _ << "\"" << p << "\" should be a directory to make directory \"" << path << "\"");
+
+	// create them
+	while(wl)
+		makeDir(wl.pop());
 }
 
 } } // elm::sys
