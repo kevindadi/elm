@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	Input class implementation
  *
  *	This file is part of OTAWA
@@ -23,6 +22,8 @@
 #include <elm/assert.h>
 #include <elm/io/io.h>
 #include <elm/io/Input.h>
+#include <elm/io/StringInput.h>
+#include <elm/io/FileInput.h>
 #include <elm/string/StringBuffer.h>
 #include <math.h>
 #include <ctype.h>
@@ -566,6 +567,96 @@ void Input::swallowBlank(void) {
  * @fn Input& Input::operator>>(const String& value);
  * shortcut @ref swallow(String).
  */
+
+
+/**
+ * @class StringInput
+ * Input performed on a string. It makes easy to perform formatted
+ * read from a simple string.
+ *
+ * @code
+ *	string s = "666";
+ *	StringInput in(s);
+ *	int x;
+ *	in >> x;
+ * @endcode
+ *
+ * @ingroup ios
+ */
+
+/**
+ * @fn StringInput::StringInput(const char *str);
+ * Perform intput from the given string stored in character array.
+ * @param	str		To read.
+ */
+
+/**
+ * @fn StringInput::StringInput(const cstring& str);
+ * Perform intput from the given C string.
+ * @param	str		To read.
+ */
+
+/**
+ * @fn StringInput::StringInput(const string& str);
+ * Perform intput from the given ELM string.
+ * @param	str		To read.
+ */
+
+
+/**
+ * @class FileInput
+ * Input from a file. Shortcut to perform formatted read
+ * from a buffered opened file.
+ * @ingroup ios
+ */
+
+/**
+ * Build an input by opening the given file path.
+ * @param path					Path to the file to open.
+ * @param buf_size				Buffer size (optional).
+ * @throw sys::SystemException	If the file cannot be opened.
+ */
+FileInput::FileInput(string path, int buf_size) throw(sys::SystemException)
+:	FileInput(sys::Path(path), buf_size)
+{ }
+
+ /**
+  * Build an input by opening the given file path.
+  * @param path					Path to the file to open.
+  * @param buf_size				Buffer size (optional).
+  * @throw sys::SystemException	If the file cannot be opened.
+  */
+FileInput::FileInput(const char *path, int buf_size) throw(sys::SystemException)
+:	FileInput(sys::Path(path), buf_size)
+{ }
+
+/**
+ * Build an input by opening the given file path.
+ * @param path					Path to the file to open.
+ * @param buf_size				Buffer size (optional).
+ * @throw sys::SystemException	If the file cannot be opened.
+ */
+FileInput::FileInput(cstring path, int buf_size) throw(sys::SystemException)
+:	FileInput(sys::Path(path), buf_size)
+{ }
+
+
+ /**
+  * Build an input by opening the given file path.
+  * @param path					Path to the file to open.
+  * @param buf_size				Buffer size (optional).
+  * @throw sys::SystemException	If the file cannot be opened.
+  */
+FileInput::FileInput(sys::Path path, int buf_size) throw(sys::SystemException)
+:	_in(path.read()),
+	_buf(*_in, buf_size)
+{ setStream(_buf); }
+
+/**
+ */
+FileInput::~FileInput(void) {
+	delete _in;
+}
 
 } // io
 

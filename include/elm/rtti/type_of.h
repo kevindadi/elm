@@ -21,7 +21,8 @@
 #ifndef ELM_RTTI_TYPE_OF_H_
 #define ELM_RTTI_TYPE_OF_H_
 
-#include <elm/string.h>
+#include <elm/string/CString.h>
+#include <elm/string/String.h>
 #include <elm/types.h>
 
 #include "Type.h"

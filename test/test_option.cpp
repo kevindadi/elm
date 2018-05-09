@@ -85,6 +85,20 @@ private:
 	/*ListOption<int> l;*/
 };
 
+
+// third generation option
+class MyCommand3: public option::Manager {
+public:
+	MyCommand3(void):
+		o1(option::Value<string>::Make(this).cmd("--o1")),
+		o2(option::Value<int>::Make(this).cmd("--o2"))
+		{ }
+
+	option::Value<string> o1;
+	option::Value<int> o2;
+};
+
+
 // test_option()
 TEST_BEGIN(option)
 
@@ -212,6 +226,14 @@ TEST_BEGIN(option)
 	catch(OptionException& e) {
 		__case.failed();
 		cerr << "FAILURE: " << e.message() << io::endl;
+	}
+
+	{
+		const char *argv[] = { "command", "--o1", "ok", "--o2", "666", nullptr };
+		MyCommand3 man;
+		FAIL_ON_EXCEPTION(OptionException, man.parse(3, argv));
+		CHECK_EQUAL(*man.o1, string("ok"));
+		CHECK_EQUAL(*man.o2, 666);
 	}
 
 TEST_END

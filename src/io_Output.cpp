@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	Output class implementation
  *
  *	This file is part of OTAWA
@@ -28,6 +27,8 @@
 
 #include <elm/io/BufferedOutStream.h>
 #include <elm/io/io.h>
+#include <elm/io/StringOutput.h>
+#include <elm/io/FileOutput.h>
 #include <elm/compare.h>
 #include <elm/data/List.h>
 #include <elm/sys/System.h>
@@ -94,13 +95,13 @@ char *Output::horner(char *p, t::uint64 val, int base, char enc) {
 /**
  * Build a formatted output on the standard output.
  */
-Output::Output(void): strm(&out), _flist(nullptr) {
+Output::Output(void): strm(&out) {
 }
 
 /**
  * Build a formatted output on the given stream.
  */
-Output::Output(OutStream& stream): strm(&stream), _flist(nullptr) {
+Output::Output(OutStream& stream): strm(&stream) {
 }
 
 /**
@@ -110,81 +111,10 @@ Output::Output(OutStream& stream): strm(&stream), _flist(nullptr) {
  */
 
 /**
- * Build an output from the given stream. If the parameter
- * free is true, the output will be in charge of deleting
- * the output string when it will be destructed.
- *
- * The free facility is useful when the stream is produced
- * by file opening method of @ref elm::sys::System.
- *
- * @param out	Output stream to use.
- * @param free	If true, this object will delete the stream
- * 				when it will destructed itself.
- * 	@param buf	If true, allocate a buffer stream to speed up the output.
- */
-Output::Output(OutStream *out, bool free, bool buf): strm(out), _flist(nullptr) {
-	if(free)
-		add(out);
-	if(buf) {
-		strm = new BufferedOutStream(*strm);
-		add(strm);
-	}
-}
-
-
-/**
- * Build an output using as stream a file created with the given path.
- * @param path			Path to the file to create.
- * @param buf			If true, create a buffer to speed up the output.
- * @throws IOException	If the file cannot be created.
- */
-Output::Output(string path, bool buf): strm(nullptr), _flist(nullptr) {
-	try {
-		strm = sys::System::createFile(path);
-		add(strm);
-		if(buf) {
-			strm = new BufferedOutStream(*strm);
-			add(strm);
-		}
-	}
-	catch(sys::SystemException& e) {
-		throw io::IOException(e.message());
-	}
-}
-
-
-/**
- */
-Output::~Output(void) {
-	clean();
-}
-
-/**
- */
-void Output::add(OutStream *out) {
-	if(_flist == nullptr)
-		_flist = new List<OutStream *>();
-	static_cast<List<OutStream *> *>(_flist)->add(out);
-}
-
-/**
- */
-void Output::clean(void) {
-	if(_flist != nullptr) {
-		List<OutStream *> *l = static_cast<List<OutStream *> *>(_flist);
-		for(auto o = **l; o; o++)
-			delete *o;
-		delete l;
-		_flist = nullptr;
-	}
-}
-
-/**
  * Change the output stream of the current output object.
  * @param stream	New stream to use.
  */
 void Output::setStream(OutStream& stream) {
-	clean();
 	strm = &stream;
 }
 
@@ -1186,6 +1116,76 @@ IntFormat byte(t::uint8 b) {
  * @param data	Data to print.
  * @param man	Manager of the data.
  */
+
+
+/**
+ * @class StringOutput
+ * Output performed into a string. This class is just a subclass of StringBuffer.
+ * @ingroup ios
+ */
+
+
+/**
+ * @class FileOutput
+ * Shortcut to build an output to an opened file. Notice that the created file
+ * overwrite any existing file.
+ * @ingroup ios
+ */
+
+/**
+ * Build a formatted output which stream is the opened corresponding to the given path.
+ * If the file already exists, it is overwritten.
+ * @param path					Path of the file to write to.
+ * @param buf_size				Buffer size (optional).
+ * @throw sys::SystemException	If the file can not be opened.
+ */
+FileOutput::FileOutput(const char *path, int buf_size) throw(sys::SystemException)
+	: FileOutput(sys::Path(path), buf_size)
+	{ }
+
+/**
+ * Build a formatted output which stream is the opened corresponding to the given path.
+ * If the file already exists, it is overwritten.
+ * @param path					Path of the file to write to.
+ * @param buf_size				Buffer size (optional).
+ * @throw sys::SystemException	If the file can not be opened.
+ */
+FileOutput::FileOutput(cstring path, int buf_size) throw(sys::SystemException)
+	: FileOutput(sys::Path(path), buf_size)
+	{ }
+
+/**
+ * Build a formatted output which stream is the opened corresponding to the given path.
+ * If the file already exists, it is overwritten.
+ * @param path					Path of the file to write to.
+ * @param buf_size				Buffer size (optional).
+ * @throw sys::SystemException	If the file can not be opened.
+ */
+FileOutput::FileOutput(string path, int buf_size) throw(sys::SystemException)
+	: FileOutput(sys::Path(path), buf_size)
+	{ }
+
+/**
+ * Build a formatted output which stream is the opened corresponding to the given path.
+ * If the file already exists, it is overwritten.
+ * @param path					Path of the file to write to.
+ * @param buf_size				Buffer size (optional).
+ * @throw sys::SystemException	If the file can not be opened.
+ */
+FileOutput::FileOutput(sys::Path path, int buf_size) throw(sys::SystemException)
+:	_out(path.write()),
+	_buf(*_out, buf_size)
+{
+	setStream(_buf);
+}
+
+
+/**
+ */
+FileOutput::~FileOutput(void) {
+	_buf.flush();
+	delete _out;
+}
 
 } // io
 

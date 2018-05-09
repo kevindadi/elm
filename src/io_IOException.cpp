@@ -192,6 +192,14 @@ namespace elm { namespace io {
  * @li @ref BufferedInStream -- buffered input.
  * @li @ref RandomAccessStream --both input and output stream with free move on the media.
  * @li @ref StreamPipe -- connect an in stream to an out stream and perform the transmission to the end.
+ *
+ * @section io_helper Helper Classes and Functions
+ *
+ * Some classes provides shortcut to perform input / output on files or on strings:
+ *	* @ref StringInput -- formatted input from a string,
+ *	* @ref FileInput -- formatted input from a file,
+ *	* @ref StringOutput -- formatted output to a string,
+ *	* @ref FileOutput -- formatted output to a file.
  */
 
 

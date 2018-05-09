@@ -99,12 +99,6 @@ include_directories(".")
 add_executable(dotest ${TEST_SOURCES})
 target_link_libraries(dotest elm)
 
-add_executable(test_io "test_io.cpp")
-target_link_libraries(test_io elm)
-
-add_executable(test_io_output "test_io_output.cpp")
-target_link_libraries(test_io_output elm)
-
 add_executable(test_sw "test_sw.cpp")
 target_link_libraries(test_sw elm)
 

@@ -188,9 +188,6 @@ class Output {
 public:
 	Output(void);
 	Output(OutStream& stream);
-	Output(OutStream *out, bool free = true, bool buf = true);
-	Output(string path, bool buf = true);
-	~Output(void);
 	inline OutStream& stream(void) const { return *strm; };
 	void setStream(OutStream& stream);
 	void flush(void);
@@ -215,9 +212,6 @@ public:
 	void print(t::uint64 value);
 private:
 	OutStream *strm;
-	void *_flist;
-	void add(OutStream *out);
-	void clean(void);
 	char *horner(char *p, t::uint64 val, int base, char enc = 'a');
 };
 
