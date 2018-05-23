@@ -34,7 +34,8 @@ public:
 	void prepare(void);
 	void complete(void);
 	void perform(void);
-	inline bool hasFailed(void) const { return errors; }
+	inline bool isSuccessful(void) const { return errors == 0; }
+	inline bool hasFailed(void) const { return errors != 0; }
 protected:
 	virtual void execute(void);
 	TestCase& __case;
@@ -74,6 +75,7 @@ const T& result, const T& reference) {
 #define ELM_CHECK(tst)			__case.check(__FILE__, __LINE__, #tst, tst)
 #define ELM_CHECK_MSG(msg, res)	__case.check(__FILE__, __LINE__, msg, res)
 #define ELM_CHECK_END 			__case.complete(); }
+#define ELM_CHECK_RETURN 		__case.complete(); if(__case.isSuccessful()) return 0; else return 1; }
 #define ELM_REQUIRE(tst, action)	if(!__case.require(__FILE__, __LINE__, #tst, tst)) action
 #define ELM_CHECK_EQUAL(res, ref)	__case.check_equal(__FILE__, __LINE__, #res " == " #ref, res, ref)
 #define ELM_CHECK_EXCEPTION(exn, stat)	{ __case.test(__FILE__, __LINE__, #stat); \
@@ -103,6 +105,7 @@ const T& result, const T& reference) {
 #	define FAIL_ON_EXCEPTION(exn, stat) ELM_FAIL_ON_EXCEPTION(exn, stat)
 #	define TEST_BEGIN(name) ELM_TEST_BEGIN(name)
 #	define TEST_END	 ELM_TEST_END
+#	define CHECK_RETURN	ELM_CHECK_RETURN
 #endif
 
 } // elm
