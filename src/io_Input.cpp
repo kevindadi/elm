@@ -36,6 +36,16 @@ namespace elm { namespace io {
  * @ingroup ios
  */
 
+/**
+ */
+Input::Input(void): strm(&in), buf(-1) {
+}
+
+/**
+ */
+Input::Input(InStream& stream): strm(&stream), buf(-1) {
+}
+
 
 /**
  * Raise an exception claiming that the IO is not supported.
@@ -402,7 +412,8 @@ String Input::scanWord(void) {
 
 
 /**
- * Scan a full line.
+ * Scan a full line. The end is reached when the string
+ * is empty.
  * @return	Read line (final \n, if any, is appended).
  */
 String Input::scanLine(void) {

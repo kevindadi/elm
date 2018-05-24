@@ -21,6 +21,8 @@
 #ifndef ELM_IO_INPUT_H
 #define ELM_IO_INPUT_H
 
+#include <elm/enum_info.h>
+#include <elm/meta.h>
 #include <elm/types.h>
 #include <elm/string/String.h>
 #include <elm/string/CString.h>
@@ -31,8 +33,8 @@ namespace elm { namespace io {
 // Input class
 class Input {
 public:
-	inline Input(void): strm(&in), buf(-1) { };
-	inline Input(InStream& stream): strm(&stream), buf(-1) { };
+	Input(void);
+	Input(InStream& stream);
 	inline InStream& stream(void) const { return *strm; };
 	inline void setStream(InStream& stream) { strm = &stream; buf = -1; };
 
