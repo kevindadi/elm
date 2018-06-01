@@ -29,7 +29,13 @@
 
 namespace elm { namespace rtti {
 
+class AbstractClass;
+
 class Object {
+public:
+	static const Type& __type;
+	virtual ~Object(void);
+	virtual const Type& getType(void) const;
 };
 
 // base types

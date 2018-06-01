@@ -169,6 +169,26 @@ static HashMap<string, const Type *> type_map;
 
 
 /**
+ * @class Object
+ * Base class of classes which type is dynamically obtained at run-time.
+ */
+
+/**
+ */
+Object::~Object(void) {
+}
+
+/**
+ * Get the actual type of the current object. It is particularly useful
+ * when a class B extends a class A and one gets a pointer to class A
+ * and the actual poinetd object is of a class B.
+ * @return 	Actual type of the current object.
+ */
+const Type& Object::getType(void) const {
+	return __type;
+}
+
+/**
  * @class PointerType;
  * Type representing a pointer to another type.
  */
@@ -611,6 +631,19 @@ public:
  * @ingroup rtti
  */
 const Type& void_type = Single<VoidType>::_;
+
+
+/**
+ */
+class ObjectClass: public AbstractClass {
+public:
+	ObjectClass(void): AbstractClass(make("elm::Object")) { }
+	void *instantiate(void) const override { return nullptr; }
+};
+
+/**
+ */
+const Type& Object::__type = Single<ObjectClass>::_;
 
 
 /**

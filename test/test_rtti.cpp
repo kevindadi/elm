@@ -7,9 +7,29 @@ using namespace elm;
 using namespace elm::rtti;
 
 // EXPERIMENTAL
-namespace elm { namespace rtti {
+/*namespace elm { namespace rtti {
+
+template <class C, class B = Object>
+class declare: public B {
+public:
+	typedef B __base_class;
+	typedef C __this_class;
+	static inline const AbstractClass& __type(void) { return Single<Class<C, B> >::_; }
+};
 
 } }
+
+using namespace elm;
+
+class A: public rtti::declare<A> {
+};
+
+class B: public rtti::declare<B, A> {
+};
+
+class C: public rtti::declare<C, B> {
+};*/
+
 
 typedef enum my_enum_t {
 	A = 0,
@@ -69,6 +89,21 @@ public:
 	void m1(void) { }
 	void m2(int i) { }
 };
+
+class AbstractC {
+public:
+	static Class<AbstractC, void, rtti::no_inst> __type;
+	virtual ~AbstractC(void) { }
+	virtual int get(void) = 0;
+};
+Class<AbstractC, void, rtti::no_inst> AbstractC::__type("AbstractC");
+
+class ConcreteC: public AbstractC {
+public:
+	static Class<ConcreteC, AbstractC> __type;
+	int get(void) override { return 0; }
+};
+Class<ConcreteC, AbstractC> ConcreteC::__type("ConcreteC");
 
 /*rtti::Class<X> __type(make("X")
 	.construct<X>("X")
@@ -143,4 +178,18 @@ TEST_BEGIN(rtti)
 		CHECK(p != 0);*/
 	}
 
+	// declare test
+	{/*
+		cout << "A class name: " << A::__type().name() << io::endl;
+		cout << "A class name: " << B::__type().name() << io::endl;
+		cout << "A class name: " << C::__type().name() << io::endl;
+		*/
+	}
+
+	// instantiation problem
+	{
+
+	}
+
 TEST_END
+

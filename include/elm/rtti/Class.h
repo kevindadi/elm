@@ -227,13 +227,17 @@ private:
 	List<Operation *> _ops;
 };
 
+template <class T>
+struct no_inst { static inline T *_(void) { return nullptr; } };
+template <class T>
+struct inst { static inline T *_(void) { return new T; } };
 
-template <class T, class B = void>
+template <class T, class B = void, template <class _ > class I = inst>
 class Class: public AbstractClass {
 public:
 	inline Class(CString name, const AbstractClass& base = type_of<B>().asClass()): AbstractClass(name, base) { };
 	inline Class(const make& m): AbstractClass(m, type_of<B>().asClass()) { }
-	virtual void *instantiate(void) const { return new T; };
+	virtual void *instantiate(void) const { return I<T>::_(); };
 	virtual void *upCast(void *ptr) const { return static_cast<B *>(static_cast<T *>(ptr)); }
 	virtual void *downCast(void *ptr) const { return static_cast<T *>(static_cast<B *>(ptr)); }
 
@@ -251,6 +255,7 @@ public:
 	public: \
 		typedef base __base; \
 		static elm::rtti::Class<name, base> __type; \
+		const elm::rtti::Type& getType(void) const override; \
 	private:
 
 #define ELM_CLASS_EXTEND(name, base) \
@@ -261,16 +266,18 @@ public:
 	public: \
 		typedef void __base; \
 		static elm::rtti::Class<name, void> __type; \
+		const elm::rtti::Type& getType(void) const override; \
 	private:
 
 #define ELM_CLASS(name) \
-	class name { \
+	class name: public Object { \
 	ELM_IS_CLASS(name)
 
 #define ELM_END_CLASS	};
 
 #define ELM_IMPLEMENT(name) \
-	elm::rtti::Class<name, typename name::__base> name::__type(#name)
+	elm::rtti::Class<name, typename name::__base> name::__type(#name); \
+	const elm::rtti::Type& name::getType(void) const { return __type; }
 
 #ifndef ELM_NO_SHORTCUT
 #	define IS_CLASS_EXTEND(name, base)	ELM_IS_CLASS_EXTEND(name, base)
