@@ -21,6 +21,7 @@
 #ifndef ELM_SYS_PLUGGER_H
 #define ELM_SYS_PLUGGER_H
 
+#include <elm/macros.h>
 #include <elm/PreIterator.h>
 #include <elm/sys/Plugin.h>
 #include <elm/data/Vector.h>

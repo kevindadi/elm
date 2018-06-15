@@ -53,27 +53,29 @@ namespace elm { namespace sys {
  *
  * @section use_plugins Using a Plugin
  *
- * ELM provides classes to implement plugins in an OS-indepedent way.
- * To work-around found on some OS, ELM provides also an independent way
- * to optionaly represent dependencies between plugins based on textual file
- * with ".ini" syntax.
+ * ELM provides classes to implement plug-ins in an OS-independent way.
+ * To work-around some shortcomings found on some OS, ELM provides also an
+ * independent way to optionally represent dependencies between plug-ins based
+ * on textual file with ".ini" syntax.
  *
- * A plugin is a piece of code that
- * provides some service while the plugger allows to plug many different
- * plugins to implement this service.
+ * A plug-in is a piece of code that provides some service based on an interface
+ * implemented by the plug-in and used by a third-party program. The retrieval
+ * of the plug-in, isolated in its own binary file, is based on its name
+ * and a list of directories or from an absolute path. The object is in charge
+ * of managing the plug-in is called a plugger and allows to plug many different
+ * plug-ins to implement the same service.
  *
  * In ELM, the plugger is declared with a hook - an identifier allowing
- * an application to have different kinds of services and matching plugins -
- * and a version for the current implemented plugin interface. For example,
- * below, the plugger provides "net_plugin" services at version 1.0.0 (see
- * @ref elm::Version for more details). We may also gives a list of directories
- * to look to find the plugin.
+ * an application to support different kinds of services and matching plug-ins -
+ * and a version - for the current implemented plug-in interface. In the example
+ * below, the plugger provides a service named "net_plugin" with an interface version
+ * 1.0.0 (see @ref elm::Version for more details).
  * @code
  * #define NET_HOOK	net_plugin
- * elm::system::Plugger net_plugger(#NET_HOOK, Version(1, 0, 0), ".:/usr/local/net_plugins");
+ * elm::system::Plugger net_plugger(ELM_STRING(NET_HOOK), Version(1, 0, 0), ".:/usr/local/net_plugins");
  * @endcode
  *
- * To open a specific plugin named, for example, "my_net_plugin", we have only
+ * To open a specific plugin named, for example, "my_net_plugin", one has only
  * to call the method Plugger::plug().
  * @code
  * elm::system::Plugin *plugin = net_plugger.plug("my_net_plugin");
@@ -88,11 +90,9 @@ namespace elm { namespace sys {
  * @endcode
  *
  * Having just a plugin pointer does not provide any service. To do this, we have
- * usually to define an interface that is implemented by the plugin instance.
+ * usually to define an interface that is implemented by the plug-in instance.
  * Let's call it "NetPlugin": it must be derived from the elm::system::Plugin class.
- * Notice that the interface pass the right name of the service but should not
- * pass the version. Otherwise, the service version would be ever compatible
- * while the actual binary would be compiled for an incompatible version.
+ *
  * @code
  * class NetPlugin: public Plugin {
  * public:
@@ -101,7 +101,8 @@ namespace elm { namespace sys {
  * 	virtual void performService(void) = 0;
  * };
  * @endcode
- * Then, we can cast the plugin to its required interface and we can call the
+ *
+ * Then, we can cast the plug-in to its required interface and we can call the
  * service:
  * @code
  * NetPlugin *net_plugin = static_cast<NetPlugin *>(plugin);
@@ -113,9 +114,10 @@ namespace elm { namespace sys {
  * net_plugin->unplug();
  * @endcode
  *
+ *
  * @section creating_plugins Creating Plugins
  *
- * To create a plugin, we have to define a class implementing the service
+ * To create a plug-in, one has to define a class implementing the service
  * interface of the plugger to plug to. Let's continue the example started
  * in the previous section. Notice that we must implement
  * the pure virtual functions of the interface in order to be able to create
@@ -124,7 +126,7 @@ namespace elm { namespace sys {
  * class MyNetPlugin: public NetPlugin {
  * public:
  *		MyNetPlugin(void);
- * 		virtual void performService(void);
+ * 		void performService(void) override;
  * };
  * @endcode
  *
@@ -135,15 +137,17 @@ namespace elm { namespace sys {
  * MyNetPlugin::MyNetPlugin(void): NetPlugin(make("my_net_plugin", Version(1, 0, 0))) {
  * }
  * @endcode
- * Notice how the version is encoded in the plugin code. If this plugin is then
- * used with in incompatible version of the plugger, say 1.2.0. The compatibility
- * comparison will compare the version 1.0.0 (from the plugin) with the version
+ *
+ * Notice how the version is encoded in the plug-in code. If this plug-in is then
+ * used with an incompatible version of the plugger, say 2.1.0. The compatibility
+ * comparison will compare the version 1.0.0 (from the plug-in) with the version
  * 1.2.0 (from the plugger) and will detect possible binary incompatibility and
  * prevent the invalid linkage.
  *
  * Then we need to provide a hook to let the plugger found the plugin object.
  * @code
- * ELM_PLUGIN(MyNetPlugin, NET_HOOK);
+ * MyNetPlugin my_net_plugin;
+ * ELM_PLUGIN(my_net_plugin, NET_HOOK);
  * @endcode
  * The result source must then be compiled to produce a shared code with
  * your preferred compiler For example, with GCC on a Unix OS.
@@ -151,35 +155,53 @@ namespace elm { namespace sys {
  * gcc -shared -o my_net_plugin.so my_net_plugin.cpp
  * @endcode
  *
+ * It is a good practice, for the plug-in interface provide, to provide a macro
+ * in the header file to provide the current version of the interface:
+ * @code
+ * #define NET_VERS		Version(1, 0, 0)
+ * @endcode
+ *
+ * If this macro is used in  a plug-in, this will ensure without any additional work
+ * that a plug-in is compatible with the compiled version of the plugger. If there is
+ * some evolution in the interface that is incompatible with the compiled plug-in,
+ * it will be detected and reported by the compiler:
+ * @code
+ * MyNetPlugin::MyNetPlugin(void): NetPlugin(make("my_net_plugin", NET_VERS)) {
+ * }
+ * @endcode
+ *
+ *
  * @section eld_files ELD Files
  *
- * ELM Linkage Description (ELD) files allows to circumvent limitations found on some OSes.
- * Basically, ELD files are textual files with ".eld" extension implementing the ".ini" file
- * syntax. They must placed in the same directory as the plugin they apply to and get the same
- * name as the plugin with the plugin extension replaced by ".eld".
+ * ELM Linkage Description Files (ELD) allows to circumvent limitations found on some OSes
+ * for the management of dynamic libraries.
+ * Basically, ELD files are textual files with ".eld" extension implementing the
+ * [".ini" file](https://en.wikipedia.org/wiki/INI_file) syntax. They must placed in the same
+ * directory as the plug-in binary they apply to and get the same
+ * name as the plug-in with the dynamic library extension replaced by ".eld".
  *
  * As usual ".ini" files, they can contain as many sections as possible but ELM is only interested
- * in the "elm-plugin" section that may contain the following definitions:
- * @li "author" -- author of the plugin in the form "AUTHOR <EMAIL>",
+ * by the "elm-plugin" section that may contain the following definitions:
+ * @li "author" -- author of the plug-in in the form "AUTHOR <EMAIL>",
  * @li "copyright" -- name and, optionally, link to the license,
- * @li "deps" -- ";" separated list of plugin names to load before the current plugin.
- * @li "description" -- description of the plugin for human user,
- * @li "libs" -- ";" separated list of library names or paths (absolute or relative) to load before the current plugin,
- * @li "name" -- alternative name of the plugin,
- * @li "path" -- absolute or relative path to the actual plugin (support for aliasing),
- * @li "rpaths" -- ";" separated list of paths to look for require plugins,
- * @li "site" -- URL to the website publising the plugin.
+ * @li "deps" -- ";" separated list of plug-in names that the current plug-in is dependent to,
+ * @li "description" -- description of the plug-in for human user,
+ * @li "libs" -- ";" separated list of library names or paths (absolute or relative) that the current plug-in is dependent to,
+ * @li "name" -- alternative name of the plug-in,
+ * @li "path" -- absolute or relative path to the actual plug-in (support for aliasing),
+ * @li "rpaths" -- ";" separated list of paths to look for require plug-ins,
+ * @li "site" -- URL to the web site publishing the plug-in.
  *
- * "path" definition allows to cope with the lack of support for symnolic links on some OSes.
+ * "path" definition allows to cope with the lack of support for symbolic links on some OSes.
  *
- * "rpaths" and "libs" are used to handle easily dependencies between plugins and libraries when the OSes
+ * "rpaths" and "libs" are used to handle easily dependencies between plug-ins and libraries when the OSes
  * does not support linkage lookup path encoded in executable.
  *
  * Paths found in "path", "libs" and "rpaths" can be prefixed by "$ORIGIN" that is replaced,
- * at run time, by the path of the directory containing the considered plugin.
+ * at run time, by the path of the directory containing the considered plug-in binary.
  *
  * Below is an example of ELD files for our example requiring two other libraries that should be found
- * in the directory containing the plugin or in directory "/usr/lib".
+ * in the directory containing the plug-in or in directory "/usr/lib".
  * It is named "net_plugin.eld" and put in the same directory
  * as "net_plugin.so".
  * @code
@@ -188,7 +210,7 @@ namespace elm { namespace sys {
  * rpath=$ORIGIN;/usr/lib
  * @endcode
  *
- * Below another example allows to have an alias, "net_plugin_v2" to "net_plugin". The file is named
+ * Below another example implements an alias, "net_plugin_v2" to "net_plugin". The file is named
  * "net_plugin_v2.eld":
  * @code
  * [elm-plugin]
@@ -201,29 +223,6 @@ namespace elm { namespace sys {
  * libs=libxml2
  * @endcode
  *
- * @section plugin_old_style Old-Style Plugin Creation
- *
- * The old-style plugin creation remains supported but is marked as deprecated.
- *
- * Here, the plugin of the example must be declared with:
- * @code
- * class MyNetPlugin: public NetPlugin {
- * public:
- *		MyNetPlugin(void): NetPlugin("my_net_plugin", Version(1, 0, 0)) {
- *			_description = "my plugin";
- *			_licence = "my licence";
- *		}
- * 		virtual void performService(void);
- * };
- * @endcode
- * Notice how description and license were passed in the constructor.
- *
- * The second difference stands in the way to declare the hook (it has proven to
- * no robust enough):
- * @code
- * MyNetPlugin NET_HOOK;
- * MyNetPlugin& my_net_plugin = NET_HOOK;
- * @endcode
  */
 
 /**
@@ -235,13 +234,13 @@ namespace elm { namespace sys {
 
 
 /**
- * List of static plugins.
+ * List of static plug-ins.
  */
 Vector<Plugin *> Plugin::static_plugins;
 
 
 /**
- * True when all static has been initialied.
+ * True when all static has been initialized.
  */
 bool Plugin::static_done = false;
 

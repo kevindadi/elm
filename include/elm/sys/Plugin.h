@@ -21,6 +21,7 @@
 #ifndef ELM_SYS_PLUGIN_H
 #define ELM_SYS_PLUGIN_H
 
+#include <elm/macros.h>
 #include <elm/types.h>
 #include <elm/string.h>
 #include <elm/data/List.h>
@@ -32,8 +33,7 @@
 namespace elm { namespace sys {
 
 #define ELM_PLUGIN_ID_PREFIX		"@@ELM-PLUGIN-ID@@:"
-#define ELM_PLUGIN_CONCAT_AUX(x, y)	x ## y
-#define ELM_PLUGIN_CONCAT(x, y)		ELM_PLUGIN_CONCAT_AUX(x, y)
+#define ELM_PLUGIN_CONCAT(x, y)		ELM_CONCAT_AUX(x, y)
 #define ELM_PLUGIN_ID(hook, info)	const char ELM_PLUGIN_CONCAT(__plugin_id_, __LINE__)[] = ELM_PLUGIN_ID_PREFIX hook ":" info;
 #define ELM_PLUGIN(plugin, hook) 	extern "C" { \
 	static ELM_PLUGIN_ID(#hook, #plugin); \
