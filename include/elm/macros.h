@@ -21,7 +21,8 @@
 #ifndef ELM_MACROS_H_
 #define ELM_MACROS_H_
 
-#define ELM_STRING(x)			#x
+#define ELM_STRING_AUX(x)		#x
+#define ELM_STRING(x)			ELM_STRING_AUX(x)
 #define ELM_CONCAT_AUX(x, y)	x ## y
 #define ELM_CONCAT(x, y)		ELM_CONCAT_AUX(x, y)
 

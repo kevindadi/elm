@@ -195,21 +195,21 @@ void Plugger::resetPaths(void) {
 Plugin *Plugger::plug(const string& name) {
 	err = OK;
 
-	// is it a path ?
+	// Is it a path ?
 	if(name.startsWith("/"))
 		return plugFile(name);
 
 	// Look in opened plugins
 	for(int i = 0; i < plugins.count(); i++)
 		if(plugins[i]->matches(name)) {
-			plugins[i]->plug(0);
+			plugins[i]->plug(nullptr);
 			return plugins[i];
 		}
 
 	// Look in static plugins
 	Plugin *plugin = Plugin::get(_hook, name);
 	if(plugin)
-		return plug(plugin, 0);
+		return plug(plugin, nullptr);
 
 	// Load the plugin
 	for(int i = 0; i < paths.count(); i++) {
@@ -224,7 +224,7 @@ Plugin *Plugger::plug(const string& name) {
 	}
 
 	// No plugin available
-	return 0;
+	return nullptr;
 }
 
 
@@ -403,11 +403,23 @@ Plugin *Plugger::plugFile(sys::Path path) {
 		return res;
 
 	// Check existence of the file
-	sys::FileItem *file = 0;
-	try {
-		file = sys::FileItem::get(path);
+	if(!path.exists()) {
+		return nullptr;
 	}
-	catch(SystemException& exn) {
+	else if(!path.isFile()) {
+		onWarning(_ << path << " is not a file!");
+		err = NO_PLUGIN;
+		return nullptr;
+	}
+	else if(!path.isReadable()) {
+		onWarning(_ << path << " is not accessible!");
+		err = NO_PLUGIN;
+		return nullptr;
+	}
+	else if(!path.isExecutable()) {
+		onWarning(_ << path << " is not executable!");
+		err = NO_PLUGIN;
+		return nullptr;
 	}
 #	if defined(__WIN32) || defined(__WIN64)
 		if(!file) {
@@ -435,11 +447,6 @@ Plugin *Plugger::plugFile(sys::Path path) {
 			}
 		}
 #	endif
-	if(!file) {
-		err = NO_PLUGIN;
-		return 0;
-	}
-	file->release();
 
 	// Open shared library
 	void *handle = link(path);
