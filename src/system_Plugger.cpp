@@ -416,11 +416,13 @@ Plugin *Plugger::plugFile(sys::Path path) {
 		err = NO_PLUGIN;
 		return nullptr;
 	}
+	/* TOFIX -- disabled for now as it seems to be too strict
+	 * Should be re-enabled in future.
 	else if(!path.isExecutable()) {
 		onWarning(_ << path << " is not executable!");
 		err = NO_PLUGIN;
 		return nullptr;
-	}
+	}*/
 #	if defined(__WIN32) || defined(__WIN64)
 		if(!file) {
 			Path rpath = path;
