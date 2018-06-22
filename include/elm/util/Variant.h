@@ -28,21 +28,21 @@ namespace elm {
 class Variant {
 public:
 	inline Variant(void) { }
-	inline Variant(bool v) 			{ _data.b = v; }
-	inline Variant(t::int8 v) 		{ _data.i8 = v; }
-	inline Variant(t::int16 v) 		{ _data.i16 = v; }
-	inline Variant(t::int32 v)		{ _data.i32 = v; }
-	inline Variant(t::int64 v)		{ _data.i64 = v; }
-	inline Variant(t::uint8 v)		{ _data.u8 = v; }
-	inline Variant(t::uint16 v)		{ _data.u16 = v; }
-	inline Variant(t::uint32 v)		{ _data.u32 = v; }
-	inline Variant(t::uint64 v)		{ _data.u64 = v; }
-	inline Variant(float v)			{ _data.f = v; }
-	inline Variant(double v)		{ _data.d = v; }
-	inline Variant(const char *v)	{ _data.s = v; }
-	inline Variant(cstring s)		{ _data.s = &s; }
-	inline Variant(string s)		{ _data.s = &s; }
-	inline Variant(void *v)			{ _data.p = v; }
+	inline Variant(bool v) 								{ _data.b = v; }
+	inline Variant(t::int8 v) 							{ _data.i8 = v; }
+	inline Variant(t::int16 v) 							{ _data.i16 = v; }
+	inline Variant(t::int32 v)							{ _data.i32 = v; }
+	inline Variant(t::int64 v)							{ _data.i64 = v; }
+	inline Variant(t::uint8 v)							{ _data.u8 = v; }
+	inline Variant(t::uint16 v)							{ _data.u16 = v; }
+	inline Variant(t::uint32 v)							{ _data.u32 = v; }
+	inline Variant(t::uint64 v)							{ _data.u64 = v; }
+	inline Variant(float v)								{ _data.f = v; }
+	inline Variant(double v)							{ _data.d = v; }
+	inline Variant(const char *v)						{ _data.s = v; }
+	inline Variant(cstring s)							{ _data.s = &s; }
+	inline Variant(string s)							{ _data.s = &s; }
+	inline Variant(void *v)								{ _data.p = v; }
 
 	inline bool asBool(void) const { return _data.b; }
 	inline int asInt(void) const { return asInt32(); }

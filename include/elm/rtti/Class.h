@@ -23,11 +23,14 @@
 
 #include <elm/data/List.h>
 #include <elm/data/Vector.h>
+#include <elm/dyndata/AbstractCollection.h>
 #include <elm/util/Variant.h>
 #include "light.h"
 #include "type_of.h"
 
-namespace elm { namespace rtti {
+namespace elm {
+
+namespace rtti {
 
 // operations
 class Parameter {
@@ -49,7 +52,7 @@ public:
 		CONSTRUCTOR,
 		METHOD,
 		STATIC,
-		ITERATOR
+		ITER
 	} kind_t;
 
 	Operation(kind_t kind, cstring name, const Type& rtype = void_type);
@@ -72,6 +75,32 @@ private:
 	List<Parameter> _pars;
 	const Type& _rtype;
 };
+
+template <class C, class S>
+class Iterator: public Operation {
+public:
+	inline Iterator(cstring name, S (C::*fun)(void)): Operation(ITER, name), _fun(fun) { }
+
+	Variant call(Vector<Variant>& args) const throw(Exception) override {
+		const C *obj = static_cast<const C *>(args[0].asPointer());
+		return new Iter(obj->begin(), obj->end());
+	}
+
+private:
+
+	class Iter: public dyndata::AbstractIter<Variant> {
+	public:
+		inline Iter(const typename S::Iter& begin, const typename S::Iter& end) { }
+		virtual bool ended(void) const { return _begin == _end; }
+		virtual Variant item(void) const { return Variant(*_begin); }
+		virtual void next(void) { _begin.next(); }
+	private:
+		typename S::Iter _begin, _end;
+	};
+
+	S (C::*_fun)(void);
+};
+
 
 template <class T>
 class Constructor0: public Operation {
@@ -270,7 +299,7 @@ public:
 	private:
 
 #define ELM_CLASS(name) \
-	class name: public Object { \
+	class name: public elm::rtti::Object { \
 	ELM_IS_CLASS(name)
 
 #define ELM_END_CLASS	};

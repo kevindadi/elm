@@ -4,7 +4,6 @@
 #include <elm/util/Variant.h>
 
 using namespace elm;
-using namespace elm::rtti;
 
 // EXPERIMENTAL
 /*namespace elm { namespace rtti {
@@ -79,7 +78,7 @@ namespace elm { namespace rtti { class AbstractClass; } }
 
 class X {
 public:
-	static rtti::AbstractClass& __type;
+	static elm::rtti::Class<X> __type;
 	X(void) { cout << "X()\n"; }
 	X(int x) { cout << "X(" << x << ")\n"; }
 
@@ -90,36 +89,38 @@ public:
 	void m2(int i) { }
 };
 
+
+rtti::Class<X> X::__type(rtti::make("X")
+	.construct<X>("X")
+	.construct<X, int>("X")
+	.op("f", X::f)
+	.op("g", X::g)
+	.op("m1", &X::m1)
+	.op("m2", &X::m2));
+
+
+// abstract / concrete case
 class AbstractC {
 public:
-	static Class<AbstractC, void, rtti::no_inst> __type;
+	static rtti::Class<AbstractC, void, rtti::no_inst> __type;
 	virtual ~AbstractC(void) { }
 	virtual int get(void) = 0;
 };
-Class<AbstractC, void, rtti::no_inst> AbstractC::__type("AbstractC");
+rtti::Class<AbstractC, void, rtti::no_inst> AbstractC::__type("AbstractC");
 
 class ConcreteC: public AbstractC {
 public:
-	static Class<ConcreteC, AbstractC> __type;
+	static rtti::Class<ConcreteC, AbstractC> __type;
 	int get(void) override { return 0; }
 };
-Class<ConcreteC, AbstractC> ConcreteC::__type("ConcreteC");
-
-/*rtti::Class<X> __type(make("X")
-	.construct<X>("X")
-	.construct<X, int>("X")
-	.op<X *>("f", X::f)
-	.op<void>("g", X::g)
-	.op<void>("m1", &X::m1)
-	.op<void>("m2", &X::m2));
-rtti::AbstractClass& X::__type = __type;*/
+rtti::Class<ConcreteC, AbstractC> ConcreteC::__type("ConcreteC");
 
 TEST_BEGIN(rtti)
 	{
-		CHECK_EQUAL(&int8_type, &type_of<t::int8>());
-		const Type& t = type_of<my_enum_t>();
+		CHECK_EQUAL(&rtti::int8_type, &type_of<t::int8>());
+		const rtti::Type& t = type_of<my_enum_t>();
 		CHECK_EQUAL(t.name(), string("my_enum_t"));
-		const Enumerable& et = t.asEnum();
+		const rtti::Enumerable& et = t.asEnum();
 		CHECK_EQUAL(et.valueFor("A"), int(A));
 		CHECK_EQUAL(et.valueFor("B"), int(B));
 		CHECK_EQUAL(et.valueFor("C"), int(C));
