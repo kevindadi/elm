@@ -91,6 +91,16 @@ public:
 	void m4(int i) const { }
 	void m5(int, float) { }
 	void m6(int, float) const { }
+
+	const Vector<int>& m7(void) const { return v;}
+
+	class Iter: public Vector<int>::Iter {
+	public:
+		Iter(const X *x): Vector<int>::Iter(x->v) { }
+	};
+
+private:
+	Vector<int> v;
 };
 
 
@@ -104,7 +114,9 @@ rtti::Class<X> X::__type(rtti::make("X")
 	.op("m3", &X::m3)
 	.op("m4", &X::m4)
 	.op("m5", &X::m5)
-	.op("m6", &X::m6));
+	.op("m6", &X::m6)
+	.coll("m7", &X::m7)
+	.iter<int, X::Iter, X>("m8"));
 
 
 // abstract / concrete case

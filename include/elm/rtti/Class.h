@@ -23,7 +23,7 @@
 
 #include <elm/data/List.h>
 #include <elm/data/Vector.h>
-#include <elm/dyndata/AbstractCollection.h>
+#include <elm/dyndata/Collection.h>
 #include <elm/util/Variant.h>
 #include "light.h"
 #include "type_of.h"
@@ -67,7 +67,7 @@ public:
 	inline const Type& returnType(void) const { return _rtype; }
 	const List<Parameter>& parameters(void) const { return _pars; }
 
-	virtual Variant call(Vector<Variant>& args) const throw(Exception);
+	virtual Variant call(const Vector<Variant>& args) const throw(Exception);
 
 protected:
 	void add(const Parameter& param);
@@ -79,31 +79,39 @@ private:
 	const Type& _rtype;
 };
 
-template <class C, class S>
+template <class T>
 class Iterator: public Operation {
 public:
-	inline Iterator(cstring name, S (C::*fun)(void)): Operation(ITER, name), _fun(fun) { }
-
-	Variant call(Vector<Variant>& args) const throw(Exception) override {
-		const C *obj = static_cast<const C *>(args[0].asPointer());
-		return new Iter(obj->begin(), obj->end());
-	}
-
+	inline Iterator(cstring name): Operation(ITER, name), _t(type_of<T>()) { }
+	inline const Type& itemType(void) const { return _t; }
 private:
-
-	class Iter: public dyndata::AbstractIter<Variant> {
-	public:
-		inline Iter(const typename S::Iter& begin, const typename S::Iter& end) { }
-		virtual bool ended(void) const { return _begin == _end; }
-		virtual Variant item(void) const { return Variant(*_begin); }
-		virtual void next(void) { _begin.next(); }
-	private:
-		typename S::Iter _begin, _end;
-	};
-
-	S (C::*_fun)(void);
+	const Type& _t;
 };
 
+template <class C, class O>
+class CollectionIterator: public Iterator<typename C::t> {
+	typedef typename C::t t;
+public:
+	typedef const C& (O::*fun_t)(void) const;
+	inline CollectionIterator(cstring name, fun_t fun): Iterator<t>(name), _fun(fun) { }
+	virtual Variant call(const Vector<Variant>& args) const throw(Exception) override {
+		const O *o = static_cast<const O *>(args[0].asPointer());
+		return new dyndata::IterInst<t, typename C::Iter>((o->*_fun)().begin());
+	}
+private:
+	fun_t _fun;
+};
+
+template <class T, class I, class O>
+class IterIterator: public Iterator<T> {
+	typedef T t;
+public:
+	inline IterIterator(cstring name): Iterator<t>(name) { }
+	Variant call(const Vector<Variant>& args) const throw(Exception) override {
+		const O *o = static_cast<const O *>(args[0].asPointer());
+		return new dyndata::IterInst<t, I>(I(o));
+	}
+};
 
 template <class T>
 class Constructor0: public Operation {
@@ -264,6 +272,11 @@ public:
 	template <class T, class C> inline make& op(cstring name, T (C::*f)(void) const) { _ops.add(new Method0Const<T, C>(name, f)); return *this; }
 	template <class T, class C, class T1> inline make& op(cstring name, T (C::*f)(T1) const) { _ops.add(new Method1Const<T, C, T1>(name, f)); return *this; }
 	template <class T, class C, class T1, class T2> inline make& op(cstring name, T (C::*f)(T1, T2) const) { _ops.add(new Method2Const<T, C, T1, T2>(name, f)); return *this; }
+
+	template <class C, class O> inline make& coll(cstring name, const C& (O::*f)(void) const)
+		{ _ops.add(new CollectionIterator<C, O>(name, f)); return *this; }
+	template <class T, class I, class O> inline make& iter(cstring name)
+		{ _ops.add(new IterIterator<T, I, O>(name)); return *this; }
 
 private:
 	cstring _name;

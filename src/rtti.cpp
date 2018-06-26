@@ -1328,8 +1328,9 @@ Operation::~Operation(void) {
  */
 
 /**
+ * TODO
  */
-Variant Operation::call(Vector<Variant>& args) const throw(Exception) {
+Variant Operation::call(const Vector<Variant>& args) const throw(Exception) {
 	throw MessageException("not implemented");
 }
 
