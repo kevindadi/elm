@@ -21,6 +21,7 @@
 #ifndef ELM_RTTI_H
 #define ELM_RTTI_H
 
+#include <elm/dyndata/AbstractCollection.h>
 #include <elm/rtti/Class.h>
 #include <elm/rtti/Enum.h>
 

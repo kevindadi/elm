@@ -22,6 +22,7 @@
 #define ELM_RTTI_TYPE_H_
 
 #include <elm/data/HashMap.h>
+#include <elm/data/List.h>
 #include <elm/ptr.h>
 #include <elm/string.h>
 #include <elm/util/Initializer.h>
@@ -55,6 +56,28 @@ public:
 	virtual void unserialize(serial2::Unserializer& uns, void *data) const = 0;
 };
 
+class TemplateType {
+public:
+	virtual ~TemplateType(void);
+	virtual int count(void) const = 0;
+};
+
+class ParamType;
+
+class InstanceType {
+public:
+	virtual ~InstanceType(void);
+	virtual const Type& templ(void) const = 0;
+	virtual const List<const Type *> params(void) const = 0;
+	const Type& typeFor(const Type& param) const;
+};
+
+class ParamType {
+public:
+	virtual ~ParamType(void);
+	virtual int index(void) const = 0;
+};
+
 class PointerType;
 
 class Type {
@@ -82,6 +105,11 @@ public:
 	virtual const Enumerable& asEnum(void) const;
 	virtual bool isSerial(void) const;
 	virtual const Serializable& asSerial(void) const;
+
+	virtual const TemplateType *asTemplate(void) const;
+	virtual const InstanceType *asInstance(void) const;
+	virtual const ParamType *asParam(void) const;
+	static const Type &param0, &param1, &param2, &param3;
 
 	void initialize(void);
 	inline bool operator==(const Type& t) const { return this == &t; }

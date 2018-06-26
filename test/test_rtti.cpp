@@ -87,6 +87,10 @@ public:
 
 	void m1(void) { }
 	void m2(int i) { }
+	void m3(void) const { }
+	void m4(int i) const { }
+	void m5(int, float) { }
+	void m6(int, float) const { }
 };
 
 
@@ -96,7 +100,11 @@ rtti::Class<X> X::__type(rtti::make("X")
 	.op("f", X::f)
 	.op("g", X::g)
 	.op("m1", &X::m1)
-	.op("m2", &X::m2));
+	.op("m2", &X::m2)
+	.op("m3", &X::m3)
+	.op("m4", &X::m4)
+	.op("m5", &X::m5)
+	.op("m6", &X::m6));
 
 
 // abstract / concrete case

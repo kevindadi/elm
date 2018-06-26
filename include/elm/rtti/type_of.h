@@ -65,10 +65,15 @@ template <> inline const Type& _type<void>::_(void) { return void_type; }
 template <class T> struct _type<T *>
 	{ static inline const Type& _(void) { return _type<T>::_().pointer(); } };
 
+template <class T> struct _templ
+	{ static inline const Type& _(void) { return *static_cast<const Type *>(nullptr); } };
+
 } // rtti
 
 template <class T> inline const rtti::Type& type_of(void) { return rtti::_type<T>::_(); }
 template <class T> inline const rtti::Type& type_of(const T& v) { return rtti::_type<T>::_(); }
+template <class T> inline const rtti::Type& template_of(void) { return rtti::_templ<T>(); }
+template <class T> inline const rtti::Type& template_of(const T& v) { return rtti::_templ<T>(); }
 
 }		// elm
 

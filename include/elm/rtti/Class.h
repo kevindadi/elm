@@ -32,6 +32,9 @@ namespace elm {
 
 namespace rtti {
 
+template <class T> struct _type<dyndata::AbstractIter<T> >
+	{ static inline const Type& _(void) { return *static_cast<const Type *>(nullptr); } };
+
 // operations
 class Parameter {
 public:
@@ -171,6 +174,18 @@ private:
 	fun_t _f;
 };
 
+template <class C> inline Variant __call_method0_const(void (C::*f)(void) const, const C *o) { (o->*f)(); return Variant(); }
+template <class T, class C> inline Variant __call_method0_const(T (C::*f)(void) const, const C *o) { return Variant((o->*f)()); }
+template <class T, class C>
+class Method0Const: public Operation {
+public:
+	typedef T (C::*fun_t)(void) const;
+	Method0Const(cstring name, fun_t f): Operation(METHOD, name, type_of<T>()), _f() { add(Parameter(type_of<C>().pointer())); }
+	virtual Variant call(const Vector<Variant>& args) { return __call_method0_const(_f, args[0].as<const C *>()); }
+private:
+	fun_t _f;
+};
+
 template <class C, class T1> inline Variant __call_method1(void (C::*f)(T1), C *o, T1 a1) { (o->*f)(a1); return Variant(); }
 template <class T, class C, class T1> inline Variant __call_method1(T (C::*f)(T1), C *o, T1 a1) { return Variant((o->*f)(a1)); }
 template <class T, class C, class T1>
@@ -184,15 +199,41 @@ private:
 	fun_t _f;
 };
 
+template <class C, class T1> inline Variant __call_method1_const(void (C::*f)(T1) const, const C *o, T1 a1) { (o->*f)(a1); return Variant(); }
+template <class T, class C, class T1> inline Variant __call_method1_const(T (C::*f)(T1) const, const C *o, T1 a1) { return Variant((o->*f)(a1)); }
+template <class T, class C, class T1>
+class Method1Const: public Operation {
+public:
+	typedef T (C::*fun_t)(T1) const;
+	Method1Const(cstring name, fun_t f): Operation(METHOD, name, type_of<T>()), _f()
+		{ add(Parameter(type_of<C>().pointer())); add(Parameter(type_of<T1>())); }
+	virtual Variant call(const Vector<Variant>& args) { return __call_method1_const(_f, args[0].as<const C *>(), args[1].as<T1>()); }
+private:
+	fun_t _f;
+};
+
 template <class C, class T1, class T2> inline Variant __call_method2(void (C::*f)(T1, T2), C *o, T1 a1, T2 a2) { (o->*f)(a1, a2); return Variant(); }
 template <class T, class C, class T1, class T2> inline Variant __call_method2(T (C::*f)(T1, T2), C *o, T1 a1, T2 a2) { return Variant((o->*f)(a1, a2)); }
 template <class T, class C, class T1, class T2>
 class Method2: public Operation {
 public:
-	typedef T (C::*fun_t)(T2);
+	typedef T (C::*fun_t)(T1, T2);
 	Method2(cstring name, fun_t f): Operation(METHOD, name, type_of<T>()), _f()
 		{ add(Parameter(type_of<C>().pointer())); add(Parameter(type_of<T1>())); add(Parameter(type_of<T2>())); }
-	virtual Variant call(const Vector<Variant>& args) { return __call_method2(_f, args[0].as<C>(), args[1].as<T1>(), args[1].as<T2>()); }
+	virtual Variant call(const Vector<Variant>& args) { return __call_method2(_f, args[0].as<C *>(), args[1].as<T1>(), args[1].as<T2>()); }
+private:
+	fun_t _f;
+};
+
+template <class C, class T1, class T2> inline Variant __call_method2_const(void (C::*f)(T1, T2) const, const C *o, T1 a1, T2 a2) { (o->*f)(a1, a2); return Variant(); }
+template <class T, class C, class T1, class T2> inline Variant __call_method2_const(T (C::*f)(T1, T2) const, const C *o, T1 a1, T2 a2) { return Variant((o->*f)(a1, a2)); }
+template <class T, class C, class T1, class T2>
+class Method2Const: public Operation {
+public:
+	typedef T (C::*fun_t)(T1, T2) const;
+	Method2Const(cstring name, fun_t f): Operation(METHOD, name, type_of<T>()), _f()
+		{ add(Parameter(type_of<C>().pointer())); add(Parameter(type_of<T1>())); add(Parameter(type_of<T2>())); }
+	virtual Variant call(const Vector<Variant>& args) { return __call_method2_const(_f, args[0].as<const C *>(), args[1].as<T1>(), args[1].as<T2>()); }
 private:
 	fun_t _f;
 };
@@ -219,6 +260,10 @@ public:
 	template <class T, class C> inline make& op(cstring name, T (C::*f)(void)) { _ops.add(new Method0<T, C>(name, f)); return *this; }
 	template <class T, class C, class T1> inline make& op(cstring name, T (C::*f)(T1)) { _ops.add(new Method1<T, C, T1>(name, f)); return *this; }
 	template <class T, class C, class T1, class T2> inline make& op(cstring name, T (C::*f)(T1, T2)) { _ops.add(new Method2<T, C, T1, T2>(name, f)); return *this; }
+
+	template <class T, class C> inline make& op(cstring name, T (C::*f)(void) const) { _ops.add(new Method0Const<T, C>(name, f)); return *this; }
+	template <class T, class C, class T1> inline make& op(cstring name, T (C::*f)(T1) const) { _ops.add(new Method1Const<T, C, T1>(name, f)); return *this; }
+	template <class T, class C, class T1, class T2> inline make& op(cstring name, T (C::*f)(T1, T2) const) { _ops.add(new Method2Const<T, C, T1, T2>(name, f)); return *this; }
 
 private:
 	cstring _name;
@@ -251,9 +296,44 @@ public:
 	inline const void *downCast(const void *ptr, const AbstractClass& cls) const { return downCast(const_cast<void *>(ptr), cls); }
 
 	inline const List<Operation *>& operations(void) const { return _ops; }
+	inline const List<const Type *> params(void) const { return _params; }
+
 private:
 	const AbstractClass& _base;
 	List<Operation *> _ops;
+	List<const Type *> _params;
+};
+
+class TemplateClass: public AbstractClass, public TemplateType {
+public:
+	TemplateClass(int count, make& make);
+	const TemplateType *asTemplate(void) const override;
+	int count(void) const override;
+private:
+	int _count;
+};
+
+class InstanceClass: public AbstractClass, public InstanceType {
+public:
+
+	class instantiate {
+		friend class InstanceClass;
+	public:
+		inline instantiate(const TemplateClass& temp): _temp(temp) { }
+		template <class T> inline instantiate& add(void) { _params.add(&type_of<T>()); return *this; }
+	private:
+		const TemplateClass& _temp;
+		List<const Type *> _params;
+	};
+
+	InstanceClass(const make& m, const instantiate& i);
+	const InstanceType *asInstance(void) const override;
+	const Type& templ(void) const override;
+	const List<const Type *> params(void) const override;
+
+private:
+	const TemplateClass& _temp;
+	const List<const Type *> _params;
 };
 
 template <class T>

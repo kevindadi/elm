@@ -465,6 +465,135 @@ const Serializable& Type::asSerial(void) const {
 	return *null<Serializable>();
 }
 
+/**
+ * Get the template interface for this type. If the type is not
+ * a template, return a null pointer.
+ * @return	Template interface or null.
+ */
+const TemplateType *Type::asTemplate(void) const {
+	return nullptr;
+}
+
+/**
+ * Get the template instance interface for this type.
+ * If this type is not a template instance, return null.
+ * @return	Instance interface or null.
+ */
+const InstanceType *Type::asInstance(void) const {
+	return nullptr;
+}
+
+/**
+ * Get the parameter interface for this type. Return null
+ * if the type is not a parameter.
+ * @return	Parameter interface or null.
+ */
+const ParamType *Type::asParam(void) const {
+	return nullptr;
+}
+
+/**
+ * @class  ParamType
+ * Interface for a parameter in a template type.
+ *
+ * @ingroup rtti
+ */
+
+/**
+ */
+ParamType::~ParamType(void) { }
+
+/**
+ * @fn int ParamType::index(void) const;
+ * Return the index of the parameter.
+ * @return	Parameter index.
+ */
+
+
+/**
+ */
+class ActualParamType: public Type, public ParamType {
+public:
+	ActualParamType(int index): _index(index) { }
+	virtual int index(void) const { return _index; }
+private:
+	int _index;
+};
+
+/**
+ */
+static const ActualParamType
+	__param0(0),
+	__param1(1),
+	__param2(2),
+	__param3(3);
+
+/**
+ */
+const Type
+	&Type::param0(__param0),
+	&Type::param1(__param1),
+	&Type::param2(__param2),
+	&Type::param3(__param3);
+
+
+/**
+ * @class TemplateType
+ * Interface for a template type.
+ * @ingroup rtti
+ */
+
+/**
+ */
+TemplateType::~TemplateType(void) {
+}
+
+/**
+ * @fn int TemplateType::count(void) const;
+ * Get the count of template type parameters.
+ * @return Parameter count.
+ */
+
+/**
+ * @class InstanceType
+ * Type resulting from the instantiation of a template type.
+ * @ingroup rtti
+ */
+
+/**
+ */
+InstanceType::~InstanceType(void) {
+}
+
+/**
+ * @fn const Type& InstanceType::templ(void) const;
+ * Get the instantiated template type.
+ * @return	Instantiated template type.
+ */
+
+/**
+ * @fn const List<const Type *> InstanceType::params(void) const;
+ * Get the list of actual parameter types.
+ * @return	List of actual parameter types.
+ */
+
+/**
+ * Get the actual type of a type involved in an instantiated type.
+ * If param is a parameter type, get the corresponding actual parameter type.
+ * Else return the type itself.
+ * @param param		Type to process.
+ * @return			Corresponding actual type.
+ */
+const Type& InstanceType::typeFor(const Type& param) const {
+	const ParamType *p = param.asParam();
+	if(p == nullptr)
+		return param;
+	else {
+		ASSERT(0 <= p->index() && p->index() < templ().asTemplate()->count());
+		return *params().nth(p->index());
+	}
+}
+
 
 /**
  */
@@ -806,6 +935,68 @@ void *AbstractClass::downCast(void *ptr, const AbstractClass& cls) const {
 	for(int i = bases.count() - 1; i >= 0; i--)
 		ptr = bases[i]->downCast(ptr);
 	return ptr;
+}
+
+
+/**
+ * @class TemplateClass
+ * RTTI representation of template class.
+ * @ingroup rtti
+ */
+
+/**
+ * Build the template class.
+ * @param count	Count of type parameters.
+ * @param make	Class descriptor.
+ */
+TemplateClass::TemplateClass(int count, make& make): AbstractClass(make), _count(count) {
+}
+
+/**
+ */
+const TemplateType *TemplateClass::asTemplate(void) const {
+	return this;
+}
+
+/**
+ */
+int TemplateClass::count(void) const {
+	return _count;
+}
+
+
+/**
+ * @class  InstanceClass
+ * RTTI representation of template class instantiated.
+ *
+ * @ingroup rtti
+ */
+
+/**
+ * Build an instance of template class.
+ * @param m		Class description.
+ * @param i		Instantiation information.
+ */
+InstanceClass::InstanceClass(const make& m, const instantiate& i)
+: AbstractClass(m), _temp(i._temp), _params(i._params) {
+}
+
+/**
+ */
+const InstanceType *InstanceClass::asInstance(void) const {
+	return this;
+}
+
+/**
+ */
+const Type& InstanceClass::templ(void) const {
+	return _temp;
+}
+
+/**
+ */
+const List<const Type *> InstanceClass::params(void) const {
+	return _params;
 }
 
 
