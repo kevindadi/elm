@@ -87,6 +87,14 @@ void __unserialize(Unserializer& serializer, AllocArray<T>& tab) {
 	}
 }
 
+template <class T>
+void __serialize(Serializer& serializer, const AllocArray<T>& tab)
+	{ __serialize(serializer, static_cast<const Array<T> &>(tab)); }
+
+
+
+
+
 
 /****** Old Serialization ******/
 

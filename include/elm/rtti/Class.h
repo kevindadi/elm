@@ -294,6 +294,7 @@ public:
 
 	inline const AbstractClass& base(void) const { return _base; };
 	virtual void *instantiate(void) const = 0;
+	virtual void free(void *obj) const = 0;
 	bool baseOf(const AbstractClass *clazz);
 	virtual bool isClass(void) const;
 	virtual const AbstractClass& asClass(void) const;
@@ -360,6 +361,7 @@ public:
 	inline Class(CString name, const AbstractClass& base = type_of<B>().asClass()): AbstractClass(name, base) { };
 	inline Class(const make& m): AbstractClass(m, type_of<B>().asClass()) { }
 	virtual void *instantiate(void) const { return I<T>::_(); };
+	virtual void free(void *obj) const override { delete static_cast<T *>(obj); }
 	virtual void *upCast(void *ptr) const { return static_cast<B *>(static_cast<T *>(ptr)); }
 	virtual void *downCast(void *ptr) const { return static_cast<T *>(static_cast<B *>(ptr)); }
 

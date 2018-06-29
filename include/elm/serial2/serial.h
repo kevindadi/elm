@@ -59,6 +59,7 @@ public:
 		: AbstractClass(name, base) { };
 
 	virtual void *instantiate(void) const { return new T(); }
+	virtual void free(void *obj) const override { delete static_cast<T *>(obj); }
 
 	// Serializable interface
 	virtual void serialize(elm::serial2::Serializer& ser, const void *data) const {

@@ -110,6 +110,8 @@ void check_array(void) {
 	AllocArray<int> a;
 	serial2::XOMUnserializer unser("unser.xml");
 	unser >> a;
+	serial2::TextSerializer ser(cout);
+	ser << a;
 }
 
 // Entry point

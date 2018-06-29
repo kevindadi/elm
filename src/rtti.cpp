@@ -753,6 +753,7 @@ public:
 	VoidType(void): AbstractClass("void",  static_cast<const AbstractClass &>(void_type)) { }
 	virtual bool isVoid(void) const { return true; }
 	virtual void *instantiate(void) const { ASSERTP(false, "void type cannot be instantiated!"); return 0; }
+	virtual void free(void *obj) const override { ASSERTP(false, "void type cannot be instantiated and therefore fried!"); }
 };
 
 /**
@@ -768,6 +769,7 @@ class ObjectClass: public AbstractClass {
 public:
 	ObjectClass(void): AbstractClass(make("elm::Object")) { }
 	void *instantiate(void) const override { return nullptr; }
+	virtual void free(void *obj) const override {  }
 };
 
 /**
@@ -843,6 +845,12 @@ AbstractClass::AbstractClass(const make& m, const AbstractClass& base): rtti::Ty
  * This function must be overridden to perform the actual allocation
  * and the class must support constructor without any argument.
  * @return	Allocated instance of class.
+ */
+
+/**
+ * @fn void AbstractClass::free(void *obj) const;
+ * Free an object corresponding to the current class.
+ * @param obj	Object to free.
  */
 
 /**
