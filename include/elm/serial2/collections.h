@@ -62,6 +62,31 @@ CollectionSerializer<C, T> CollectionSerializer<C, T>::__type;
 template <class T> struct from_class<Vector<T> >: public CollectionSerializer<Vector<T>, T> { };
 
 
+// special case for arrays
+template <class T>
+void __serialize(Serializer& serializer, const Array<T>& tab) {
+	serializer.beginCompound(&tab);
+	for(int i = 0; i < tab.count(); i++) {
+		serializer.onItem();
+		__serialize(serializer, tab[i]);
+	}
+	serializer.endCompound(&tab);
+}
+
+template <class T>
+void __unserialize(Unserializer& serializer, AllocArray<T>& tab) {
+	int cnt = serializer.countItems();
+	if(cnt != 0) {
+		tab = AllocArray<T>(cnt);
+		ASSERT(serializer.beginCompound(&tab));
+		for(int i = 0; i < cnt; i++) {
+			__unserialize(serializer, tab[i]);
+			serializer.nextItem();
+		}
+		serializer.endCompound(&tab);
+	}
+}
+
 
 /****** Old Serialization ******/
 

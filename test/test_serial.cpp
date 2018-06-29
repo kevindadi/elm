@@ -13,6 +13,7 @@
 #include <elm/serial2/data.h>
 #include <elm/serial2/TextSerializer.h>
 #include <elm/serial2/XOMUnserializer.h>
+#include <elm/serial2/collections.h>
 #include "../include/elm/test.h"
 
 using namespace elm;
@@ -104,6 +105,12 @@ ENUM_BEGIN(SimpleClass::enum_t)
 	VALUE(SimpleClass::VAL2),
 	VALUE(SimpleClass::VAL3)
 ENUM_END
+
+void check_array(void) {
+	AllocArray<int> a;
+	serial2::XOMUnserializer unser("unser.xml");
+	unser >> a;
+}
 
 // Entry point
 TEST_BEGIN(serial)
