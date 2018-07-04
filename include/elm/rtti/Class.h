@@ -351,9 +351,15 @@ private:
 };
 
 template <class T>
-struct no_inst { static inline T *_(void) { return nullptr; } };
+struct no_inst {
+	static inline T *_(void) { return nullptr; }
+	static inline void _free(void *p) { }
+};
 template <class T>
-struct inst { static inline T *_(void) { return new T; } };
+struct inst {
+	static inline T *_(void) { return new T; }
+	static inline void _free(void *p) { delete static_cast<T*>(p); }
+};
 
 template <class T, class B = void, template <class _ > class I = inst>
 class Class: public AbstractClass {
@@ -361,7 +367,7 @@ public:
 	inline Class(CString name, const AbstractClass& base = type_of<B>().asClass()): AbstractClass(name, base) { };
 	inline Class(const make& m): AbstractClass(m, type_of<B>().asClass()) { }
 	virtual void *instantiate(void) const { return I<T>::_(); };
-	virtual void free(void *obj) const override { delete static_cast<T *>(obj); }
+	virtual void free(void *obj) const override { I<T>::_free(obj); }
 	virtual void *upCast(void *ptr) const { return static_cast<B *>(static_cast<T *>(ptr)); }
 	virtual void *downCast(void *ptr) const { return static_cast<T *>(static_cast<B *>(ptr)); }
 
