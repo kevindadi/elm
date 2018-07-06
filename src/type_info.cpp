@@ -288,12 +288,14 @@ cstring type_info<string>::name(void) { return "string"; }
  */
 
 /**
- * @class Single
- * Ensures a unique implementation of a singleton of type T.
- * This singleton is accessible by Single<T>::_ (no need to declare and define
- * it somewhere).
+ * @fn T& single(void);
+ * Returns a singleton corresponding to the parameter type.
+ * The uniqueness of the return value is ensured, meaning that any call
+ * to this function will ever return the same singleton object.
+ * This function provides an easy and fast way to define a singleton.
  *
- * @param T		Type of singleton. Must support no-paramater constructor.
+ * @param T		Type of singleton. Must support default constructor.
+ * @ingroup types
  */
 
 }  // elm

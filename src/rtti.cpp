@@ -617,49 +617,49 @@ public:
  * Type for signed 8-bit integer.
  * @ingroup rtti
  */
-const Type& int8_type = Single<IntType<t::int8> >::_;
+const Type& int8_type = single<IntType<t::int8> >();
 
 /**
  * Type for unsigned 8-bit integer.
  * @ingroup rtti
  */
-const Type& uint8_type = Single<IntType<t::uint8> >::_;
+const Type& uint8_type = single<IntType<t::uint8> >();
 
 /**
  * Type for signed 16-bit integer.
  * @ingroup rtti
  */
-const Type& int16_type = Single<IntType<t::int16> >::_;
+const Type& int16_type = single<IntType<t::int16> >();
 
 /**
  * Type for unsigned 8-bit integer.
  * @ingroup rtti
  */
-const Type& uint16_type = Single<IntType<t::uint16> >::_;
+const Type& uint16_type = single<IntType<t::uint16> >();
 
 /**
  * Type for signed 32-bit integer.
  * @ingroup rtti
  */
-const Type& int32_type = Single<IntType<t::int32> >::_;
+const Type& int32_type = single<IntType<t::int32> >();
 
 /**
  * Type for unsigned 32-bit integer.
  * @ingroup rtti
  */
-const Type& uint32_type = Single<IntType<t::uint32> >::_;
+const Type& uint32_type = single<IntType<t::uint32> >();
 
 /**
  * Type for signed 64-bit integer.
  * @ingroup rtti
  */
-const Type& int64_type = Single<IntType<t::int64> >::_;
+const Type& int64_type = single<IntType<t::int64> >();
 
 /**
  * Type for unsigned 64-bit integer.
  * @ingroup rtti
  */
-const Type& uint64_type = Single<IntType<t::uint64> >::_;
+const Type& uint64_type = single<IntType<t::uint64> >();
 
 
 /**
@@ -685,19 +685,19 @@ public:
  * Type for single-precision floating-point real.
  * @ingroup rtti
  */
-const Type& float_type = Single<FloatType<float> >::_;
+const Type& float_type = single<FloatType<float> >();
 
 /**
  * Type for double-precision floating-point real.
  * @ingroup rtti
  */
-const Type& double_type = Single<FloatType<double> >::_;
+const Type& double_type = single<FloatType<double> >();
 
 /**
  * Type for quadruple-precision floating-point real.
  * @ingroup rtti
  */
-const Type& long_double_type = Single<FloatType<long double> >::_;
+const Type& long_double_type = single<FloatType<long double> >();
 
 /**
  */
@@ -720,7 +720,7 @@ public:
  * Type for booleans.
  * @ingroup rtti
  */
-const Type& bool_type = Single<BoolType>::_;
+const Type& bool_type = single<BoolType>();
 
 /**
  */
@@ -742,7 +742,7 @@ public:
  * Type for strings.
  * @ingroup rtti
  */
-const Type& string_type = Single<StringType>::_;
+const Type& string_type = single<StringType>();
 
 /**
  * Class to represent void type.
@@ -760,7 +760,7 @@ public:
  * Void type representation.
  * @ingroup rtti
  */
-const Type& void_type = Single<VoidType>::_;
+const Type& void_type = single<VoidType>();
 
 
 /**
@@ -774,7 +774,7 @@ public:
 
 /**
  */
-const Type& Object::__type = Single<ObjectClass>::_;
+const Type& Object::__type = single<ObjectClass>();
 
 
 /**
@@ -796,7 +796,7 @@ public:
  * Type for C strings.
  * @ingroup rtti
  */
-const Type& cstring_type = Single<CStringType>::_;
+const Type& cstring_type = single<CStringType>();
 
 
 /**

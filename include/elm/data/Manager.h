@@ -35,7 +35,7 @@ public:
 	typedef E equiv_t;
 	typedef A alloc_t;
 
-	inline EquivManager(E& e = Single<E>::_, A& a = A::DEFAULT): eq(e), alloc(a) { }
+	inline EquivManager(E& e = single<E>(), A& a = A::DEFAULT): eq(e), alloc(a) { }
 
 	inline bool equals(const T& v1, const T& v2) const { return eq.isEqual(v1, v2); }
 	inline void *allocate(t::size size) const { return alloc.allocate(size); }
@@ -49,7 +49,7 @@ public:
 template <class T, class C = Comparator<T>, class E = Equiv<T>, class A = DefaultAllocator>
 class CompareManager {
 public:
-	inline CompareManager(const C& c = Single<C>::_, const E& e = Single<E>::_, A& a = DefaultAllocator::DEFAULT)
+	inline CompareManager(const C& c = single<C>(), const E& e = single<E>(), A& a = DefaultAllocator::DEFAULT)
 		: cmp(c), eq(e), alloc(a) { }
 
 	inline int compare(const T& v1, const T& v2) const { return cmp.doCompare(v1, v2); }

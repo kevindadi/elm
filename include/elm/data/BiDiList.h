@@ -43,7 +43,7 @@ class BiDiList {
 
 public:
 
-	inline BiDiList(void): _man(Single<M>::_) { }
+	inline BiDiList(void): _man(single<M>()) { }
 	inline BiDiList(const BiDiList<T>& list): _man(list._man) { copy(list); }
 	inline BiDiList(M& man): _man(man) { }
 	inline ~BiDiList(void) { clear(); }

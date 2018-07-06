@@ -88,7 +88,7 @@ TEST_BEGIN(data)
 		for(int i = 0; i < 10; i++)
 			ok = ok && v[i] + 1 == w[i];
 		CHECK(ok);
-		CHECK_EQUAL(fold(v, Single<Add<int> >::_), 45);
+		CHECK_EQUAL(fold(v, single<Add<int> >()), 45);
 		CHECK_EQUAL(sum(v), 45);
 		CHECK_EQUAL(product(v), 0);
 	}

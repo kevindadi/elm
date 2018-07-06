@@ -47,7 +47,7 @@ class List {
 
 public:
 
-	inline List(void): _man(Single<M>::_) { }
+	inline List(void): _man(single<M>()) { }
 	inline List(const List<T, M>& list): _man(list._man) { copy(list); }
 	inline List(M& man): _man(man) { }
 	inline ~List(void) { clear(); }

@@ -61,7 +61,7 @@ template <class K, class T, class C = Comparator<K> >
 class AssocComparator {
 public:
 	typedef Pair<K, T> pair_t;
-	inline AssocComparator(const C& c = Single<C>::_): _c(c) { }
+	inline AssocComparator(const C& c = single<C>()): _c(c) { }
 	static inline int compare(const pair_t& v1, const pair_t& v2)
 		{ return C::compare(v1.fst, v2. fst); }
 	inline int doCompare(const pair_t& v1, const pair_t& v2)
@@ -76,7 +76,7 @@ template <class K, class T> class Comparator<Pair<K, T> >
 template <class T, class C>
 class ReverseComparator {
 public:
-	inline ReverseComparator(const C& c = Single<C>::_): _c(c) { }
+	inline ReverseComparator(const C& c = single<C>()): _c(c) { }
 	static inline int compare(const T& v1, const T& v2)
 		{ return -C::compare(v1, v2); }
 	inline int doCompare(const T& v1, const T& v2) const
@@ -89,7 +89,7 @@ private:
 template <class T, class C = Comparator<T> >
 class CompareEquiv {
 public:
-	inline CompareEquiv(const C& c = Single<C>::_): _c(c) { }
+	inline CompareEquiv(const C& c = single<C>()): _c(c) { }
 	static inline bool equals(const T& v1, const T& v2)
 		{ return C::compare(v1, v2) == 0; }
 	inline bool isEqual(const T& v1, const T& v2)
@@ -109,11 +109,11 @@ public:
 // Useful inlines
 template <class T> inline const T& min(const T& x, const T& y)
 	{ if(Comparator<T>::compare(x, y) >= 0) return y; else return x; }
-template <class T, class C> inline const T& min(const T& x, const T& y, const C& c = Single<C>::_)
+template <class T, class C> inline const T& min(const T& x, const T& y, const C& c = single<C>())
 	{ if(c.doCompare(x, y) >= 0) return y; else return x; }
 template <class T> inline const T& max(const T& x, const T& y)
 	{ if(Comparator<T>::compare(x, y) >= 0) return x; else return y; }
-template <class T, class C> inline const T& max(const T& x, const T& y, const C& c = Single<C>::_)
+template <class T, class C> inline const T& max(const T& x, const T& y, const C& c = single<C>())
 	{ if(c.doCompare(x, y) >= 0) return x; else return y; }
 
 template <class C> inline typename C::t min(const C& c)

@@ -41,7 +41,7 @@ class ListQueue {
 	};
 
 public:
-	inline ListQueue(void): h(0), t(0), _man(Single<M>::_) { }
+	inline ListQueue(void): h(0), t(0), _man(single<M>()) { }
 	inline ~ListQueue(void) { reset(); }
 
 	inline bool isEmpty(void) const { return !h; }

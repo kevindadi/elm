@@ -28,7 +28,7 @@ namespace elm {
 template <class K, class T, class KC = Comparator<K>, class TE = Equiv<K>, class A = DefaultAllocator>
 class ListMapManager {
 public:
-	inline ListMapManager(KC& kcmp = Single<KC>::_, TE& tequ = Single<TE>::_, A& alloc = DefaultAllocator::DEFAULT)
+	inline ListMapManager(KC& kcmp = single<KC>(), TE& tequ = single<TE>(), A& alloc = DefaultAllocator::DEFAULT)
 		: _kcmp(kcmp), _tequ(tequ), _alloc(alloc) { }
 
 	inline void *allocate(t::size size) { return _alloc.allocate(size); }
@@ -54,7 +54,7 @@ class ListMap: private SortedList<typename M::pair_t, M> {
 public:
 	typedef ListMap<K, T, M> self_t;
 
-	inline ListMap(M& man = Single<M>::_): base_t(man) { }
+	inline ListMap(M& man = single<M>()): base_t(man) { }
 	inline ListMap(const ListMap<K, T, M>& l): base_t::type_t(l) { }
 	inline M& manager(void) const { return base_t::manager(); }
 

@@ -74,7 +74,7 @@ private:
 
 public:
 
-	HashTable(int _size = 211): _man(Single<M>::_), _size(_size), _tab(new node_t *[_size])
+	HashTable(int _size = 211): _man(single<M>()), _size(_size), _tab(new node_t *[_size])
 		{ array::fast<node_t*>::clear(_tab, _size); }
 	HashTable(M& man, int _size = 211): _man(man), _size(_size), _tab(new node_t *[_size])
 		{ array::fast<node_t*>::clear(_tab, _size); }

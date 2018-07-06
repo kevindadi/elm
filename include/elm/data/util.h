@@ -120,11 +120,11 @@ inline typename F::y_t fold(const C& c, const F& f, typename F::y_t t = F::null)
 
 template <class C>
 inline typename C::t sum(const C& c)
-	{ return fold(c, Single<Add<typename C::t> >::_, 0); }
+	{ return fold(c, single<Add<typename C::t> >(), 0); }
 
 template <class C>
 inline typename C::t product(const C& c)
-	{ return fold(c, Single<Mul<typename C::t> >::_); }
+	{ return fold(c, single<Mul<typename C::t> >()); }
 
 
 // construction operations

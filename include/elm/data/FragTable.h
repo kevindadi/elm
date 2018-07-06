@@ -34,11 +34,11 @@ class FragTable {
 public:
 	typedef FragTable<T, M> self_t;
 
-	inline FragTable(int size_pow = 8, M& man = Single<M>::_)
-		: vec_equiv(Single<Equiv<T *> >::_, man.alloc), tab(8, vec_equiv), _man(man), size(1 << size_pow), msk(size - 1), shf(size_pow), used(size)
+	inline FragTable(int size_pow = 8, M& man = single<M>())
+		: vec_equiv(single<Equiv<T *> >(), man.alloc), tab(8, vec_equiv), _man(man), size(1 << size_pow), msk(size - 1), shf(size_pow), used(size)
 		{ ASSERTP(size_pow > 0, "size must be greater than 0"); }
 	inline FragTable(const FragTable& t)
-		: vec_equiv(Single<Equiv<T *> >::_, t._man.alloc), tab(8, vec_equiv), _man(t._man), size(t.size), msk(size - 1), shf(t.shf), used(0)
+		: vec_equiv(single<Equiv<T *> >(), t._man.alloc), tab(8, vec_equiv), _man(t._man), size(t.size), msk(size - 1), shf(t.shf), used(0)
 		{ addAll(tab); }
 	inline ~FragTable(void) { clear(); }
 	inline M& manager(void) const { return tab.manager(); }
