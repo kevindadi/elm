@@ -72,19 +72,23 @@ public:
 	void applyOr(const BitVector& vec);
 	void applyAnd(const BitVector& vec);
 	void applyReset(const BitVector& vec);
+#ifdef EXPERIMENTAL
 	inline void shiftLeft(int n = 1) { doShiftLeft(n, bits); }
 	inline void shiftRight(int n = 1) { doShiftRight(n, bits); }
 	inline void rotateLeft(int n = 1)  { doRotateLeft(n, bits); }
 	inline void rotateRight(int n = 1) { doRotateRight(n, bits); }
+#endif
 	
 	BitVector makeNot(void) const;
 	BitVector makeOr(const BitVector& vec) const;
 	BitVector makeAnd(const BitVector& vec) const;
 	BitVector makeReset(const BitVector& vec) const;
+#ifdef EXPERIMENTAL
 	inline BitVector makeShiftLeft(int n = 1) const { BitVector r(size()); doShiftLeft(n, r.bits); return r; }
 	inline BitVector makeShiftRight(int n = 1) const { BitVector r(size()); doShiftRight(n, r.bits); return r; }
 	inline BitVector makeRotateLeft(int n = 1) const { BitVector r(size()); doRotateLeft(n, r.bits); return r; }
 	inline BitVector makeRotateRight(int n = 1) const { BitVector r(size()); doRotateRight(n, r.bits); return r; }
+#endif
 	
 	void print(io::Output& out) const;
 	
@@ -139,15 +143,19 @@ public:
 	inline BitVector operator&(const BitVector& vec) const	{ return makeAnd(vec); }
 	inline BitVector operator+(const BitVector& vec) const	{ return makeOr(vec); }
 	inline BitVector operator-(const BitVector& vec) const	{ return makeReset(vec); }
+#ifdef EXPERIMENTAL
 	inline BitVector operator<<(int n) const				{ return makeShiftLeft(n); }
 	inline BitVector operator>>(int n) const				{ return makeShiftRight(n); }
+#endif
 	BitVector& operator=(const BitVector& vec);
 	inline BitVector& operator|=(const BitVector& vec)		{ applyOr(vec); return *this; }
 	inline BitVector& operator&=(const BitVector& vec)		{ applyAnd(vec); return *this; }
 	inline BitVector& operator+=(const BitVector& vec)		{ applyOr(vec); return *this; }
 	inline BitVector& operator-=(const BitVector& vec)		{ applyReset(vec); return *this; }
+#ifdef EXPERIMENTAL
 	inline BitVector& operator<<=(int d)					{ shiftLeft(d); return *this; }
 	inline BitVector& operator>>=(int d)					{ shiftRight(d); return *this; }
+#endif
 	inline bool operator==(const BitVector& vec) const		{ return equals(vec); }
 	inline bool operator!=(const BitVector& vec) const		{ return !equals(vec); }
 	inline bool operator<(const BitVector& vec) const		{ return vec.includesStrictly(*this); }
@@ -172,11 +180,12 @@ private:
 		if(mask) bits[wcount() - 1] &= mask;
 	}
 	inline void mask(void) const { mask(bits); }
-
+#ifdef EXPERIMENTAL
 	void doShiftLeft(int n, word_t *tbits) const;
 	void doShiftRight(int n, word_t *tbits) const;
 	void doRotateLeft(int n, word_t *tbits) const;
 	void doRotateRight(int n, word_t *tbits) const;
+#endif
 };
 
 inline io::Output& operator<<(io::Output& out, const BitVector& bvec)

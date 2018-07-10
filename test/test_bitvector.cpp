@@ -121,7 +121,8 @@ TEST_BEGIN(bitvector)
 	CHECK(equals(v8, 0x0202));
 	BitVector v12 = v4.makeNot();
 	CHECK(equals(v12, 0xfcfc));
-	
+
+#ifdef EXPERIMENTAL
 	// left shift
 	{
 		t::uint32 pat = 0xf0ccba56;
@@ -201,6 +202,7 @@ TEST_BEGIN(bitvector)
 		v1.rotateRight(17);
 		CHECK_EQUAL(v1, make(32, rotate_right(pat, 17)));
 	}
+#endif
 
 	TEST_END
 

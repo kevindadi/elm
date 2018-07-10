@@ -520,6 +520,7 @@ void BitVector::resize(int new_size) {
 }
 
 
+#ifdef EXPERIMENTAL
 /**
  * @fn void BitVector::shiftLeft(int n);
  * Shift the vector for n positions to the left.
@@ -702,5 +703,6 @@ void BitVector::doRotateRight(int n, word_t *tbits) const {
  * @param n	Rotated positions (default to 1).
  * @return	Rotated vector.
  */
+#endif
 
 } // elm
