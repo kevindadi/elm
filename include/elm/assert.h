@@ -43,15 +43,18 @@ namespace elm {
 		{ if(!(cond)) { ELM_ASSERT_MSG("assert failure: " #cond); elm::crash(); } }
 #	define ELM_ASSERTP(cond, msg) \
 		{ if(!(cond)) { ELM_ASSERT_MSG(msg); elm::crash(); } }
+#	define ELM_IN_ASSERT(x)	x
 #else
 #	define ELM_ASSERT(cond)	;
 #   define ELM_ASSERTP(cond, msg);
+#	define ELM_IN_ASSERT(x)
 #endif
 
 // Macros without prefix
 #ifndef ELM_NO_ASSERT_SHORTCUT
 #	define ASSERT(cond) ELM_ASSERT(cond)
 #	define ASSERTP(cond, msg) ELM_ASSERTP(cond, msg)
+#	define IN_ASSERT(x) ELM_IN_ASSERT(x)
 #endif
 
 #endif // ELM_ASSERT_H

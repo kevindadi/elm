@@ -82,7 +82,7 @@ public:
 		{ _if<type_info<T>::is_defined_enum, enum_scanner<T>, def_scanner<T> >::_::scan(*this, v); return *this; }
 
 private:
-	static void unsupported(void);
+	 [[noreturn]] static void unsupported(void);
 	InStream *strm;
 	int buf;
 	int get(void);
