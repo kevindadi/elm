@@ -23,8 +23,19 @@
 
 #include <elm/string/String.h>
 #include <elm/int.h>
+#include <elm/meta.h>
 
 namespace elm {
+
+namespace intern {
+	template <class T> char test_class(int T::*);
+	template <class T> int test_class(...);
+
+	template <class T>
+	struct is_scalar {
+		enum { _ = sizeof(test_class<T>(0)) != sizeof(char) };
+	};
+}
 
 // type_info trait
 typedef struct default_t {
@@ -89,6 +100,8 @@ public:
 // generic class
 template <class T> class type_info: public class_t<T> {
 public:
+	enum { is_enum = intern::is_scalar<T>::_ };
+	enum { is_scalar = intern::is_scalar<T>::_ };
 	static cstring name(void) { return ""; }
 };
 
@@ -109,6 +122,7 @@ typedef struct scalar_t: public default_t {
 // pointer type
 typedef struct ptr_t: public scalar_t {
 	enum { is_ptr = 1 };
+	enum { is_scalar = 1 };
 } ptr_t;
 
 // reference type
@@ -225,7 +239,7 @@ template <class T> struct type_info<const T *>: public ptr_t, public asis_t<cons
 	static const T * const null;
 	static string name(void) { return "const " + type_info<T>::name() + " *"; }
 };
-template <class T> const T * const type_info<const T *>::null = 0;
+template <class T> const T *const type_info<const T *>::null = nullptr;
 
 
 template <class T> struct type_info<T *>: public ptr_t, public asis_t<T *>, little_transient_t<T *> {
@@ -234,7 +248,7 @@ template <class T> struct type_info<T *>: public ptr_t, public asis_t<T *>, litt
 	static T * const null;
 	static string name(void) { return type_info<T>::name() + " *"; }
 };
-template <class T> T * const type_info<T *>::null = 0;
+template <class T> T *const type_info<T *>::null = nullptr;
 
 
 // reference specialization

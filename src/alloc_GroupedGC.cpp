@@ -439,9 +439,8 @@ void GroupedGC::endGC(void) {
 		while(i < blockCount) {
 			if(!(*c->bits)[i]) {
 				// free block here
-				block_t *blk2 = static_cast<block_t *>(static_cast<void *>(c->buffer + i * blockSize));
+				//block_t *blk2 = static_cast<block_t *>(static_cast<void *>(c->buffer + i * blockSize));
 				block_t *blk = static_cast<block_t *>(static_cast<void *>(c->buffer + currentSize));
-				ASSERT(blk == blk2);
 				blk->next = free_list[index];
 #ifdef NON_OPTIMIZATION
 				blk->size = blockSize; // actually not necessary

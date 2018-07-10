@@ -27,6 +27,7 @@
 #include <elm/array.h>
 #include <elm/data/StaticStack.h>
 #include <elm/data/Vector.h>
+#include <elm/io.h>
 
 namespace elm { namespace avl {
 

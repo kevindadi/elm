@@ -139,8 +139,10 @@ bool Input::scanBool(void) {
 		pattern = "false";
 		res = false;
 	}
-	else
+	else {
 		pattern = "";
+		res = false;
+	}
 
 	// Look other characters
 	while(*pattern == chr) {

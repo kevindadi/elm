@@ -63,7 +63,7 @@ void Fletcher::shuffle(void) {
 /**
  */
 void Fletcher::add(void) {
-	sum1 += *(t::uint16 *)half;
+	sum1 += (t::uint16(half[0]) << 8) | t::uint16(half[1]);
 	sum2 += sum1;
 	len += 2;
 	if(len == 360)

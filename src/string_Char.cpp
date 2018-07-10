@@ -21,6 +21,7 @@
 
 #include <elm/assert.h>
 #include <elm/string/Char.h>
+#include <elm/types.h>
 
 namespace elm {
 

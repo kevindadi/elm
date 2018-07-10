@@ -78,7 +78,7 @@ TEST_BEGIN(io_format)
 	
 	BlockInStream instream("666", 3);
 	Input in(instream);
-	int x;
+	int x = 0;
 	FAIL_ON_EXCEPTION(IOException, in >> x);
 	CHECK_EQUAL(x, 666);
 

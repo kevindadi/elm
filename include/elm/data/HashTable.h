@@ -58,8 +58,8 @@ private:
 		node->next = _tab[i]; _tab[i] = node; return node; }
 
 	struct InternIterator {
-		inline InternIterator(const self_t& _htab): htab(&_htab) { i = 0; step(); }
-		inline InternIterator(const self_t& _htab, bool end): htab(&_htab)
+		inline InternIterator(const self_t& _htab): node(nullptr), htab(&_htab) { i = 0; step(); }
+		inline InternIterator(const self_t& _htab, bool end): node(nullptr), htab(&_htab)
 			{ if(end) { i = htab->_size; node = nullptr; } else { i = 0; step(); } }
 		inline bool ended(void) const { return i >= htab->_size; }
 		inline void next(void) { node = node->next; if(!node) { i++; step(); }  }

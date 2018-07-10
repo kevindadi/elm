@@ -616,7 +616,7 @@ void Output::print(const StringFormat& fmt) {
 			break;
 		default:
 			ASSERT(false);
-			break;
+			return;
 		}
 
 		// perform the display

@@ -53,7 +53,7 @@ Formatter::Formatter(char escape): esc(escape) {
  * @return		0 for success, <0 for an IO error.
  */
 int Formatter::format(io::InStream& in, io::OutStream& out) {
-	int chr, res;
+	int chr, res = 0;
 	chr = in.read();
 	while(chr != InStream::ENDED) {
 		if(chr != esc)

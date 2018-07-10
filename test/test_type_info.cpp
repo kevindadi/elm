@@ -43,54 +43,79 @@ TEST_BEGIN(type_info)
 	CHECK(type_info<t::int8>::is_signed == true);
 	CHECK(type_info<t::int8>::min == -0x80);
 	CHECK(type_info<t::int8>::max == 0x7f);
+	CHECK(type_info<t::int8>::is_enum == false);
+	CHECK(type_info<t::int8>::is_scalar == true);
 
 	CHECK(type_info<t::uint8>::null == 0);
 	CHECK(type_info<t::uint8>::is_signed == false);
 	CHECK(type_info<t::uint8>::min == 0);
 	CHECK(type_info<t::uint8>::max == 0xff);
+	CHECK(type_info<t::uint8>::is_enum == false);
+	CHECK(type_info<t::uint8>::is_scalar == true);
 
 	CHECK(type_info<t::int16>::null == 0);
 	CHECK(type_info<t::int16>::is_signed == true);
 	CHECK(type_info<t::int16>::min == t::int16(-32768));
 	CHECK(type_info<t::int16>::max == 0x7fff);
+	CHECK(type_info<t::int16>::is_enum == false);
+	CHECK(type_info<t::int16>::is_scalar == true);
 
 	CHECK(type_info<t::uint16>::null == 0);
 	CHECK(type_info<t::uint16>::is_signed == false);
 	CHECK(type_info<t::uint16>::min == 0);
 	CHECK(type_info<t::uint16>::max == 0xffff);
+	CHECK(type_info<t::uint16>::is_enum == false);
+	CHECK(type_info<t::uint16>::is_scalar == true);
 
 	CHECK(type_info<int>::null == 0);
 	CHECK(type_info<int>::is_signed == true);
 	CHECK(type_info<int>::min == (int)-0x80000000);
 	CHECK(type_info<int>::max == 0x7fffffff);
+	CHECK(type_info<int>::is_enum == false);
+	CHECK(type_info<int>::is_scalar == true);
 
 	CHECK(type_info<unsigned>::null == 0);
 	CHECK(type_info<unsigned>::is_signed == false);
 	CHECK(type_info<unsigned>::min == 0);
 	CHECK(type_info<unsigned>::max == 0xffffffff);
+	CHECK(type_info<unsigned>::is_enum == false);
+	CHECK(type_info<unsigned>::is_scalar == true);
 
 	CHECK(type_info<t::int32>::null == 0);
 	CHECK(type_info<t::int32>::is_signed == true);
 	CHECK(type_info<t::int32>::min == t::int32(-0x80000000));
 	CHECK(type_info<t::int32>::max == 0x7fffffff);
+	CHECK(type_info<t::int32>::is_enum == false);
+	CHECK(type_info<t::int32>::is_scalar == true);
 
 	CHECK(type_info<t::uint32>::null == 0);
 	CHECK(type_info<t::uint32>::is_signed == false);
 	CHECK(type_info<t::uint32>::min == 0);
 	CHECK(type_info<t::uint32>::max == 0xffffffff);
+	CHECK(type_info<t::uint32>::is_enum == false);
+	CHECK(type_info<t::uint32>::is_scalar == true);
 
 	CHECK(type_info<t::int64>::null == 0);
 	CHECK(type_info<t::int64>::is_signed == true);
 	CHECK(type_info<t::int64>::min == t::int64(-0x8000000000000000LL));
 	CHECK(type_info<t::int64>::max == 0x7fffffffffffffffLL);
+	CHECK(type_info<t::int64>::is_enum == false);
+	CHECK(type_info<t::int64>::is_scalar == true);
 
 	CHECK(type_info<t::uint64>::null == 0);
 	CHECK(type_info<t::uint64>::is_signed == false);
 	CHECK(type_info<t::uint64>::min == 0LL);
 	CHECK(type_info<t::uint64>::max == 0xffffffffffffffffLL);
+	CHECK(type_info<t::uint64>::is_enum == false);
+	CHECK(type_info<t::int64>::is_scalar == true);
 
 	CHECK(type_info<enm_t>::is_ptr == 0);
-	//cerr << io::hex(type_info<unsigned long long>::max) << io::endl;
+	CHECK(type_info<enm_t>::is_enum == true);
+	CHECK(type_info<enm_t>::is_scalar == true);
+
+	CHECK(type_info<void *>::is_ptr == true);
+	CHECK(type_info<void *>::is_enum == false);
+	CHECK(type_info<void *>::is_scalar == true);
 
 	// embed test
 	{

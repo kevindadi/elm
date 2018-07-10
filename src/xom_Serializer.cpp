@@ -235,7 +235,7 @@ void Serializer::write(Document *doc) {
 	writeXMLDeclaration();
 	Element *element = doc->getRootElement();
 	ASSERTP(element, "null root element");
-	write(doc->getRootElement());
+	write(element);
 }
 
 

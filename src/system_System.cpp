@@ -766,8 +766,7 @@ sys::Path System::getTempDir(void) throw(SystemException) {
 		char t[tmp.length() + 1];
 		strncpy(t, &tmp, tmp.length());
 		t[tmp.length()] = '\0';
-		mkdtemp(t);
-		return Path(t);
+		return Path(mkdtemp(t));
 	#	endif
 }
 
