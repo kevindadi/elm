@@ -41,8 +41,17 @@ public:
 	inline Variant(double v)							{ _data.d = v; }
 	inline Variant(const char *v)						{ _data.s = v; }
 	inline Variant(cstring s)							{ _data.s = &s; }
-	inline Variant(string s)							{ _data.s = &s; }
-	inline Variant(void *v)								{ _data.p = v; }
+	inline Variant(string s)							{ _data.s = &s.toCString(); }
+	template <class T>
+	inline Variant(T *v)								{ _data.p = v; }
+	template <class T>
+	inline Variant(const T *v)							{ _data.p = v; }
+	template <class T>
+	inline Variant(T&& v)								{ _data.p = new T(v); }
+	template <class T>
+	inline Variant(T& v)								{ _data.p = &v; }
+	template <class T>
+	inline Variant(const T& v)							{ _data.cp = &v; }
 
 	inline bool asBool(void) const { return _data.b; }
 	inline int asInt(void) const { return asInt32(); }
@@ -56,12 +65,19 @@ public:
 	inline t::uint8 asUInt64(void) const { return _data.i64; }
 	inline float asFloat(void) const { return _data.f; }
 	inline float asDouble(void) const { return _data.d; }
+	inline cstring asCString(void) const { return _data.s; }
 	inline cstring asString(void) const { return _data.s; }
 	inline void *asPointer(void) const { return _data.p; }
 
-	template <class T> T as(void) const { return get(static_cast<T *>(0)); }
+	template <class T> T as(void) const { return _get<T>::_(*this); }
 
 private:
+	template <class T> struct _get				{ static T _(const Variant& v) { return v.get(static_cast<T *>(nullptr)); } };
+	template <class T> struct _get<T *>			{ static T *_(const Variant& v) { return static_cast<T *>(v._data.p); } };
+	template <class T> struct _get<const T *>	{ static const T *_(const Variant& v) { return static_cast<const T *>(v._data.cp); } };
+	template <class T> struct _get<T&>			{ static T& _(const Variant& v) { return *static_cast<T *>(v._data.p); } };
+	template <class T> struct _get<const T&>	{ static const T& _(const Variant& v) { return *static_cast<const T *>(v._data.cp); } };
+
 	inline t::int8   get(t::int8   *x) const { return _data.i8 ; }
 	inline t::int16  get(t::int16  *x) const { return _data.i16; }
 	inline t::int32  get(t::int32  *x) const { return _data.i32; }
@@ -74,9 +90,8 @@ private:
 	inline double    get(double    *x) const { return _data.d  ; }
 	inline cstring   get(cstring   *x) const { return _data.s  ; }
 	inline string    get(string    *x) const { return _data.s  ; }
-	template <class T> inline const T *get(const T **x) const { return static_cast<const T *>(_data.p); }
-	template <class T> inline T *get(T **x) const { return static_cast<T *>(_data.p); }
-	template <class T> inline const T& get(const T *x) const { return *static_cast<const T *>(_data.p); }
+	template <class T>
+	inline T get(const T *x)		   const { return *static_cast<const T *>(_data.p); }
 
 	union {
 		bool b;
@@ -92,8 +107,10 @@ private:
 		double d;
 		const char *s;
 		void *p;
+		const void *cp;
 	} _data;
-};	// Variant
+
+};
 
 }	// elm
 

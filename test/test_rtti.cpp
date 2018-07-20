@@ -5,6 +5,13 @@
 
 using namespace elm;
 
+class AClass {
+public:
+	int x;
+	inline AClass(void): x(0) { }
+	inline AClass(int _x): x(_x) { }
+};
+
 // EXPERIMENTAL
 /*namespace elm { namespace rtti {
 
@@ -174,15 +181,26 @@ TEST_BEGIN(rtti)
 	{
 		Variant v1(666);
 		CHECK_EQUAL(v1.as<int>(), 666);
+
 		int x;
 		Variant v2(&x);
 		CHECK_EQUAL(v2.as<int *>(), &x);
+
 		cstring s1 = "ok";
 		Variant v3(s1);
 		CHECK_EQUAL(v3.as<cstring>(), s1);
+
 		string s2 = "ko";
 		Variant v4(s2);
 		CHECK_EQUAL(v4.as<string>(), s2);
+
+		AClass anobj;
+		AClass& ranobj = anobj;
+		Variant s5(ranobj);
+		CHECK_EQUAL(&s5.as<AClass&>(), &ranobj);
+
+		Variant s6(AClass(111));
+		CHECK_EQUAL(s6.as<AClass>().x, 111);
 	}
 
 	// RTTI constructor

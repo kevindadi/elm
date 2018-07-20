@@ -61,13 +61,14 @@ class CleanList {
 public:
 	inline ~CleanList(void) { clean(); }
 	void add(Cleaner *cleaner);
+	template <class T> void add(T *p) { if(p != nullptr) add(static_cast<Cleaner *>(new Deletor<T>(p))); }
 	void clean(void);
 	
 	inline Cleaner *operator()(Cleaner *cleaner) { add(cleaner); return cleaner; }
 	template <class T> inline const LockPtr<T>& operator()(const LockPtr<T>& object)
 		{ add(new AutoCleaner<T>(object)); return object; } 
 	template <class T> inline T *operator()(T *object)
-		{ add(new Deletor<T>(object)); return object; } 
+		{ add(object); return object; }
 
 private:
 	typedef List<Cleaner *> list_t;

@@ -176,7 +176,7 @@ template <class T, class C>
 class Method0: public Operation {
 public:
 	typedef T (C::*fun_t)(void);
-	Method0(cstring name, fun_t f): Operation(METHOD, name, type_of<T>()), _f() { add(Parameter(type_of<C>().pointer())); }
+	Method0(cstring name, fun_t f): Operation(METHOD, name, type_of<T>()), _f(f) { add(Parameter(type_of<C>().pointer())); }
 	Variant call(const Vector<Variant>& args) const throw(Exception) override { return __call_method0(_f, args[0].as<C *>()); }
 private:
 	fun_t _f;
@@ -188,7 +188,7 @@ template <class T, class C>
 class Method0Const: public Operation {
 public:
 	typedef T (C::*fun_t)(void) const;
-	Method0Const(cstring name, fun_t f): Operation(METHOD, name, type_of<T>()), _f() { add(Parameter(type_of<C>().pointer())); }
+	Method0Const(cstring name, fun_t f): Operation(METHOD, name, type_of<T>()), _f(f) { add(Parameter(type_of<C>().pointer())); }
 	Variant call(const Vector<Variant>& args) const throw(Exception) override { return __call_method0_const(_f, args[0].as<const C *>()); }
 private:
 	fun_t _f;
@@ -200,7 +200,7 @@ template <class T, class C, class T1>
 class Method1: public Operation {
 public:
 	typedef T (C::*fun_t)(T1);
-	Method1(cstring name, fun_t f): Operation(METHOD, name, type_of<T>()), _f()
+	Method1(cstring name, fun_t f): Operation(METHOD, name, type_of<T>()), _f(f)
 		{ add(Parameter(type_of<C>().pointer())); add(Parameter(type_of<T1>())); }
 	Variant call(const Vector<Variant>& args) const throw(Exception) override { return __call_method1(_f, args[0].as<C *>(), args[1].as<T1>()); }
 private:
@@ -213,7 +213,7 @@ template <class T, class C, class T1>
 class Method1Const: public Operation {
 public:
 	typedef T (C::*fun_t)(T1) const;
-	Method1Const(cstring name, fun_t f): Operation(METHOD, name, type_of<T>()), _f()
+	Method1Const(cstring name, fun_t f): Operation(METHOD, name, type_of<T>()), _f(f)
 		{ add(Parameter(type_of<C>().pointer())); add(Parameter(type_of<T1>())); }
 	Variant call(const Vector<Variant>& args) const throw(Exception) override { return __call_method1_const(_f, args[0].as<const C *>(), args[1].as<T1>()); }
 private:
@@ -226,9 +226,9 @@ template <class T, class C, class T1, class T2>
 class Method2: public Operation {
 public:
 	typedef T (C::*fun_t)(T1, T2);
-	Method2(cstring name, fun_t f): Operation(METHOD, name, type_of<T>()), _f()
+	Method2(cstring name, fun_t f): Operation(METHOD, name, type_of<T>()), _f(f)
 		{ add(Parameter(type_of<C>().pointer())); add(Parameter(type_of<T1>())); add(Parameter(type_of<T2>())); }
-	Variant call(const Vector<Variant>& args) const throw(Exception) override { return __call_method2(_f, args[0].as<C *>(), args[1].as<T1>(), args[1].as<T2>()); }
+	Variant call(const Vector<Variant>& args) const throw(Exception) override { return __call_method2(_f, args[0].as<C *>(), args[1].as<T1>(), args[2].as<T2>()); }
 private:
 	fun_t _f;
 };
@@ -239,9 +239,9 @@ template <class T, class C, class T1, class T2>
 class Method2Const: public Operation {
 public:
 	typedef T (C::*fun_t)(T1, T2) const;
-	Method2Const(cstring name, fun_t f): Operation(METHOD, name, type_of<T>()), _f()
+	Method2Const(cstring name, fun_t f): Operation(METHOD, name, type_of<T>()), _f(f)
 		{ add(Parameter(type_of<C>().pointer())); add(Parameter(type_of<T1>())); add(Parameter(type_of<T2>())); }
-	Variant call(const Vector<Variant>& args) const throw(Exception) override { return __call_method2_const(_f, args[0].as<const C *>(), args[1].as<T1>(), args[1].as<T2>()); }
+	Variant call(const Vector<Variant>& args) const throw(Exception) override { return __call_method2_const(_f, args[0].as<const C *>(), args[1].as<T1>(), args[2].as<T2>()); }
 private:
 	fun_t _f;
 };

@@ -87,6 +87,7 @@ set(TEST_SOURCES
 	"test_utf8.cpp"
 	"test_util_array.cpp"
     "test_wah"
+    "test_cleaner.cpp"
 )
 
 if(HAS_SOCKET)

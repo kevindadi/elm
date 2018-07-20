@@ -31,6 +31,7 @@ public:
 	ToClean(string _name, bool& _cleaned): name(_name), cleaned(_cleaned)
 		{ cleaned = false; }
 	~ToClean(void) { cleaned = true; cout << "cleaned " << name << io::endl; }
+	void print(void) { }
 private:
 	string name;
 	bool& cleaned;
@@ -43,8 +44,7 @@ public:
 };
 
 // Entry point
-int main(void) {	
-	CHECK_BEGIN("cleaner");
+TEST_BEGIN(cleaner)
 	
 	// Simple deletor
 	bool b1, b2;
@@ -55,6 +55,9 @@ int main(void) {
 		CHECK(b1 == false);
 		CHECK(b2 == false);
 		c1 = c2;
+		CHECK(b2 == false);
+		c1->print();
+		cl(static_cast<ToClean *>(nullptr));
 	}
 	CHECK(b1 == true);
 	CHECK(b2 == true);
@@ -62,7 +65,7 @@ int main(void) {
 	// AutoCleaner test
 	bool b3;
 	{
-		AutoPtr<LockedClean> p = new LockedClean("3", b3);
+		LockPtr<LockedClean> p = new LockedClean("3", b3);
 		CHECK(b3 == false);
 		CleanList cl;
 		cl(p);
@@ -71,7 +74,7 @@ int main(void) {
 	
 	// AutoCleaner test
 	bool b4;
-	AutoPtr<LockedClean> p = new LockedClean("4", b4);
+	LockPtr<LockedClean> p = new LockedClean("4", b4);
 	{
 		CHECK(b4 == false);
 		CleanList cl;
@@ -79,6 +82,5 @@ int main(void) {
 	}
 	CHECK(b4 == false);
 
-	CHECK_END
-	return 0;
-}
+TEST_END
+
