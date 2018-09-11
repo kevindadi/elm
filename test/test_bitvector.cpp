@@ -122,6 +122,23 @@ TEST_BEGIN(bitvector)
 	BitVector v12 = v4.makeNot();
 	CHECK(equals(v12, 0xfcfc));
 
+	// resize tests
+	{
+		BitVector bv;
+		bv.resize(4);
+		CHECK(bv.size() == 4);
+	}
+	{
+		BitVector bv(64);
+		bv.set(3);
+		bv.set(4);
+		bv.set(31);
+		bv.resize(65);
+		CHECK(bv.bit(3));
+		CHECK(bv.bit(4));
+		CHECK(bv.bit(31));
+	}
+
 #ifdef EXPERIMENTAL
 	// left shift
 	{

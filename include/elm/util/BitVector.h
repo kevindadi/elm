@@ -31,7 +31,7 @@ namespace elm {
 class BitVector {
 	typedef t::uint8 word_t;
 public:
-	inline BitVector(void): bits(0), _size(0) { }
+	inline BitVector(void): bits(nullptr), _size(0) { }
 	BitVector(int size, bool set = false);
 	BitVector(const BitVector& vec);
 	BitVector(const BitVector& vec, int new_size);
@@ -171,7 +171,8 @@ private:
 
 	inline int wsize(void) const { return sizeof(word_t) << 3; }
 	inline int wshift(void) const { return type_info<word_t>::shift + 3; }
-	inline int wcount(void) const { return (_size + wsize() - 1) >> wshift(); }
+	inline int inWords(int s) const { return (s + wsize() - 1) >> wshift(); }
+	inline int wcount(void) const { return inWords(_size); }
 	inline int windex(int index) const { return index >> wshift(); }
 	inline int bindex(int index) const { return index & (wsize() - 1); }
 

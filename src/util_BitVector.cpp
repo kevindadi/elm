@@ -510,11 +510,14 @@ int BitVector::countOnes(void) const {
  * @param new_size	New size (in bits).
  */
 void BitVector::resize(int new_size) {
-	new_size = (new_size + wsize() - 1) >> wshift();
-	if(wcount() != new_size) {
-		if(bits)
+	int new_wcount = inWords(new_size);
+	if(wcount() != new_wcount) {
+		word_t *new_bits = new word_t[new_wcount];
+		if(bits != nullptr) {
+			array::copy(new_bits, bits, wcount());
 			delete [] bits;
-		bits = new word_t[new_size];
+		}
+		bits = new_bits;
 	}
 	_size = new_size;
 }
