@@ -200,8 +200,7 @@ namespace sys {
  * @return	Linked streams.
  * @throws	System exception.
  */
-Pair<SystemInStream *, SystemOutStream *> System::pipe(void)
-throw (SystemException) {
+Pair<SystemInStream *, SystemOutStream *> System::pipe(void) {
 #if defined(__unix) || defined(__APPLE__)
 	int fds[2];
 	// Create the pair
@@ -271,7 +270,7 @@ unsigned int System::random(unsigned int top) {
  * @return		Opened file.
  * @throws		SystemException	Thrown if there is an error.
  */
-io::OutStream *System::createFile(const Path& path) throw (SystemException) {
+io::OutStream *System::createFile(const Path& path) {
 
 #if defined(__unix) || defined(__APPLE__)
 	int fd = ::open(&path.toString(), O_CREAT | O_TRUNC | O_WRONLY, 0777);
@@ -304,7 +303,7 @@ io::OutStream *System::createFile(const Path& path) throw (SystemException) {
  * @return		Opened file.
  * @throws		SystemException	Thrown if there is an error.
  */
-io::InStream *System::readFile(const Path& path) throw(SystemException) {
+io::InStream *System::readFile(const Path& path) {
 
 #	if defined(__unix) || defined(__APPLE__)
 		int fd = ::open(&path.toString(), O_RDONLY);
@@ -339,7 +338,7 @@ io::InStream *System::readFile(const Path& path) throw(SystemException) {
  * @return		Opened file.
  * @throws		SystemException	Thrown if there is an error.
  */
-io::OutStream *System::appendFile(const Path& path) throw(SystemException) {
+io::OutStream *System::appendFile(const Path& path) {
 #if defined(__unix) || defined(__APPLE__)
 	int fd = ::open(&path.toString(), O_APPEND | O_CREAT | O_WRONLY, 0777);
 	if(fd == -1)
@@ -461,7 +460,6 @@ static inline int makeFlags(System::access_t access) {
 io::RandomAccessStream *System::openRandomFile(
 		const sys::Path& path,
 		access_t access )
-throw(SystemException)
 {
 	int fd = ::open(&path.toString(), makeFlags(access));
 	if(fd < 0)
@@ -486,7 +484,6 @@ throw(SystemException)
 io::RandomAccessStream *System::createRandomFile(
 		const sys::Path& path,
 		access_t access)
-throw(SystemException)
 {
 	ASSERTP(access != READ, "file creation requires at least a write mode");
 	int fd = ::open(&path.toString(), makeFlags(access) | O_CREAT | O_TRUNC, 0666);
@@ -616,7 +613,7 @@ bool System::hasEnv(cstring key) {
  * @param path	Path of the directory to build.
  * @throw SystemException	If the directory cannot be built.
  */
-void System::makeDir(const sys::Path& path) throw(SystemException) {
+void System::makeDir(const sys::Path& path) {
 #	if defined(__WIN32) || defined(__WIN64)
 		if(!CreateDirectory(&path.toString().toCString(), NULL))
 			throw SystemException(0, _ << "cannot create " << path << ": " << win::getLastErrorMessage()));
@@ -631,7 +628,7 @@ void System::makeDir(const sys::Path& path) throw(SystemException) {
  * Remove a directory.
  * @param path	Path of the directory to remove.
  */
-void System::removeDir(const sys::Path& path) throw(SystemException) {
+void System::removeDir(const sys::Path& path) {
 #	if defined(__WIN32) || defined(__WIN64)
 		if(!RemoveDirectory(&path.toString().toCString(), NULL))
 			throw SystemException(0, _ << "cannot remove " << path << ": " << win::getLastErrorMessage()));
@@ -646,7 +643,7 @@ void System::removeDir(const sys::Path& path) throw(SystemException) {
  * Remove a file.
  * @param path	Path of the file to remove.
  */
-void System::removeFile(const Path& path) throw(SystemException) {
+void System::removeFile(const Path& path) {
 #	if defined(__WIN32) || defined(__WIN64)
 		if(!DeleteFile(&path.toString().toCString()))
 			throw SystemException(0, _ << "cannot remove " << path << ": " << win::getLastErrorMessage()));
@@ -662,7 +659,7 @@ void System::removeFile(const Path& path) throw(SystemException) {
  * Remove a file or a directory. If the directory is not empty,
  * remove recursively its content.
  */
-void System::remove(const Path& path) throw(SystemException) {
+void System::remove(const Path& path) {
 	List<sys::Path> wl;
 	wl.push(path);
 
@@ -705,7 +702,7 @@ void System::remove(const Path& path) throw(SystemException) {
  * @param dir	Directory to look in.
  * @return 		Descriptor of the content of the directory content.
  */
-Path::DirReader System::contentOf(const sys::Path& dir) throw(SystemException) {
+Path::DirReader System::contentOf(const sys::Path& dir) {
 	return dir.readDir();
 }
 
@@ -718,7 +715,7 @@ Path::DirReader System::contentOf(const sys::Path& dir) throw(SystemException) {
  * The application is responsible for cleaning up the file.
  * @return	Temporary file path.
  */
-sys::Path System::getTempFile(void) throw(SystemException) {
+sys::Path System::getTempFile(void) {
 #	if defined(__WIN32) || defined(__WIN64)
 		// From https://msdn.microsoft.com/en-us/library/windows/desktop/aa363875%28v=vs.85%29.aspx
 		char buf[MAX_PATH + 1];
@@ -745,7 +742,7 @@ sys::Path System::getTempFile(void) throw(SystemException) {
  * The application is responsible for cleaning up the directory.
  * @return	Temporary directory path.
  */
-sys::Path System::getTempDir(void) throw(SystemException) {
+sys::Path System::getTempDir(void) {
 #	if defined(__WIN32) || defined(__WIN64)
 	// Windows: https://msdn.microsoft.com/en-us/library/windows/desktop/aa363875%28v=vs.85%29.aspx
 	int cnt = 0;
@@ -825,7 +822,7 @@ void System::exit(int code) {
  * @param path				Path of the directory to create.
  * @throw SystemException	If there is an OS error or if a file with same name exist.
  */
-void System::makeDirs(const sys::Path& path)  throw(SystemException) {
+void System::makeDirs(const sys::Path& path) {
 	List<Path> wl;
 	Path p = path;
 

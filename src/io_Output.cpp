@@ -1139,7 +1139,7 @@ IntFormat byte(t::uint8 b) {
  * @param buf_size				Buffer size (optional).
  * @throw sys::SystemException	If the file can not be opened.
  */
-FileOutput::FileOutput(const char *path, int buf_size) throw(sys::SystemException)
+FileOutput::FileOutput(const char *path, int buf_size)
 	: FileOutput(sys::Path(path), buf_size)
 	{ }
 
@@ -1150,7 +1150,7 @@ FileOutput::FileOutput(const char *path, int buf_size) throw(sys::SystemExceptio
  * @param buf_size				Buffer size (optional).
  * @throw sys::SystemException	If the file can not be opened.
  */
-FileOutput::FileOutput(cstring path, int buf_size) throw(sys::SystemException)
+FileOutput::FileOutput(cstring path, int buf_size)
 	: FileOutput(sys::Path(path), buf_size)
 	{ }
 
@@ -1161,7 +1161,7 @@ FileOutput::FileOutput(cstring path, int buf_size) throw(sys::SystemException)
  * @param buf_size				Buffer size (optional).
  * @throw sys::SystemException	If the file can not be opened.
  */
-FileOutput::FileOutput(string path, int buf_size) throw(sys::SystemException)
+FileOutput::FileOutput(string path, int buf_size)
 	: FileOutput(sys::Path(path), buf_size)
 	{ }
 
@@ -1172,7 +1172,7 @@ FileOutput::FileOutput(string path, int buf_size) throw(sys::SystemException)
  * @param buf_size				Buffer size (optional).
  * @throw sys::SystemException	If the file can not be opened.
  */
-FileOutput::FileOutput(sys::Path path, int buf_size) throw(sys::SystemException)
+FileOutput::FileOutput(sys::Path path, int buf_size)
 :	_out(path.write()),
 	_buf(*_out, buf_size)
 {

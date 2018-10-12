@@ -64,8 +64,8 @@ class File {
 	typedef ListMap<string, Section *> map_t;
 
 public:
-	static File *load(const sys::Path& path) throw(Exception);
-	static File *load(io::InStream *in) throw (Exception);
+	static File *load(const sys::Path& path);
+	static File *load(io::InStream *in);
 	~File(void);
 	inline Section *defaultSection(void) const { return def; }
 	inline Section *get(const string& name) const { return sects.get(name, 0); }

@@ -57,7 +57,7 @@ AbstractBlockAllocatorWithGC::~AbstractBlockAllocatorWithGC(void) {
  * @return			Allocated block.
  * @throw BadAlloc	If the allocation fails.
  */
-void *AbstractBlockAllocatorWithGC::allocate(t::size size) throw(BadAlloc) {
+void *AbstractBlockAllocatorWithGC::allocate(t::size size) {
 	ASSERT(size == bsize);
 	return allocate();
 }
@@ -65,7 +65,7 @@ void *AbstractBlockAllocatorWithGC::allocate(t::size size) throw(BadAlloc) {
 
 /**
  */
-void *AbstractBlockAllocatorWithGC::allocate(void) throw(BadAlloc) {
+void *AbstractBlockAllocatorWithGC::allocate(void) {
 
 	// take it from free blocks
 	if(free_list) {

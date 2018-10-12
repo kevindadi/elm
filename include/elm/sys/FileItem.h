@@ -41,7 +41,7 @@ protected:
 	FileItem(Path path, ino_t inode);
 	virtual ~FileItem(void);
 public:
-	static FileItem *get(Path path) throw(SystemException);
+	static FileItem *get(Path path);
 	void use(void);
 	void release(void);
 	

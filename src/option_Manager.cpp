@@ -466,7 +466,7 @@ void Manager::process(String arg) {
  * @param option				Option to add.
  * @throw OptionException		If the short name or the long name is already used.
  */
-void Manager::addOption(Option *option) throw(OptionException) {
+void Manager::addOption(Option *option) {
 	ASSERTP(option, "null option");
 	options.add(option);
 }
@@ -486,7 +486,7 @@ void Manager::removeOption(Option *option) {
  * @param cmd		Short command character.
  * @param option	Option to add.
  */
-void Manager::addShort(char cmd, Option *option) throw(OptionException) {
+void Manager::addShort(char cmd, Option *option) {
 	string str = _ << '-' << cmd;
 	ASSERTP(!cmds.hasKey(str), "command '" << cmd << "' already used");
 	cmds.put(str, option);
@@ -499,7 +499,7 @@ void Manager::addShort(char cmd, Option *option) throw(OptionException) {
  * @param cmd		Long command string.
  * @param option	Option to add.
  */
-void Manager::addLong(cstring cmd, Option *option) throw(OptionException) {
+void Manager::addLong(cstring cmd, Option *option) {
 	string str = _ << "--" << cmd;
 	ASSERTP(!cmds.hasKey(str), _ << "long command \"" << str << "\" already used");
 	cmds.put(str, option);
@@ -511,7 +511,7 @@ void Manager::addLong(cstring cmd, Option *option) throw(OptionException) {
  * @param cmd		Command to add.
  * @param option	Option to add.
  */
-void Manager::addCommand(string cmd, Option *option) throw(OptionException) {
+void Manager::addCommand(string cmd, Option *option) {
 	ASSERTP(!cmds.hasKey(cmd), "command \"" << cmd << "\" already used");
 	cmds.put(cmd, option);
 }
@@ -527,7 +527,7 @@ void Manager::addCommand(string cmd, Option *option) throw(OptionException) {
  *
  * @throw elm::Exception	For any error during application run.
  */
-void Manager::run(void) throw(elm::Exception) {
+void Manager::run(void) {
 }
 
 
@@ -572,7 +572,7 @@ int Manager::manage(int argc, argv_t argv) {
  * @param argv				Argument vector.
  * @throw OptionException	Thrown if the syntax contains an error.
  */
-void Manager::parse(int argc, Manager::argv_t argv) throw(OptionException) {
+void Manager::parse(int argc, Manager::argv_t argv) {
 	ASSERTP(argv, "null argv");
 	ASSERTP(argc > 0, "negative argc");
 	for(int i = 1; i < argc; i++) {

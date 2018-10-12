@@ -128,7 +128,7 @@ void ProcessBuilder::setError(SystemOutStream *_err) {
  * @return	The built process.
  * @throws SystemException	Thrown if there is an error during the build.
  */
-Process *ProcessBuilder::run(void) throw(SystemException) {
+Process *ProcessBuilder::run(void) {
 #if defined(__unix) || defined(__APPLE__)
 	int error = 0;
 	int old_in = -1, old_out = -1, old_err = -1;
@@ -268,11 +268,11 @@ Process *ProcessBuilder::run(void) throw(SystemException) {
 #endif
 
 
-// Return the result
-if(error)
-	throw new SystemException(error, "process building");
-else
-	return process;
+	// Return the result
+	if(error)
+		throw new SystemException(error, "process building");
+	else
+		return process;
 }
 
 } } // elm::sys

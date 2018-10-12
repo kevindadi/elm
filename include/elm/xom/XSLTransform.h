@@ -42,16 +42,16 @@ public:
 // XSLTransform class
 class XSLTransform: public ErrorBase {
 public:
-	XSLTransform(Document *stylesheet) throw(XSLException);
-	XSLTransform(Document *stylesheet, NodeFactory *factory) throw(XSLException);
+	XSLTransform(Document *stylesheet);
+	XSLTransform(Document *stylesheet, NodeFactory *factory);
 
 	void setParameter(const string& name, const string& value);
 	void setParameter(const string& name, const string& ns, const string& value);
-	Document *toDocument(const Nodes& nodes) throw(XMLException);
+	Document *toDocument(const Nodes& nodes);
 	String toString(void);
-	Nodes transform(Document *in) throw(XSLException);
-	Nodes transform(Nodes in) throw(XSLException);
-	Document *transformDocument(Document *in ) throw(XSLException);
+	Nodes transform(Document *in);
+	Nodes transform(Nodes in);
+	Document *transformDocument(Document *in );
 
 private:
 	static void handle_error(void *ctx, const char *msg, ...);

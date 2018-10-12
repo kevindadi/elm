@@ -30,26 +30,26 @@ namespace elm { namespace json {
 class Maker {
 public:
 	virtual ~Maker(void);
-	virtual void beginObject(void) throw(json::Exception);
-	virtual void endObject(void) throw(json::Exception);
-	virtual void beginArray(void) throw(json::Exception);
-	virtual void endArray(void) throw(json::Exception);
-	virtual void onField(string name) throw(json::Exception);
-	virtual void onNull(void) throw(json::Exception);
-	virtual void onValue(bool value) throw(json::Exception);
-	virtual void onValue(int value) throw(json::Exception);
-	virtual void onValue(double value) throw(json::Exception);
-	virtual void onValue(string value) throw(json::Exception);
+	virtual void beginObject(void);
+	virtual void endObject(void);
+	virtual void beginArray(void);
+	virtual void endArray(void);
+	virtual void onField(string name);
+	virtual void onNull(void);
+	virtual void onValue(bool value);
+	virtual void onValue(int value);
+	virtual void onValue(double value);
+	virtual void onValue(string value);
 };
 
 class Parser {
 public:
 	Parser(Maker& maker);
-	void parse(string s) throw(json::Exception);
-	inline void parse(cstring s) throw(json::Exception) { parse(string(s)); }
-	inline void parse(const char *s) throw(json::Exception) { parse(string(s)); }
-	void parse(io::InStream& in) throw(json::Exception);
-	void parse(sys::Path path) throw(json::Exception);
+	void parse(string s);
+	inline void parse(cstring s) { parse(string(s)); }
+	inline void parse(const char *s) { parse(string(s)); }
+	void parse(io::InStream& in);
+	void parse(sys::Path path);
 
 private:
 	typedef enum {
@@ -68,18 +68,18 @@ private:
 		COLON
 	} token_t;
 
-	void doParsing(io::InStream& in) throw(json::Exception);
-	token_t parseNumber(io::InStream& in, char c, int base = 10) throw(json::Exception);
-	void parseObject(io::InStream& in) throw(json::Exception);
-	void parseArray(io::InStream& in) throw(json::Exception);
-	void parseValue(io::InStream& in, token_t t) throw(json::Exception);
-	void parseString(io::InStream& in, char c) throw(json::Exception);
-	void parseLitt(io::InStream& in, cstring litt) throw(json::Exception);
+	void doParsing(io::InStream& in);
+	token_t parseNumber(io::InStream& in, char c, int base = 10);
+	void parseObject(io::InStream& in);
+	void parseArray(io::InStream& in);
+	void parseValue(io::InStream& in, token_t t);
+	void parseString(io::InStream& in, char c);
+	void parseLitt(io::InStream& in, cstring litt);
 	void parseComment(io::InStream& in);
 	token_t parseBasedNumber(io::InStream& in);
 
-	void error(string message) throw(json::Exception);
-	token_t next(io::InStream& in) throw(json::Exception);
+	void error(string message);
+	token_t next(io::InStream& in);
 	char nextChar(io::InStream& in);
 	void pushBack(char c);
 

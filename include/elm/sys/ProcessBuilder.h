@@ -41,7 +41,7 @@ public:
 	void setOutput(SystemOutStream *_out);
 	void setError(SystemOutStream *_out);
 	void setNewSession(bool enabled);
-	Process *run(void) throw(SystemException);
+	Process *run(void);
 
 private:
 	Vector<string> args;

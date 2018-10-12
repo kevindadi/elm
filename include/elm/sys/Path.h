@@ -86,11 +86,11 @@ public:
 	bool isExecutable(void) const;
 
 	// file handling
-	void remove(void) throw(SystemException);
-	void makeDir(void) throw(SystemException);
-	io::InStream *read(void) throw(SystemException);
-	io::OutStream *write(void) throw(SystemException);
-	io::OutStream *append(void) throw(SystemException);
+	void remove(void);
+	void makeDir(void);
+	io::InStream *read(void);
+	io::OutStream *write(void);
+	io::OutStream *append(void);
 
 	// Operator
 	inline Path& operator=(const char *str) { buf = str; return *this; }
@@ -136,7 +136,7 @@ public:
 	class DirIter: public PreIterator<DirIter, cstring> {
 	public:
 		inline DirIter(void): _dir(nullptr) { }
-		DirIter(Path path) throw(SystemException);
+		DirIter(Path path);
 		inline bool ended(void) const { return _dir == nullptr; }
 		inline cstring item(void) const { return _cur; }
 		void next(void);
@@ -149,13 +149,13 @@ public:
 	class DirReader {
 	public:
 		inline DirReader(const Path& p): _p(p) { }
-		inline DirIter begin(void) throw(SystemException) { return DirIter(_p); }
+		inline DirIter begin(void) { return DirIter(_p); }
 		inline DirIter end(void) { return DirIter(); }
 	private:
 		const Path& _p;
 	};
 
-	inline DirReader readDir(void) const throw(SystemException) { return DirReader(*this); }
+	inline DirReader readDir(void) const { return DirReader(*this); }
 	void makeDirs(void) const;
 
 	// deprecated

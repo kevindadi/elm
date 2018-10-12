@@ -72,7 +72,7 @@ StackAllocator::~StackAllocator(void) {
  * @throws BadAlloc		If there is no more memory.
  * @note	The size must not be greater than the size of the chunks.
  */
-void *StackAllocator::allocate(t::size size) throw(BadAlloc) {
+void *StackAllocator::allocate(t::size size) {
 	ASSERTP(size <= _size, "allocated block too big !")
 	if(!cur || size_t(max - top) < size)
 		return chunkFilled(size);
@@ -89,7 +89,7 @@ void *StackAllocator::allocate(t::size size) throw(BadAlloc) {
  * @return			Allocated block.
  * @throiw BadAlloc	In case of fatal allocation error.
  */
-void *StackAllocator::chunkFilled(t::size size) throw(BadAlloc) {
+void *StackAllocator::chunkFilled(t::size size) {
 	newChunk();
 	return allocate(size);
 }
@@ -118,7 +118,7 @@ void StackAllocator::clear(void) {
 /**
  * Allocate a new chunk.
  */
-void StackAllocator::newChunk(void) throw(BadAlloc) {
+void StackAllocator::newChunk(void) {
 	try {
 		chunk_t *chunk = (chunk_t *)new char[sizeof(chunk_t) + _size];
 		chunk->next = cur;

@@ -92,7 +92,7 @@ FileItem::~FileItem(void) {
  * @return					File matching the given path or null if file does not exists.
  * @throw SystemException	If there is a system error.
  */
-FileItem *FileItem::get(Path path) throw(SystemException) {
+FileItem *FileItem::get(Path path) {
 	path = path.canonical();
 	
 	// Need to initialize ?

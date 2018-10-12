@@ -36,7 +36,7 @@ public:
 	virtual ~GroupedGC(void);
 	void clear(void);
 	void doGC(void);
-	virtual void *allocate(t::size size) throw(BadAlloc);
+	virtual void *allocate(t::size size);
 	virtual bool mark(void *data, t::size size);
 	inline void setDisableGC(bool b) { disableGC = b; }
 protected:

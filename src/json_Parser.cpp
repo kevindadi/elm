@@ -49,7 +49,7 @@ Maker::~Maker(void) {
  * Called when a new object is started.
  * As a default, raise an error.
  */
-void Maker::beginObject(void) throw(json::Exception) {
+void Maker::beginObject(void) {
 	throw json::Exception("unexpected object");
 }
 
@@ -57,14 +57,14 @@ void Maker::beginObject(void) throw(json::Exception) {
  * Called when the current object is ended.
  * As a default, do nothing.
  */
-void Maker::endObject(void) throw(json::Exception) {
+void Maker::endObject(void) {
 }
 
 /**
  * Called an array is started.
  * As a default, raise an error.
  */
-void Maker::beginArray(void) throw(json::Exception) {
+void Maker::beginArray(void) {
 	throw json::Exception("unexpected array");
 }
 
@@ -72,7 +72,7 @@ void Maker::beginArray(void) throw(json::Exception) {
  * Called when an array is ended.
  * As a default, do nothing.
  */
-void Maker::endArray(void) throw(json::Exception) {
+void Maker::endArray(void) {
 }
 
 /**
@@ -82,7 +82,7 @@ void Maker::endArray(void) throw(json::Exception) {
  * As a default, raise an error.
  * @param name	Field name.
  */
-void Maker::onField(string name) throw(json::Exception) {
+void Maker::onField(string name) {
 	throw json::Exception("unexpected field");
 }
 
@@ -90,7 +90,7 @@ void Maker::onField(string name) throw(json::Exception) {
  * Called when a "null" is found in JSON file.
  * As a default, raise an exception.
  */
-void Maker::onNull(void) throw(json::Exception) {
+void Maker::onNull(void) {
 	throw json::Exception("unexpected null");
 }
 
@@ -100,7 +100,7 @@ void Maker::onNull(void) throw(json::Exception) {
  * As a default, raise an error.
  * @param value	Found value.
  */
-void Maker::onValue(bool value) throw(json::Exception) {
+void Maker::onValue(bool value) {
 	throw json::Exception("unexpected boolean value");
 }
 
@@ -110,7 +110,7 @@ void Maker::onValue(bool value) throw(json::Exception) {
  * As a default, raise an error.
  * @param value	Integer value.
  */
-void Maker::onValue(int value) throw(json::Exception) {
+void Maker::onValue(int value) {
 	throw json::Exception("unexpected integer value");
 }
 
@@ -119,7 +119,7 @@ void Maker::onValue(int value) throw(json::Exception) {
  * As a default, raise an error.
  * @param value	Float value.
  */
-void Maker::onValue(double value) throw(json::Exception) {
+void Maker::onValue(double value) {
 	throw json::Exception("unexpected float value");
 }
 
@@ -128,7 +128,7 @@ void Maker::onValue(double value) throw(json::Exception) {
  * As a default, raise an error.
  * @param value	String value.
  */
-void Maker::onValue(string value) throw(json::Exception) {
+void Maker::onValue(string value) {
 	throw json::Exception("unexpected string value");
 }
 
@@ -161,7 +161,7 @@ Parser::Parser(Maker& maker): m(maker), line(0), col(0), prev('\0') {
  * Parser from a string.
  * @param s		String to parser.
  */
-void Parser::parse(string s) throw(json::Exception) {
+void Parser::parse(string s) {
 	io::BlockInStream in(s);
 	doParsing(in);
 }
@@ -170,7 +170,7 @@ void Parser::parse(string s) throw(json::Exception) {
  * Parse from an input stream.
  * @param in	Input stream to use.
  */
-void Parser::parse(io::InStream& in) throw(json::Exception) {
+void Parser::parse(io::InStream& in) {
 	try {
 		io::BufferedInStream buf(in);
 		doParsing(buf);
@@ -184,7 +184,7 @@ void Parser::parse(io::InStream& in) throw(json::Exception) {
  * Parser from a file.
  * @param path	File path.
  */
-void Parser::parse(sys::Path path) throw(json::Exception) {
+void Parser::parse(sys::Path path) {
 	try {
 		io::InStream *file = sys::System::readFile(path);
 		try {
@@ -206,7 +206,7 @@ void Parser::parse(sys::Path path) throw(json::Exception) {
  * Raise an error with the given message at the given position.
  * @param message	Error message.
  */
-void Parser::error(string message) throw(json::Exception) {
+void Parser::error(string message) {
 	throw json::Exception(_ << line << ':' << col << ": " << message);
 }
 
@@ -214,7 +214,7 @@ void Parser::error(string message) throw(json::Exception) {
 /**
  * Perform the parsing of the input.
  */
-void Parser::doParsing(io::InStream& in) throw(json::Exception) {
+void Parser::doParsing(io::InStream& in) {
 	line = 1;
 	col = 0;
 	prev = '\0';
@@ -227,7 +227,7 @@ void Parser::doParsing(io::InStream& in) throw(json::Exception) {
  * @param in	Input stream.
  * @param t		Last token.
  */
-void Parser::parseValue(io::InStream& in, token_t t) throw(json::Exception) {
+void Parser::parseValue(io::InStream& in, token_t t) {
 		switch(t) {
 		case LBRACE:	m.beginObject(); parseObject(in); return;
 		case LBRACK:	m.beginArray(); parseArray(in); return;
@@ -246,7 +246,7 @@ void Parser::parseValue(io::InStream& in, token_t t) throw(json::Exception) {
  * Parse an array (initial token has already been parsed).
  * @param in	Input stream.
  */
-void Parser::parseArray(io::InStream& in) throw(json::Exception) {
+void Parser::parseArray(io::InStream& in) {
 	token_t t = next(in);
 	while(t != RBRACK) {
 		parseValue(in, t);
@@ -263,7 +263,7 @@ void Parser::parseArray(io::InStream& in) throw(json::Exception) {
  * Parse an object (considering initial token has been parsed).
  * @param in	Input stream.
  */
-void Parser::parseObject(io::InStream& in) throw(json::Exception) {
+void Parser::parseObject(io::InStream& in) {
 	token_t t = next(in);
 	while(t != RBRACE) {
 		if(t != STRING)
@@ -303,7 +303,7 @@ static inline bool isNumber(char c) {
  * @param in	Input stream.
  * @return		Found token.
  */
-Parser::token_t Parser::next(io::InStream& in) throw(json::Exception) {
+Parser::token_t Parser::next(io::InStream& in) {
 	while(true) {
 		char c = nextChar(in);
 		switch(c) {
@@ -368,7 +368,7 @@ char Parser::nextChar(io::InStream& in) {
  * @param base	Base for an integer parse.
  * @return		Matching token.
  */
-Parser::token_t Parser::parseNumber(io::InStream& in, char c, int base)  throw(json::Exception) {
+Parser::token_t Parser::parseNumber(io::InStream& in, char c, int base)  {
 	static string dec_base = "0123456789+-.eE";
 	static string hex_base = "0123456789abcdefABCEDEF";
 	static string bin_base = "01";
@@ -408,7 +408,7 @@ Parser::token_t Parser::parseNumber(io::InStream& in, char c, int base)  throw(j
  * @param in	Input stream.
  * @param q		First quote.
  */
-void Parser::parseString(io::InStream& in, char q) throw(json::Exception) {
+void Parser::parseString(io::InStream& in, char q) {
 	static string escapes = "\"\'\\/bfnrt";
 	StringBuffer buf;
 	char c = nextChar(in);
@@ -443,7 +443,7 @@ void Parser::parseString(io::InStream& in, char q) throw(json::Exception) {
  * Parse a literal string.
  * @param litt	Literal string to parse (first character is ignored).
  */
-void Parser::parseLitt(io::InStream& in, cstring litt) throw(json::Exception) {
+void Parser::parseLitt(io::InStream& in, cstring litt) {
 	for(int i = 1; i < litt.length(); i++)
 		if(nextChar(in) != litt[i])
 			error("unknown identifier");

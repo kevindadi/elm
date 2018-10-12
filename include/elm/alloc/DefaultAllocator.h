@@ -38,7 +38,7 @@ public:
 class DefaultAllocator {
 public:
 	static DefaultAllocator DEFAULT;
-	virtual void *allocate(t::size size) throw(BadAlloc);
+	virtual void *allocate(t::size size);
 	virtual bool mark(void *data, t::size size);
 	inline void free(void *block) { delete [] (char *)block; }
 	virtual ~DefaultAllocator() { }

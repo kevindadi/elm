@@ -43,29 +43,29 @@ public:
 	static const int WRITE = 2;
 	static const int READ_WRITE = READ | WRITE;
 
-	static Pair<SystemInStream *, SystemOutStream *> pipe(void) throw(SystemException);
+	static Pair<SystemInStream *, SystemOutStream *> pipe(void);
 	static unsigned int random(unsigned int top);
-	static io::OutStream *createFile(const Path& path) throw(SystemException);
-	static io::OutStream *appendFile(const Path& path) throw(SystemException);
-	static io::InStream *readFile(const Path& path) throw(SystemException);
-	static io::RandomAccessStream *openRandomFile(const Path& path, access_t access = READ) throw(SystemException);
-	static io::RandomAccessStream *createRandomFile(const Path& path, access_t access = READ) throw(SystemException);
+	static io::OutStream *createFile(const Path& path);
+	static io::OutStream *appendFile(const Path& path);
+	static io::InStream *readFile(const Path& path);
+	static io::RandomAccessStream *openRandomFile(const Path& path, access_t access = READ);
+	static io::RandomAccessStream *createRandomFile(const Path& path, access_t access = READ);
 	static Path getUnitPath(void *address);
 	static cstring getEnv(cstring key);
 	static bool hasEnv(cstring key);
 	static cstring library_prefix, library_suffix, exec_suffix;
 	static string getLibraryFileName(const string& name);
 	static string getPluginFileName(const string& name);
-	static void makeDir(const sys::Path& path) throw(SystemException);
-	static void makeDirs(const sys::Path& path)  throw(SystemException);
-	static void removeDir(const sys::Path& path) throw(SystemException);
-	static void removeFile(const Path& path) throw(SystemException);
-	static void remove(const Path& path) throw(SystemException);
-	static sys::Path getTempFile(void) throw(SystemException);
-	static sys::Path getTempDir(void) throw(SystemException);
+	static void makeDir(const sys::Path& path);
+	static void makeDirs(const sys::Path& path);
+	static void removeDir(const sys::Path& path);
+	static void removeFile(const Path& path);
+	static void remove(const Path& path);
+	static sys::Path getTempFile(void);
+	static sys::Path getTempDir(void);
 	static int coreCount(void);
 	static void exit(int code = 0);
-	static Path::DirReader contentOf(const sys::Path& dir) throw(SystemException);
+	static Path::DirReader contentOf(const sys::Path& dir);
 
 };
 

@@ -65,7 +65,7 @@ namespace elm { namespace net {
 		virtual const string& host(void) const { return _host; }
 		virtual const string& service(void) const { return _serv; }
 
-		virtual void connect(void) throw(Exception)  {
+		virtual void connect(void) {
 
 			// find the host
 			struct addrinfo hints;
@@ -91,7 +91,7 @@ namespace elm { namespace net {
 			}
 		}
 
-		virtual void disconnect(void) throw(Exception)  {
+		virtual void disconnect(void)  {
 			if(_fd >= 0) {
 				::close(_fd);
 				_fd = -1;
@@ -102,7 +102,7 @@ namespace elm { namespace net {
 			}
 		}
 
-		virtual io::InStream& in(void) throw(Exception)  {
+		virtual io::InStream& in(void)  {
 			if(_fd < 0)
 				throw Exception("client not connected");
 			if(!_in)
@@ -110,7 +110,7 @@ namespace elm { namespace net {
 			return *_in;
 		}
 
-		virtual io::OutStream& out(void) throw(Exception)  {
+		virtual io::OutStream& out(void) {
 			if(_fd < 0)
 				throw Exception("client not connected");
 			if(!_out)
@@ -147,7 +147,7 @@ namespace elm { namespace net {
 		virtual const string& host(void) const { return _host; }
 		virtual const string& service(void) const { return _serv; }
 
-		virtual void connect(void) throw(Exception)  {
+		virtual void connect(void)  {
 
 			// initialization
 			struct addrinfo *result = 0, *ptr = 0, hints;
@@ -174,19 +174,19 @@ namespace elm { namespace net {
 			}
 		}
 
-		virtual void disconnect(void) throw(Exception)  {
+		virtual void disconnect(void) {
 			if(sock != INVALID_SOCKET)
 				closesocket(sock);
 		}
 
-		virtual io::InStream& in(void) throw(Exception)  {
+		virtual io::InStream& in(void)  {
 			if(sock == INVALID_SOCKET)
 				throw Exception("client not connected");
 			else
 				return _in;
 		}
 
-		virtual io::OutStream& out(void) throw(Exception)  {
+		virtual io::OutStream& out(void) {
 			if(sock == INVALID_SOCKET)
 				throw Exception("client not connected");
 			else
@@ -277,21 +277,21 @@ ClientSocket *ClientSocket::make(const string& host, const string& service) {
 
 
 /**
- * @fn void ClientSocket::connect(void) throw(Exception);
+ * @fn void ClientSocket::connect(void);
  * Connect the client to the server.
  * @throw Exception		If there is an error.
  */
 
 
 /**
- * @fn void ClientSocket::disconnect(void) throw(Exception);
+ * @fn void ClientSocket::disconnect(void);
  * Disconnect from the server.
  * @throw	Exception	If there is an error.
  */
 
 
 /**
- * @fn io::InStream& ClientSocket::in(void) throw(Exception);
+ * @fn io::InStream& ClientSocket::in(void);
  * Obtain the input channel for the connection.
  * @return	Input channel.
  * @throw	Exception	If there is an error.
@@ -299,7 +299,7 @@ ClientSocket *ClientSocket::make(const string& host, const string& service) {
 
 
 /**
- * @fn io::OutStream& ClientSocket::out(void) throw(Exception);
+ * @fn io::OutStream& ClientSocket::out(void);
  * Obtain the output channel for the connection.
  * @return	Output channel.
  * @throw	Exception	If there is an error.

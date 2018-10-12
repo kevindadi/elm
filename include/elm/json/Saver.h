@@ -34,8 +34,8 @@ class Saver {
 public:
 	Saver(io::OutStream& out = io::out);
 	Saver(StringBuffer& buf);
-	Saver(sys::Path& path) throw(io::IOException);
-	~Saver(void) throw(io::IOException, Exception);
+	Saver(sys::Path& path);
+	~Saver(void);
 	void close(void);
 
 	inline bool isReadable(void) const { return readable; }
@@ -43,21 +43,21 @@ public:
 	inline string getIndent(void) const { return indent; }
 	inline void setIndent(string i) { indent = i; }
 
-	void beginObject(void) throw(io::IOException);
-	void endObject(void) throw(io::IOException);
-	void beginArray(void) throw(io::IOException);
-	void endArray(void) throw(io::IOException);
-	void addField(string id) throw(io::IOException);
+	void beginObject(void);
+	void endObject(void);
+	void beginArray(void);
+	void endArray(void);
+	void addField(string id);
 
-	void put(void) throw(io::IOException);
-	inline void put(const char *val) throw(io::IOException) { put(cstring(val)); }
-	void put(cstring val) throw(io::IOException);
-	void put(string val) throw(io::IOException);
-	void put(t::uint64 val) throw(io::IOException);
-	void put(t::int64 val) throw(io::IOException);
-	inline void put(int val) throw(io::IOException) { put(t::int64(val)); }
-	void put(double val) throw(io::IOException);
-	void put(bool val) throw(io::IOException);
+	void put(void);
+	inline void put(const char *val) { put(cstring(val)); }
+	void put(cstring val);
+	void put(string val);
+	void put(t::uint64 val);
+	void put(t::int64 val);
+	inline void put(int val) { put(t::int64(val)); }
+	void put(double val);
+	void put(bool val);
 
 private:
 	typedef enum {
@@ -70,11 +70,11 @@ private:
 		END
 	} state_t;
 
-	void doIndent(bool close = false) throw(io::IOException);
+	void doIndent(bool close = false);
 	static state_t next(state_t s);
 	static bool isObject(state_t s);
 	static bool isArray(state_t s);
-	void escape(utf8::char_t c) throw(io::IOException);
+	void escape(utf8::char_t c);
 
 	state_t state;
 	Vector<state_t> stack;

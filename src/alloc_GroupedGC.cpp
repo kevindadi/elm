@@ -273,7 +273,7 @@ void *GroupedGC::allocFromFreeList(t::size size, unsigned int index) {
  * Perform an allocation of the given size.
  * @param size	Size of allocated memory.
  */
-void *GroupedGC::allocate(t::size s) throw(BadAlloc) {
+void *GroupedGC::allocate(t::size s) {
 //void *aaa = new char[s];
 //return aaa;
 

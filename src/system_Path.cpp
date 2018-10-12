@@ -597,7 +597,7 @@ bool Path::isExecutable(void) const {
  *
  * @throw SystemException	Thrown if there is an IO error during operation.
  */
-void Path::remove(void) throw(SystemException) {
+void Path::remove(void) {
 	sys::System::remove(*this);
 }
 
@@ -606,7 +606,7 @@ void Path::remove(void) throw(SystemException) {
  *
  * @throw SystemException	Thrown if there is an IO error during operation.
  */
-void Path::makeDir(void) throw(SystemException) {
+void Path::makeDir(void) {
 	sys::System::makeDir(*this);
 }
 
@@ -616,7 +616,7 @@ void Path::makeDir(void) throw(SystemException) {
  * @return	Opened file.
  * @throw	SystemException	Thrown if there is an IO error during operation.
  */
-io::InStream *Path::read(void) throw(SystemException) {
+io::InStream *Path::read(void) {
 	return sys::System::readFile(*this);
 }
 
@@ -627,7 +627,7 @@ io::InStream *Path::read(void) throw(SystemException) {
  * @return	Opened file.
  * @throw	SystemException	Thrown if there is an IO error during operation.
  */
-io::OutStream *Path::write(void) throw(SystemException) {
+io::OutStream *Path::write(void) {
 	return sys::System::createFile(*this);
 }
 
@@ -639,7 +639,7 @@ io::OutStream *Path::write(void) throw(SystemException) {
  * @return	Opened file.
  * @throw	SystemException	Thrown if there is an IO error during operation.
  */
-io::OutStream *Path::append(void) throw(SystemException) {
+io::OutStream *Path::append(void) {
 	return sys::System::appendFile(*this);
 }
 
@@ -686,7 +686,7 @@ void Path::makeDirs(void) const {
 
 /**
  */
-Path::DirIter::DirIter(Path path) throw(SystemException) {
+Path::DirIter::DirIter(Path path) {
 	_dir = opendir(&path.toString().toCString());
 	if(_dir == NULL)
 		throw SystemException(errno, _ << "cannot read directory " << path);

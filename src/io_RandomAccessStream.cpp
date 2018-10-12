@@ -95,7 +95,6 @@ namespace elm { namespace io {
 RandomAccessStream *RandomAccessStream::openFile(
 	const sys::Path& path,
 	access_t access )
-	throw(sys::SystemException)
 {
 	return sys::System::openRandomFile(path, access);
 };
@@ -111,7 +110,6 @@ RandomAccessStream *RandomAccessStream::openFile(
 RandomAccessStream *RandomAccessStream::createFile(
 	const sys::Path& path,
 	access_t access)
-	throw(sys::SystemException)
 {
 	return sys::System::createRandomFile(path, access);
 }

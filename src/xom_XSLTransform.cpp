@@ -65,7 +65,7 @@ namespace elm { namespace xom {
  * @param stylesheet 	document containing the stylesheet
  * @throw XSLException	when the supplied document is not syntactically correct XSLT
  */
-XSLTransform::XSLTransform(Document *stylesheet) throw(XSLException)
+XSLTransform::XSLTransform(Document *stylesheet)
 : ss(stylesheet), fact(&NodeFactory::default_factory) {
 }
 
@@ -81,7 +81,7 @@ XSLTransform::XSLTransform(Document *stylesheet) throw(XSLException)
  * @param factory		the factory used to build nodes in the result tree
  * @throw XSLException	when the supplied document is not syntactically correct XSLT
  */
-XSLTransform::XSLTransform(Document *stylesheet, NodeFactory *factory) throw(XSLException)
+XSLTransform::XSLTransform(Document *stylesheet, NodeFactory *factory)
 : ss(stylesheet), fact(factory) {
 
 }
@@ -121,7 +121,7 @@ void XSLTransform::setParameter(const string& name, const string& ns, const stri
  * @throw XSLException	if the transformation fails, normally due to an XSLT error
  * 						all nodes passed in in parameter are cleaned up
  */
-Document *XSLTransform::toDocument(const Nodes& nodes) throw(XMLException) {
+Document *XSLTransform::toDocument(const Nodes& nodes) {
 	Document *doc = fact->startMakingDocument();
 
 	// find the root
@@ -176,7 +176,7 @@ void XSLTransform::handle_error(void *ctx, const char *msg, ...) {
  * @return 				a Nodes containing the result of the transformation
  * @throw XSLException	if the transformation fails, normally due to an XSLT error
  */
-Nodes XSLTransform::transform(Document *in) throw(XSLException) {
+Nodes XSLTransform::transform(Document *in) {
 	ASSERTP(false, "unsupported");
 	return Nodes();
 }
@@ -187,7 +187,7 @@ Nodes XSLTransform::transform(Document *in) throw(XSLException) {
  * @param in	document to transform.
  * @return		transformed document.
  */
-Document *XSLTransform::transformDocument(Document *in) throw(XSLException) {
+Document *XSLTransform::transformDocument(Document *in) {
 	xsltInit();
 
 	// prepare parameters
@@ -231,7 +231,7 @@ Document *XSLTransform::transformDocument(Document *in) throw(XSLException) {
 /**
  * Not currently supported.
  */
-Nodes XSLTransform::transform(Nodes in) throw(XSLException) {
+Nodes XSLTransform::transform(Nodes in) {
 	ASSERTP(false, "unsupported");
 	return Nodes();
 }

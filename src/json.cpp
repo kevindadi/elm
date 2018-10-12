@@ -59,7 +59,7 @@ Saver::Saver(StringBuffer& sbuf)
 
 /**
  */
-Saver::Saver(sys::Path& path) throw(io::IOException)
+Saver::Saver(sys::Path& path)
 : state(BEGIN), readable(false), indent("\t"), buf(0), str(0) {
 	str = sys::System::createFile(path);
 	buf = new io::BufferedOutStream(*str);
@@ -68,7 +68,7 @@ Saver::Saver(sys::Path& path) throw(io::IOException)
 
 /**
  */
-Saver::~Saver(void) throw(io::IOException, Exception) {
+Saver::~Saver(void) {
 	close();
 	if(buf)
 		delete buf;
@@ -113,7 +113,7 @@ void Saver::close(void) {
  * using the current indentation.
  * @param close		Set to true to close an object or an array.
  */
-void Saver::doIndent(bool close) throw(io::IOException) {
+void Saver::doIndent(bool close) {
 	if(!close && (state == IN_ARRAY || state == IN_OBJECT))
 		_out << ",";
 	if(readable && state != FIELD) {
@@ -159,7 +159,7 @@ bool Saver::isArray(state_t s) {
  * Begin an object. Only allowed at the beginning of the output,
  * after adding an object or inside an array.
  */
-void Saver::beginObject(void) throw(io::IOException) {
+void Saver::beginObject(void) {
 	ASSERTP(state != END, "json: ended output!");
 	ASSERTP(!isObject(state), "json: object creation only allowed in a field or an array");
 	doIndent();
@@ -172,7 +172,7 @@ void Saver::beginObject(void) throw(io::IOException) {
 /**
  * End an object. Only allowed inside an object.
  */
-void Saver::endObject(void) throw(io::IOException) {
+void Saver::endObject(void) {
 	ASSERTP(isObject(state), "json: not inside an object!");
 	if(!stack)
 		state = END;
@@ -185,7 +185,7 @@ void Saver::endObject(void) throw(io::IOException) {
 /**
  * Begin an array. Only allowed inside an array or in a field.
  */
-void Saver::beginArray(void) throw(io::IOException) {
+void Saver::beginArray(void) {
 	ASSERTP(state != END, "json: ended output!");
 	ASSERTP(state == FIELD || isArray(state), "json: array only allowed in a field or in an array");
 	doIndent();
@@ -198,7 +198,7 @@ void Saver::beginArray(void) throw(io::IOException) {
 /**
  * End an array. Only allowed inside an array.
  */
-void Saver::endArray(void) throw(io::IOException) {
+void Saver::endArray(void) {
 	ASSERTP(isArray(state), "json: not inside an array!");
 	state_t new_state = next(stack.pop());
 	state = ARRAY;
@@ -210,7 +210,7 @@ void Saver::endArray(void) throw(io::IOException) {
 /**
  * Add a field. Only allowed inside an object.
  */
-void Saver::addField(string id) throw(io::IOException) {
+void Saver::addField(string id) {
 	ASSERTP(isObject(state), "json: field only allowed inside an object!");
 	doIndent();
 	_out << '"';
@@ -235,7 +235,7 @@ void Saver::addField(string id) throw(io::IOException) {
  * @param c		Character to escape.
  * @return		Empty string if escape if not useful, escaped string else.
  */
-void Saver::escape(utf8::char_t c) throw(io::IOException) {
+void Saver::escape(utf8::char_t c) {
 	switch(c) {
 	case '"' :	_out << "\\\""; break;
 	case '\\':	_out << "\\\\"; break;
@@ -256,7 +256,7 @@ void Saver::escape(utf8::char_t c) throw(io::IOException) {
 /**
  * Put a null value.
  */
-void Saver::put(void) throw(io::IOException) {
+void Saver::put(void) {
 	ASSERTP(state == FIELD || isArray(state), "json: cannot put a value out of a field or an array!");
 	doIndent();
 	_out << "null";
@@ -269,7 +269,7 @@ void Saver::put(void) throw(io::IOException) {
  * Put a string value.
  * @param str	String to put.
  */
-void Saver::put(cstring str) throw(io::IOException) {
+void Saver::put(cstring str) {
 	ASSERTP(state == FIELD || isArray(state), "json: cannot put a value out of a field or an array!");
 	doIndent();
 	_out << '"';
@@ -285,7 +285,7 @@ void Saver::put(cstring str) throw(io::IOException) {
  * Put a string value.
  * @param val	String to put.
  */
-void Saver::put(string val) throw(io::IOException) {
+void Saver::put(string val) {
 	ASSERTP(state == FIELD || isArray(state), "json: cannot put a value out of a field or an array!");
 	doIndent();
 	_out << '"';
@@ -301,7 +301,7 @@ void Saver::put(string val) throw(io::IOException) {
  * Put an integer value.
  * @param val	Value to put.
  */
-void Saver::put(t::uint64 val) throw(io::IOException) {
+void Saver::put(t::uint64 val) {
 	ASSERTP(state == FIELD || isArray(state), "json: cannot put a value out of a field or an array!");
 	doIndent();
 	_out << val;
@@ -314,7 +314,7 @@ void Saver::put(t::uint64 val) throw(io::IOException) {
  * Put an integer value.
  * @param val	Value to put.
  */
-void Saver::put(t::int64 val) throw(io::IOException) {
+void Saver::put(t::int64 val) {
 	ASSERTP(state == FIELD || isArray(state), "json: cannot put a value out of a field or an array!");
 	doIndent();
 	_out << val;
@@ -327,7 +327,7 @@ void Saver::put(t::int64 val) throw(io::IOException) {
  * Put a double value.
  * @param val	Value to put.
  */
-void Saver::put(double val) throw(io::IOException) {
+void Saver::put(double val) {
 	ASSERTP(state == FIELD || isArray(state), "json: cannot put a value out of a field or an array!");
 	doIndent();
 	_out << val;
@@ -340,7 +340,7 @@ void Saver::put(double val) throw(io::IOException) {
  * Put a boolean value.
  * @param val	Value to put.
  */
-void Saver::put(bool val) throw(io::IOException) {
+void Saver::put(bool val) {
 	ASSERTP(state == FIELD || isArray(state), "json: cannot put a value out of a field or an array!");
 	doIndent();
 	if(val)

@@ -47,7 +47,7 @@ public:
 		mask();
 		for(int i = 0; i < wcount(); i++)
 			if(bits[i]) return false;
-			return true;
+		return true;
 	}
 
 	bool includes(const BitVector& vec) const;

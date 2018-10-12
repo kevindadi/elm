@@ -24,6 +24,8 @@
 
 #include <elm/assert.h>
 #include <elm/io.h>
+#undef major
+#undef minor
 
 namespace elm {
 

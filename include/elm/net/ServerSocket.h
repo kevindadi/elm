@@ -40,8 +40,8 @@ public:
 	static ServerSocket *make(int port);
 	virtual ~ServerSocket(void);
 	virtual int port(void) const = 0;
-	virtual void open(void) throw(Exception) = 0;
-	virtual Connection *listen(void) throw(Exception) = 0;
+	virtual void open(void) = 0;
+	virtual Connection *listen(void) = 0;
 	virtual void close(void) = 0;
 };
 
@@ -51,8 +51,8 @@ public:
 	Server(int port);
 	virtual ~Server(void);
 	inline int port(void) const { if(sock) return sock->port(); else return -1; }
-	void open(void) throw(Exception);
-	void manage(void) throw(Exception);
+	void open(void);
+	void manage(void);
 	void close(void);
 protected:
 	virtual void onConnection(Connection& connection) = 0;

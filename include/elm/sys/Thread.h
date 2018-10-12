@@ -68,9 +68,9 @@ public:
 	static Thread *current(void);
 	static void setRootRunnable(Runnable& runnable);
 
-	virtual void start(void) throw(ThreadException) = 0;
-	virtual void join(void) throw(ThreadException) = 0;
-	virtual void kill(void) throw(ThreadException) = 0;
+	virtual void start(void) = 0;
+	virtual void join(void) = 0;
+	virtual void kill(void) = 0;
 	virtual bool isRunning(void) = 0;
 
 protected:
@@ -84,11 +84,11 @@ inline Runnable& Runnable::current(void) { return Thread::current()->runnable();
 
 class Mutex {
 public:
-	static Mutex *make(void) throw(SystemException);
+	static Mutex *make(void);
 	virtual ~Mutex(void);
-	virtual void lock(void) throw(SystemException) = 0;
-	virtual void unlock(void) throw(SystemException) = 0;
-	virtual bool tryLock(void) throw(SystemException) = 0;
+	virtual void lock(void) = 0;
+	virtual void unlock(void) = 0;
+	virtual bool tryLock(void) = 0;
 };
 
 } }	// elm::sys

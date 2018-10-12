@@ -29,10 +29,10 @@ namespace elm { namespace io {
 
 class FileOutput: public Output {
 public:
-	FileOutput(const char *path, int buf_size = BufferedOutStream::default_size) throw(sys::SystemException);
-	FileOutput(cstring path, int buf_size = BufferedOutStream::default_size) throw(sys::SystemException);
-	FileOutput(string path, int buf_size = BufferedOutStream::default_size) throw(sys::SystemException);
-	FileOutput(sys::Path path, int buf_size = BufferedOutStream::default_size) throw(sys::SystemException);
+	FileOutput(const char *path, int buf_size = BufferedOutStream::default_size);
+	FileOutput(cstring path, int buf_size = BufferedOutStream::default_size);
+	FileOutput(string path, int buf_size = BufferedOutStream::default_size);
+	FileOutput(sys::Path path, int buf_size = BufferedOutStream::default_size);
 	~FileOutput(void);
 private:
 	OutStream *_out;

@@ -37,19 +37,19 @@ public:
 
 class Iter: public PreIterator<Iter, char_t> {
 public:
-	inline Iter(const char *str, t::size size) throw(Exception)
+	inline Iter(const char *str, t::size size)
 		: p(str), q(p + size), c(0) { parse(); }
-	inline Iter(cstring str) throw(Exception)
+	inline Iter(cstring str)
 		: p(&str), q(p + str.length()), c(0) { parse(); }
-	inline Iter(string str) throw(Exception)
+	inline Iter(string str)
 		: p(&str), q(p + str.length()), c(0) { parse(); }
 
 	inline bool ended(void) const { return !c; }
 	inline char_t item(void) const { return c; }
-	inline void next(void) throw(Exception) { return parse(); }
+	inline void next(void) { return parse(); }
 
 private:
-	void parse(void) throw(Exception);
+	void parse(void);
 	const char *p, *q;
 	char_t c;
 };

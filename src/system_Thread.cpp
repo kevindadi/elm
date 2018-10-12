@@ -122,7 +122,7 @@ Thread::~Thread(void) {
  */
 
 /**
- * @fn void Thread::start(void) throw(ThreadException);
+ * @fn void Thread::start(void);
  * Start the execution of the thread and perform the call
  * to Runnable::run(). The thread is stopped when Runnable::run()
  * returns, when it is killed or when the Runnable::run() performs
@@ -136,12 +136,12 @@ Thread::~Thread(void) {
  */
 
 /**
- * @fn void Thread::join(void) throw(ThreadException);
+ * @fn void Thread::join(void);
  * Wait for the current thread to stop.
  */
 
 /**
- * @fn void Thread::kill(void) throw(ThreadException);
+ * @fn void Thread::kill(void);
  * Kill the current thread: notice that this method does not
  * allow any synchronization, the thread will be killed but
  * guarantee can be done at which program point it will happen.
@@ -219,19 +219,19 @@ Mutex::~Mutex(void) { }
 		virtual ~PThread(void) { }
 
 		// Thread overload
-		virtual void start(void) throw(ThreadException) {
+		virtual void start(void) {
 			int rc = pthread_create(&pt, NULL, PThread::run, this);
 			if(rc < 0)
 				throw ThreadException("no more thread available");
 		}
 
-		virtual void join(void) throw(ThreadException) {
+		virtual void join(void) {
 			int rc = pthread_join(pt, NULL);
 			if(rc < 0)
 				throw ThreadException(strerror(errno));
 		}
 
-		virtual void kill(void) throw(ThreadException) {
+		virtual void kill(void) {
 			int rc = pthread_cancel(pt);
 			if(rc < 0)
 				throw ThreadException(strerror(errno));
@@ -275,7 +275,7 @@ Mutex::~Mutex(void) { }
 	class PMutex: public Mutex {
 	public:
 
-		PMutex(void) throw(SystemException) {
+		PMutex(void) {
 			int r = pthread_mutex_init(&h, 0);
 			if(r != 0)
 				throw SystemException(errno, "elm::Mutex");
@@ -285,7 +285,7 @@ Mutex::~Mutex(void) { }
 			pthread_mutex_destroy(&h);
 		}
 
-		virtual void lock(void) throw(SystemException) {
+		virtual void lock(void) {
 			int r = pthread_mutex_lock(&h);
 			if(r)
 				switch(errno) {
@@ -296,7 +296,7 @@ Mutex::~Mutex(void) { }
 				}
 		}
 
-		virtual void unlock(void) throw(SystemException) {
+		virtual void unlock(void) {
 			int r = pthread_mutex_unlock(&h);
 			if(r != 0)
 				switch(errno) {
@@ -307,7 +307,7 @@ Mutex::~Mutex(void) { }
 
 		}
 
-		virtual bool tryLock(void) throw(SystemException) {
+		virtual bool tryLock(void) {
 			int r = pthread_mutex_trylock(&h);
 			if(r == 0)
 				return true;
@@ -349,7 +349,7 @@ Mutex::~Mutex(void) { }
 			return 0;
 		}
 
-		virtual void start(void) throw(ThreadException) {
+		virtual void start(void) {
 			DWORD id;
 			handle = CreateThread(
 				NULL,	// default security attributes
@@ -362,11 +362,11 @@ Mutex::~Mutex(void) { }
 				throw ThreadException(_ << "cannot create thread: " << GetLastError());
 		}
 
-		virtual void join(void) throw(ThreadException) {
+		virtual void join(void) {
 			WaitForSingleObject(handle, INFINITE);
 		}
 
-		virtual void kill(void) throw(ThreadException) {
+		virtual void kill(void) {
 			if(TerminateThread(handle, 0))
 				throw ThreadException(_ << "cannot terminate thread: " << GetLastError());
 		}
@@ -392,7 +392,7 @@ Mutex::~Mutex(void) { }
 	class WinMutex: public Mutex {
 	public:
 
-		WinMutex(void) throw(SystemException) {
+		WinMutex(void) {
 			h = CreateMutex(NULL, FALSE, NULL);
 			ASSERT(h != NULL);
 		}
@@ -401,15 +401,15 @@ Mutex::~Mutex(void) { }
 			CloseHandle(h);
 		}
 
-		virtual void lock(void) throw(SystemException) {
+		virtual void lock(void) {
 			WaitForSingleObject(h, INFINITE);
 		}
 
-		virtual void unlock(void) throw(SystemException) {
+		virtual void unlock(void) {
 			ReleaseMutex(h);
 		}
 
-		virtual bool tryLock(void) throw(SystemException) {
+		virtual bool tryLock(void) {
 			int r = WaitForSingleObject(h, 0);
 			return r != WAIT_TIMEOUT;
 		}
@@ -440,7 +440,7 @@ Thread *Thread::make(Runnable& runnable) {
  * @return	Created mutex.
  * @throw SystemException	If the mutex cannot be created.
  */
-Mutex *Mutex::make(void) throw(SystemException) {
+Mutex *Mutex::make(void) {
 #	if defined(__unix) || defined(__APPLE__)
 		return new PMutex();
 #	elif defined(__WIN32) || defined(__WIN64)

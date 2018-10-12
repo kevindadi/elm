@@ -81,7 +81,7 @@ class Allocator {
 	 * @param size		Size in bytes of the allocated block.
 	 * @throw BadAlloc	If the allocation fails.
 	 */
-	void *allocate(t::size size) throw(BadAlloc);
+	void *allocate(t::size size);
 
 	/**
 	 * Free a block previously allocated.
@@ -128,7 +128,7 @@ DefaultAllocator DefaultAllocator::DEFAULT;
  * @return		Allocated block.
  * @throw BadAlloc	Thrown if there is no more system memory.
  */
-void *DefaultAllocator::allocate(t::size size) throw(BadAlloc) {
+void *DefaultAllocator::allocate(t::size size) {
 	try {
 		return new char[size];
 	}

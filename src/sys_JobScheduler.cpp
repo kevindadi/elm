@@ -76,7 +76,7 @@ namespace elm { namespace sys {
 /**
  * Initialize the scheduler.
  */
-void JobScheduler::init(void) throw(SystemException) {
+void JobScheduler::init(void) {
 
 	// build the mutex
 	mutex = Mutex::make();
@@ -91,7 +91,7 @@ void JobScheduler::init(void) throw(SystemException) {
  * Constructor without producer.
  * @throw SystemException	Lack of OS resources.
  */
-JobScheduler::JobScheduler(void) throw(SystemException): prod(0), mutex(0), cnt(0), thds(0), state(WAIT) {
+JobScheduler::JobScheduler(void): prod(0), mutex(0), cnt(0), thds(0), state(WAIT) {
 	init();
 }
 
@@ -101,7 +101,7 @@ JobScheduler::JobScheduler(void) throw(SystemException): prod(0), mutex(0), cnt(
  * @param producer	Producer to use.
  * @throw SystemException	Lack of OS resources.
  */
-JobScheduler::JobScheduler(JobProducer& producer) throw(SystemException): prod(&producer), mutex(0), cnt(0), thds(0), state(WAIT) {
+JobScheduler::JobScheduler(JobProducer& producer): prod(&producer), mutex(0), cnt(0), thds(0), state(WAIT) {
 	init();
 }
 

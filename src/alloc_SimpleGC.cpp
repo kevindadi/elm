@@ -149,7 +149,7 @@ void *SimpleGC::allocFromFreeList(t::size size) {
  * Perform an allocation of the given size.
  * @param size	Size of allocated memory.
  */
-void *SimpleGC::allocate(t::size size) throw(BadAlloc) {
+void *SimpleGC::allocate(t::size size) {
 	ASSERTP(size < csize, "block too big for SimpleGC");
 
 	// round the size

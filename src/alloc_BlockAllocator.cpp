@@ -47,7 +47,7 @@ BlockAllocator::BlockAllocator(int block_size, int block_per_chunk)
  * Allocate an object.
  * @return	Allocated object.
  */
-void *BlockAllocator::allocate(void) throw(BadAlloc) {
+void *BlockAllocator::allocate(void) {
 	if(list) {
 		block_t *res = list;
 		list = list->next;

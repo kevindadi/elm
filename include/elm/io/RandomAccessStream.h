@@ -47,9 +47,9 @@ public:
 	virtual bool moveBackward(pos_t pos) = 0;
 	virtual void resetPos(void) { moveTo(0); }
 	static RandomAccessStream *openFile(const sys::Path& path,
-		access_t access = READ) throw(sys::SystemException);
+		access_t access = READ);
 	static RandomAccessStream *createFile(const sys::Path& path,
-		access_t access = WRITE) throw(sys::SystemException);
+		access_t access = WRITE);
 };
 
 } } // elm::io

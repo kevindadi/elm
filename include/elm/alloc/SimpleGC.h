@@ -63,7 +63,7 @@ public:
 	void clear(void);
 	void doGC(void);
 
-	void *allocate(t::size size) throw(BadAlloc);
+	void *allocate(t::size size);
 	inline void free(void *block) { }
 
 protected:

@@ -70,9 +70,9 @@ public:
 	Manager(int tag, ...);
 	Manager(const Make& maker);
 	virtual ~Manager(void);
-	void addOption(Option *option) throw(OptionException);
+	void addOption(Option *option);
 	void removeOption(Option *option);
-	void parse(int argc, argv_t argv) throw(OptionException);
+	void parse(int argc, argv_t argv);
 	int manage(int artc, argv_t argv);
 
 	virtual void displayHelp(void);
@@ -90,14 +90,14 @@ protected:
 	Make info;
 	virtual void process(String arg);
 	virtual void configure(int tag, VarArg& args);
-	virtual void run(void) throw(elm::Exception);
+	virtual void run(void);
 
 private:
 	Vector<Option *> options;
 	void processOption(Option *option, int& i, int argc, argv_t argv, const char *earg);
-	void addShort(char cmd, Option *option) throw(OptionException);
-	void addLong(cstring cmd, Option *option) throw(OptionException);
-	void addCommand(string cmd, Option *option) throw(OptionException);
+	void addShort(char cmd, Option *option);
+	void addLong(cstring cmd, Option *option);
+	void addCommand(string cmd, Option *option);
 	ListMap<char, Option *> shorts;
 	ListMap<string, Option *> cmds;
 	UniquePtr<SwitchOption> _help_opt, _version_opt;

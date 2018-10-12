@@ -45,20 +45,20 @@ public:
 
 	MyMaker(void): res(NONE), i(0), f(0) { }
 
-	virtual void beginObject(void) throw(json::Exception) 		{ res = OBJECT; }
-	virtual void endObject(void) throw(json::Exception) 		{ }
-	virtual void beginArray(void) throw(json::Exception)		{ res = ARRAY; }
-	virtual void endArray(void) throw(json::Exception)			{ }
+	virtual void beginObject(void)	{ res = OBJECT; }
+	virtual void endObject(void) 	{ }
+	virtual void beginArray(void)	{ res = ARRAY; }
+	virtual void endArray(void) 	{ }
 
-	virtual void onField(string name) throw(json::Exception)	{
+	virtual void onField(string name) {
 		ASSERT(res == OBJECT);
 		ASSERTP(name == "int" || name == "float" || name == "string", "got " << name);
 	}
 
-	virtual void onNull(void) throw(json::Exception)			{ res = _NULL; }
-	virtual void onValue(bool value) throw(json::Exception)		{ res = value ? TRUE : FALSE; }
+	virtual void onNull(void) { res = _NULL; }
+	virtual void onValue(bool value) { res = value ? TRUE : FALSE; }
 
-	virtual void onValue(int value) throw(json::Exception)		{
+	virtual void onValue(int value) {
 		if(res == ARRAY)
 			iv.add(value);
 		else if(res == OBJECT)
@@ -69,7 +69,7 @@ public:
 		}
 	}
 
-	virtual void onValue(double value) throw(json::Exception)	{
+	virtual void onValue(double value) {
 		if(res == OBJECT)
 			f = value;
 		else {
@@ -78,7 +78,7 @@ public:
 		}
 	}
 
-	virtual void onValue(string value) throw(json::Exception) {
+	virtual void onValue(string value) {
 		if(res == OBJECT)
 			s = value;
 		else {

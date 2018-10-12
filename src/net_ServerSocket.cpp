@@ -120,7 +120,7 @@ Connection::~Connection(void) {
 		virtual ~NativeServerSocket(void) { close(); }
 		virtual int port(void) const { return _port; }
 
-		virtual void open(void) throw(net::Exception) {
+		virtual void open(void) {
 
 			// create the socket
 			_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -160,7 +160,7 @@ Connection::~Connection(void) {
 			}
 		}
 
-		virtual elm::net::Connection *listen(void) throw(net::Exception) {
+		virtual elm::net::Connection *listen(void) {
 
 			// accept the connection
 			struct sockaddr_in caddr;
@@ -208,7 +208,7 @@ Connection::~Connection(void) {
 		virtual ~NativeServerSocket(void) { close(); }
 		virtual int port(void) const { return _port; }
 
-		virtual void open(void) throw(Exception) {
+		virtual void open(void) {
 
 			// create the socket
 			sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -241,7 +241,7 @@ Connection::~Connection(void) {
 			}
 		}
 
-		virtual Connection *listen(void) throw(Exception) {
+		virtual Connection *listen(void) {
 			SOCKENT con = accept(sock, NULL, NULL);
 			if(con == INVALID_SOCKET)
 				throw net::Exception(_ << "cannot accept: " << WSAGetLastError());
@@ -370,7 +370,7 @@ ServerSocket::~ServerSocket(void) {
 
 
 /**
- * @fn void ServerSocket::open(void) throw(Exception);
+ * @fn void ServerSocket::open(void);
  * Open the port.
  * @throw Exception		Thrown if there is an error during the open.
  */
@@ -381,7 +381,7 @@ ServerSocket::~ServerSocket(void) {
  */
 
 /**
- * @fn void ServerSocket::listen(void) throw(Exception);
+ * @fn void ServerSocket::listen(void);
  * Listen for a connection and return it.
  * @throw Exception		Thrown if there is an error during the open.
  */
@@ -421,7 +421,7 @@ Server::~Server(void) {
 /**
  * Open the server.
  */
-void Server::open(void) throw(Exception) {
+void Server::open(void) {
 	if(_port < 0)
 		sock = ServerSocket::make();
 	else
@@ -445,7 +445,7 @@ void Server::close(void) {
  * until it is requested to close.
  * @throw Exception		Thrown if there is an error during the open.
  */
-void Server::manage(void) throw(Exception) {
+void Server::manage(void) {
 	on = true;
 	while(on) {
 		Connection *con = sock->listen();

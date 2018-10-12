@@ -48,8 +48,8 @@ private:
 
 class JobScheduler: private Runnable {
 public:
-	JobScheduler(void) throw(SystemException);
-	JobScheduler(JobProducer& producer) throw(SystemException);
+	JobScheduler(void);
+	JobScheduler(JobProducer& producer);
 	~JobScheduler(void);
 
 	// accessors
@@ -63,7 +63,7 @@ public:
 	void stop(void);
 
 private:
-	void init(void) throw(SystemException);
+	void init(void);
 	virtual void run(void);
 	JobProducer *prod;
 	Mutex *mutex;

@@ -37,10 +37,10 @@ public:
 	virtual int port(void) const = 0;
 	virtual const string& host(void) const = 0;
 	virtual const string& service(void) const = 0;
-	virtual void connect(void) throw(Exception) = 0;
-	virtual void disconnect(void) throw(Exception) = 0;
-	virtual io::InStream& in(void) throw(Exception) = 0;
-	virtual io::OutStream& out(void) throw(Exception) = 0;
+	virtual void connect(void) = 0;
+	virtual void disconnect(void) = 0;
+	virtual io::InStream& in(void) = 0;
+	virtual io::OutStream& out(void) = 0;
 };
 
 } }	// elm::net

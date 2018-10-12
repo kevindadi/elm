@@ -629,7 +629,7 @@ void Input::swallowBlank(void) {
  * @param buf_size				Buffer size (optional).
  * @throw sys::SystemException	If the file cannot be opened.
  */
-FileInput::FileInput(string path, int buf_size) throw(sys::SystemException)
+FileInput::FileInput(string path, int buf_size)
 :	FileInput(sys::Path(path), buf_size)
 { }
 
@@ -639,7 +639,7 @@ FileInput::FileInput(string path, int buf_size) throw(sys::SystemException)
   * @param buf_size				Buffer size (optional).
   * @throw sys::SystemException	If the file cannot be opened.
   */
-FileInput::FileInput(const char *path, int buf_size) throw(sys::SystemException)
+FileInput::FileInput(const char *path, int buf_size)
 :	FileInput(sys::Path(path), buf_size)
 { }
 
@@ -649,7 +649,7 @@ FileInput::FileInput(const char *path, int buf_size) throw(sys::SystemException)
  * @param buf_size				Buffer size (optional).
  * @throw sys::SystemException	If the file cannot be opened.
  */
-FileInput::FileInput(cstring path, int buf_size) throw(sys::SystemException)
+FileInput::FileInput(cstring path, int buf_size)
 :	FileInput(sys::Path(path), buf_size)
 { }
 
@@ -660,7 +660,7 @@ FileInput::FileInput(cstring path, int buf_size) throw(sys::SystemException)
   * @param buf_size				Buffer size (optional).
   * @throw sys::SystemException	If the file cannot be opened.
   */
-FileInput::FileInput(sys::Path path, int buf_size) throw(sys::SystemException)
+FileInput::FileInput(sys::Path path, int buf_size)
 :	_in(path.read()),
 	_buf(*_in, buf_size)
 { setStream(_buf); }

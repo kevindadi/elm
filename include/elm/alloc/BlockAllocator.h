@@ -30,7 +30,7 @@ namespace elm {
 class BlockAllocator {
 public:
 	BlockAllocator(int block_size, int block_per_chunk = 16);
-	void *allocate(void) throw(BadAlloc);
+	void *allocate(void);
 	void free(void *block);
 
 private:

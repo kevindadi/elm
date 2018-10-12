@@ -32,7 +32,7 @@ namespace elm { namespace utf8 {
 
 /**
  */
-void Iter::parse(void) throw(Exception) {
+void Iter::parse(void) {
 
 	// detect end
 	if(p == q) {

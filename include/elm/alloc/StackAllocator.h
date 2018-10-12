@@ -36,7 +36,7 @@ public:
 	static StackAllocator DEFAULT;
 	StackAllocator(t::size size = 4096);
 	virtual ~StackAllocator(void);
-	void *allocate(t::size size) throw(BadAlloc);
+	void *allocate(t::size size);
 	inline void free(void *block) { }
 	void clear(void);
 
@@ -47,10 +47,10 @@ public:
 
 	// template access
 	template <class T>
-	inline T *allocate(int n = 1) throw(BadAlloc) { return static_cast<T *>(StackAllocator::allocate(n * sizeof(T))); }
+	inline T *allocate(int n = 1) { return static_cast<T *>(StackAllocator::allocate(n * sizeof(T))); }
 
 protected:
-	virtual void *chunkFilled(t::size size) throw(BadAlloc);
+	virtual void *chunkFilled(t::size size);
 
 	typedef struct chunk_t {
 		struct chunk_t *next;
@@ -70,7 +70,7 @@ protected:
 	};
 
 	inline t::size chunkSize(void) const { return _size; }
-	void newChunk(void) throw(BadAlloc);
+	void newChunk(void);
 
 private:
 	chunk_t *cur;

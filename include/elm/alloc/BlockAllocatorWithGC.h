@@ -32,7 +32,7 @@ class AbstractBlockAllocatorWithGC {
 public:
 	AbstractBlockAllocatorWithGC(t::size block_size, t::size chunk_size = 1 << 20);
 	virtual ~AbstractBlockAllocatorWithGC(void);
-	void *allocate(void) throw(BadAlloc);
+	void *allocate(void);
 	void collectGarbage(void);
 	inline t::size blockSize(void) const { return bsize; }
 	inline t::size chunkSize(void) const { return csize; }
@@ -41,7 +41,7 @@ public:
 	inline int usedCount(void) const { return totalCount() - freeCount(); }
 
 	// Allocator concept compatibility
-	void *allocate(t::size size) throw(BadAlloc);
+	void *allocate(t::size size);
 	void free(void *block);
 
 protected:
@@ -66,7 +66,7 @@ template <class T>
 class BlockAllocatorWithGC: public AbstractBlockAllocatorWithGC {
 public:
 	inline BlockAllocatorWithGC(t::size chunk_size = 1 << 20): AbstractBlockAllocatorWithGC(sizeof(T), chunk_size) { }
-	inline T *allocate(void) throw(BadAlloc) { return static_cast<T *>(AbstractBlockAllocatorWithGC::allocate()); }
+	inline T *allocate(void) { return static_cast<T *>(AbstractBlockAllocatorWithGC::allocate()); }
 
 protected:
 	inline bool mark(T *b) { return AbstractBlockAllocatorWithGC::mark(b); }

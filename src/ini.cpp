@@ -167,7 +167,7 @@ File::~File(void) {
  * @return			Created INI file.
  * @throw Exception	For any error (IO or format).
  */
-File *File::load(const sys::Path& path) throw(Exception) {
+File *File::load(const sys::Path& path) {
 	try {
 		io::InStream *in = sys::System::readFile(path);
 		File *r = load(in);
@@ -187,7 +187,7 @@ File *File::load(const sys::Path& path) throw(Exception) {
  * @return			Created INI file.
  * @throw Exception	For any error (IO or format).
  */
-File *File::load(io::InStream *in) throw (Exception) {
+File *File::load(io::InStream *in) {
 	File *file = new File();
 	Section *sect = file->defaultSection();
 	io::BufferedInStream bufin(*in);
