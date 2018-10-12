@@ -24,7 +24,18 @@
 namespace elm {
 
 template <class T>
-void swap(T& x, T& y) { T t = x; x = y; y = t; }
+	void swap(T& x, T& y) { T t = x; x = y; y = t; }
+
+#if defined(__GNUC__)
+#  define ELM_UNUSED __attribute__ ((unused))
+#elif defined(_MSC_VER)
+#  define ELM_UNUSED __pragma(warning(suppress:4100))
+#else
+#  define ELM_UNUSED
+#endif
+#ifndef ELM_NO_SHORTCUT
+#	define	UNUSED	ELM_UNUSED
+#endif
 
 }	// elm
 

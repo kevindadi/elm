@@ -184,4 +184,18 @@ String Exception::message(void) {
  * @param T		Type of pointed object.
  * @ingroup		utility
  */
+
+/**
+ * @macro UNUSED
+ * Avoid "unused variable" warning when put after the identifier of the variable.
+ * Mainly useful when a for(auto x: ...) is used.
+ * @ingroup utility
+ */
+
+/**
+ * @macro ELM_UNUSED
+ * See @ref UNUSED.
+ * @ingroup utility
+ */
+
 };
