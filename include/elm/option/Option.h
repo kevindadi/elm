@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	Option class interface
  *
  *	This file is part of OTAWA
@@ -74,6 +73,7 @@ public:
 		inline Make(Manager *m): man(*m) { }
 		inline Make(Manager& m): man(m) { }
 		inline Make& cmd(string cmd) { cmds.add(cmd); return *this; }
+		inline Make& help(cstring d) { _desc = d; return *this; }
 		inline Make& description(cstring desc) { _desc = desc; return *this; }
 	protected:
 		Manager& man;
@@ -84,25 +84,18 @@ public:
 	inline Option(void) { }
 	Option(const Make& make);
 	virtual ~Option(void) { }
-	void output(io::Output& out);
+	//void output(io::Output& out);
 	virtual cstring description(void);
 	virtual usage_t usage(void) = 0;
 	virtual cstring argDescription(void) = 0;
 	virtual void process(String arg) = 0;
 
-	// deprecated
-	virtual char shortName(void);
-	virtual CString longName(void);
-
 protected:
-	virtual void configure(Manager& manager, int tag, VarArg& args);
-	void init(Manager& manager, int tag, ...);
-	void init(Manager& manager, int tag, VarArg& args);
 	cstring desc;
 };
 
 // Inlines
-inline io::Output& operator<<(io::Output& out, Option& opt) { opt.output(out); return out; };
+//inline io::Output& operator<<(io::Output& out, Option& opt) { opt.output(out); return out; };
 
 } } // elm::option
 

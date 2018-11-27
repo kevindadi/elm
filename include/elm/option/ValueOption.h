@@ -22,7 +22,7 @@
 #ifndef ELM_OPTION_VALUEOPTION_H_
 #define ELM_OPTION_VALUEOPTION_H_
 
-#include <elm/option/StandardOption.h>
+#include <elm/option/Option.h>
 #include <elm/type_info.h>
 
 namespace elm { namespace option {
@@ -39,6 +39,7 @@ public:
 		inline Make& usage(usage_t u) { _usage = u; return *this; }
 		inline Make& cmd(string c) { Option::Make::cmd(c); return *this; }
 		inline Make& description(cstring d) { Option::Make::description(d); return *this; }
+		inline Make& help(cstring d) { Option::Make::description(d); return *this; }
 	private:
 		cstring arg_desc;
 		usage_t _usage;
@@ -46,16 +47,11 @@ public:
 
 	AbstractValueOption(const Make& make);
 	AbstractValueOption(Manager& man);
-	AbstractValueOption(Manager& man, int tag, ...);
-	AbstractValueOption(Manager& man, int tag, VarArg& args);
 
 	// Option overload
-	virtual cstring description(void);
-	virtual usage_t usage(void);
-	virtual cstring argDescription(void);
-
-protected:
-	virtual void configure(Manager& manager, int tag, VarArg& args);
+	cstring description(void) override;
+	usage_t usage(void) override;
+	cstring argDescription(void) override;
 
 private:
 	cstring arg_desc;
@@ -87,26 +83,7 @@ public:
 	};
 
 	inline ValueOption(void) { }
-
 	inline ValueOption(const Make& make): AbstractValueOption(make), val(make._def) { }
-
-	inline ValueOption(Manager& man, int tag ...)
-		: AbstractValueOption(man)
-		{ VARARG_BEGIN(args, tag) AbstractValueOption::init(man, tag, args); VARARG_END }
-
-	inline ValueOption(Manager& man, int tag, VarArg& args)
-		: AbstractValueOption(man)
-		{ AbstractValueOption::init(man, tag, args); }
-
-	inline ValueOption(Manager& man, char s, cstring desc, cstring adesc, const T& val = type_info<T>::null)
-		: AbstractValueOption(man)
-		{ init(man, short_cmd, s, option::description, &desc, option::arg_desc, &adesc, def, val, end); }
-
-	inline ValueOption(Manager& man, cstring l, cstring desc, cstring adesc, const T& _val = type_info<T>::null)
-		: AbstractValueOption(Make(man).cmd(l).description(desc).argDescription(adesc)), val(_val) { }
-
-	inline ValueOption(Manager& man, char s, cstring l, cstring desc, cstring adesc, const T& _val = type_info<T>::null)
-		: AbstractValueOption(Make(man).cmd(l).cmd(_ << '-' << s).description(desc).argDescription(adesc)), val(_val) { }
 
 	inline const T& get(void) const { return val; };
 	inline void set(const T& value) { val = value; };
@@ -123,14 +100,6 @@ public:
 	// deprecated
 	inline const T& value(void) const { return val; };
 
-protected:
-	virtual void configure(Manager& manager, int tag, VarArg& args) {
-		switch(tag) {
-		case def: val = get(args); break;
-		default: AbstractValueOption::configure(manager, tag, args); break;
-		}
-	}
-
 private:
 	T val;
 	inline T get(VarArg& args) { return args.next<T>(); }
@@ -142,27 +111,6 @@ template <class T> class Value: public ValueOption<T> {
 public:
 	inline Value(const typename ValueOption<T>::Make& make): ValueOption<T>(make) { }
 };
-
-// string specialization
-template <>
-inline ValueOption<string>::ValueOption(Manager& man, char s, cstring desc, cstring adesc, const string& value)
-	: AbstractValueOption(man)
-	{ AbstractValueOption::init(man, short_cmd, s, option::description, &desc, option::arg_desc, &adesc, def, value.chars(), end); }
-
-template <>
-inline ValueOption<string>::ValueOption(Manager& man, cstring l, cstring desc, cstring adesc, const string& val)
-	: AbstractValueOption(man)
-	{ init(man, long_cmd, &l, option::description, &desc, option::arg_desc, &adesc, def, &val, end); }
-
-template <>
-inline ValueOption<string>::ValueOption(Manager& man, char s, cstring l, cstring desc, cstring adesc, const string& val)
-	: AbstractValueOption(man)
-	{ init(man, short_cmd, s, long_cmd, &l, option::description, &desc, option::arg_desc, &adesc, def, &val, end); }
-
-
-// get specialization
-template <> inline string ValueOption<string>::get(VarArg& args) { return args.next<const char *>(); }
-
 
 // read specializations
 template <> string read<string>(string arg);

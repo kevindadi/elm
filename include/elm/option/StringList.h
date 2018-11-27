@@ -22,35 +22,20 @@
 #ifndef ELM_OPTION_STRING_LIST_H
 #define ELM_OPTION_STRING_LIST_H
 
-#include <elm/option/StandardOption.h>
+#include <elm/option/Option.h>
 #include <elm/data/Vector.h>
 
 namespace elm { namespace option {
 
 // StringList class
-class StringList: public StandardOption {
+class StringList: public Option {
 public:
-	StringList(
-		Manager& manager,
-		char short_name,
-		cstring description,
-		cstring arg_description);
-	StringList(
-		Manager& manager,
-		cstring long_name,
-		cstring description,
-		cstring arg_description);
-	StringList(
-		Manager& manager,
-		char short_name,
-		cstring long_name,
-		cstring description,
-		cstring arg_description);
+	StringList(const Make& m);
 
 	// Option overload
-	virtual usage_t usage(void);
-	virtual cstring argDescription(void);
-	virtual void process(string arg);
+	usage_t usage(void) override;
+	cstring argDescription(void) override;
+	void process(string arg) override;
 
 	// Operators
 	inline operator bool(void) const { return args; };

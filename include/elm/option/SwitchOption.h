@@ -30,7 +30,6 @@ namespace elm { namespace option {
 // SwitchOption class
 class SwitchOption: public Option {
 public:
-	SwitchOption(Manager& man, int tag ...);
 	SwitchOption(const Make& make);
 
 	inline void set(bool value) { val = value; }
@@ -45,9 +44,6 @@ public:
 	virtual usage_t usage(void);
 	virtual CString argDescription(void);
 	virtual void process(string arg);
-
-protected:
-	virtual void configure(Manager& manager, int tag, VarArg& args);
 
 private:
 	bool val;

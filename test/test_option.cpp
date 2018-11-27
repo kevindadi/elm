@@ -20,9 +20,7 @@
  */
 
 #include <elm/options.h>
-#include <elm/option/BoolOption.h>
-#include <elm/option/ListOption.h>
-#include "../include/elm/test.h"
+#include <elm/test.h>
 
 using namespace elm;
 using namespace elm::option;
@@ -53,16 +51,12 @@ static const Version version(1, 2, 3);
 class MyCommand: public Manager {
 public:
 
-	MyCommand(void)
-	: Manager(
-		option::program, &::program,
-		option::version, new Version(::version),
-		option::copyright, &::copyright,
-		option::description, &::description,
-		option::author, &::author,
-		option::free_arg, &::arg_free,
-		end
-	) {
+	MyCommand(void): Manager(Manager::Make(::program, ::version)
+		.copyright(::copyright)
+		.description(::description)
+		.author(::author)
+		.free_argument(::arg_free))
+	{
 	}
 };
 
@@ -74,12 +68,16 @@ MyCommand man;
 ValueOption<string> ns(ValueOption<string>::Make(man).cmd("--ns"));
 
 // old style options
-BoolOption b(man, 'b', "boolean", "boolean test", false);
-EnumOption<int> enum_opt(man, 'e', "enum", "", vals);
-StringOption s(man, 's', "string", "string test", "", "");
-SwitchOption c(man, cmd, "command", end);
-SwitchOption sw(man, cmd, "-S", help, "switch option", end);
-ListOption<int> l(man, cmd, "-l", end);
+SwitchOption b(SwitchOption::Make(man).cmd("-b").cmd("--boolean").description("boolean test"));
+EnumOption<val_t> enum_opt(EnumOption<val_t>::Make(man).cmd("-e").cmd("--enum")
+	.val("1", one)
+	.val("one", one)
+	.val("two", two)
+	.val("three", three));
+ValueOption<string> s(ValueOption<string>::Make(man).cmd("-s").cmd("--string").description("string test"));
+SwitchOption c(SwitchOption::Make(man).cmd("--command"));
+SwitchOption sw(SwitchOption::Make(man).cmd("-S").description("switch option"));
+ListOption<int> l(ListOption<int>::Make(man).cmd("-l"));
 
 
 class MyCommand2: public option::Manager {
@@ -196,7 +194,7 @@ TEST_BEGIN(option)
 		{
 			const char *argv[] = { "command", "command", 0 };
 			FAIL_ON_EXCEPTION(OptionException, man.parse(2, argv));
-			CHECK_EQUAL(*c, true);
+			CHECK_EQUAL(*c, false);
 		}
 
 		// Unknown option

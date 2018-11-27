@@ -22,14 +22,11 @@
 #ifndef ELM_OPTIONS_H
 #define ELM_OPTIONS_H
 
-#include <elm/option/ActionOption.h>
-#include <elm/option/BoolOption.h>
 #include <elm/option/EnumOption.h>
-#include <elm/option/IntOption.h>
-#include <elm/option/Manager.h>
-#include <elm/option/StandardOption.h>
-#include <elm/option/StringOption.h>
-#include <elm/option/SwitchOption.h>
 #include <elm/option/ListOption.h>
+#include <elm/option/Manager.h>
+#include <elm/option/StringList.h>
+#include <elm/option/SwitchOption.h>
+#include <elm/option/ValueOption.h>
 
 #endif	// ELM_OPTIONS_H

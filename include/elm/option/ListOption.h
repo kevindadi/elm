@@ -32,10 +32,6 @@ template <class T>
 class ListOption: public AbstractValueOption {
 public:
 
-	ListOption(Manager& man, int tag, ...): AbstractValueOption(man)
-		{ VARARG_BEGIN(args, tag) init(man, tag, args); VARARG_END }
-	ListOption(Manager& man, int tag, VarArg& args)
-		: AbstractValueOption(man, tag, args) { }
 	ListOption(const Make& make)
 		: AbstractValueOption(make) { }
 

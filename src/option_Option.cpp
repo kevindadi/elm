@@ -34,56 +34,6 @@ namespace elm { namespace option {
 
 
 /**
- * Common initialization.
- */
-void Option::init(Manager& manager, int tag, VarArg& args) {
-	manager.addOption(this);
-	while(tag != end) {
-		configure(manager, tag, args);
-		tag = args.next<int>();
-	}
-}
-
-
-/**
- * Common initialization.
- */
-void Option::init(Manager& manager, int tag, ...) {
-	VARARG_BEGIN(args, tag)
-		init(manager, tag, args);
-	VARARG_END
-}
-
-
-/**
- * Handle a configuration tag and its value.
- * May be override for extending the @ref Option class
- * but do no forget to call back the original configure() method.
- * @param manager	Owner manager.
- * @param tag		Current tag.
- * @param args		List of arguments.
- */
-void Option::configure(Manager& manager, int tag, VarArg& args) {
-	switch(tag) {
-	case cmd:
-		manager.addCommand(args.next<const char *>(), this);
-		break;
-	case short_cmd:
-		manager.addShort(args.next<char>(), this);
-		break;
-	case long_cmd:
-		manager.addLong(args.next<const char *>(), this);
-		break;
-	case option::description:
-		desc = args.next<const char *>();
-		break;
-	default:
-		ASSERTP(false, "unknown configuration tag: " << tag);
-	}
-}
-
-
-/**
  * Build an option.
  * @param make	Option maker.
  */
@@ -128,7 +78,7 @@ Option::Option(const Make& make) {
  * Display the name of the option to the given output stream.
  * @param out	Stream to output to.
  */
-void Option::output(io::Output& out) {
+/*void Option::output(io::Output& out) {
 	char sname = shortName();
 	CString lname = longName();
 	if(sname)
@@ -137,7 +87,7 @@ void Option::output(io::Output& out) {
 		out << '|';
 	if(lname)
 		out << "--" << lname;
-}
+}*/
 
 	
 /**
@@ -145,9 +95,9 @@ void Option::output(io::Output& out) {
  * @return	Single character or '\\0' if there is no short name.
  * @deprecated
  */
-char Option::shortName(void) {
+/*char Option::shortName(void) {
 	return 0;
-}
+}*/
 
 	
 /**
@@ -155,9 +105,9 @@ char Option::shortName(void) {
  * @return	Multi-character or an empty string if there is no long name.
  * @deprecated
  */
-cstring Option::longName(void) {
+/*cstring Option::longName(void) {
 	return "";
-}
+}*/
 
 	
 /**

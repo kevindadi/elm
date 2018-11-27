@@ -33,54 +33,9 @@ namespace elm { namespace option {
 
 /**
  * Build a string option with a short name.
- * @param manager			Parent option manager.
- * @param short_name		Single-letter name.
- * @param description		Option description.
- * @param arg_description	Argument description.
+ * @param m		Option maker.
  */
-StringList::StringList(
-	Manager& manager,
-	char short_name,
-	cstring description,
-	cstring arg_description)
-:	StandardOption(manager, short_name, description),
-	arg_desc(arg_description)
-	{ }
-
-
-/**
- * Build a string option with a long name.
- * @param manager			Parent option manager.
- * @param long_name			Multiple-letter name.
- * @param description		Option description.
- * @param arg_description	Argument description.
- */
-StringList::StringList(
-	Manager& manager,
-	cstring long_name,
-	cstring description,
-	cstring arg_description)
-:	StandardOption(manager, long_name, description),
-	arg_desc(arg_description)
-	{ }
-
-
-/**
- * Build a string option with a short name and a long name.
- * @param manager			Parent option manager.
- * @param short_name		Single-letter name.
- * @param long_name			Multiple-letter name.
- * @param description		Option description.
- * @param arg_description	Argument description.
- */
-StringList::StringList(
-	Manager& manager,
-	char short_name,
-	cstring long_name,
-	cstring description,
-	cstring arg_description)
-:	StandardOption(manager, short_name, long_name, description),
-	arg_desc(arg_description)
+StringList::StringList(const Make& m): Option(m)
 	{ }
 
 

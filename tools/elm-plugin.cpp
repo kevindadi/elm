@@ -30,13 +30,11 @@ class ElmPlugin: public option::Manager {
 public:
 	ElmPlugin(void):
 	Manager(
-		option::program, "elm-plugin",
-		option::version, new Version(1, 0, 0),
-		option::copyright, "GPL (c) 2013 IRIT - UPS",
-		option::author, "H. Cassé <casse@irit.fr>",
-		option::end),
-	info(*this, option::cmd, "-i", option::cmd, "--info", option::help, "Display the content of the plugin information string", option::end),
-	help(*this, option::cmd, "-h", option::cmd, "--help", option::help, "Display this summary of options.", option::end)
+		Make("elm-plugin", Version(1, 0, 0))
+			.copyright("GPL (c) 2013 IRIT - UPS")
+			.author("H. Cassé <casse@irit.fr>")),
+	info(option::SwitchOption::Make(this).cmd("-i").cmd("--info").help("Display the content of the plugin information string")),
+	help(option::SwitchOption::Make(this).cmd("-h").cmd("--help").help("Display this summary of options."))
 
 	{ }
 

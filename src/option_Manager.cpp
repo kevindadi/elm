@@ -319,21 +319,6 @@ Manager::Manager(void) {
 
 
 /**
- * Build a manager with the new method.
- * @param config	First configuration item.
- * @param ...		end() ended configuration item list.
- * @deprecated		Since 22/03/13.
- */
-Manager::Manager(int tag, ...) {
-	VARARG_BEGIN(args, tag)
-		while(tag != end) {
-			configure(tag, args);
-			tag = args.next<int>();
-		}
-	VARARG_END
-}
-
-/**
  * Build a new option manager.
  * @param maker		Information for initialization.
  */
