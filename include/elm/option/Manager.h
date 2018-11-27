@@ -67,7 +67,7 @@ public:
 
 	typedef const char * const *argv_t;
 	Manager(void);
-	Manager(int tag, ...);
+	//Manager(int tag, ...);
 	Manager(const Make& maker);
 	virtual ~Manager(void);
 	void addOption(Option *option);

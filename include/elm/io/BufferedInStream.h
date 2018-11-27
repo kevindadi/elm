@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	BufferedInStream class interface
  *
  *	This file is part of OTAWA
@@ -22,6 +21,7 @@
 #ifndef ELM_BUFFEREDINSTREAM_H_
 #define ELM_BUFFEREDINSTREAM_H_
 
+#include <elm/io.h>
 #include <elm/io/InStream.h>
 
 namespace elm { namespace io {
@@ -31,12 +31,18 @@ class BufferedInStream: public InStream {
 public:
 	static const int default_size = 4096;
 	
-	BufferedInStream(InStream& input, int size = default_size);
-	virtual ~BufferedInStream(void);
-	virtual int read(void *buffer, int size);
+	BufferedInStream(InStream& input = cin.stream(), int size = default_size);
+	~BufferedInStream(void);
+
+	void setStream(InStream& str);
+	void reset();
+
+	int read(void *buffer, int size) override;
+	int read(void) override;
 
 private:
-	InStream& in;
+	int refill();
+	InStream *in;
 	char *buf;
 	int pos, top, buf_size;
 };

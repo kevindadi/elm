@@ -24,6 +24,7 @@
 #include <elm/dyndata/AbstractCollection.h>
 #include <elm/rtti/Class.h>
 #include <elm/rtti/Enum.h>
+#include <elm/rtti/Tuple.h>
 
 namespace elm {
 

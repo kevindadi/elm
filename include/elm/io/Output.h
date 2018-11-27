@@ -220,7 +220,7 @@ private:
 template <class T> struct def_printer { static inline void print(Output& out, const T& v) { out.print("<not printable>"); } };
 template <class T> struct enum_printer { static inline void print(Output& out, const T& v) { out.print(enum_info<T>::toString(v)); } };
 template <class T> inline Output& operator<<(Output& out, const T& v)
-	{ _if<type_info<T>::is_defined_enum, enum_printer<T>, def_printer<T> >::_::print(out, v); return out; }
+	{ _if<type_info<T>::is_defined_enum, enum_printer<T>, def_printer<T> >::print(out, v); return out; }
 template <class T> inline Output& operator<<(Output& out, T *v)
 	{ out.print((void *)v); return out; }
 inline Output& operator<<(Output& out, bool value) { out.print(value); return out; };

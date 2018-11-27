@@ -25,75 +25,9 @@
 
 namespace elm {
 
-class Variant {
-public:
-	inline Variant(void) { }
-	inline Variant(bool v) 								{ _data.b = v; }
-	inline Variant(t::int8 v) 							{ _data.i8 = v; }
-	inline Variant(t::int16 v) 							{ _data.i16 = v; }
-	inline Variant(t::int32 v)							{ _data.i32 = v; }
-	inline Variant(t::int64 v)							{ _data.i64 = v; }
-	inline Variant(t::uint8 v)							{ _data.u8 = v; }
-	inline Variant(t::uint16 v)							{ _data.u16 = v; }
-	inline Variant(t::uint32 v)							{ _data.u32 = v; }
-	inline Variant(t::uint64 v)							{ _data.u64 = v; }
-	inline Variant(float v)								{ _data.f = v; }
-	inline Variant(double v)							{ _data.d = v; }
-	inline Variant(const char *v)						{ _data.s = v; }
-	inline Variant(cstring s)							{ _data.s = &s; }
-	inline Variant(string s)							{ _data.s = &s.toCString(); }
-	template <class T>
-	inline Variant(T *v)								{ _data.p = v; }
-	template <class T>
-	inline Variant(const T *v)							{ _data.p = v; }
-	template <class T>
-	inline Variant(T&& v)								{ _data.p = new T(v); }
-	template <class T>
-	inline Variant(T& v)								{ _data.p = &v; }
-	template <class T>
-	inline Variant(const T& v)							{ _data.cp = &v; }
+namespace variant {
 
-	inline bool asBool(void) const { return _data.b; }
-	inline int asInt(void) const { return asInt32(); }
-	inline t::int8 asInt8(void) const { return _data.i8; }
-	inline t::int8 asInt16(void) const { return _data.i16; }
-	inline t::int8 asInt32(void) const { return _data.i32; }
-	inline t::int8 asInt64(void) const { return _data.i64; }
-	inline t::uint8 asUInt8(void) const { return _data.i8; }
-	inline t::uint8 asUInt16(void) const { return _data.i16; }
-	inline t::uint8 asUInt32(void) const { return _data.i32; }
-	inline t::uint8 asUInt64(void) const { return _data.i64; }
-	inline float asFloat(void) const { return _data.f; }
-	inline float asDouble(void) const { return _data.d; }
-	inline cstring asCString(void) const { return _data.s; }
-	inline cstring asString(void) const { return _data.s; }
-	inline void *asPointer(void) const { return _data.p; }
-
-	template <class T> T as(void) const { return _get<T>::_(*this); }
-
-private:
-	template <class T> struct _get				{ static T _(const Variant& v) { return v.get(static_cast<T *>(nullptr)); } };
-	template <class T> struct _get<T *>			{ static T *_(const Variant& v) { return static_cast<T *>(v._data.p); } };
-	template <class T> struct _get<const T *>	{ static const T *_(const Variant& v) { return static_cast<const T *>(v._data.cp); } };
-	template <class T> struct _get<T&>			{ static T& _(const Variant& v) { return *static_cast<T *>(v._data.p); } };
-	template <class T> struct _get<const T&>	{ static const T& _(const Variant& v) { return *static_cast<const T *>(v._data.cp); } };
-
-	inline t::int8   get(t::int8   *x) const { return _data.i8 ; }
-	inline t::int16  get(t::int16  *x) const { return _data.i16; }
-	inline t::int32  get(t::int32  *x) const { return _data.i32; }
-	inline t::int64  get(t::int64  *x) const { return _data.i64; }
-	inline t::uint8  get(t::uint8  *x) const { return _data.u8 ; }
-	inline t::uint16 get(t::uint16 *x) const { return _data.u16; }
-	inline t::uint32 get(t::uint32 *x) const { return _data.u32; }
-	inline t::uint64 get(t::uint64 *x) const { return _data.u64; }
-	inline float     get(float     *x) const { return _data.f  ; }
-	inline double    get(double    *x) const { return _data.d  ; }
-	inline cstring   get(cstring   *x) const { return _data.s  ; }
-	inline string    get(string    *x) const { return _data.s  ; }
-	template <class T>
-	inline T get(const T *x)		   const { return *static_cast<const T *>(_data.p); }
-
-	union {
+	typedef union {
 		bool b;
 		t::int8 i8;
 		t::int16 i16;
@@ -108,8 +42,64 @@ private:
 		const char *s;
 		void *p;
 		const void *cp;
-	} _data;
+	} data_t;
 
+	template <typename T>
+	struct access_t {
+		static T get(const data_t& d) 			{ return *static_cast<const T *>(d.cp); }
+		static void set(data_t& d, const T& x)	{ d.cp = &x; }
+	};
+
+	template <> struct access_t<bool> { static bool get(const data_t& d) { return d.b; } static void set(data_t& d, bool x)	{ d.b = x; } };
+	template <> struct access_t<t::int8 >  { static t::int8   get(const data_t& d) { return d.i8 ; } static void set(data_t& d, t::int8   x) { d.i8  = x; } };
+	template <> struct access_t<t::int16>  { static t::int16  get(const data_t& d) { return d.i16; } static void set(data_t& d, t::int16  x) { d.i16 = x; } };
+	template <> struct access_t<t::int32>  { static t::int32  get(const data_t& d) { return d.i32; } static void set(data_t& d, t::int32  x) { d.i32 = x; } };
+	template <> struct access_t<t::int64>  { static t::int64  get(const data_t& d) { return d.i64; } static void set(data_t& d, t::int64  x) { d.i64 = x; } };
+	template <> struct access_t<t::uint8 > { static t::uint8  get(const data_t& d) { return d.u8 ; } static void set(data_t& d, t::uint8  x) { d.u8  = x; } };
+	template <> struct access_t<t::uint16> { static t::uint16 get(const data_t& d) { return d.u16; } static void set(data_t& d, t::uint16 x) { d.u16 = x; } };
+	template <> struct access_t<t::uint32> { static t::uint32 get(const data_t& d) { return d.u32; } static void set(data_t& d, t::uint32 x) { d.u32 = x; } };
+	template <> struct access_t<t::uint64> { static t::uint64 get(const data_t& d) { return d.u64; } static void set(data_t& d, t::uint64 x) { d.u64 = x; } };
+	template <> struct access_t<float>	   { static float     get(const data_t& d) { return d.f;   } static void set(data_t& d, float     x) { d.f   = x; } };
+	template <> struct access_t<double>	   { static double    get(const data_t& d) { return d.d;   } static void set(data_t& d, double    x) { d.d   = x; } };
+
+	template <> struct access_t<cstring> 		{ static cstring get(const data_t& d) { return static_cast<const char *>(d.cp); } static void set(data_t& d, cstring x) { d.cp = &x; } };
+	template <> struct access_t<string> 		{ static string get(const data_t& d)  { return static_cast<const char *>(d.cp); } static void set(data_t& d, string x)	 { d.cp = &x; } };
+	template <> struct access_t<const cstring&> { static cstring get(const data_t& d) { return static_cast<const char *>(d.cp); } static void set(data_t& d, cstring x) { d.cp = &x; } };
+	template <> struct access_t<const string&>	{ static string get(const data_t& d)  { return static_cast<const char *>(d.cp); } static void set(data_t& d, string x)	 { d.cp = &x; } };
+
+	template <class T> struct access_t<T *> { static T *get(const data_t& d) { return static_cast<T *>(d.p); } static void set(data_t& d, T *x)	{ d.p = x; } };
+	template <class T> struct access_t<const T *> { static const T *get(const data_t& d) { return static_cast<const T *>(d.cp); } static void set(data_t& d, const T *x)	{ d.cp = x; } };
+	template <class T> struct access_t<T&> { static T& get(const data_t& d) { return *static_cast<T *>(d.p); } static void set(data_t& d, T& x)	{ d.p = &x; } };
+	template <class T> struct access_t<const T&> { static const T& get(const data_t& d) { return *static_cast<const T *>(d.cp); } static void set(data_t& d, const T& x)	{ d.cp = &x; } };
+
+}	// variant
+
+
+class Variant {
+public:
+	inline Variant(void) { }
+	template <class T> Variant(T x) { variant::access_t<T>::set(_data, x); }
+
+	/*inline bool asBool(void) const { return _data.b; }
+	inline int asInt(void) const { return asInt32(); }
+	inline t::int8 asInt8(void) const { return _data.i8; }
+	inline t::int8 asInt16(void) const { return _data.i16; }
+	inline t::int8 asInt32(void) const { return _data.i32; }
+	inline t::int8 asInt64(void) const { return _data.i64; }
+	inline t::uint8 asUInt8(void) const { return _data.i8; }
+	inline t::uint8 asUInt16(void) const { return _data.i16; }
+	inline t::uint8 asUInt32(void) const { return _data.i32; }
+	inline t::uint8 asUInt64(void) const { return _data.i64; }
+	inline float asFloat(void) const { return _data.f; }
+	inline float asDouble(void) const { return _data.d; }
+	inline cstring asCString(void) const { return _data.s; }
+	inline cstring asString(void) const { return _data.s; }*/
+	inline void *asPointer(void) const { return _data.p; }
+
+	template <class T> T as() const { return variant::access_t<T>::get(_data); }
+
+private:
+	variant::data_t _data;
 };
 
 }	// elm

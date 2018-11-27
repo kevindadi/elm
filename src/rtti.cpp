@@ -800,6 +800,53 @@ const Type& cstring_type = single<CStringType>();
 
 
 /**
+ * @class Tuple
+ * This interface provides access to member of a tuple class.
+ * A tuple class is a class of object which identity is not important.
+ * They are used as scalar values as int, float, etc. A good example of
+ * tuple class would be a class representing complex numbers.
+ *
+ * @ingroup rtti
+ */
+
+/**
+ */
+Tuple::~Tuple() {
+}
+
+/**
+ * @fn int Tuple::count() const;
+ * Count the number of components in the tuple.
+ * @return	Number of components.
+ */
+
+/**
+ * @fn const Vector<const rtti::Type *> Tuple::types() const;
+ * Get the types of the values composing the object.
+ * @return	Vector of types of object components.
+ */
+
+/**
+ * @fn void Tuple::split(void *ptr, Vector<Variant>& values) const;
+ * Decompose a tuple object in its component. The component order in values arrays
+ * must be the same as type as types returned by Tuple::types().
+ *
+ * @param ptr		Object to decompose.
+ * @param values	Result variant vector made of components of the object.
+ */
+
+/**
+ * @fn void *Tuple::make(const Vector<Variant>& values, int i) const;
+ * Build a tuple objects from its components. The component order in values arrays
+ * must be the same as type as types returned by Tuple::types().
+ *
+ * @param values	Values composing the tuple object.
+ * @param i			Index to start reading components from.
+ * @return			Built tuple object.
+ */
+
+
+/**
  * @class AbstractClass
  *
  * Abstract class to represent classes in RTTI. It is mainly used
@@ -899,6 +946,17 @@ void *AbstractClass::upCast(void *ptr) const {
  */
 void *AbstractClass::downCast(void *ptr) const {
 	return ptr;
+}
+
+/**
+ * Try to get the value interface of a tuple class. Class that can be considered
+ * as tuples are classes which identity (address) is not important.
+ * They are used as values as int, float, etc.
+ *
+ * @return	Value class interface, or null.
+ */
+const Tuple *AbstractClass::toTuple() const {
+	return nullptr;
 }
 
 /**

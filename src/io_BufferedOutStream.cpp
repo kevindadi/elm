@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	BufferedOutStream class implementation
  *
  *	This file is part of OTAWA
@@ -71,6 +70,19 @@ int BufferedOutStream::write(const char *buffer, int size) {
 
 /**
  */
+int BufferedOutStream::write(char byte) {
+	if(top == buf_size) {
+		int rc = flush();
+		if(rc < 0)
+			return rc;
+	}
+	buf[top++] = byte;
+	return 0;
+}
+
+
+/**
+ */
 int BufferedOutStream::flush(void) {
 	 if(top == 0)
 		 return 0;
@@ -78,8 +90,26 @@ int BufferedOutStream::flush(void) {
 		 int res = out->write(buf, top);
 		 top = 0;
 		 return res;
-	 }
- }
+	}
+}
+
+
+/**
+ * Reset the stream without flushing.
+ */
+void BufferedOutStream::reset() {
+	top = 0;
+}
+
+
+/**
+ * Change the buffered stream, flushing remaining content.
+ * @param str	New stream.
+ */
+void BufferedOutStream::setStream(OutStream& str) {
+	flush();
+	out = &str;
+}
 
 
 /**

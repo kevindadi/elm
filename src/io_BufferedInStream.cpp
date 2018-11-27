@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	BufferedInStream class implementation
  *
  *	This file is part of OTAWA
@@ -43,7 +42,7 @@ namespace elm { namespace io {
  * @param size	Default size of the used buffer.
  */
 BufferedInStream::BufferedInStream(InStream& input, int size)
-:	in(input), buf(new char[size]), pos(0), top(0), buf_size(size) {
+:	in(&input), buf(new char[size]), pos(0), top(0), buf_size(size) {
 	ASSERTP(size > 0, "strictly positive buffer size required");
 }
 
@@ -56,16 +55,33 @@ BufferedInStream::~BufferedInStream(void) {
 
 
 /**
+ * Set the current stream to read. The buffer is reset.
+ * @param str	New stream.
+ */
+void BufferedInStream::setStream(InStream& str) {
+	reset();
+	in = &str;
+}
+
+
+/**
+ * Reset the buffer to empty.
+ */
+void BufferedInStream::reset() {
+	pos = 0;
+	top = 0;
+}
+
+
+/**
  */
 int BufferedInStream::read(void *buffer, int size) {
 	
 	// refill buffer
 	if(pos >= top) {
-		int size = in.read(buf, buf_size);
-		if(size <= 0)
-			return size;
-		pos = 0;
-		top = size;
+		int nsize = refill();
+		if(nsize <= 0)
+			return nsize;
 	}
 	
 	// transfer data
@@ -73,6 +89,33 @@ int BufferedInStream::read(void *buffer, int size) {
 		size = top - pos;
 	memcpy(buffer, buf + pos, size);
 	pos += size;
+	return size;
+}
+
+
+/**
+ */
+int BufferedInStream::read(void) {
+	if(pos >= top) {
+		int nsize = refill();
+		if(nsize <= 0)
+			return nsize;
+	}
+	pos++;
+	return buf[pos - 1];
+}
+
+
+/**
+ * Reload the buffer.
+ */
+int BufferedInStream::refill() {
+	ASSERT(pos >= top);
+	int size = in->read(buf, buf_size);
+	if(size > 0) {
+		pos = 0;
+		top = size;
+	}
 	return size;
 }
 

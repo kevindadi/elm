@@ -140,8 +140,8 @@ inline void __serialize(Serializer& s, const T *v) {
 template <class T>
 inline void __serialize(Serializer& s, const T& v) {
 	_if<type_info<T>::is_class, from_class<T>,
-			typename _if<type_info<T>::is_enum, from_enum<T>, from_type<T> >::_
-		>::_::serialize(s, v);
+			_if<type_info<T>::is_enum, from_enum<T>, from_type<T> >
+		>::serialize(s, v);
 }
 template <class T>
 inline Serializer& operator&(Serializer& serializer, const T& data) {
@@ -167,8 +167,8 @@ inline void __unserialize(Unserializer& s, const T *&v) {
 template <class T>
 inline void __unserialize(Unserializer& s, T& v) {
 	_if<type_info<T>::is_class, from_class<T>,
-			typename _if<type_info<T>::is_enum, from_enum<T>, from_type<T> >::_
-		>::_::unserialize(s, v);
+			_if<type_info<T>::is_enum, from_enum<T>, from_type<T> >
+		>::unserialize(s, v);
 }
 template <class T>
 inline Unserializer& operator&(Unserializer& serializer, T& data) {

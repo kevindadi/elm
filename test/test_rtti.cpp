@@ -1,6 +1,7 @@
 #include "../include/elm/test.h"
 #include <elm/rtti.h>
 #include <elm/data/Vector.h>
+#include <elm/sys/Path.h>
 #include <elm/util/Variant.h>
 
 using namespace elm;
@@ -142,6 +143,11 @@ public:
 };
 rtti::Class<ConcreteC, AbstractC> ConcreteC::__type("ConcreteC");
 
+
+// tuple test
+rtti::Declare sys_path_class(rtti::tuple1("elm::sys::Path", &sys::Path::toString));
+
+
 TEST_BEGIN(rtti)
 	{
 		CHECK_EQUAL(&rtti::int8_type, &type_of<t::int8>());
@@ -175,6 +181,30 @@ TEST_BEGIN(rtti)
 
 		CHECK_EQUAL(t::ptr(pb), DD::__type.upCast(pd, BB::__type));
 		CHECK_EQUAL(t::ptr(pd), BB::__type.downCast(pb, DD::__type));
+	}
+
+	// Pre-variante test
+	{
+		variant::data_t d;
+		variant::access_t<bool>::set(d, true);
+		CHECK_EQUAL(variant::access_t<bool>::get(d), true);
+		variant::access_t<t::int32>::set(d, 666);
+		CHECK_EQUAL(variant::access_t<t::int32>::get(d), t::int32(666));
+		variant::access_t<t::uint16>::set(d, 666);
+		CHECK_EQUAL(variant::access_t<t::uint16>::get(d), t::uint16(666));
+		variant::access_t<float>::set(d, 666.111);
+		CHECK_EQUAL(variant::access_t<float>::get(d), float(666.111));
+
+		cstring s = "ok";
+		variant::access_t<cstring>::set(d, s);
+		CHECK_EQUAL(variant::access_t<cstring>::get(d), s);
+		string ss(s);
+		variant::access_t<string>::set(d, ss);
+		CHECK_EQUAL(variant::access_t<string>::get(d), ss);
+		variant::access_t<const cstring &>::set(d, s);
+		CHECK_EQUAL(variant::access_t<const cstring &>::get(d), s);
+		variant::access_t<const string &>::set(d, ss);
+		CHECK_EQUAL(variant::access_t<const string &>::get(d), ss);
 	}
 
 	// Variant test
@@ -225,9 +255,17 @@ TEST_BEGIN(rtti)
 		*/
 	}
 
-	// instantiation problem
+	// Tuple testing
 	{
-
+		/*const Vector<const rtti::Type *> &types = sys_path_class->toTuple()->types();
+		CHECK_EQUAL(types.length(), 1);
+		CHECK_EQUAL(types[0], &type_of<string>());
+		Vector<Variant> args;
+		string s("/usr/lib");
+		args.add(s);
+		cout << "DEBUG: " << args[0].asString() << io::endl;
+		sys::Path *path = static_cast<sys::Path *>(sys_path_class->toTuple()->make(args));
+		CHECK_EQUAL(*path, sys::Path(s));*/
 	}
 
 TEST_END

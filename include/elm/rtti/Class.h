@@ -284,6 +284,8 @@ private:
 	List<Operation *> _ops;
 };
 
+class Tuple;
+
 class AbstractClass: public rtti::Type {
 	friend class Operation;
 public:
@@ -300,6 +302,7 @@ public:
 	virtual const AbstractClass& asClass(void) const;
 	virtual void *upCast(void *ptr) const;
 	virtual void *downCast(void *ptr) const;
+	virtual const Tuple *toTuple() const;
 
 	void *upCast(void *ptr, const AbstractClass& cls) const;
 	void *downCast(void *ptr, const AbstractClass& cls) const;

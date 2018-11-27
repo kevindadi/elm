@@ -1,5 +1,5 @@
 /*
- *	BitVector class test
+ *	Option class test
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2006, IRIT UPS.

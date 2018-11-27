@@ -68,9 +68,9 @@ public:
 
 // copy definitions
 template <class T> inline void copy(T *target, const T *source, int size)
-	{ _if<type_info<T>::is_deep, slow<T>, fast<T> >::_::copy(target, source, size); }
+	{ _if<type_info<T>::is_deep, slow<T>, fast<T> >::copy(target, source, size); }
 template <class T> inline void move(T *target, const T *source, int size)
-	{ _if<type_info<T>::is_deep, slow<T>, fast<T> >::_::move(target, source, size); }
+	{ _if<type_info<T>::is_deep, slow<T>, fast<T> >::move(target, source, size); }
 template <class T> inline void set(T *target, int size, const T& v)
 	{ for(int i = 0; i < size; i++) target[i] = v; }
 template <class T> inline void clear(T *target, int size)
@@ -78,9 +78,9 @@ template <class T> inline void clear(T *target, int size)
 template <class T> inline int cmp(const T* t1, const T* t2, int size)
 	{ return _if<type_info<T>::is_virtual, slow<T>, fast<T> >::_::cmp(t1, t2, size); }
 template <class T> inline void construct(T *t, int size)
-	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::_::construct(t, size); }
+	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::construct(t, size); }
 template <class T> inline void destruct(T *t, int size)
-	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::_::destruct(t, size); }
+	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::destruct(t, size); }
 
 // other useful operations
 template <class T> void reverse(T *a, int n)

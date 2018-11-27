@@ -64,6 +64,8 @@ template <> inline const Type& _type<void>::_(void) { return void_type; }
 
 template <class T> struct _type<T *>
 	{ static inline const Type& _(void) { return _type<T>::_().pointer(); } };
+template <class T> struct _type<const T &>
+	{ static inline const Type& _(void) { return _type<T>::_(); } };
 
 template <class T> struct _templ
 	{ static inline const Type& _(void) { return *static_cast<const Type *>(nullptr); } };

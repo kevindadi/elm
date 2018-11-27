@@ -12,11 +12,12 @@ namespace elm {
 
 // Value pattern
 template <int x> struct _n { enum { _ = x }; };
-
+struct _true { enum { _ = 1 }; };
+struct _false { enum { _ = 0 }; };
 
 // If pattern
-template <bool c, class T, class E> struct _if { typedef T _; };
-template <class T, class E> struct _if<false, T, E> { typedef E _; };
+template <bool c, class T, class E> struct _if: public T {  };
+template <class T, class E> struct _if<false, T, E>: public E {  };
 
 }	// elm
 

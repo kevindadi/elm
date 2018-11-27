@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	InStream class interface
  *
  *	This file is part of OTAWA
