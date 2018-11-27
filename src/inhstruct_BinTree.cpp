@@ -123,6 +123,8 @@ void BinTree::search(Visitor *visitor, Node *node) const {
 
 // Private 
 void BinTree::clear(Node *node) {
+	if(node == nullptr)
+		return;
 	clear(node->left());
 	clear(node->right());
 	delete node;

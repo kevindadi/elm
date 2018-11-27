@@ -133,7 +133,7 @@ class Constructor2: public Operation {
 public:
 	Constructor2(cstring name): Operation(CONSTRUCTOR, name, T::__type.pointer())
 		{ add(Parameter(type_of<T1>())); add(Parameter(type_of<T2>())); }
-	Variant call(const Vector<Variant>& args) override { return new T(args[0].as<T1>(), args[1].as<T2>()); }
+	Variant call(const Vector<Variant>& args) const override { return new T(args[0].as<T1>(), args[1].as<T2>()); }
 };
 
 inline Variant __call_static0(void (*f)(void)) { f(); return Variant(); }

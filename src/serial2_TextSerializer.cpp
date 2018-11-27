@@ -161,7 +161,7 @@ void TextSerializer::onValue(const unsigned short& v) {
 /**
  */
 void TextSerializer::onValue(const signed long& v) {
-	prefix(type_of<signed long>(), &v);
+	prefix(type_of<t::uint32>(), &v);
 	_out << v << ';';
 	suffix();
 }
@@ -170,7 +170,7 @@ void TextSerializer::onValue(const signed long& v) {
 /**
  */
 void TextSerializer::onValue(const unsigned long& v) {
-	prefix(type_of<unsigned long>(), &v);
+	prefix(type_of<t::uint32>(), &v);
 	_out << v << ';';
 	suffix();
 }

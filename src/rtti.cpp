@@ -751,8 +751,8 @@ const Type& string_type = single<StringType>();
 class VoidType: public AbstractClass {
 public:
 	VoidType(void): AbstractClass("void",  static_cast<const AbstractClass &>(void_type)) { }
-	virtual bool isVoid(void) const { return true; }
-	virtual void *instantiate(void) const { ASSERTP(false, "void type cannot be instantiated!"); return 0; }
+	virtual bool isVoid(void) const override { return true; }
+	virtual void *instantiate(void) const override { ASSERTP(false, "void type cannot be instantiated!"); return 0; }
 	virtual void free(void *obj) const override { ASSERTP(false, "void type cannot be instantiated and therefore fried!"); }
 };
 

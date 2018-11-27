@@ -21,6 +21,7 @@
 #ifndef ELM_STRING_UTF8
 #define ELM_STRING_UTF8
 
+#include <elm/types.h>
 #include <elm/PreIterator.h>
 #include <elm/string.h>
 #include <elm/util/MessageException.h>
@@ -37,7 +38,7 @@ public:
 
 class Iter: public PreIterator<Iter, char_t> {
 public:
-	inline Iter(const char *str, t::size size)
+	inline Iter(const char *str, elm::t::size size)
 		: p(str), q(p + size), c(0) { parse(); }
 	inline Iter(cstring str)
 		: p(&str), q(p + str.length()), c(0) { parse(); }

@@ -23,7 +23,7 @@ class CollectionSerializer: public rtti::Type, public rtti::Serializable {
 public:
 	static CollectionSerializer __type;
 
-	static inline rtti::Type& type(void) { return __type; }
+	//static inline rtti::Type& type(void) { return __type; }
 	static inline rtti::Type& type(const C& v) { return __type; }
 
 	inline CollectionSerializer(void): rtti::Type("") { }
