@@ -125,6 +125,20 @@ public:
 	String ltrim(void) const;
 	String rtrim(void) const;
 	String replace(String pat, String sub);
+
+	class Iter: public PreIterator<Iter, char> {
+	public:
+		inline Iter(const String& s, int i = 0): _s(s), _i(i) { }
+		inline bool atEnd() const { return _i >= _s.length(); }
+		inline char item() const { return _s[_i]; }
+		inline void next() { _i++; }
+		inline bool equals(const Iter& i) const { return _i == i._i; }
+	private:
+		const String& _s;
+		int _i;
+	};
+	inline Iter begin() const { return Iter(*this); }
+	inline Iter end() const { return Iter(*this, length()); }
 };
 
 // Type shortcut

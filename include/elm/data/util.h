@@ -177,7 +177,7 @@ inline SelectIter<I, P> select_iter(const I& i, const P& p) { return SelectIter<
 
 template <class C, class P>
 inline Range<SelectIter<typename C::Iter, P> > select(const C& c, const P& p)
-	{ return range(Select_iter(c.begin(), p), select_iter(c.end(), p)); }
+	{ return range(select_iter(c.begin(), p), select_iter(c.end(), p)); }
 
 } // elm
 

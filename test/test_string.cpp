@@ -416,5 +416,17 @@ TEST_BEGIN(string)
 		sp.next();
 		CHECK(sp.ended());
 	}
+
+	{
+		string s = "01234567";
+		char i = '0';
+		bool ok = true;
+		for(auto c: s) {
+			ok &= c == i;
+			i++;
+		}
+		CHECK(ok);
+	}
+
 TEST_END
 
