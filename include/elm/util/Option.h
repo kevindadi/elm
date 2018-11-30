@@ -41,6 +41,9 @@ public:
 	inline bool equals(const Option<T> &opt) const
 		{ return (this->isNone() && opt.isNone()) || (this->isOne() && opt.isOne() && val == opt.val); }
 
+	template <class F> const Option<T>& if_one(const F& f) { if(one) f(val); return *this; }
+	template <class F> const Option<T>& if_else(const F& f) { if(!one) f(val); return *this; }
+
 private:
 	bool one;
 	typename type_info<T>::embed_t val;

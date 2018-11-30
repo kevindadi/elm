@@ -43,6 +43,14 @@ TEST_BEGIN(utility)
 		CHECK(one.value() == 666);
 		CHECK(none.isOne() == false);
 		CHECK(none.isNone() == true);
+
+		bool set = false;
+		one.if_one([&set](int x) { set = true; });
+		CHECK(set);
+
+		set = false;
+		none.if_else([&set](int x) { set = true; });
+		CHECK(set);
 	}
 	
 	// Hashing tests
