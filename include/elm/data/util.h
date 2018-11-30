@@ -61,76 +61,123 @@ template <class T> struct true_pred
 	{ inline bool operator()(const T& v) { return true; } };
 
 
-// predicate operations
+// count operations
 template <class C, class P>
 inline int count(const C& c, const P& p)
-	{ int r = 0; for(typename C::Iter i(c); i; i++) if(p(*i)) r++; return r; }
+	{ int r = 0; for(const auto& i: c) if(p(i)) r++; return r; }
 
-template <class C, class P, class A>
-inline int count(const C& c, const P& p, const A& a)
-	{ int r = 0; for(typename C::Iter i(c); i; i++) if(p(*i, a)) r++; return r; }
 
+// forall operations
 template <class C, class P>
 inline bool forall(const C& c, const P& p)
-	{ for(typename C::Iter i(c); i; i++) if(!p(*i)) return false; return true; }
+	{ for(const auto& i: c) if(!p(i)) return false; return true; }
 
-template <class C, class P, class A>
-inline bool forall(const C& c, const P& p, const A& a)
-	{ for(typename C::Iter i(c); i; i++) if(!p(*i, a)) return false; return true; }
 
+// exists operations
 template <class C, class P>
 inline bool exists(const C& c, const P& p)
-	{ for(typename C::Iter i(c); i; i++) if(p(*i)) return true; return false; }
-
-template <class C, class P, class A>
-inline bool exists(const C& c, const P& p, const A& a)
-	{ for(typename C::Iter i(c); i; i++) if(p(*i, a)) return true; return false; }
+	{ for(const auto& i: c) if(p(i)) return true; return false; }
 
 
-// lookup operation
-template <class I, class P>
-inline I find(I i, const P& p)
-	{ for(; i; i++) if(p(*i)) break; return i; }
-
-template <class I, class P, class A>
-inline I find(I i, const P& p, const A& a)
-	{ for(; i; i++) if(p(*i, a)) break; return i; }
+// find operation
+template <class C, class P>
+inline typename C::Iter find(const C& c, const P& p)
+	{ typename C::Iter i = c.begin(); for(; i != c.end(); i++) if(p(i)) break; return i; }
 
 
-// transformation operations
+// map operation
 template <class C, class F, class D>
 inline void map(const C& c, const F& f, D& d)
-	{ for(typename C::Iter i(c); i; i++) d.add(f(*i)); }
+	{ for(const auto& i: c) d.add(f(i)); }
 
-template <class C, class F, class A, class D>
-inline void map(const C& c, const F& f, const A& a, D& d)
-	{ for(typename C::Iter i(c); i; i++) d.add(f(*i, a)); }
 
+// iter operation
 template <class C, class F>
 inline void iter(const C& c, const F& f)
-{ for(typename C::Iter i(c); i; i++) f(*i); }
+	{ for(const auto& i: c) f(i); }
 
-template <class C, class F, class A>
-inline void iter(const C& c, const F& f, const A& a)
-{ for(typename C::Iter i(c); i; i++) f(*i, a); }
 
-template <class C, class F>
-inline typename F::y_t fold(const C& c, const F& f, typename F::y_t t = F::null)
-	{ for(typename C::Iter i(c); i; i++) t = f(*i, t); return t; }
+// fold operation
+template <class C, class F, class T>
+inline T fold(const C& c, const F& f, T t)
+	{ for(const auto& i: c) t = f(i, t); return t; }
 
+
+// useful function
 template <class C>
 inline typename C::t sum(const C& c)
-	{ return fold(c, single<Add<typename C::t> >(), 0); }
-
+	{ return fold(c, [](const typename C::t& i, const typename C::t& s) { return i + s; }, typename C::t(0)); }
 template <class C>
 inline typename C::t product(const C& c)
-	{ return fold(c, single<Mul<typename C::t> >()); }
+	{ return fold(c, [](const typename C::t& i, const typename C::t& p) { return i * p; }, typename C::t(1)); }
 
 
 // construction operations
 template <class C>
 inline void fill(C& c, int n, const typename C::t v = type_info<typename C::t>::null)
 	{ for(int i = 0; i < n; i++) c.add(v); }
+
+
+// NumIter class
+template <class T>
+class NumIter: public PreIterator<NumIter<T>, T> {
+public:
+	inline NumIter(T i, T j, T s = 1): _i(i), _j(j), _s(s) { }
+	inline bool ended() const { return _i <= _j; }
+	inline T item() const { return _i; }
+	inline void next() { _i += _s; }
+	inline bool equals(const NumIter<T>& i) const { return _i == i._i; }
+private:
+	T _i, _j, _s;
+};
+template <class T>
+class NumRange {
+public:
+	typedef T t;
+	inline NumRange(T i, T j, T s = 1): _i(i), _j(j), _s(s) { }
+	inline NumIter<T> begin() const { return NumIter<T>(_i, _j, _s); }
+	inline NumIter<T> end() const { return NumIter<T>(_j + 1, _j, _s); }
+private:
+	int _i, _j, _s;
+};
+template <class T> NumRange<T> nrange(T i, T j, T s = 1) { return NumRange<T>(i, j, s); }
+
+
+// range class
+template <class I>
+class Range {
+public:
+	typedef typename I::t t;
+	typedef I Iter;
+	inline Range(const I& b, const I& e): _b(b), _e(e) { }
+	inline const I& begin() const { return _b; }
+	inline const I& end() const { return _e; }
+private:
+	I _b, _e;
+};
+template <class I> Range<I> range(const I& b, const I& e) { return Range<I>(b, e); }
+
+
+// select classes
+template <class I, class P>
+class SelectIter: public PreIterator<SelectIter<I, P>, typename I::t> {
+public:
+	inline SelectIter(const I &i, const P& p): _i(i), _p(p) { step(); }
+	inline bool atEnd() const { return _i.atEnd(); }
+	inline typename I::t item() const { return *_i; }
+	inline void next() { _i++; step(); }
+	inline bool equals(const SelectIter<I, P>& i) { return _i.equals(i._i); }
+private:
+	inline void step() { while(_i && !_p(*_i)) _i++; }
+	I _i;
+	P _p;
+};
+template <class I, class P>
+inline SelectIter<I, P> select_iter(const I& i, const P& p) { return SelectIter<I, P>(i, p); }
+
+template <class C, class P>
+inline Range<SelectIter<typename C::Iter, P> > select(const C& c, const P& p)
+	{ return range(Select_iter(c.begin(), p), select_iter(c.end(), p)); }
 
 } // elm
 

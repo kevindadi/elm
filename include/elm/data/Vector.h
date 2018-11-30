@@ -47,7 +47,7 @@ public:
 	inline Array<T>& asArray(void) { return Array<T>(count, tab); }
 
 	// Iterator
-	class Iter: public PreIterator<Iter, const T&> {
+	class Iter: public PreIterator<Iter, T> {
 	public:
 		friend class Vector;
 		inline Iter(const Vector& vec, int idx = 0): _vec(vec), i(idx) { }

@@ -53,34 +53,39 @@ struct Inc {
 	int operator()(int x) const { return x + 1; }
 } inc;
 
+
 TEST_BEGIN(data)
 	Vector<int> v;
 	for(int i = 0; i < 10; i++)
 		v.add(i);
 
+	// count test
+	{
+		CHECK_EQUAL(count(v, [](int i) { return i % 2 == 0; }), 5);
+		CHECK_EQUAL(count(range(v.begin(), v.end()), [](int i) { return i % 2 == 0; }), 5);
+	}
+
 	// simple predicate functions
 	{
 		CHECK_EQUAL(count(v, _pair), 5);
+
 		CHECK(!forall(v, _pair));
 		CHECK(forall(v, pos));
 		CHECK(exists(v, _pair));
 		CHECK(!exists(v, neg));
-		CHECK(find(*v, _pair));
-		CHECK(!find(*v, neg));
+		CHECK(find(v, _pair));
+		CHECK(!find(v, neg));
+
+		CHECK(!forall(range(v.begin(), v.end()), _pair));
+		CHECK(forall(range(v.begin(), v.end()), pos));
+		CHECK(exists(range(v.begin(), v.end()), _pair));
+		CHECK(!exists(range(v.begin(), v.end()), neg));
+		CHECK(find(range(v.begin(), v.end()), _pair));
+		CHECK(!find(range(v.begin(), v.end()), neg));
+
 	}
 
-	// predicate with argument
-	{
-		CHECK_EQUAL(count(v, ::mult, 2), 5);
-		CHECK(!forall(v, lt, 5));
-		CHECK(forall(v, lt, 10));
-		CHECK(exists(v, gt, 5));
-		CHECK(!exists(v, lt, 0));
-		CHECK(find(*v, gt, 5));
-		CHECK(!find(*v, gt, 10));
-	}
-
-	// transformation functions without argument
+	// map
 	{
 		Vector<int> w;
 		map(v, inc, w);
@@ -88,10 +93,42 @@ TEST_BEGIN(data)
 		for(int i = 0; i < 10; i++)
 			ok = ok && v[i] + 1 == w[i];
 		CHECK(ok);
-		CHECK_EQUAL(fold(v, single<Add<int> >()), 45);
-		CHECK_EQUAL(sum(v), 45);
-		CHECK_EQUAL(product(v), 0);
+
+		w.clear();
+		map(range(v.begin(), v.end()), inc, w);
+		ok = true;
+		for(int i = 0; i < 10; i++)
+			ok = ok && v[i] + 1 == w[i];
+		CHECK(ok);
 	}
 
+	// iter test
+	{
+		int s = 0;
+		iter(v, [&s](int i) { s = s + i; });
+		CHECK_EQUAL(s, 45);
+
+		s = 0;
+		auto i = v.begin();
+		i++;
+		iter(range(i, v.end()), [&s](int i) { s = s + i; });
+		CHECK_EQUAL(s, 45);
+	}
+
+	// transformation functions without argument
+	{
+		CHECK_EQUAL(fold(v, [](int i, int s) { return i + s; }, 0), 45);
+		CHECK_EQUAL(fold(range(v.begin(), v.end()), [](int i, int s) { return i + s; }, 0), 45);
+		CHECK_EQUAL(sum(v), 45);
+		CHECK_EQUAL(sum(nrange(0, 9)), 45);
+		CHECK_EQUAL(product(nrange(1, 4)), 24);
+	}
+
+	// range test
+	{
+		CHECK_EQUAL(sum(range(v.begin(), v.end())), 45);
+		CHECK_EQUAL(sum(select(v, [](int i) { return i % 2 == 0; })), 20);
+		CHECK_EQUAL(sum(select(range(v.begin(), v.end()), [](int i) { return i % 2 == 0; })), 20);
+	}
 
 TEST_END

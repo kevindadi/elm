@@ -8,6 +8,8 @@
 #ifndef ELM_DATA_H_
 #define ELM_DATA_H_
 
+#include <elm/data/util.h>
+
 namespace elm {
 
 /**
@@ -131,6 +133,9 @@ namespace elm {
  * * @ref sum(const C& c) -- perform the sum of items of c,
  * * @ref product(const C& c) -- perform the product of items of c,
  * * @ref fill(C& c, int n, const typename C::t v) -- add n items of value v to collection c.
+ * * @ref range(const I& b, const I& e) -- creates a pseudo-collection containing objects between given iterators.
+ * * @ref nrange(const T& b, const T& e) -- creates a pseudo- numeric collection ranging from b to e.
+ * * @ref select(const C& c, const P& p) -- creates a pseudo-collection containing values of p satisfying predicate p.
  *
  * @par Delegate Classes
  *
@@ -242,29 +247,10 @@ struct FunctionWithArg {
  */
 
 /**
- * @fn int count(const C& c, const P& p, const A& a);
- * Count the number of elements of c that matches the predicate p (using addiotnal argument a).
- * @param c		Collection to count in (must implement concept::Collection).
- * @param p		Predicate to test element (must implement concept::PredicateWithArg).
- * @param a		Additional argument.
- * @ingroup data
- */
-
-/**
  * @fn bool forall(const C& c, const P& p);
  * Test if the predicate p is true for each element of c.
  * @param c		Collection to test (must implement concept::Collection).
  * @param p		Predicate to evaluate (must implement concept::Predicate).
- * @return		True if the predicate p is true for all element of c.
- * @ingroup data
- */
-
-/**
- * @fn bool forall(const C& c, const P& p, const A& a);
- * Test if the predicate p is true for each element of c (using an additional argument a).
- * @param c		Collection to test (must implement concept::Collection).
- * @param p		Predicate to evaluate (must implement concept::PredicateWithArg).
- * @param a		Additional argument.
  * @return		True if the predicate p is true for all element of c.
  * @ingroup data
  */
@@ -279,30 +265,10 @@ struct FunctionWithArg {
  */
 
 /**
- * @fn bool exists(const C& c, const P& p, const A& a);
- * Test if the predicate p is true at least for one element of c (with an additional argument).
- * @param c		Collection to test (must implement concept::Collection).
- * @param p		Predicate to evaluate (must implement concept::PredicateWithArg).
- * @param a		Additional argument.
- * @return		True if at least one element is true for predicate p.
- * @ingroup data
- */
-
-/**
  * @fn I find(I i, const P& p);
  * Find an element starting at iterator i matching the predicate p.
  * @param i		Iterator to start look up.
  * @param p		Predicate to test (must implement concept::Predicate).
- * @return		Either the end iterator, or the iterator on the first position where o is true.
- * @ingroup data
- */
-
-/**
- * @fn I find(I i, const P& p, const A& a);
- * Find an element starting at iterator i matching the predicate p (with additional argument).
- * @param i		Iterator to start look up.
- * @param p		Predicate to test (must implement concept::Predicate).
- * @param a		Additional argument.
  * @return		Either the end iterator, or the iterator on the first position where o is true.
  * @ingroup data
  */
@@ -318,30 +284,10 @@ struct FunctionWithArg {
  */
 
 /**
- * @fn void map(const C& c, const F& f, const A& a, D& d);
- * Map the elements of a collection to element of another collection using
- * the function f (with an additional argument).
- * @param c	Original collection (must implement concept::Collection).
- * @param f	Transforming function (must implement concept::Function).
- * @param a	Additional argument passed to the function.
- * @param d	Filled collection (must implement concept::MutableCollection).
- * @ingroup data
- */
-
-/**
  * @fn void iter(const C& c, const F& f);
  * Apply the function f on the element of collection c (ignoring the result).
  * @param c		Collection to iterate on (must implement concept::Collection).
  * @param f		Function to apply (must implement concept::Function).
- * @ingroup data
- */
-
-/**
- * @fn void iter(const C& c, const F& f, const A& a);
- * Apply the function f on the element of collection c (ignoring the result and with an additional argument).
- * @param c		Collection to iterate on (must implement concept::Collection).
- * @param f		Function to apply (must implement concept::FunctionWithArg).
- * @param a		Additional argument passed to f.
  * @ingroup data
  */
 
@@ -384,6 +330,34 @@ struct FunctionWithArg {
  * @param n		Number of values to add.
  * @param v		Value to add (as a default, the null value).
  * @ingroup data
+ */
+
+
+/**
+ * @fn NumRange<T> nrange(T i, T j, T s = 1);
+ * Creates a range over a numeric domain spanning from i to j using a step of s.
+ * @param i	Lower bound of the range (inclusive).
+ * @param j	Upper bound of the range (inclusive).
+ * @param s	Step in the range.
+ * @return	Range from i to j (with a step of s).
+ */
+
+
+/**
+ * @fn Range<I> range(const I& b, const I& e);
+ * Creates a range from the iterator b to iterator e.
+ * @param b		First position of the range (inclusive).
+ * @param e		One position after the last position of the range (exclusive).
+ * @return		Range from b to e.
+ */
+
+
+/**
+ * @fn Range<SelectIter<typename C::Iter, P> > select(const C& c, const P& p);
+ * Creates a range over items of collection c that satisfies the predicate p.
+ * @param c		Collection to select items in.
+ * @param p		Predicate to select items of c.
+ * @return		Range on c items satisfying p.
  */
 
 
