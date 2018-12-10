@@ -229,13 +229,14 @@ TEST_BEGIN(rtti)
 		Variant s5(ranobj);
 		CHECK_EQUAL(&s5.as<AClass&>(), &ranobj);
 
-		Variant s6(AClass(111));
+		AClass obj(111);
+		Variant s6(obj);
 		CHECK_EQUAL(s6.as<AClass>().x, 111);
 	}
 
 	// RTTI constructor
-	{
-		/*Vector<Variant> args;
+	/*{
+		Vector<Variant> args;
 		X *p = make0.call(args).as<X *>();
 		CHECK(p != 0);
 		delete p;
@@ -244,8 +245,8 @@ TEST_BEGIN(rtti)
 		CHECK(p != 0);
 		delete p;
 		p = make2.call(args).as<X *>();
-		CHECK(p != 0);*/
-	}
+		CHECK(p != 0);
+	}*/
 
 	// declare test
 	{/*
