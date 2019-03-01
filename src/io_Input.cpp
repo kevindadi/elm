@@ -200,6 +200,7 @@ static inline int test_base(char chr, int base) {
 t::uint32 Input::scanULong(void) {
 	t::uint32 val = 0;
 	int base = 10;
+	swallowBlank();
 
 	// Read the base
 	int chr = get();

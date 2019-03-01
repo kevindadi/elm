@@ -410,11 +410,11 @@ TEST_BEGIN(avl)
 		for(avl::Map<int, int>::MutableIterator i(map); i; i++)
 			if((*i).fst % 2 == 0)
 				i.set(0);
-		CHECK(map.get(0) == 0);
-		CHECK(map.get(1) == 1);
-		CHECK(map.get(2) == 0);
-		CHECK(map.get(3) == 3);
-		CHECK(map.get(4) == 0);
+		CHECK(*map.get(0) == 0);
+		CHECK(*map.get(1) == 1);
+		CHECK(*map.get(2) == 0);
+		CHECK(*map.get(3) == 3);
+		CHECK(*map.get(4) == 0);
 	}
 
 TEST_END

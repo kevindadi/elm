@@ -101,6 +101,7 @@ set(LIBELM_LA_SOURCES
 	"system_SystemException.cpp"
 	"system_SystemIO.cpp"
 	"util_BitVector.cpp"
+	"util_Buffer.cpp"
 	"util_Cleaner.cpp"
 	"util_Comparator.cpp"
 	"util_Equiv.cpp"

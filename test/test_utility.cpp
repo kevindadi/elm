@@ -27,7 +27,9 @@ using namespace elm;
 
 template <class T>
 void read(T& x, string s) {
-	io::StringInput sin(s); sin >> x;
+	io::StringInput sin(s);
+	io::Input& in = sin;
+	in >> x;
 }
 
 volatile int res;
@@ -158,9 +160,10 @@ TEST_BEGIN(utility)
 
 	{
 		Pair<int, int> p;
-		read(p, "");
-		cout << p.fst << p.snd << io::endl;
-		res = p.fst;
+		read(p, "3 5");
+		CHECK(p.fst == 3 && p.snd == 5);
+		string s = _ << p;
+		CHECK(s == "3 5");
 	}
 
 TEST_END

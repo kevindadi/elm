@@ -1,8 +1,22 @@
 /*
- * $Id$
- * Copyright (c) 2006, IRIT-UPS <casse@irit.fr>.
+ *	Option class interface
  *
- * elm/util/Option.h -- interface for Option class.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2006, IRIT UPS.
+ *
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #ifndef ELM_UTIL_OPTION_H
 #define ELM_UTIL_OPTION_H
@@ -43,6 +57,11 @@ public:
 
 	template <class F> const Option<T>& if_one(const F& f) { if(one) f(val); return *this; }
 	template <class F> const Option<T>& if_else(const F& f) { if(!one) f(val); return *this; }
+
+	inline bool operator==(const OptionalNone& _) const { return isNone(); }
+	inline bool operator!=(const OptionalNone& _) const { return !isNone(); }
+	inline bool operator==(const Option<T>& o) const { return !isNone() && !o.isNone() && val == o.val; }
+	inline bool operator!=(const Option<T>& o) const { return !operator==(o); }
 
 private:
 	bool one;
