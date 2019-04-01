@@ -37,6 +37,7 @@ public:
 	inline HashMap(int _size = 211): _tab(_size) { }
 	inline HashMap(M& man, int _size = 211): _tab(man, _size) { }
 	inline HashMap(const self_t& h): _tab(h._tab) { }
+	inline M& manager() const { return _tab.manager(); }
 
 	inline bool isEmpty(void) const { return _tab.isEmpty(); }
 	inline int count(void) const { return _tab.count(); }

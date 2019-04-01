@@ -82,6 +82,7 @@ public:
 		{ array::fast<node_t*>::clear(_tab, _size); putAll(h); }
 	~HashTable(void)
 		{ clear(); delete [] _tab; }
+	inline M& manager() const { return _man; }
 
 	bool isEmpty(void) const
 		{ for(int i = 0; i < _size; i++) if(_tab[i]) return false; return true; }

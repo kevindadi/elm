@@ -20,6 +20,7 @@
  */
 #include <elm/utility.h>
 #include <elm/hash.h>
+#include <elm/util/StrongType.h>
 #include <elm/util/Version.h>
 #include <elm/test.h>
 
@@ -33,6 +34,8 @@ void read(T& x, string s) {
 }
 
 volatile int res;
+
+typedef StrongType<int> index_t;
 
 // Utility tests
 TEST_BEGIN(utility)
@@ -164,6 +167,11 @@ TEST_BEGIN(utility)
 		CHECK(p.fst == 3 && p.snd == 5);
 		string s = _ << p;
 		CHECK(s == "3 5");
+	}
+
+	// strong type
+	{
+
 	}
 
 TEST_END

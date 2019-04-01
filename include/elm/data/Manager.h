@@ -67,8 +67,17 @@ public:
 template <class K, class H = HashKey<K>, class A = DefaultAllocator>
 class HashManager {
 public:
+	typedef H hash_t;
+	typedef A alloc_t;
+
 	inline HashManager(void): alloc(DefaultAllocator::DEFAULT) { }
 	inline HashManager(const H& h, A& a = DefaultAllocator::DEFAULT): hash(h), alloc(a) { }
+
+	inline bool isEqual(const K& k1, const K& k2) const { return hash.isEqual(k1, k2); }
+	inline t::hash computeHash(const K& k) const { return hash.computeHash(k); }
+	template <class T> inline void *allocate() { return alloc.allocate(sizeof(T)); }
+	inline void free(void *p) { alloc.free(p); }
+
 	H hash;
 	A& alloc;
 };
