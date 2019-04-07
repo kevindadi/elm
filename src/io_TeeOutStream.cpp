@@ -81,4 +81,11 @@ cstring TeeOutStream::lastErrorMessage(void) {
 	}
 }
 
+
+/**
+ */
+bool TeeOutStream::supportsANSI() const {
+	return _out1.supportsANSI() && _out2.supportsANSI();
+}
+
 } }	// elm::io

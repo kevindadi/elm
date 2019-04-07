@@ -75,14 +75,19 @@ CString UnixOutStream::lastErrorMessage(void) {
 }
 
 
-// Overloaded
+///
 int UnixOutStream::write(const char *buffer, int size) {
 	return ::write(_fd, buffer, size);
 }
 
-// Overloaded
+///
 int UnixOutStream::flush(void) {
 	return 0;
+}
+
+///
+bool UnixOutStream::supportsANSI() const {
+	return isatty(_fd);
 }
 
 } } // elm::io

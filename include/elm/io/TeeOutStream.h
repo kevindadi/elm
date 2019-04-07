@@ -29,9 +29,11 @@ namespace elm { namespace io {
 class TeeOutStream: public OutStream {
 public:
 	TeeOutStream(OutStream& out1, OutStream& out2);
-	virtual int write (const char *buffer, int size);
-	virtual int flush (void);
-	virtual cstring lastErrorMessage(void);
+	int write (const char *buffer, int size) override;
+	int flush (void) override;
+	cstring lastErrorMessage(void) override;
+	bool supportsANSI() const override;
+
 private:
 	OutStream& _out1;
 	OutStream& _out2;

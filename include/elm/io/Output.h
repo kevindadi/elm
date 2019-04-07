@@ -204,6 +204,7 @@ public:
 	void print(const StringFormat& fmt);
 	void format(CString fmt, ...);
 	void format(CString fmt, VarArg& args);
+	bool supportsANSI();
 
 	// deprecated
 	void print(t::int32 value);
@@ -212,6 +213,7 @@ public:
 	void print(t::uint64 value);
 private:
 	OutStream *strm;
+	char ansi;
 	char *horner(char *p, t::uint64 val, int base, char enc = 'a');
 };
 
@@ -257,10 +259,11 @@ IntFormat byte(t::uint8 b);
 template <class P>
 class Tag {
 public:
+	typedef cstring t;
 	inline Tag(const typename P::t& val): v(val) { }
 	inline void print(io::Output& out) const { P::print(out, v); }
 private:
-	const typename P::t& v;
+	const typename P::t v;
 };
 template <class P>
 io::Output& operator<<(io::Output& out, const Tag<P>& t) { t.print(out); return out; }

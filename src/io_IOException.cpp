@@ -158,6 +158,22 @@ namespace elm { namespace io {
  * @li @ref pointer() -- hexadecimal representation of a pointer on a fixed size.
  * @li @ref byte() -- hexadecimal representation of a byte on a fixed size.
  *
+ * @section ANSI Codes
+ * On OS's supporting them (Linux and MacOSX), ANSI codes allows to change the look of
+ * displayed text. ANSI codes are supported by @ref io::Output class and can be used
+ * if the header file <elm/io/ansi.h> is include. The look change is implemented by
+ * sending special values to the output.
+ *
+ * The text color can be changed using io::BLACK, io::RED, io::GREEN, io::YELLOW,
+ * io::BLUE, io::MAGENTA, io::CYAN or io::WHITE. Bright colors equivalent colors
+ * exists and are name by prefixing the color with "BRIGHT_": io::BRIGHT_XXX.
+ * Background color can also be customize by prefixing the color name with "BACK_":
+ * io::BACK_XXX.
+ *
+ * Style of the characters can also be changed by displaying special values as
+ * io::BOLD, io::ITALIC, io::UNDERLINE, io::BLINK, ... To reset the display of
+ * the characters, one can use the value io::PLAIN.
+ *
  * @section low_level Byte Streams
  * 
  * The low-level IO system is only responsible for exchanging streams of bytes.

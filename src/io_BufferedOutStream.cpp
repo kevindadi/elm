@@ -119,4 +119,11 @@ CString BufferedOutStream::lastErrorMessage(void) {
 }
 
 
+/**
+ */
+bool BufferedOutStream::supportsANSI() const {
+	return out->supportsANSI();
+}
+
+
 } } // elm::io

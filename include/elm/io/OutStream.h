@@ -34,6 +34,7 @@ public:
 	virtual int write(char byte);
 	virtual int flush(void) = 0;
 	virtual CString lastErrorMessage(void);
+	virtual bool supportsANSI() const;
 	
 	static OutStream& null;
 };

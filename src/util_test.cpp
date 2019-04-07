@@ -1,12 +1,27 @@
 /*
- * $Id$
- * Copyright (c) 2005, IRIT UPS.
+ *	test facilities implementation
  *
- * util/test.cpp -- facilities for performing unit test.
+ *	This file is part of OTAWA
+ *	Copyright (c) 2005, IRIT UPS.
+ *
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <elm/io.h>
-#include "../include/elm/test.h"
+#include <elm/io/ansi.h>
+#include <elm/test.h>
 
 namespace elm {
 
@@ -214,13 +229,13 @@ void TestCase::initialize(void) {
 void TestCase::complete(void) {
 	if(errors)
 #if defined(__unix) || defined(__APPLE__)
-		cout << "\x1b[1;31mFAILURE: \x1b[0m";
+		cout << "\x1b[1;31mFAILURE: " << io::PLAIN;
 #elif defined(__WIN32)
 		cout << "FAILURE :";
 #endif
 	else
 #if defined(__unix) || defined(__APPLE__)
-		cout << "\x1b[1;32mSUCCESS: \x1b[0m";
+		cout << "\x1b[1;32mSUCCESS: " << io::PLAIN;
 #elif defined(__WIN32) || defined(__WIN64)
 		cout << "SUCCESS: ";
 #endif
@@ -241,7 +256,7 @@ bool TestCase::require(CString file, int line, CString text, bool result) {
 	check(file, line, text, result);
 	if(!result)
 #if defined(__unix) || defined(__APPLE__)
-		cout << "\x1b[1;31mMain failure: test must be interrupted.\x1b[0m\n";
+		cout << "\x1b[1;31mMain failure: test must be interrupted." << io::PLAIN << io::endl;
 #elif defined(__WIN32) || defined(__WIN64)
 		cout << "Main failure: test must be interrupted\n";
 #endif

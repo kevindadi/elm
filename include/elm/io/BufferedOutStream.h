@@ -42,6 +42,7 @@ public:
 	int write(char byte) override;
 	int flush(void) override;
 	CString lastErrorMessage(void) override;
+	bool supportsANSI() const override;
 
 private:
 	OutStream *out;

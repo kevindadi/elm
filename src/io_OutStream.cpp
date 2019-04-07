@@ -57,6 +57,16 @@ int OutStream::write(char byte) {
 }
 
 /**
+ * Test if the current stream knows how to decode ANSI special codes.
+ * The default implementation returns false.
+ * @return	True if ANSI code are supported, false else.
+ */
+bool OutStream::supportsANSI() const {
+	return false;
+}
+
+
+/**
  * @fn int OutStream::flush()
  * Cause the current stream to dump its buffer to the medium.
  * @return 0 for success, less than 0 for error.

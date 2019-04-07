@@ -95,13 +95,13 @@ char *Output::horner(char *p, t::uint64 val, int base, char enc) {
 /**
  * Build a formatted output on the standard output.
  */
-Output::Output(void): strm(&out) {
+Output::Output(void): strm(&out), ansi(-1) {
 }
 
 /**
  * Build a formatted output on the given stream.
  */
-Output::Output(OutStream& stream): strm(&stream) {
+Output::Output(OutStream& stream): strm(&stream), ansi(-1) {
 }
 
 /**
@@ -115,8 +115,21 @@ Output::Output(OutStream& stream): strm(&stream) {
  * @param stream	New stream to use.
  */
 void Output::setStream(OutStream& stream) {
+	ansi = -1;
 	strm = &stream;
 }
+
+
+/**
+ * Test if the current stream supports ANSI codes.
+ * @return	True if the current stream supports ANSI codes, false else.
+ */
+bool Output::supportsANSI() {
+	if(ansi == -1)
+		ansi = strm->supportsANSI();
+	return ansi;
+}
+
 
 /**
  * Print a boolean value, 'true' or 'false'.
