@@ -1,9 +1,8 @@
 /*
- *	$Id$
  *	BlockAllocator class interface
  *
  *	This file is part of OTAWA
- *	Copyright (c) 20010, IRIT UPS.
+ *	Copyright (c) 2010, IRIT UPS.
  *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -23,22 +22,41 @@
 #define ELM_ALLOC_BLOCKALLOCATOR_H_
 
 #include <elm/alloc/StackAllocator.h>
+#include <elm/compare.h>
 
 namespace elm {
 
-// BlockAllocator class
+// RawBlockAllocator class
+template <class T>
 class BlockAllocator {
-public:
-	BlockAllocator(int block_size, int block_per_chunk = 16);
-	void *allocate(void);
-	void free(void *block);
 
-private:
 	typedef struct block_t {
 		struct block_t *next;
 	} block_t;
 
-	int size;
+public:
+	static const int default_block_per_chunk = 32;
+
+	BlockAllocator(int block_per_chunk = default_block_per_chunk)
+		: alloc(min(sizeof(T), sizeof(block_t)) * block_per_chunk), list(0) { }
+
+	inline T *allocate() {
+		if(list != nullptr) {
+			block_t *res = list;
+			list = list->next;
+			return static_cast<T *>(res);
+		}
+		else
+			return alloc.allocate(sizeof(T));
+	}
+
+	void free(T *p) {
+		block_t *b = reinterpret_cast<block_t *>(p);
+		b->next = list;
+		list = b;
+	}
+
+private:
 	StackAllocator alloc;
 	block_t *list;
 };

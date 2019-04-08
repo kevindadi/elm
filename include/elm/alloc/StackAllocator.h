@@ -37,6 +37,7 @@ public:
 	StackAllocator(t::size size = 4096);
 	virtual ~StackAllocator(void);
 	void *allocate(t::size size);
+	template <class T> inline void *allocate() { return allocate(sizeof(T)); }
 	inline void free(void *block) { }
 	void clear(void);
 
