@@ -30,6 +30,7 @@ message(STATUS ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(TEST_SOURCES
 	"test.cc"
+	"test_alloc.cpp"
 	"test_ansi.cpp"
 	"test_array.cpp"
 	"test_array_list.cpp"

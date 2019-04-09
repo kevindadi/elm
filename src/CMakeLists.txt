@@ -79,7 +79,7 @@ set(LIBELM_LA_SOURCES
 	"option_StringList.cpp"
 	"option_SwitchOption.cpp"
 	"option_ValueOption.cpp"
-	"rbt.cpp"
+	#"rbt.cpp"
 	"rtti.cpp"
 	"serial2_serial.cpp"
 	"serial2_TextSerializer.cpp"

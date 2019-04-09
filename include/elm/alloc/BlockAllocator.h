@@ -44,10 +44,10 @@ public:
 		if(list != nullptr) {
 			block_t *res = list;
 			list = list->next;
-			return static_cast<T *>(res);
+			return reinterpret_cast<T *>(res);
 		}
 		else
-			return alloc.allocate(sizeof(T));
+			return reinterpret_cast<T *>(alloc.allocate(sizeof(T)));
 	}
 
 	void free(T *p) {

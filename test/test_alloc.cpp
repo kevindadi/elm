@@ -20,16 +20,26 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <elm/alloc/BlockAllocator.h>
 #include <elm/alloc/StackAllocator.h>
-#include <elm/system/System.h>
+#include <elm/sys/System.h>
 #include <elm/io.h>
+#include <elm/test.h>
 
 using namespace elm;
 
-int main(int argc, char **argv) {
-	StackAllocator stack;
-	for(int i = 0; i < 1000; i++) {
-		elm::t::size size = system::System::random(4096);
-		cout << "allocate(" << size << ") = " << stack.allocate(size) << io::endl;
+TEST_BEGIN(alloc)
+	{
+		StackAllocator stack;
+		for(int i = 0; i < 1000; i++) {
+			elm::t::size size = sys::System::random(4096);
+			cout << "allocate(" << size << ") = " << stack.allocate(size) << io::endl;
+		}
 	}
-}
+
+	{
+		BlockAllocator<int> b;
+		int *i = b.allocate();
+		b.free(i);
+	}
+TEST_END
