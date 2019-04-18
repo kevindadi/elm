@@ -22,6 +22,7 @@
 #define ELM_DATA_UTIL_H_
 
 #include <elm/PreIterator.h>
+#include <elm/data/Range.h>
 #include <elm/meta.h>
 #include <elm/type_info.h>
 #include <elm/types.h>
@@ -120,13 +121,24 @@ inline void fill(C& c, int n, const typename C::t v = type_info<typename C::t>::
 
 // NumIter class
 template <class T>
-class NumIter: public PreIterator<NumIter<T>, T> {
+class NumIter {
 public:
+	typedef T t;
+
 	inline NumIter(T i, T j, T s = 1): _i(i), _j(j), _s(s) { }
 	inline bool ended() const { return _i <= _j; }
 	inline T item() const { return _i; }
 	inline void next() { _i += _s; }
 	inline bool equals(const NumIter<T>& i) const { return _i == i._i; }
+
+	inline operator bool() const { return !ended(); }
+	inline operator T() const { return item(); }
+	inline T operator*() const { return item(); }
+	inline NumIter& operator++() { next(); return *this; }
+	inline NumIter operator++(int) { NumIter o = *this; next(); return *o; }
+	inline bool operator==(const NumIter& i) const { return equals(i); }
+	inline bool operator!=(const NumIter& i) const { return !equals(i); }
+
 private:
 	T _i, _j, _s;
 };
@@ -143,30 +155,15 @@ private:
 template <class T> NumRange<T> nrange(T i, T j, T s = 1) { return NumRange<T>(i, j, s); }
 
 
-// range class
-template <class I>
-class Range {
-public:
-	typedef typename I::t t;
-	typedef I Iter;
-	inline Range(const I& b, const I& e): _b(b), _e(e) { }
-	inline const I& begin() const { return _b; }
-	inline const I& end() const { return _e; }
-private:
-	I _b, _e;
-};
-template <class I> Range<I> range(const I& b, const I& e) { return Range<I>(b, e); }
-
-
 // select classes
 template <class I, class P>
 class SelectIter: public PreIterator<SelectIter<I, P>, typename I::t> {
 public:
 	inline SelectIter(const I &i, const P& p): _i(i), _p(p) { step(); }
 	inline bool atEnd() const { return _i.atEnd(); }
-	inline typename I::t item() const { return *_i; }
+	inline const typename I::return_t& item() const { return _i.item(); }
 	inline void next() { _i++; step(); }
-	inline bool equals(const SelectIter<I, P>& i) { return _i.equals(i._i); }
+	inline bool equals(const SelectIter<I, P>& i) const { return _i.equals(i._i); }
 private:
 	inline void step() { while(_i && !_p(*_i)) _i++; }
 	I _i;

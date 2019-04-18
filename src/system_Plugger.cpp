@@ -68,7 +68,7 @@ static cstring fun_suffix = "_fun";
  * @param file	File to test.
  * @return		True if it is a library, false else.
  */
-static inline bool isLibrary(FileItem *file) {
+static inline bool isLibrary(LockPtr<FileItem> file) {
 #if defined(WITH_LIBTOOL)
 		return file->path().toString().endsWith(".la");
 #elif defined(__APPLE__)
@@ -628,7 +628,7 @@ void Plugger::onWarning(String message) {
 
 /**
  */
-void Plugger::Iterator::go(void) {
+void Plugger::Iter::go(void) {
 
 	// Look in statics
 	if(i < statics.count()) {
@@ -656,11 +656,11 @@ void Plugger::Iterator::go(void) {
 			_path++;
 			if(_path >= plugger.paths.count())
 				break;
-			FileItem *item = FileItem::get(Path(plugger.paths[_path]));
+			LockPtr<FileItem> item = FileItem::get(Path(plugger.paths[_path]));
 			if(!item || !item->toDirectory())
 				continue;
 			else {
-				file = new Directory::Iterator(item->toDirectory());
+				file = new Directory::Iter(item->toDirectory());
 				if(file->ended())
 					continue;
 			}
@@ -683,7 +683,7 @@ void Plugger::Iterator::go(void) {
  * Build a new iterator.
  * @param plugger	Used plugger.
  */
-Plugger::Iterator::Iterator(Plugger& _plugger)
+Plugger::Iter::Iter(Plugger& _plugger)
 :	plugger(_plugger),
 	statics(_plugger.statics()),
 	i(-1),
@@ -697,7 +697,7 @@ Plugger::Iterator::Iterator(Plugger& _plugger)
 
 /**
  */
-Plugger::Iterator::~Iterator(void) {
+Plugger::Iter::~Iter(void) {
 	if(file)
 		delete file;
 }
@@ -707,7 +707,7 @@ Plugger::Iterator::~Iterator(void) {
  * Test if the iteration is ended.
  * @return	True if it is ended.
  */
-bool Plugger::Iterator::ended(void) const {
+bool Plugger::Iter::ended(void) const {
 	return _path >= plugger.paths.count();
 }
 
@@ -716,7 +716,7 @@ bool Plugger::Iterator::ended(void) const {
  * Get the current plugin name.
  * @return	Current plugin name.
  */
-String Plugger::Iterator::item(void) const {
+String Plugger::Iter::item(void) const {
 	if(i < c)
 		return statics[i]->name();
 	else {
@@ -732,7 +732,7 @@ String Plugger::Iterator::item(void) const {
  * Get the path of the current plug-in.
  * @return	Plug-in path.
  */
-Path Plugger::Iterator::path(void) const {
+Path Plugger::Iter::path(void) const {
 	if(i < c)
 		return "<static>";
 	else
@@ -743,7 +743,7 @@ Path Plugger::Iterator::path(void) const {
 /**
  * Go to the next plugin.
  */
-void Plugger::Iterator::next(void) {
+void Plugger::Iter::next(void) {
 	go();
 }
 
@@ -752,7 +752,7 @@ void Plugger::Iterator::next(void) {
  * Plug the current plugin.
  * @return	Matching plugin.
  */
-Plugin *Plugger::Iterator::plug(void) const {
+Plugin *Plugger::Iter::plug(void) const {
 	if(i < statics.count())
 		return plugger.plug(statics[i], 0);
 	else

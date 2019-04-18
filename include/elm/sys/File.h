@@ -30,12 +30,8 @@ class File: public FileItem {
 	friend class FileItem;
 	File(Path path, ino_t inode);
 public:
-
-	// Accessors
 	int size(void);
-	
-	// Overload
-	virtual File *toFile(void);
+	LockPtr<File> toFile(void) override;
 };
 
 } } // elm::sys

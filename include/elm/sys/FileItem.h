@@ -21,7 +21,8 @@
 #ifndef ELM_SYS_FILE_ITEM_H
 #define ELM_SYS_FILE_ITEM_H
 
-#include <sys/stat.h>
+#include <sys/stat.h>	// TODO find a way to remove
+#include <elm/util/LockPtr.h>
 #include <elm/sys/Path.h>
 #include <elm/sys/SystemException.h>
 
@@ -32,27 +33,25 @@ class File;
 class Directory;
 
 // FileItem class
-class FileItem {
-	int usage;
+class FileItem: public Lock {
+	friend class LockPtr<FileItem>;
+public:
+	static LockPtr<FileItem> get(Path path);
+	
+	virtual LockPtr<File> toFile();
+	virtual LockPtr<Directory> toDirectory();
+	String name();
+	Path& path();
+	bool isReadable();
+	bool isWritable();
+	bool isDeletable();
+
 protected:
 	Directory *parent;
 	Path _path;
 	ino_t ino;
 	FileItem(Path path, ino_t inode);
-	virtual ~FileItem(void);
-public:
-	static FileItem *get(Path path);
-	void use(void);
-	void release(void);
-	
-	// Accessors
-	virtual File *toFile(void);
-	virtual Directory *toDirectory(void);
-	String name(void);
-	Path& path(void);
-	bool isReadable(void);
-	bool isWritable(void);
-	bool isDeletable(void);
+	virtual ~FileItem();
 };
 
 } } // elm::system

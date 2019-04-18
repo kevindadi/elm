@@ -75,7 +75,7 @@ namespace elm { namespace inhstruct {
  */
 int Tree::count(void) const {
 	int cnt = 0;
-	for(Iterator cur(this); cur; cur++)
+	for(Iter cur(this); cur; cur++)
 		cnt++;
 	return cnt;
 }
@@ -117,7 +117,7 @@ void Tree::appendChild(Tree *child) {
 	if(!_children)
 		_children = child;
 	else
-		for(Iterator cur(this); cur; cur++)
+		for(Iter cur(this); cur; cur++)
 			if(!cur->sibling()) {
 				cur->_sibling = child;
 				break;
@@ -148,7 +148,7 @@ void Tree::removeChild(Tree *child) {
 		_children = _children->_sibling;
 			return;		
 	}
-	for(Iterator cur(this); cur; cur++)
+	for(Iter cur(this); cur; cur++)
 		if(cur->sibling() == child) {
 			cur->_sibling = child->_sibling;
 			return;

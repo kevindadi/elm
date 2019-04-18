@@ -55,16 +55,27 @@ public:
 		{ return inhstruct::Tree::isEmpty(); }
 
 	// Iterator class
-	class Iterator: public PreIterator<Iterator, const T&> {
+	class Iter {
 	public:
-		inline Iterator(const Iterator& iter): it(iter.it) { }
-		inline Iterator(const Tree *tree): it(tree) { }
-		inline bool ended (void) const { return it.ended(); }
-		inline const T& item(void) const
-			{ return static_cast<Tree *>(it.item())->_value; }
+		inline Iter(const Tree *tree): it(tree) { }
+		inline Iter(const Iter& iter): it(iter.it) { }
+		inline bool ended(void) const { return it.ended(); }
+		inline const T& item(void) const { return static_cast<Tree *>(it.item())->_value; }
 		inline void next(void) { it.next(); }
+		inline bool equals(Iter i) const { return it.equals(i.it); }
+
+		inline operator bool() const { return !ended(); }
+		inline operator T() const { return item(); }
+		inline operator Tree *() const { return item(); }
+		inline Tree *operator*() const { return item(); }
+		inline Tree *operator->() const { return item(); }
+		inline Iter& operator++() { next(); return *this; }
+		inline Iter operator++(int) { auto o = *this; next(); return o; }
+		inline bool operator==(Iter i) const { return equals(i); }
+		inline bool operator!=(Iter i) const { return !equals(i); }
+
 	private:
-		inhstruct::Tree::Iterator it;
+		inhstruct::Tree::Iter it;
 	};
 
 	// Mutators
@@ -82,7 +93,7 @@ public:
 		{ inhstruct::Tree::removeChild(child); }
 	inline void remove(Tree *child)
 		{ inhstruct::Tree::remove(child); }
-	inline void remove(const Iterator& iter)
+	inline void remove(const Iter& iter)
 		{ removeChild(iter); }
 	template <class TT> void removeAll(const TT& coll)
 		{ inhstruct::Tree::removeAll(coll); } 

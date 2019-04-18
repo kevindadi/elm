@@ -20,8 +20,8 @@
  */
 
 #include <elm/data/Vector.h>
-#include "../include/elm/data/Range.h"
-#include "../include/elm/test.h"
+#include <elm/data/util.h>
+#include <elm/test.h>
 
 using namespace elm;
 
@@ -44,7 +44,7 @@ TEST_BEGIN(sub_coll)
 	CHECK(bool(e));
 
 	Range<Vector<int>::Iter> s(b, e);
-	Range<Vector<int>::Iter>::Iter i(s);
+	Range<Vector<int>::Iter>::Iter i(s.begin());
 	CHECK(!i.ended());
 	CHECK_EQUAL(*i, 3);
 	i++;

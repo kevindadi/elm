@@ -32,25 +32,37 @@ class Directory: public FileItem {
 	Directory(Path path, ino_t inode);
 public:
 
-	// Constructors
-	static Directory *make(Path path);
+	static LockPtr<Directory> make(Path path);
 
 	// Children iterator
-	class Iterator: public PreIterator<Iterator, FileItem *> {
+	class Iter {
+	public:
+		typedef LockPtr<FileItem> t;
+
+		Iter(LockPtr<Directory> directory);
+		~Iter(void);
+		bool ended(void) const;
+		t item(void) const;
+		void next(void);
+		bool equals(const Iter& i) const;
+
+		inline operator bool() const { return !ended(); }
+		inline operator t() const { return item(); }
+		inline t operator*() const { return item(); }
+		inline t operator->() const { return item(); }
+		inline Iter& operator++() { next(); return *this; }
+		inline void operator++(int) { next(); }
+		inline bool operator==(const Iter& i) const { return equals(i); }
+		inline bool operator!=(const Iter& i) const { return !equals(i); }
+
+	private:
 		Path path;
 		void *dir;
-		FileItem *file;
+		LockPtr<FileItem> file;
 		void go(void);
-	public:
-		Iterator(Directory *directory);
-		~Iterator(void);
-		bool ended(void) const;
-		FileItem *item(void) const;
-		void next(void);
 	};
 
-	// Overload
-	virtual Directory *toDirectory(void);
+	LockPtr<Directory> toDirectory(void) override;
 };
 
 } } // elm::system

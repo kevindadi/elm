@@ -19,9 +19,10 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <elm/data/Range.h>
 #include <elm/data/util.h>
 #include <elm/data/Vector.h>
-#include "../include/elm/test.h"
+#include <elm/test.h>
 
 using namespace elm;
 

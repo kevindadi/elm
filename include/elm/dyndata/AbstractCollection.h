@@ -40,7 +40,7 @@ public:
 
 // Iterator class
 template <class T>
-class Iter: public PreIterator<Iter<T>, T> {
+class Iter: public PreIterator<Iter<T>, T, T> {
 public:
 	inline Iter(AbstractIter<T> *iter): i(iter) { }
 	inline Iter(const Iter<T>& iter): i(iter.i) { }

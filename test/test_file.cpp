@@ -19,7 +19,7 @@ cstring files[] = {
 };
 int found = 0;
 
-static bool lookup(FileItem *item) {
+static bool lookup(LockPtr<FileItem> item) {
 	string name = item->path().namePart();
 	for(t::uint i = 0; i < sizeof(files) / sizeof(cstring); i++)
 		if(name == files[i]) {
@@ -47,13 +47,13 @@ static bool look_all(void) {
 TEST_BEGIN(file)
 
 	// Read directory
-	FileItem *file = FileItem::get(sys::Path::current() / "test-file");
+	auto file = FileItem::get(sys::Path::current() / "test-file");
 	CHECK(file->path().namePart() == "test-file");
 	CHECK(file);
-	Directory *dir = file->toDirectory();
+	auto dir = file->toDirectory();
 	CHECK(dir);
 	CHECK(dir->path().namePart() == "test-file");
-	for(Directory::Iterator item(dir); item; item++) {
+	for(Directory::Iter item(dir); item; item++) {
 		cerr << item->path() << io::endl;
 		CHECK(lookup(item));
 	}

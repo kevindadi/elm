@@ -123,7 +123,7 @@ TEST_BEGIN(plugin)
 
 	// Check iterator
 	{
-		Plugger::Iterator plugin(plugger);
+		Plugger::Iter plugin(plugger);
 		CHECK(plugin);
 		CHECK(plugin == "plugin_two");
 		plugin++;

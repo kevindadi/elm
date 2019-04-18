@@ -13,8 +13,7 @@ TEST_BEGIN(system)
 		io::OutStream *out = p.write();
 		out->write('E');
 		delete out;
-		FAIL_ON_EXCEPTION(sys::SystemException,
-			sys::System::remove(p));
+		FAIL_ON_EXCEPTION(sys::SystemException, sys::System::remove(p));
 		CHECK(!p.exists());
 	}
 

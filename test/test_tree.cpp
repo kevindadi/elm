@@ -13,7 +13,7 @@ TEST_BEGIN(tree)
 		t1->add(t2);
 		t1->add(t3);
 		CHECK(!t1->isEmpty());
-		inhstruct::Tree::Iterator child(t1);
+		inhstruct::Tree::Iter child(t1);
 		CHECK(!child.ended());
 		CHECK(*child == t3);
 		child++;
@@ -35,7 +35,7 @@ TEST_BEGIN(tree)
 		t1->add(t2);
 		t1->add(t3);
 		CHECK(!t1->isEmpty());
-		tree_t::Iterator child(t1);
+		tree_t::Iter child(t1);
 		CHECK(child == true); 
 		CHECK(child == "3");
 		child++;

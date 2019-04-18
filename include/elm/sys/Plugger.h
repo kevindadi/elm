@@ -66,10 +66,10 @@ public:
 	String lastErrorMessage(void);
 
 	// Iterator class
-	class Iterator: public PreIterator<Iterator, String> {
+	class Iter: public PreIterator<Iter, String, String> {
 	public:
-		Iterator(Plugger& _plugger);
-		~Iterator(void);
+		Iter(Plugger& _plugger);
+		~Iter(void);
 		bool ended(void) const;
 		String item(void) const;
 		void next(void);
@@ -80,7 +80,7 @@ public:
 		Vector<Plugin *>& statics;
 		int i, c;
 		int _path;
-		Directory::Iterator *file;
+		Directory::Iter *file;
 		void go(void);
 	};
 

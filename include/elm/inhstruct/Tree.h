@@ -43,13 +43,23 @@ public:
 	inline operator bool(void) const { return !isEmpty(); }
 	
 	// Iterator class
-	class Iterator: public PreIterator<Iterator, Tree *> {
+	class Iter {
 	public:
-		inline Iterator(const Iterator& iter): cur(iter.cur) { }
-		inline Iterator(const Tree *tree): cur(tree->children()) { }
+		inline Iter(const Tree *tree): cur(tree->children()) { }
+		inline Iter(const Iter& iter): cur(iter.cur) { }
 		inline bool ended (void) const { return !cur; }
 		inline Tree *item (void) const { return cur; }
 		inline void next(void) { cur = cur->sibling(); }
+		inline bool equals(Iter ii) const { return cur == ii.cur; }
+
+		inline operator bool() const { return !ended(); }
+		inline operator Tree *() const { return item(); }
+		inline Tree *operator*() const { return item(); }
+		inline Tree *operator->() const { return item(); }
+		inline Iter& operator++() { next(); return *this; }
+		inline Iter operator++(int) { auto o = *this; next(); return o; }
+		inline bool operator==(Iter i) const { return equals(i); }
+		inline bool operator!=(Iter i) const { return !equals(i); }
 	private:
 		Tree *cur;
 	};
@@ -73,7 +83,7 @@ public:
 		{ for(typename TT::Iterator iter(coll); iter; iter++) add(*iter); } 
 	void removeChild(Tree *child);
 	inline void remove(Tree *child) { removeChild(child); }
-	inline void remove(const Iterator& iter) { removeChild(iter); }
+	inline void remove(const Iter& iter) { removeChild(iter); }
 	template <class TT> void removeAll(const TT& coll)
 		{ for(typename TT::Iterator iter(coll); iter; iter++) remove(*iter); } 
 	inline void clear(void) { _children = 0; }

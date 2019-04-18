@@ -25,14 +25,24 @@
 
 namespace elm {
 
-class StringSplit: public PreIterator<StringSplit, String> {
+class StringSplit {
 public:
 	inline StringSplit(void): l(-1), p(-1) { }
 	inline StringSplit(const String& str, char chr): s(str), ss(String::make(chr)), l(-1), p(-1) { find(); }
 	inline StringSplit(const String& str, String sub): s(str), ss(sub), l(-1), p(-1) { find(); }
+
 	inline bool ended(void) const { return l >= s.length(); }
-	inline String item(void) { return s.substring(l + 1, p - l - 1); }
+	inline String item(void) const { return s.substring(l + 1, p - l - 1); }
 	inline void next(void) { if(p >= s.length()) l = s.length(); else find(); }
+	inline bool equals(const StringSplit& sp) const { return l == sp.l && p == sp.p; }
+
+	inline operator bool() const { return !ended(); }
+	inline operator String() const { return item(); }
+	inline String operator*() const { return item(); }
+	inline StringSplit& operator++() { next(); return *this; }
+	inline StringSplit operator++(int) { StringSplit o = *this; next(); return o; }
+	inline bool operator==(const StringSplit& sp) const { return equals(sp); }
+	inline bool operator!=(const StringSplit& sp) const { return !equals(sp); }
 
 private:
 	inline void find(void)

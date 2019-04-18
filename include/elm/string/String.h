@@ -126,7 +126,7 @@ public:
 	String rtrim(void) const;
 	String replace(String pat, String sub);
 
-	class Iter: public PreIterator<Iter, char> {
+	class Iter: public PreIterator<Iter, char, char> {
 	public:
 		inline Iter(const String& s, int i = 0): _s(s), _i(i) { }
 		inline bool atEnd() const { return _i >= _s.length(); }

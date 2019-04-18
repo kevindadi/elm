@@ -73,16 +73,18 @@ namespace sys {
 
 /**
  */ 
-FileItem::FileItem(Path path, ino_t inode):	usage(0), parent(0), _path(path), ino(inode) {
+FileItem::FileItem(Path path, ino_t inode):	parent(0), _path(path), ino(inode) {
 	ASSERTP(path, "null path");
 }
 
 
-/**
- * Virtual destructor.
- */
-FileItem::~FileItem(void) {
-	ASSERT(!usage);
+///
+FileItem::~FileItem() {
+#		if defined(__WIN32) || defined(__WIN64)
+			files->remove(path());
+#		else
+			files->remove(ino);
+#		endif
 }
 
 
@@ -92,7 +94,7 @@ FileItem::~FileItem(void) {
  * @return					File matching the given path or null if file does not exists.
  * @throw SystemException	If there is a system error.
  */
-FileItem *FileItem::get(Path path) {
+LockPtr<FileItem> FileItem::get(Path path) {
 	path = path.canonical();
 	
 	// Need to initialize ?
@@ -107,7 +109,7 @@ FileItem *FileItem::get(Path path) {
 	 struct stat st;
 	 if(stat(&path.toString(), &st) < 0) {
 	 	if(errno == ENOENT || errno == ENOTDIR)
-	 		return 0;
+	 		return nullptr;
 	 	else
 	 		throw SystemException(errno, "filesystem");
 	 }
@@ -135,32 +137,7 @@ FileItem *FileItem::get(Path path) {
 	}
 	
 	// Return found file
-	result->usage++;
 	return result;
-}
-
-
-/**
- */
-void FileItem::use(void) {
-	usage++;
-}
-
-
-/**
- * This method must be called when a file item is no more usable by its getter.
- * According other usage, it may be fully deleted.
- */
-void FileItem::release(void) {
-	usage--;
-	if(!usage) {
-#		if defined(__WIN32) || defined(__WIN64)
-			files->remove(path());
-#		else
-			files->remove(ino);
-#		endif
-		delete this;
-	}
 }
 
 
@@ -168,8 +145,8 @@ void FileItem::release(void) {
  * Convert the file item to file if it is consistent.
  * @return	Matching file or null (if it is a directory for example).
  */
-File *FileItem::toFile(void) {
-	return 0;
+LockPtr<File> FileItem::toFile() {
+	return nullptr;
 }
 
 
@@ -177,8 +154,8 @@ File *FileItem::toFile(void) {
  * Convert the file item to directory if it is consistent.
  * @return Matching directory or null (if it is a regular file for example).
  */
-Directory *FileItem::toDirectory(void) {
-	return 0;
+LockPtr<Directory> FileItem::toDirectory() {
+	return nullptr;
 }
 
 
@@ -204,7 +181,7 @@ Path& FileItem::path(void) {
  * Test if the file is readble.
  * @return True if it is readable.
  */
-bool FileItem::isReadable(void) {
+bool FileItem::isReadable() {
 	if(!access(&_path.toString(), R_OK))
 		return true;
 	else if(errno == EACCES)
@@ -218,7 +195,7 @@ bool FileItem::isReadable(void) {
  * Test if the file is readble.
  * @return True if it is readable.
  */
-bool FileItem::isWritable(void) {
+bool FileItem::isWritable() {
 	if(!access(&_path.toString(), W_OK))
 		return true;
 	else if(errno == EACCES)
@@ -232,7 +209,7 @@ bool FileItem::isWritable(void) {
  * Test if the file may be deleted.
  * @return True if is deletable, false else.
  */
-bool FileItem::isDeletable(void) {
+bool FileItem::isDeletable() {
 	if(!access(&_path.parent().toString(), W_OK))
 		return true;
 	else if(errno == EACCES)

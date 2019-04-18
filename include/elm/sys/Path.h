@@ -133,14 +133,26 @@ public:
 	inline static PathSplit splitPaths(string paths) { return PathSplit(paths); }
 
 	// directory reading
-	class DirIter: public PreIterator<DirIter, cstring> {
+	class DirIter {
 	public:
+		typedef cstring t;
+
 		inline DirIter(void): _dir(nullptr) { }
 		DirIter(Path path);
+
 		inline bool ended(void) const { return _dir == nullptr; }
 		inline cstring item(void) const { return _cur; }
 		void next(void);
 		inline bool equals(const DirIter& i) const { return _dir == i._dir && _cur == i._cur; }
+
+		inline operator bool() const { return !ended(); }
+		inline operator cstring() const { return item(); }
+		inline cstring operator*() const { return item(); }
+		inline DirIter& operator++() { next(); return *this; }
+		inline DirIter operator++(int) { DirIter o = *this; next(); return o; }
+		inline bool operator==(const DirIter& i) const { return equals(i); }
+		inline bool operator!=(const DirIter& i) const { return !equals(i); }
+
 	private:
 		void *_dir;
 		cstring _cur;

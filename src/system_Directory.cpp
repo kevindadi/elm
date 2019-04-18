@@ -44,7 +44,7 @@ namespace elm { namespace sys {
  * @return		Built directory.
  * @Throws		SystemException		When creation files.
  */
-Directory *Directory::make(Path path) {
+LockPtr<Directory> Directory::make(Path path) {
 	errno = 0;
 	// Build the directory
 #if defined(__MINGW__) || defined(__MINGW32__)
@@ -56,9 +56,9 @@ Directory *Directory::make(Path path) {
 #endif
 
 	// Get the file
-	FileItem *item = FileItem::get(path);
+	LockPtr<FileItem> item = FileItem::get(path);
 	ASSERT(item);
-	Directory *dir = item->toDirectory();
+	LockPtr<Directory> dir = item->toDirectory();
 	ASSERT(dir);
 	return dir;
 }
@@ -73,7 +73,7 @@ Directory::Directory(Path path, ino_t inode): FileItem(path, inode) {
 
 /**
  */
-Directory *Directory::toDirectory(void) {
+LockPtr<Directory> Directory::toDirectory(void) {
 	return this;
 }
 
@@ -86,7 +86,7 @@ Directory *Directory::toDirectory(void) {
 
 /**
  */
-void Directory::Iterator::go(void) {
+void Directory::Iter::go(void) {
 	errno = 0;
 	while(true) {
 		struct dirent *dirent = readdir((DIR *)dir);
@@ -109,7 +109,7 @@ void Directory::Iterator::go(void) {
 
 /**
  */
-Directory::Iterator::Iterator(Directory *directory)
+Directory::Iter::Iter(LockPtr<Directory> directory)
 : path(directory->path()), dir(0), file(0)  {
 	errno = 0;
 	dir = opendir(&directory->path().toString());
@@ -120,23 +120,21 @@ Directory::Iterator::Iterator(Directory *directory)
 
 /**
  */
-Directory::Iterator::~Iterator(void) {
+Directory::Iter::~Iter(void) {
 	if(dir)
 		closedir((DIR *)dir);
-	if(file)
-		file->release();
 }
 
 /**
  */
-bool Directory::Iterator::ended(void) const {
+bool Directory::Iter::ended(void) const {
 	return !file;
 }
 
 
 /**
  */
-FileItem *Directory::Iterator::item(void) const {
+LockPtr<FileItem> Directory::Iter::item(void) const {
 	ASSERT(file);
 	return file;
 }
@@ -144,9 +142,13 @@ FileItem *Directory::Iterator::item(void) const {
 
 /**
  */
-void Directory::Iterator::next(void) {
-	file->release();
+void Directory::Iter::next(void) {
 	go();
+}
+
+///
+bool Directory::Iter::equals(const Iter& i) const {
+	return file == i.file;
 }
 
 } } // elm::sys

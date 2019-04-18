@@ -46,7 +46,7 @@ public:
 		: p(&str), q(p + str.length()), c(0) { parse(); }
 
 	inline bool ended(void) const { return !c; }
-	inline char_t item(void) const { return c; }
+	inline const char_t& item(void) const { return c; }
 	inline void next(void) { return parse(); }
 
 private:

@@ -36,15 +36,19 @@ public:
 	class Iter: public PreIterator<Iter, t> {
 	public:
 		typedef Range collec_t;
-		inline Iter(const Range& collection)
-			: c(collection), i(c._begin) { }
-		inline bool ended(void) const { return i == c._end; }
-		inline const t& item(void) const { return i.item(); }
+		inline Iter(const Range& collection): c(collection), i(c._begin) { }
+		inline Iter(const Range& collection, const I& ii): c(collection), i(ii) { }
+		inline bool ended(void) const { return i.equals(c._end); }
+		inline typename I::return_t item(void) const { return i.item(); }
 		inline void next(void) { i.next(); }
+		inline bool equals(const Iter& ii) const { return i.equals(ii.i); }
 	private:
 		const Range& c;
 		I i;
 	};
+
+	inline Iter begin() const { return Iter(*this, _begin); }
+	inline Iter end() const { return Iter(*this, _end); }
 
 	inline bool isEmpty(void) const { return _begin == _end; }
 	inline int count(void) const

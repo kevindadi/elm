@@ -22,40 +22,6 @@
 #ifndef ELM_PREITERATOR_H
 #define ELM_PREITERATOR_H
 
-namespace elm {
-
-// PreIterator class
-template <class I, class T>
-class PreIterator {
-public:
-	typedef T t;
-
-	// operators
-	inline operator bool(void) const
-		{ return !((I *)this)->ended(); }
-	inline operator T(void) const
-		{ return ((I *)this)->item(); }
-	inline I& operator++(void)
-		{ ((I *)this)->next(); return *(I *)this; }
-	inline I& operator++(int)
-		{ ((I *)this)->next(); return *(I *)this; }
-	inline T operator*(void) const
-		{ return ((I *)this)->item(); }
-	inline T operator*(void)
-		{ return ((I *)this)->item(); }
-	inline T operator->(void) const
-		{ return ((I *)this)->item(); }
-	inline T operator->(void)
-		{ return ((I *)this)->item(); }
-
-	// C++ iterator support (including new for form)
-	inline bool operator==(const I& i)
-		{ return ((I *)this)->equals(i); }
-	inline bool operator!=(const I& i)
-		{ return !((I *)this)->equals(i); }
-
-};
-
-} // elm
+#include <elm/iter.h>
 
 #endif	// ELM_PREITERATOR_H

@@ -96,26 +96,46 @@ public:
 	int countOnes(void) const;
 	inline int countZeroes(void) const { return countBits() - countOnes(); }
 
-	// OneIterator iter
-	class OneIterator: public PreIterator<OneIterator, int> {
+	class Iter {
+	public:
+		inline Iter(const BitVector& v): bvec(v), i(0) { }
+		inline bool ended() const { return i >= bvec.size(); }
+		inline bool item() const { return bvec.bit(i); }
+		inline void next() { i++; }
+		inline bool equals(const Iter& it) const { return i == it.i; }
+
+		inline operator bool() const { return !ended(); }
+		inline bool operator*() const { return item(); }
+		inline Iter& operator++() { next(); return *this; }
+		inline Iter operator++(int) { Iter o = *this; next(); return o; }
+		inline bool operator==(const Iter& it) const { return equals(it); }
+		inline bool operator!=(const Iter& it) const { return !equals(it); }
+
+	protected:
 		const BitVector& bvec;
 		int i;
+	};
+
+	// OneIterator iter
+	class OneIterator: public Iter {
 	public:
-		inline OneIterator(const BitVector& bit_vector): bvec(bit_vector), i(-1) { next(); }
+		inline OneIterator(const BitVector& bit_vector): Iter(bit_vector) { i = -1; next(); }
 		inline int item(void) const  { return i; }
-		inline bool ended(void) const { return i >= bvec.size(); }
 		inline void next(void) { do i++; while(i < bvec.size() && !bvec.bit(i)); }
+		inline int operator*() const { return item(); }
+		inline Iter& operator++() { next(); return *this; }
+		inline Iter operator++(int) { Iter o = *this; next(); return o; }
 	};
 
 	// ZeroIterator iter
-	class ZeroIterator: public PreIterator<ZeroIterator, int> {
-		const BitVector& bvec;
-		int i;
+	class ZeroIterator: public Iter {
 	public:
-		inline ZeroIterator(const BitVector& bit_vector): bvec(bit_vector), i(-1) { next(); }
+		inline ZeroIterator(const BitVector& bit_vector): Iter(bit_vector) { i = -1; next(); }
 		inline int item(void) const  { return i; }
-		inline bool ended(void) const { return i >= bvec.size(); }
 		inline void next(void) { do i++; while(i < bvec.size() && bvec.bit(i)); }
+		inline int operator*() const { return item(); }
+		inline Iter& operator++() { next(); return *this; }
+		inline Iter operator++(int) { Iter o = *this; next(); return o; }
 	};
 
 	// Ref delegate

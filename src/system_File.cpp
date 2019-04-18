@@ -58,7 +58,7 @@ int File::size(void) {
 
 /**
  */
-File *File::toFile(void) {
+LockPtr<File> File::toFile() {
 	return this;
 }
 
