@@ -53,8 +53,8 @@ TEST_BEGIN(frag_table)
 	// Test iterator
 	bool test_iter = true;
 	int i = 0;
-	for(FragTable<int>::Iter iter(tab); iter; iter++, i++)
-		if(iter != i) {
+	for(FragTable<int>::Iter iter(tab); iter(); iter++, i++)
+		if(*iter != i) {
 			test_iter = false;
 			break;
 		}

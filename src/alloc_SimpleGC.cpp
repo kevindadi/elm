@@ -110,8 +110,8 @@ SimpleGC::~SimpleGC(void) {
  * Reset the allocator.
  */
 void SimpleGC::clear(void) {
-	for(List<chunk_t *>::Iter c(chunks); c; c++)
-		delete *c;
+	for(auto c: chunks)
+		delete c;
 	free_list = 0;
 }
 
@@ -206,7 +206,7 @@ void SimpleGC::beginGC(void) {
 
 	// build the data structure
 	stree::SegmentBuilder<void *, chunk_t *> builder(0);
-	for(List<chunk_t *>::Iter c(chunks); c; c++) {
+	for(auto c: chunks) {
 		builder.add(c->buffer, c->buffer + csize, c);
 		c->bits = new BitVector(csize / sizeof(block_t));
 	}
@@ -234,7 +234,7 @@ void SimpleGC::endGC(void) {
 	free_list = 0;
 
 	// build the list of free blocks
-	for(List<chunk_t *>::Iter c(chunks); c; c++) {
+	for(auto c: chunks) {
 
 		// traverse the bits
 		int i = 0, b = -1, cs = csize / sizeof(block_t);
@@ -264,7 +264,7 @@ void SimpleGC::endGC(void) {
 	}
 
 	// free the GC resources
-	for(List<chunk_t *>::Iter c(chunks); c; c++) {
+	for(auto c: chunks) {
 		delete c->bits;
 		c->bits = 0;
 	}

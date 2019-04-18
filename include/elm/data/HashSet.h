@@ -35,7 +35,7 @@ public:
 	inline HashSet(int size = 211): _tab(size) { }
 	inline HashSet(M& man, int size = 211): _tab(man, size) { }
 
-	class Iter: public PreIterator<Iter, T> {
+	class Iter: public InplacePreIterator<Iter, T> {
 	public:
 		inline Iter(const HashSet& set): i(set._tab) { }
 		inline Iter(const HashSet& set, bool end): i(set._tab, end) { }
@@ -52,17 +52,17 @@ public:
 	inline int count(void) const { return _tab.count(); }
 	inline bool contains(const T& val) { return _tab.hasKey(val); }
 	template <class C> inline bool containsAll(const C& coll)
-		{ for(typename C::Iter i(coll); i; i++) if(!contains(*i)) return false; return true; }
+		{ for(typename C::Iter i(coll); i(); i++) if(!contains(*i)) return false; return true; }
 	inline bool isEmpty(void) const { return _tab.isEmpty(); }
 	inline Iter items(void) const { return Iter(*this); }
 
 	inline void clear(void) { _tab.clear(); }
 	inline void add(const T& val) { _tab.put(val); }
 	template <class C> void addAll(const C& coll)
-		{ for(typename C::Iter i(coll); i; i++) add(*i); }
+		{ for(typename C::Iter i(coll); i(); i++) add(*i); }
 	inline void remove(const T& val) { _tab.remove(val); }
 	template <class C> void removeAll(const C& coll)
-		{ for(typename C::Iter i(coll); i; i++) remove(*i); }
+		{ for(typename C::Iter i(coll); i(); i++) remove(*i); }
 	inline void remove(const Iter& i) { remove(*i); }
 
 	inline void insert(const T& val) { add(val); }

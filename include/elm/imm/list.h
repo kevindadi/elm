@@ -52,7 +52,7 @@ private:
 	class GC: public BlockAllocatorWithGC<node_t> {
 	public:
 		virtual void collect(void)
-			{ for(typename List<Collector *>::Iter coll(colls); coll; coll++) coll->collect(); }
+			{ for(typename List<Collector *>::Iter coll(colls); coll(); coll++) coll->collect(); }
 		inline void add(Collector& coll) { colls.add(&coll); coll.gc = this; }
 		inline void remove(Collector& coll) { colls.remove(&coll); }
 		inline bool mark(node_t *node) { return BlockAllocatorWithGC<node_t>::mark(node); }

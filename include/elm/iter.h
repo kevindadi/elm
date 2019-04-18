@@ -24,17 +24,19 @@
 namespace elm {
 
 // PreIterator class
-template <class I, class T, class R = const T &>
+template <class I, class T>
 class PreIterator {
 public:
 	typedef T t;
-	typedef R return_t;
+	typedef T return_t;
 
-	inline operator bool() const { return !((I *)this)->ended(); }
+	//inline operator bool() const { return !((I *)this)->ended(); }
+	inline bool operator()() const { return !((I *)this)->ended(); }
+	inline bool operator!() const { return ((I *)this)->ended(); }
 
-	inline operator R() const { return ((I *)this)->item(); }
-	inline R operator*() const { return ((I *)this)->item(); }
-	inline R operator->() const { return ((I *)this)->item(); }
+	//inline operator T() const { return ((I *)this)->item(); }
+	inline T operator*() const { return ((I *)this)->item(); }
+	inline T operator->() const { return ((I *)this)->item(); }
 
 	inline I& operator++() { ((I *)this)->next(); return *(I *)this; }
 	inline void operator++(int) { ((I *)this)->next(); }
@@ -44,6 +46,30 @@ public:
 
 };
 
-}
+// InplacePreIterator class
+template <class I, class T>
+class InplacePreIterator: public PreIterator<I, T> {
+public:
+
+	typedef T t;
+	typedef const T& return_t;
+
+	//inline operator bool() const { return !((I *)this)->ended(); }
+	inline bool operator()() const { return !((I *)this)->ended(); }
+	inline bool operator!() const { return ((I *)this)->ended(); }
+
+	//inline operator const T&() const { return ((I *)this)->item(); }
+	inline const T& operator*() const { return ((I *)this)->item(); }
+	inline const T& operator->() const { return ((I *)this)->item(); }
+
+	inline I& operator++() { ((I *)this)->next(); return *(I *)this; }
+	inline void operator++(int) { ((I *)this)->next(); }
+
+	inline bool operator==(const I& i) { return ((I *)this)->equals(i); }
+	inline bool operator!=(const I& i) { return !((I *)this)->equals(i); }
+
+};
+
+}	// elm
 
 #endif /* ELM_ITER_H_ */

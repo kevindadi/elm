@@ -45,7 +45,7 @@ TEST_BEGIN(bidilist)
 		CHECK(list.count() == 10);
 		int i = 9;
 		bool good = true;
-		for(BiDiList<int>::Iter iter(list); iter; iter++, i--)
+		for(BiDiList<int>::Iter iter(list); iter(); iter++, i--)
 			if(iter.item() != i) {
 				good = false;
 				break;
@@ -99,14 +99,14 @@ TEST_BEGIN(bidilist)
 		BiDiList<int> l;
 		for(int i = 0; i < 10; i++)
 			l += i;
-		for(BiDiList<int>::Iter i(l); i;) {
+		for(BiDiList<int>::Iter i(l); i();) {
 			if(*i % 2 == 0)
 				l.remove(i);
 			else
 				i++;
 		}
 		int pairs = 0;
-		for(BiDiList<int>::Iter i(l); i; i++)
+		for(BiDiList<int>::Iter i(l); i(); i++)
 			if(*i % 2 == 0)
 				pairs++;
 		CHECK_EQUAL(pairs, 0);

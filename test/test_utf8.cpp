@@ -31,16 +31,16 @@ TEST_BEGIN(utf8)
 		char s1[] = "abcd";
 
 		Iter i(s1, 4);
-		CHECK(i);
+		CHECK(i());
 		CHECK_EQUAL(*i, char_t('a'));
 		i++;
-		CHECK(i);
+		CHECK(i());
 		CHECK_EQUAL(*i, char_t('b'));
 		i++;
-		CHECK(i);
+		CHECK(i());
 		CHECK_EQUAL(*i, char_t('c'));
 		i++;
-		CHECK(i);
+		CHECK(i());
 		CHECK_EQUAL(*i, char_t('d'));
 		i++;
 		CHECK(!i);
@@ -52,10 +52,10 @@ TEST_BEGIN(utf8)
 	{
 		char s[] = { 'a', CODE2(0x654) };
 		Iter i(s, 3);
-		CHECK(i);
+		CHECK(i());
 		CHECK_EQUAL(*i, char_t('a'));
 		i++;
-		CHECK(i);
+		CHECK(i());
 		CHECK_EQUAL(*i, char_t(0x654));
 		i++;
 		CHECK(!i);

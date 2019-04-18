@@ -501,8 +501,8 @@ Plugin *Plugger::plugFile(sys::Path path) {
 
 	// Plug it
 	plugin->setPath(path);
-	for(Vector<Plugin *>::Iter dep(deps); dep; dep++)
-		plugin->deps.add(dep);
+	for(Vector<Plugin *>::Iter dep(deps); dep(); dep++)
+		plugin->deps.add(*dep);
 	return plug(plugin, handle);
 }
 

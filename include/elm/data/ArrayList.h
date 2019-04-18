@@ -40,7 +40,7 @@ public:
 	inline ArrayList(int n = 6): _csize(1 << n), _size(0), _avail(0), _fst(0), _lst(0) { }
 	inline ~ArrayList(void) { clear(); }
 
-	class Iter: public PreIterator<Iter, T> {
+	class Iter: public PreIterator<Iter, const T&> {
 		friend class ArrayList;
 	public:
 		inline Iter(const ArrayList<T>& array): a(array), i(0), c(_fst) { }

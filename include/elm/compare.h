@@ -118,13 +118,13 @@ template <class T, class C> inline const T& max(const T& x, const T& y, const C&
 
 template <class C> inline typename C::t min(const C& c)
 	{ 	typename C::Iter i(c); typename C::t m = *i;
-		for(i++; i; i++) if(Comparator<typename C::t>::compare(*i, m) < 0) m = *i; return m; }
+		for(i++; i(); i++) if(Comparator<typename C::t>::compare(*i, m) < 0) m = *i; return m; }
 template <class C, class CC> inline typename C::t min(const C& c, const CC& cc)
 	{ 	typename C::Iter i(c); typename C::t m = *i;
 		for(i++; i; i++) if(cc.doCompare(*i, m) < 0) m = *i; return m; }
 template <class C> inline typename C::t max(const C& c)
 	{ 	typename C::Iter i(c); typename C::t m = *i;
-		for(i++; i; i++) if(Comparator<typename C::t>::compare(*i, m) > 0) m = *i; return m; }
+		for(i++; i(); i++) if(Comparator<typename C::t>::compare(*i, m) > 0) m = *i; return m; }
 
 } // elm
 

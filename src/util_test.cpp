@@ -301,7 +301,7 @@ TestCase::~TestCase(void) {
  * Perform the tests of the test set.
  */
 void TestSet::perform(void) {
-	for(Iterator test(*this); test; test++)
+	for(Iterator test(*this); test(); test++)
 		test->perform();
 }
 

@@ -41,31 +41,31 @@ public:
 	void join(const self_t& set) {
 		typename base_t::list_t::PrecIter i(base_t::list);
 		typename base_t::Iter j(set);
-		while(i && j) {
+		while(i() && j()) {
 			int c =  base_t::manager().compare(*i, *j);
 			if(c == 0) { i++; j++; }
 			else if(c < 0) i++;
 			else { base_t::list.addBefore(i, *j); j++; }
 		}
-		while(j) { base_t::list.addBefore(i, *j); j++; }
+		while(j()) { base_t::list.addBefore(i, *j); j++; }
 	}
 
 	void meet(const self_t& set) {
 		typename base_t::list_t::PrecIter i(base_t::list);
 		typename base_t::Iter j(set);
-		while(i && j) {
+		while(i() && j()) {
 			int c =  base_t::manager().compare(*i, *j);
 			if(c == 0) { i++; j++; }
 			else if(c < 0) base_t::list.remove(i);
 			else j++;
 		}
-		while(i) base_t::list.remove(i);
+		while(i()) base_t::list.remove(i);
 	}
 
 	void diff(const self_t& set) {
 		typename base_t::list_t::PrecIter i(base_t::list);
 		typename base_t::Iter j(set);
-		while(i && j) {
+		while(i() && j()) {
 			int c =  base_t::manager().compare(*i, *j);
 			if(c == 0) { base_t::list.remove(i); j++; }
 			else if(c < 0) i++;

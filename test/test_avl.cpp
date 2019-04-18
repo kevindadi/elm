@@ -97,7 +97,7 @@ public:
 	static void checkLoop(Node *n, Vector<Node *> s) {
 		if(n == nullptr)
 			return;
-		for(auto i = *s; i; i++)
+		for(auto i = *s; i(); i++)
 			ASSERT(*i != n);
 		s.push(n);
 		checkLoop(n->left(), s);
@@ -152,7 +152,7 @@ TEST_BEGIN(avl)
 		// test iterator
 		bool ok = true;
 		int n = 0;
-		for(auto i = set.begin(); i; i++, n++)
+		for(auto i = set.begin(); i(); i++, n++)
 			ok = ok || *i == n;
 		CHECK(ok);
 	}
@@ -171,7 +171,7 @@ TEST_BEGIN(avl)
 		// test iterator
 		bool ok = true;
 		int n = 1;
-		for(auto i = set.begin(); i; i++, n++)
+		for(auto i = set.begin(); i(); i++, n++)
 			ok = ok || *i == n;
 		CHECK(ok);
 	}
@@ -188,7 +188,7 @@ TEST_BEGIN(avl)
 		CHECK(Debug<int>::invariant(set));
 		CHECK_EQUAL(set.count(), setp.count());
 		auto i = set.begin(), ip = setp.begin();
-		for(; i && ip; i++, ip++)
+		for(; i() && ip(); i++, ip++)
 			if(*i != *i)
 				break;
 		CHECK(!i && !ip);
@@ -393,7 +393,7 @@ TEST_BEGIN(avl)
 		map.put(3, 3);
 		map.put(4, 4);
 		bool equals = true;
-		for(avl::Map<int, int>::PairIterator i(map); i; i++)
+		for(avl::Map<int, int>::PairIterator i(map); i(); i++)
 			if((*i).fst != (*i).snd)
 				equals = false;
 		CHECK(equals);
@@ -407,7 +407,7 @@ TEST_BEGIN(avl)
 		map.put(2, 2);
 		map.put(3, 3);
 		map.put(4, 4);
-		for(avl::Map<int, int>::MutableIterator i(map); i; i++)
+		for(avl::Map<int, int>::MutableIterator i(map); i(); i++)
 			if((*i).fst % 2 == 0)
 				i.set(0);
 		CHECK(*map.get(0) == 0);

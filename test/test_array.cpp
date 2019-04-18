@@ -39,7 +39,7 @@ TEST_BEGIN(array)
 		int i = 0;
 		for(Array<int>::Iter n(tab); !n.ended(); n++, i++) {
 			CHECK(i < 4);
-			CHECK(n == t[i]);
+			CHECK(*n == t[i]);
 		}
 		CHECK(i == 4);
 	}

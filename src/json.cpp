@@ -215,7 +215,7 @@ void Saver::addField(string id) {
 	doIndent();
 	_out << '"';
 	try {
-		for(utf8::Iter i(id); i; i++)
+		for(utf8::Iter i(id); i(); i++)
 			escape(*i);
 	}
 	catch(utf8::Exception& e) {
@@ -273,7 +273,7 @@ void Saver::put(cstring str) {
 	ASSERTP(state == FIELD || isArray(state), "json: cannot put a value out of a field or an array!");
 	doIndent();
 	_out << '"';
-	for(utf8::Iter i(str); i; i++)
+	for(utf8::Iter i(str); i(); i++)
 		escape(*i);
 	_out << '"';
 	if(state == FIELD)
@@ -289,7 +289,7 @@ void Saver::put(string val) {
 	ASSERTP(state == FIELD || isArray(state), "json: cannot put a value out of a field or an array!");
 	doIndent();
 	_out << '"';
-	for(utf8::Iter i(val); i; i++)
+	for(utf8::Iter i(val); i(); i++)
 		escape(*i);
 	_out << '"';
 	if(state == FIELD)

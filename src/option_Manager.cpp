@@ -635,7 +635,7 @@ void Manager::displayHelp(void) {
 	// display the arguments
 	Vector<Option *> done;
 	typedef ListMap<string, Option *>::PairIter iter;
-	for(iter cmd = cmds.pairs(); cmd; cmd++) {
+	for(iter cmd = cmds.pairs(); cmd(); cmd++) {
 
 		// already done?
 		Option *option = (*cmd).snd;
@@ -647,7 +647,7 @@ void Manager::displayHelp(void) {
 		bool comma = false;
 		for(int longCommands = 0; longCommands <= 1; longCommands++) {
 			// first iterate with short, then with long commands
-			for(iter ocmd = cmd; ocmd; ocmd++)
+			for(iter ocmd = cmd; ocmd(); ocmd++)
 				if((*ocmd).snd == option)
 					if(    ((*ocmd).fst[1] == '-' && longCommands)
 					 	|| ((*ocmd).fst[1] != '-' && !longCommands) ) {

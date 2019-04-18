@@ -47,7 +47,7 @@ public:
 	inline Array<T>& asArray(void) { return Array<T>(count, tab); }
 
 	// Iterator
-	class Iter: public PreIterator<Iter, T> {
+	class Iter: public InplacePreIterator<Iter, T> {
 	public:
 		friend class Vector;
 		inline Iter(const Vector& vec, int idx = 0): _vec(vec), i(idx) { }
@@ -80,7 +80,7 @@ public:
 	static const Vector<T, M> null;
 	inline int count(void) const { return cnt; }
 	bool contains(const T& v) const
-		{ for(Iter i(*this); i; i++) if(v == *i) return true; return false; }
+		{ for(Iter i(*this); i(); i++) if(v == *i) return true; return false; }
 	template <template <class _> class C> inline bool containsAll(const C<T>& items)
 		{ for(typename C<T>::Iter item(items); item; item++) if(!contains(item)) return false; return true; }
 	inline bool isEmpty(void) const { return cnt == 0; }
@@ -94,7 +94,7 @@ public:
 	inline void clear(void) { cnt = 0; }
 	void add(const T& v) { if(cnt >= cap) grow(cap * 2); tab[cnt++] = v; }
 	template <class C> inline void addAll(const C& c)
-		{ for(typename C::Iter i(c); i; i++) add(i); }
+		{ for(typename C::Iter i(c); i(); i++) add(*i); }
 	inline void remove(const T& value) { int i = indexOf(value); if(i >= 0) removeAt(i); }
 	template <template <class _> class C> inline void removeAll(const C<T>& items)
 		{ for(typename C<T>::Iter item(items); item; item++) remove(item); }

@@ -252,7 +252,7 @@ public:
 
 	bool equals(const GenTree<T, K, C>& tree) const {
 		GenTree<T, K, C>:: Iterator ai(*this), bi(tree);
-		for(; ai && bi; ai++, bi++)
+		for(; ai() && bi(); ai++, bi++)
 			if(!(C::compare(*ai, *bi) == 0))
 				return false;
 		return !ai && !bi;

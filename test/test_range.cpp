@@ -36,12 +36,12 @@ TEST_BEGIN(sub_coll)
 	Vector<int>::Iter b(v);
 	for(int i = 0; i < 3; i++)
 		b++;
-	CHECK(bool(b));
+	CHECK(b());
 
 	Vector<int>::Iter e(v);
 	for(int i = 0; i < 6; i++)
 		e++;
-	CHECK(bool(e));
+	CHECK(e());
 
 	Range<Vector<int>::Iter> s(b, e);
 	Range<Vector<int>::Iter>::Iter i(s.begin());
@@ -54,7 +54,7 @@ TEST_BEGIN(sub_coll)
 	CHECK(!i.ended());
 	CHECK_EQUAL(*i, 5);
 	i++;
-	CHECK(!bool(i));
+	CHECK(!i);
 	CHECK_EQUAL(s.count(), 3);
 	CHECK(!s.isEmpty());
 	CHECK(s.contains(4));

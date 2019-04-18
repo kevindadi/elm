@@ -83,7 +83,7 @@ inline bool exists(const C& c, const P& p)
 // find operation
 template <class C, class P>
 inline typename C::Iter find(const C& c, const P& p)
-	{ typename C::Iter i = c.begin(); for(; i != c.end(); i++) if(p(i)) break; return i; }
+	{ typename C::Iter i = c.begin(); for(; i != c.end(); i++) if(p(*i)) break; return i; }
 
 
 // map operation
@@ -165,7 +165,7 @@ public:
 	inline void next() { _i++; step(); }
 	inline bool equals(const SelectIter<I, P>& i) const { return _i.equals(i._i); }
 private:
-	inline void step() { while(_i && !_p(*_i)) _i++; }
+	inline void step() { while(_i() && !_p(*_i)) _i++; }
 	I _i;
 	P _p;
 };

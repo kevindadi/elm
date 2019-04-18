@@ -1216,7 +1216,7 @@ const Type& Enum::type(void) const {
  * @param text	Text to lookup.
  */
 int Enum::valueFor(string text) const {
-	for(Vector<Value>::Iter i = _map; i; i++)
+	for(Vector<Value>::Iter i = _map; i(); i++)
 		if((*i).name() == text)
 			return (*i).value();
 	return -1;
@@ -1225,7 +1225,7 @@ int Enum::valueFor(string text) const {
 /**
  */
 cstring Enum::nameFor(int value) const {
-	for(Iter i = values(); i; i++)
+	for(Iter i = values(); i(); i++)
 		if((*i).value() == value)
 			return (*i).name();
 	return "";

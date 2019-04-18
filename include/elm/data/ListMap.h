@@ -105,10 +105,10 @@ public:
 
 	// Map concept
 	inline Option<T> get(const K &k) const
-		{ PairIter i = lookup(k); if(i) return some((*i).snd); else return none; }
+		{ PairIter i = lookup(k); if(i()) return some((*i).snd); else return none; }
 	inline const T &get(const K &k, const T &d) const
-		{ PairIter i = lookup(k); if(i) return (*i).snd; else return d; }
-	inline bool hasKey(const K &k) const { return lookup(k); }
+		{ PairIter i = lookup(k); if(i()) return (*i).snd; else return d; }
+	inline bool hasKey(const K &k) const { return lookup(k)(); }
 	inline KeyIter keys(void) const { return KeyIter(*this); }
 	inline KeyIter keys_end(void) const { return KeyIter(); }
 	inline PairIter pairs(void) const { return PairIter(*this); }
@@ -117,18 +117,18 @@ public:
 	// MutableMap concept
 	void put(const K& k, const T& v) {
 		PairIter i = lookup(k);
-		if(i)
+		if(i())
 			base_t::set(i, pair(k, v));
 		else
 			base_t::add(pair(k, v));
 	}
 	inline void remove(const Iter& i) { base_t::remove(*i); }
 	inline void remove(const K& k)
-		{ PairIter i = lookup(k); if(i) base_t::remove(*i); }
+		{ PairIter i = lookup(k); if(i()) base_t::remove(*i); }
 
 private:
 	PairIter lookup(const K& k) const {
-		for(PairIter i = base_t::begin(); i; i++) {
+		for(PairIter i = base_t::begin(); i(); i++) {
 			int cmp = base_t::manager().compareKey(k, (*i).fst);
 			if(cmp == 0)
 				return i;

@@ -169,8 +169,8 @@ GroupedGC::~GroupedGC(void) {
  * Reset the allocator.
  */
 void GroupedGC::clear(void) {
-	for(List<chunk_t *>::Iter c(chunks); c; c++)
-		delete *c;
+	for(auto c: chunks)
+		delete c;
 	free_list[0] = 0;
 }
 
@@ -385,7 +385,7 @@ bool GroupedGC::mark(void *data, t::size size) {
 void GroupedGC::beginGC(void) {
 	// build the data structure
 	stree::SegmentBuilder<void *, chunk_t *> builder(0);
-	for(List<chunk_t *>::Iter c(chunks); c; c++) {
+	for(auto c: chunks) {
 		builder.add(c->buffer, c->buffer + csize, c);
 		c->bits = new BitVector(csize / (sizeof(block_t) * c->index));
 	}
@@ -424,7 +424,7 @@ void GroupedGC::endGC(void) {
 
 
 	// build the list of free blocks
-	for(List<chunk_t *>::Iter c(chunks); c; c++) {
+	for(auto c: chunks) {
 		if(c->init > 0) {
 			continue;
 		}
@@ -473,7 +473,7 @@ void GroupedGC::endGC(void) {
 	} // end of each chunk
 
 	// free the GC resources
-	for(List<chunk_t *>::Iter c(chunks); c; c++) {
+	for(auto c: chunks) {
 		delete c->bits;
 		c->bits = 0;
 	}

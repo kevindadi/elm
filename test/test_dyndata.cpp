@@ -37,7 +37,7 @@ TEST_BEGIN(dyndata)
 
 	bool error = false;
 	int cnt = 0;
-	for(auto i = *coll; i; i++) {
+	for(auto i = *coll; i(); i++) {
 		if(*i < 0 || *i >= 10) {
 			error = true;
 			break;

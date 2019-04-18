@@ -156,7 +156,7 @@ File::File(void) {
 /**
  */
 File::~File(void) {
-	for(ListMap<string, Section *>::Iter s = sects.items(); s; s++)
+	for(ListMap<string, Section *>::Iter s = sects.items(); s(); s++)
 		delete *s;
 }
 

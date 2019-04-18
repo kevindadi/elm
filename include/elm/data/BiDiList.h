@@ -49,7 +49,7 @@ public:
 	inline ~BiDiList(void) { clear(); }
 
 	class BackIter;
-	class Iter: public PreIterator<Iter, T> {
+	class Iter: public InplacePreIterator<Iter, T> {
 		friend class BiDiList;
 	public:
 		inline Iter(void): n(_(null._list.first())) { }
@@ -64,7 +64,7 @@ public:
 		const Node *n;
 	};
 
-	class BackIter: public PreIterator<T, BackIter> {
+	class BackIter: public InplacePreIterator<BackIter, T> {
 		friend class BiDiList;
 	public:
 		inline BackIter(const BiDiList& l): n(_(l._list.last())) { }
@@ -81,20 +81,20 @@ public:
 	static const BiDiList<T, M> null;
 	inline int count(void) const { return _list.count(); }
 	inline bool contains (const T &item) const
-		{ for(Iter iter(*this); iter; iter++) if(_man.eq.isEqual(item, iter)) return true; return false; }
+		{ for(Iter iter(*this); iter(); iter++) if(_man.eq.isEqual(item, *iter)) return true; return false; }
 	inline bool isEmpty(void) const { return _list.isEmpty(); };
 	inline operator bool(void) const { return !isEmpty(); }
 	bool equals(const BiDiList<T>& l) const
-		{ Iter i1(*this), i2(l); while(i1 && i2) { if(!_man.eq.isEqual(*i1, *i2)) return false; i1++; i2++; } return !i1 && !i2; }
+		{ Iter i1(*this), i2(l); while(i1() && i2()) { if(!_man.eq.isEqual(*i1, *i2)) return false; i1++; i2++; } return !i1 && !i2; }
 	bool includes(const BiDiList<T>& l) const
-		{ Iter i1(*this), i2(l); while(i1 && i2) { if(_man.eq.isEqual(*i1, *i2)) i2++; i1++; } ; return !i2; }
+		{ Iter i1(*this), i2(l); while(i1() && i2()) { if(_man.eq.isEqual(*i1, *i2)) i2++; i1++; } ; return !i2; }
 	inline Iter begin(void) const { return Iter(*this); }
 	inline Iter end(void) const { return Iter(*this, true); }
 	inline Iter operator*(void) const { return begin(); }
 	inline operator Iter(void) const { return begin(); }
 
 	// MutableCollection concept
-	void copy(const BiDiList<T>& l) { clear(); for(Iter i(l); i; i++) addLast(*i); }
+	void copy(const BiDiList<T>& l) { clear(); for(Iter i(l); i(); i++) addLast(*i); }
 	inline void clear(void)
 		{ while(!_list.isEmpty()) { Node *node = _(_list.first()); _list.removeFirst(); node->free(_man); } }
 	inline void add(const T& value) { addFirst(value); }
@@ -102,7 +102,7 @@ public:
 		{ for(typename C::Iter iter(items); iter; iter++) add(iter); }
 	template <class C> inline void removeAll(const C& items)
 		{ for(typename C::Iter iter(items); iter; iter++) remove(iter);	}
-	inline void remove(const T& v) { Iter i = find(v); if(i) remove(i); }
+	inline void remove(const T& v) { Iter i = find(v); if(i()) remove(i); }
 	inline void remove(Iter &i) { ASSERT(i); const Node *n = _(i.n->next()); ((Node *)i.n)->remove(); i.n = n; }
 
 	// List concept
@@ -112,7 +112,7 @@ public:
 	inline const T& last(void) const { return _(_list.first())->val; }
 	inline Iter nth(int n) { Iter i(*this); while(n) { ASSERT(i); i++; n--; } ASSERT(i); return i; };
 	Iter find(const T& item) const
-		{ Iter i; for(i = begin(); i; i++) if(_man.eq.isEqual(item, i)) break; return i; }
+		{ Iter i; for(i = begin(); i(); i++) if(_man.eq.isEqual(item, *i)) break; return i; }
 	Iter find(const T& item, const Iter& pos) const
 		{ Iter i = pos; for(i++; i; i++) if(_man.eq.isEqual(item, i)) break; return i; }
 

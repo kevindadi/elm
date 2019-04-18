@@ -55,7 +55,7 @@ public:
 			cnt++;
 			K p = iter.item().fst.snd;
 			iter++;
-			while(iter) {
+			while(iter()) {
 				if(C::compare(iter.item().fst.fst, p) != 0)
 					cnt++;
 				p = iter.item().fst.snd;
@@ -74,7 +74,7 @@ public:
 		nodes[i++].data = iter.item().snd;
 		K p = iter.item().fst.snd;
 		iter++;
-		while(iter) {
+		while(iter()) {
 			if(C::compare(iter.item().fst.fst, p) != 0) {
 				nodes[i] = node_t(p, iter.item().fst.fst);
 				nodes[i++].data = _def;

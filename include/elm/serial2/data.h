@@ -56,7 +56,7 @@ public:
 	virtual void serialize(Serializer& serializer, const void *object) {
 		const C &coll = *static_cast<const C *>(object);
 		serializer.beginCompound(&coll);
-		for (typename C::Iter iter(coll); iter; iter++) {
+		for (typename C::Iter iter(coll); iter(); iter++) {
 			serializer.onItem();
 			__serialize(serializer, *iter);
 		}

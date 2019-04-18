@@ -43,7 +43,7 @@ public:
 	inline ~FragTable(void) { clear(); }
 	inline M& manager(void) const { return tab.manager(); }
 
-	class Iter: public PreIterator<Iter, const T&> {
+	class Iter: public InplacePreIterator<Iter, const T&> {
 	public:
 		inline Iter(void): arr(0), i(0), len(0) { }
 		inline Iter(const FragTable<T, M>& array, int pos = 0): arr(&array), i(pos), len(array.count()) { }

@@ -88,7 +88,7 @@ TEST_BEGIN(dllist)
 		l.addLast(4);
 		CHECK(l.count() == 5);
 		int i = 0;
-		for(genstruct::DLList<int>::Iterator iter(l); iter; iter++, i++)
+		for(genstruct::DLList<int>::Iterator iter(l); iter(); iter++, i++)
 			CHECK(*iter == i);
 	}
 	
@@ -151,7 +151,7 @@ TEST_BEGIN(dllist)
 		for(int i = 0; i < 10; i++)
 			list.addLast(i);
 		int n = 9;
-		for(genstruct::DLList<int>::BackIterator iter(list); iter;
+		for(genstruct::DLList<int>::BackIterator iter(list); iter();
 		iter++, n--)
 			CHECK_EQUAL(*iter, n); 
 	}

@@ -50,12 +50,12 @@ public:
 	inline Iter begin() const { return Iter(*this, _begin); }
 	inline Iter end() const { return Iter(*this, _end); }
 
-	inline bool isEmpty(void) const { return _begin == _end; }
+	inline bool isEmpty(void) const { return _begin.equals(_end); }
 	inline int count(void) const
-		{ int c = 0; for(Iter i(*this); i; i++) c++; return c; }
+		{ int c = 0; for(Iter i(*this); i(); i++) c++; return c; }
 	inline operator bool(void) const { return !isEmpty(); }
 	inline bool contains(const t& v)
-		{ for(Iter i(*this); i; i++) if(Equiv<t>::equals(*i, v)) return true; return false; }
+		{ for(Iter i(*this); i(); i++) if(Equiv<t>::equals(*i, v)) return true; return false; }
 	template <class C> inline bool containsAll(const C& c)
 	 	 { for(typename C::Iter i(c); i; i++) if(!contains(*i)) return false; return true; }
 

@@ -66,10 +66,10 @@ public:
 	virtual void clear(void) { Collection<T, C>::coll.clear(); }
 	virtual void add(const T& item) { Collection<T, C>::coll.add(item); }
 	virtual void addAll(const AbstractCollection<T>& coll)
-		{ for(auto iter = coll.items(); iter; iter++) add(iter); }
+		{ for(auto iter = coll.items(); iter(); iter++) add(*iter); }
 	virtual void remove(const T& item) { Collection<T, C>::coll.remove(item); }
 	virtual void removeAll(const AbstractCollection<T>& coll)
-		{ for(auto iter = coll.items(); iter; iter++) remove(iter); }
+		{ for(auto iter = coll.items(); iter(); iter++) remove(iter); }
 	virtual void remove(const Iter<T>& iter)
 		{ Collection<T, C>::coll.remove(static_cast<const IterInst<T, typename C::Iter> *>(iter.instance())->iter()); }
 };

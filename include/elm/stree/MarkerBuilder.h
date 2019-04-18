@@ -44,7 +44,7 @@ public:
 		int i = 0;
 		typename avl::Map<K, T, C>::PairIterator iter(marks);
 		Pair<K, T> l = *iter;
-		for(iter++; iter; iter++) {
+		for(iter++; iter(); iter++) {
 			Pair<K, T> u = *iter;
 			nodes[i] = node_t(l.fst, u.fst);
 			nodes[i++].data = l.snd;

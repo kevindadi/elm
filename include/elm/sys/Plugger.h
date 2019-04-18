@@ -66,7 +66,7 @@ public:
 	String lastErrorMessage(void);
 
 	// Iterator class
-	class Iter: public PreIterator<Iter, String, String> {
+	class Iter: public PreIterator<Iter, String> {
 	public:
 		Iter(Plugger& _plugger);
 		~Iter(void);

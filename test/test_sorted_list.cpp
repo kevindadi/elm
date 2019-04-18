@@ -44,17 +44,17 @@ TEST_BEGIN(sorted_list)
 
 		// Traversal
 		SortedList<int>::Iter item(list);
-		CHECK(item);
-		if(item) {
-			CHECK(item == 2);
+		CHECK(item());
+		if(item()) {
+			CHECK(*item == 2);
 			item++;
-			CHECK(item);
-			if(item) {
-				CHECK(item == 5);
+			CHECK(*item);
+			if(item()) {
+				CHECK(*item == 5);
 				item++;
-				CHECK(item);
-				if(item) {
-					CHECK(item == 9);
+				CHECK(item());
+				if(item()) {
+					CHECK(*item == 9);
 					item++;
 					CHECK(!item);
 				}

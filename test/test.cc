@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 	for(int i = 1; i < argc; i++)
 		if(string("-h") == argv[i] || string("--help") == argv[i]) {
 			cerr << "Modules:\n";
-			for(TestSet::Iterator test(TestSet::def); test; test++)
+			for(TestSet::Iterator test(TestSet::def); test(); test++)
 				cerr << "\t" << test->name() << io::endl;
 			return 0;
 		}
@@ -30,9 +30,9 @@ int main(int argc, char *argv[]) {
 		bool found = false;
 
 		// look in the structure
-		for(TestSet::Iterator test(TestSet::def); test; test++)
+		for(TestSet::Iterator test(TestSet::def); test(); test++)
 			if(test->name() == argv[i]) {
-				tests.add(test);
+				tests.add(*test);
 				found = true;
 				break;
 			}
@@ -46,13 +46,13 @@ int main(int argc, char *argv[]) {
 
 	// if none selected, test all
 	if(!tests)
-		for(TestSet::Iterator test(TestSet::def); test; test++)
-			tests.add(test);
+		for(TestSet::Iterator test(TestSet::def); test(); test++)
+			tests.add(*test);
 
 	// perform tests
 
 	bool failed = false;
-	for(Vector<TestCase *>::Iter test(tests); test; test++) {
+	for(Vector<TestCase *>::Iter test(tests); test(); test++) {
 		try {
 			test->perform();
 		}
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
 	}
 	else {
 		cerr << "ERROR: some tests failed:\n";
-		for(Vector<TestCase *>::Iter test(tests); test; test++)
+		for(Vector<TestCase *>::Iter test(tests); test(); test++)
 			if(test->hasFailed())
 				cerr << "  * " << test->name() << io::endl;
 		return 1;

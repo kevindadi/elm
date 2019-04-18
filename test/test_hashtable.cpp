@@ -68,15 +68,15 @@ TEST_BEGIN(hashtable)
 		for(int i = 0; i < 10; i++)
 			map.put(i, 9 - i);
 		int mask = 0x3ff;
-		for(HashMap<int, int>::KeyIter key(map); key; key++) {
-			CHECK(mask & (1 << key));
-			mask &= ~(1 << key);
+		for(HashMap<int, int>::KeyIter key(map); key(); key++) {
+			CHECK(mask & (1 << *key));
+			mask &= ~(1 << *key);
 		}
 		CHECK(!mask);
 		mask = 0x3ff;
-		for(HashMap<int, int>::Iter item(map); item; item++) {
-			CHECK(mask & (1 << item));
-			mask &= ~(1 << item);
+		for(HashMap<int, int>::Iter item(map); item(); item++) {
+			CHECK(mask & (1 << *item));
+			mask &= ~(1 << *item);
 		}
 		CHECK(!mask);
 	}
@@ -142,7 +142,7 @@ TEST_BEGIN(hashtable)
 		CHECK(set.contains(666));
 
 		HashSet<int>::Iter i = set.items();
-		CHECK(i);
+		CHECK(*i);
 		CHECK_EQUAL(*i, 666);
 		i++;
 		CHECK(!i);

@@ -74,15 +74,15 @@ TEST_BEGIN(data)
 		CHECK(forall(v, pos));
 		CHECK(exists(v, _pair));
 		CHECK(!exists(v, neg));
-		CHECK(find(v, _pair));
-		CHECK(!find(v, neg));
+		CHECK(find(v, _pair)());
+		CHECK(!find(v, neg)());
 
 		CHECK(!forall(range(v.begin(), v.end()), _pair));
 		CHECK(forall(range(v.begin(), v.end()), pos));
 		CHECK(exists(range(v.begin(), v.end()), _pair));
 		CHECK(!exists(range(v.begin(), v.end()), neg));
-		CHECK(find(range(v.begin(), v.end()), _pair));
-		CHECK(!find(range(v.begin(), v.end()), neg));
+		CHECK(find(range(v.begin(), v.end()), _pair)());
+		CHECK(!find(range(v.begin(), v.end()), neg)());
 
 	}
 

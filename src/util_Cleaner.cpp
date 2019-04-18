@@ -107,9 +107,9 @@ void CleanList::add(Cleaner *cleaner) {
  * Clean the recorded cleaners.
  */
 void CleanList::clean(void) {
-	for(list_t::Iter cleaner(list); cleaner; cleaner++) {
+	for(list_t::Iter cleaner(list); cleaner(); cleaner++) {
 		cleaner->clean();
-		delete cleaner;
+		delete *cleaner;
 	}
 	list.clear();
 }

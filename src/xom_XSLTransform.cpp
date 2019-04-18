@@ -194,7 +194,7 @@ Document *XSLTransform::transformDocument(Document *in) {
 	const char **aparams = new const char *[params.count() * 2 + 1];
 	ASSERT(aparams);
 	int i = 0;
-	for(ListMap<string, string>::PairIter iter = params.pairs(); iter; iter++) {
+	for(ListMap<string, string>::PairIter iter = params.pairs(); iter(); iter++) {
 		aparams[i] = new char[(*iter).fst.length() + 1];
 		strcpy((char *)aparams[i], &(*iter).fst);
 		i++;

@@ -98,7 +98,7 @@ public:
 	void put(const data_t& data)
 		{ node_t *node = find(A::key(data)); if(node) node->data = data; else add(data); }
 	void add(const data_t& data) { make(data, _man); }
-	void putAll(const self_t& m) { for(typename self_t::Iter i(m); i; i++) put(*i); }
+	void putAll(const self_t& m) { for(typename self_t::Iter i(m); i(); i++) put(*i); }
 
 	void remove(const key_t& key) {
 		int i = _man.hash.computeHash(key) % _size;
@@ -120,7 +120,7 @@ public:
 		}
 	}
 
-	class Iter: public InternIterator, public PreIterator<Iter, T> {
+	class Iter: public InternIterator, public InplacePreIterator<Iter, data_t> {
 	public:
 		inline Iter(const self_t& htab): InternIterator(htab) { };
 		inline Iter(const self_t& htab, bool end): InternIterator(htab, end) { };

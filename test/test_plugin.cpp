@@ -124,11 +124,11 @@ TEST_BEGIN(plugin)
 	// Check iterator
 	{
 		Plugger::Iter plugin(plugger);
-		CHECK(plugin);
-		CHECK(plugin == "plugin_two");
+		CHECK(plugin());
+		CHECK(*plugin == "plugin_two");
 		plugin++;
-		REQUIRE(plugin, return);
-		CHECK(plugin == "libmyplugin");
+		REQUIRE(plugin(), return);
+		CHECK(*plugin == "libmyplugin");
 		plugin++;
 		CHECK(!plugin);
 	}

@@ -55,7 +55,7 @@ public:
 
 	void copy(const List<T, M>& list) {
 		clear(); Iter item(list); if(!item) return; addFirst(*item); Node *cur = firstNode();
-		for(item++; item; item++) { cur->insertAfter(new(_man) Node(*item)); cur = cur->next(); }
+		for(item++; item(); item++) { cur->insertAfter(new(_man) Node(*item)); cur = cur->next(); }
 	}
 
 	// Iter class
@@ -103,7 +103,7 @@ public:
 	public:
 		inline SubIter(void) { }
 		inline SubIter(Iter begin, Iter end): c(begin), e(end) { }
-		inline bool ended(void) const { return c == e; }
+		inline bool ended(void) const { return c.equals(e); }
 		inline const T& item(void) const { return *c; }
 		inline void next(void) { c++; }
 		inline Iter asIter(void) const { return c; }
@@ -116,13 +116,13 @@ public:
 	static List<T, M> null;
 	inline int count(void) const { return _list.count(); }
 	inline bool contains (const T &item) const
-		{ for(Iter iter(*this); iter; iter++) if(_man.eq.isEqual(item, iter)) return true; return false; }
+		{ for(Iter iter(*this); iter(); iter++) if(_man.eq.isEqual(item, *iter)) return true; return false; }
 	inline bool isEmpty(void) const { return _list.isEmpty(); };
 	inline operator bool(void) const { return !isEmpty(); }
 	bool equals(const List<T>& l) const
-		{ Iter i1(*this), i2(l); while(i1 && i2) { if(!_man.eq.isEqual(*i1, *i2)) return false; i1++; i2++; } return !i1 && !i2; }
+		{ Iter i1(*this), i2(l); while(i1() && i2()) { if(!_man.eq.isEqual(*i1, *i2)) return false; i1++; i2++; } return !i1 && !i2; }
 	bool includes(const List<T>& l) const
-		{ Iter i1(*this), i2(l); while(i1 && i2) { if(_man.eq.isEqual(*i1, *i2)) i2++; i1++; } ; return !i2; }
+		{ Iter i1(*this), i2(l); while(i1() && i2()) { if(_man.eq.isEqual(*i1, *i2)) i2++; i1++; } ; return !i2; }
 	inline const T& at(const Iter& i) const { return i.node->val; }
 
 	// MutableCollection concept
@@ -130,7 +130,7 @@ public:
 		{ while(!_list.isEmpty()) { Node *node = firstNode(); _list.removeFirst(); node->free(_man); } }
 	inline void add(const T& value) { addFirst(value); }
 	template <class C> inline void addAll(const C& items)
-		{ for(typename C::Iter i(items); i; i++) add(i); }
+		{ for(typename C::Iter i(items); i(); i++) add(*i); }
 	template <class C> inline void removeAll(const C& items)
 		{ for(typename C::Iter i(items); i; i++) remove(i);	}
 	void remove(const T& value) {

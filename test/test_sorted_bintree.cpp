@@ -36,14 +36,14 @@ TEST_BEGIN(sorted_bintree)
 		CHECK(tree.contains(5));
 
 		int field = 0, cnt = 0;
-		for(genstruct::SortedBinTree<int>::Iterator iter(tree); iter; iter++) {
+		for(genstruct::SortedBinTree<int>::Iterator iter(tree); iter(); iter++) {
 			cnt++;
-			field |= 1 << iter;
+			field |= 1 << *iter;
 		}
 		CHECK(cnt == 6);
 		CHECK(field == 0x3f);
 		int n = 0;
-		for(genstruct::SortedBinTree<int>::Iterator i(tree); i; i++, n++)
+		for(genstruct::SortedBinTree<int>::Iterator i(tree); i(); i++, n++)
 			CHECK_EQUAL(*i, n);
 	}
 	
@@ -128,7 +128,7 @@ TEST_BEGIN(sorted_bintree)
 		CHECK(!error);
 
 		// cleanup in the end
-		for(genstruct::SortedBinMap<int, int *>::Iterator v(map); v; v++)
+		for(genstruct::SortedBinMap<int, int *>::Iterator v(map); v(); v++)
 			delete *v;
 	}
 	

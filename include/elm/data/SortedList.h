@@ -99,7 +99,7 @@ public:
 	inline void clear(void) { list.clear(); }
 
 	void add(const T &value) {
-		for(typename list_t::PrecIter current(list); current; current++)
+		for(typename list_t::PrecIter current(list); current(); current++)
 			if(list.manager().compare(value,  *current) < 0) {
 				list.addBefore(current, value);
 				return;
@@ -120,7 +120,7 @@ public:
 	inline const T& first(void) const { return list.first(); }
 	inline const T& last(void) const { return list.last(); }
 	Iter find(const T& item, const Iter& iter) const {
-		Iter i = iter; for(; i; i++) {
+		Iter i = iter; for(; i(); i++) {
 			int cmp = list.manager().compare(item, *i);
 			if(cmp > 0) continue; else if(!cmp) return i; else return end();
 		}

@@ -54,7 +54,7 @@ public:
 	inline void remove(const K& key) { _tab.remove(key); }
 	inline void clear(void) { _tab.clear(); }
 
-	class Iter: public PreIterator<Iter, T> {
+	class Iter: public InplacePreIterator<Iter, T> {
 	public:
 		inline Iter(const self_t& htab): i(htab._tab) { };
 		inline Iter(const self_t& htab, bool end): i(htab._tab, end) { };
@@ -69,7 +69,7 @@ public:
 	inline Iter begin(void) const { return Iter(*this); }
 	inline Iter end(void) const { return Iter(*this, true); }
 
-	class KeyIter: public PreIterator<KeyIter, K> {
+	class KeyIter: public InplacePreIterator<KeyIter, K> {
 	public:
 		inline KeyIter(const self_t& htab): i(htab._tab) { };
 		inline KeyIter(const self_t& htab, bool end): i(htab._tab, end) { };
@@ -93,7 +93,7 @@ public:
 	};
 	inline KeyAccess keys(void) const { return KeyAccess(*this); }
 
-	class PairIter: public PreIterator<PairIter, Pair<K, T> > {
+	class PairIter: public InplacePreIterator<PairIter, Pair<K, T> > {
 	public:
 		inline PairIter(const self_t& htab): i(htab._tab) { };
 		inline PairIter(const self_t& htab, bool end): i(htab._tab, end) { };
