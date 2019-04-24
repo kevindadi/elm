@@ -123,7 +123,7 @@ void AbstractBlockAllocatorWithGC::collectGarbage(void) {
 
 	// collect the died blocks
 	free_cnt = 0;
-	for(BitVector::ZeroIterator n(*coll); n; n++) {
+	for(BitVector::ZeroIterator n(*coll); n(); n++) {
 		int chunk = *n / (csize / bsize);
 		free_t *nfree = (free_t *)(chunks[chunk] + (*n - chunk * (csize / bsize)) * bsize);
 		nfree->next = free_list;

@@ -104,7 +104,7 @@ public:
 		inline void next() { i++; }
 		inline bool equals(const Iter& it) const { return i == it.i; }
 
-		inline operator bool() const { return !ended(); }
+		inline bool operator()() const { return !ended(); }
 		inline bool operator*() const { return item(); }
 		inline Iter& operator++() { next(); return *this; }
 		inline Iter operator++(int) { Iter o = *this; next(); return o; }

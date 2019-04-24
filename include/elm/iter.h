@@ -41,8 +41,8 @@ public:
 	inline I& operator++() { ((I *)this)->next(); return *(I *)this; }
 	inline void operator++(int) { ((I *)this)->next(); }
 
-	inline bool operator==(const I& i) { return ((I *)this)->equals(i); }
-	inline bool operator!=(const I& i) { return !((I *)this)->equals(i); }
+	inline bool operator==(const I& i) const { return ((I *)this)->equals(i); }
+	inline bool operator!=(const I& i) const { return !((I *)this)->equals(i); }
 
 };
 
@@ -65,8 +65,8 @@ public:
 	inline I& operator++() { ((I *)this)->next(); return *(I *)this; }
 	inline void operator++(int) { ((I *)this)->next(); }
 
-	inline bool operator==(const I& i) { return ((I *)this)->equals(i); }
-	inline bool operator!=(const I& i) { return !((I *)this)->equals(i); }
+	inline bool operator==(const I& i) const { return ((I *)this)->equals(i); }
+	inline bool operator!=(const I& i) const { return !((I *)this)->equals(i); }
 
 };
 
