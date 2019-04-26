@@ -260,7 +260,9 @@ unsigned int System::random(unsigned int top) {
 		init = true;
 	}
 	int op = rand();
-	return int(double(op) * top / RAND_MAX);
+	unsigned int r = (unsigned int)(double(op) * top / RAND_MAX);
+	ASSERT(0 <= r && r <= top);
+	return r;
 }
 
 /**

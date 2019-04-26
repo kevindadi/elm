@@ -24,6 +24,7 @@
 #include <elm/alloc/DefaultAllocator.h>
 #include <elm/data/Vector.h>
 #include <elm/util/BitVector.h>
+#include <elm/util/Flags.h>
 
 namespace elm {
 
@@ -33,7 +34,13 @@ public:
 	AbstractBlockAllocatorWithGC(t::size block_size, t::size chunk_size = 1 << 20);
 	virtual ~AbstractBlockAllocatorWithGC(void);
 	void *allocate(void);
+
+	inline bool needsCollect() const { return flags(NEED); }
+	inline bool isSync() { return flags(SYNC); }
+	inline void setSync() { flags.set(SYNC); }
+	inline void setAsync() { flags.clear(SYNC); }
 	void collectGarbage(void);
+
 	inline t::size blockSize(void) const { return bsize; }
 	inline t::size chunkSize(void) const { return csize; }
 	inline int freeCount(void) const { return free_cnt; }
@@ -49,12 +56,17 @@ protected:
 	virtual void collect(void) = 0;
 	virtual void beginGC(void);
 	virtual void endGC(void);
+	virtual void destroy(void *p);
 
 	typedef struct free_t { free_t *next; } free_t;
 	free_t *free_list;
 	int free_cnt;
 
 private:
+	static const t::uint32
+		SYNC = 0,
+		NEED = 1;
+	Flags<> flags;
 	Vector<t::uint8 *> chunks;
 	t::uint8 *top;
 	t::size bsize, csize;
@@ -67,6 +79,8 @@ class BlockAllocatorWithGC: public AbstractBlockAllocatorWithGC {
 public:
 	inline BlockAllocatorWithGC(t::size chunk_size = 1 << 20): AbstractBlockAllocatorWithGC(sizeof(T), chunk_size) { }
 	inline T *allocate(void) { return static_cast<T *>(AbstractBlockAllocatorWithGC::allocate()); }
+	virtual void destroy(T *p) { }
+	void destroy(void *p) override { destroy(static_cast<T *>(p)); }
 
 protected:
 	inline bool mark(T *b) { return AbstractBlockAllocatorWithGC::mark(b); }

@@ -131,7 +131,8 @@ public:
 			tab[i] = v; cnt++; }
 	inline void insert(const Iter &i, const T &v) { insert(i.i, v); }
 	void removeAt(int i)
-		{ array::move(tab + i, tab + i + 1, cnt - i - 1); cnt--; }
+		{ ASSERTP(0 <= i && i <= cnt, "index out of bounds");
+		  array::move(tab + i, tab + i + 1, cnt - i - 1); cnt--; }
 	inline void removeAt(const Iter& i) { removeAt(i.i); }
 
 	// List concept

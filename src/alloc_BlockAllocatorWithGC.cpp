@@ -25,7 +25,7 @@ namespace elm {
 
 /**
  * @class AbstractBlockAllocatorWithGC
- * Implements the block allocator whose the template form is @ref BlockAllocatorWithGC.
+ * Implements the block allocator whose template form is @ref BlockAllocatorWithGC.
  */
 
 
@@ -35,7 +35,8 @@ namespace elm {
  * @param chunk_size	Size of the memory chunks (1Mb as a default).
  */
 AbstractBlockAllocatorWithGC::AbstractBlockAllocatorWithGC(t::size block_size, t::size chunk_size)
-: free_list(0), free_cnt(0), bsize(block_size), csize(chunk_size) {
+: free_list(nullptr), free_cnt(0), bsize(block_size), csize(chunk_size), coll(nullptr) {
+	bsize = max(block_size, sizeof(free_t));
 	ASSERTP(block_size < chunk_size, "block size must be lower than chunk size");
 	chunks.add(new t::uint8[csize]);
 	top = chunks.top();
@@ -82,20 +83,28 @@ void *AbstractBlockAllocatorWithGC::allocate(void) {
 		return r;
 	}
 
-	// else collect garbage
+	// else possibly collect garbage
 	else {
-		collectGarbage();
-		if(free_list) {
-			void *r = free_list;
-			free_list = free_list->next;
-			free_cnt--;
-			return r;
-		}
+
+		// synchronous: just record the need
+		if(flags(SYNC))
+			flags.set(NEED);
+
+		// asynchronous: collect garbage and look in free list
 		else {
-			chunks.add(new t::uint8[csize]);
-			top = chunks.top() + bsize;
-			return chunks.top();
+			collectGarbage();
+			if(free_list) {
+				void *r = free_list;
+				free_list = free_list->next;
+				free_cnt--;
+				return r;
+			}
 		}
+
+		// allocate a new chunk
+		chunks.add(new t::uint8[csize]);
+		top = chunks.top() + bsize;
+		return chunks.top();
 	}
 }
 
@@ -115,7 +124,8 @@ void AbstractBlockAllocatorWithGC::free(void *block) {
 void AbstractBlockAllocatorWithGC::collectGarbage(void) {
 
 	// allocate bit vector
-	coll = new BitVector(chunks.count() * csize / bsize, false);
+	//coll = new BitVector(chunks.count() * csize / bsize, false);
+	coll = new BitVector(totalCount(), false);
 	beginGC();
 
 	// collect the blocks
@@ -126,6 +136,7 @@ void AbstractBlockAllocatorWithGC::collectGarbage(void) {
 	for(BitVector::ZeroIterator n(*coll); n(); n++) {
 		int chunk = *n / (csize / bsize);
 		free_t *nfree = (free_t *)(chunks[chunk] + (*n - chunk * (csize / bsize)) * bsize);
+		destroy(nfree);
 		nfree->next = free_list;
 		free_list = nfree;
 		free_cnt++;
@@ -133,16 +144,37 @@ void AbstractBlockAllocatorWithGC::collectGarbage(void) {
 
 	// clean up bit vector
 	endGC();
+	flags.clear(NEED);
 	delete coll;
 }
 
+/**
+ * @fn bool AbstractBlockAllocatorWithGC::needsCollect() const;
+ * Test if garbage collection is required (in synchronous model).
+ * @return	True if garbage collection is needed, false else.
+ */
+
+/**
+ * @fn bool AbstractBlockAllocatorWithGC::isSync();
+ * Test if the allocator is synchronous or not.
+ * @return	True if synchronous, false else.
+ */
+
+/**
+ * void AbstractBlockAllocatorWithGC::setSync();
+ * Set the allocator synchronous.
+ */
+
+/**
+ * @fn void AbstractBlockAllocatorWithGC::setAsync();
+ * Set the allocator asynchronous.
+ */
 
 /**
  * @fn t::size AbstractBlockAllocatorWithGC::blockSize(void) const;
  * Get the block size.
  * @return	Block size (in bytes).
  */
-
 
 /**
  * @fn t::size AbstractBlockAllocatorWithGC::chunkSize(void) const;
@@ -197,6 +229,15 @@ void AbstractBlockAllocatorWithGC::endGC(void) {
 
 
 /**
+ * This function is called each time a block is released
+ * to the free list to let user perform some cleanup.
+ * @param p	Pointer to the block.
+ */
+void AbstractBlockAllocatorWithGC::destroy(void *p) {
+}
+
+
+/**
  * Compute the total count of allocated blocks (including used and fried ones).
  * @return	Total count of allocated blocks.
  */
@@ -230,13 +271,29 @@ int AbstractBlockAllocatorWithGC::totalCount(void) const {
 
 /**
  * @class BlockAllocatorWithGC
- * This class provides an allocator of block of same size supporting garbage collection.
- * The blocks are allocated with a call to BlockAllocatorWithGC::allocate(). When no more
- * memory is available, a garbage collection is launched: it is performed with the help
- * of the user class that must provides all living blocks by overriding the method BlockAllocatorWithGC::collect().
- * For each living block, this method must perform a call to BlockAllocatorWithGC::mark() to record it. If the block
- * has already been collected, this method return false else, true returned and the block may be deeply collected
+ * This class provides an allocator of block of same size supporting cooperative
+ * garbage collection. The blocks are allocated with a call to
+ * BlockAllocatorWithGC::allocate(). When no more memory is available, a garbage
+ * collection is launched: it is performed with the help of the user class that
+ * must provides all living blocks by overriding the method BlockAllocatorWithGC::collect().
+ * For each living block, this method must perform a call to BlockAllocatorWithGC::mark()
+ * to record it. If the block has already been collected, this method return false else,
+ * true returned and the block may be deeply collected
  * (sub-blocks linked to this one must be collected in turn).
+ *
+ * The garbage collection can performed according 2 model:
+ *	* in synchronous model, no automatic garbage collection is performed and the user has
+ *		to call BlockAllocatorWithGC::collectGarbage() to start garbage collection at safe
+ *		point in its code;
+ *	* in asynchronous model, garbage collection is automatically launched as soon as
+ *		new memory is required, possibly in middle of an operation that may make the
+ *		marking of alive block tricky but discharge the user from managing garbage
+ *		collection load.
+ *
+ * To help a bit in synchronous mode, this class provides a function, needsCollect(),
+ * indicating if a garbage collection is needed or not. As a default, and for
+ * backward compatibility, this class starts with asynchronous model but setting
+ * it synchronous may prevent a lot of bugs.
  *
  * Below, a simple example implementing a-la Lisp / Scheme lists.
  * @code

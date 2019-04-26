@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	utility module
  *
  *	This file is part of OTAWA
@@ -196,6 +195,48 @@ String Exception::message(void) {
  * @macro ELM_UNUSED
  * See @ref UNUSED.
  * @ingroup utility
+ */
+
+/**
+ * @class Flags;
+ * Small class to manage flags of bit in a safe way.
+ *
+ * The user has to assign an index to each flag bit and they are stored in
+ * this class as an integer of type type T. Then, they may be read, set
+ * or cleared safely with function of Flags.
+ *
+ * Operator (index) and [index] can be used as shortcuts to Flags::bit().
+ *
+ * A common use of this class with 3 flags, RED, GREEN, BLUE could be:
+ * @code
+ * const int RED = 0, GREEN = 1, BLUE = 2;
+ * Flags<> f;
+ * f.set(RED);
+ * f.clear(GREEN);
+ * if(f(RED))
+ *	// do something
+ * @endcode
+ *
+ * @param T	Integer type to store the flag bits (default o t::uint32).
+ * @ingroup utility
+ */
+
+/**
+ * @fn bool Flags::bit(int i) const;
+ * Get the value of flag represented by the index.
+ * @return	Flag value.
+ */
+
+/**
+ * @fn void Flags::set(int i);
+ * Set to true the flag corresponding to the index.
+ * @param i		Index of the flag to set.
+ */
+
+/**
+ * @fn void Flags::clear(int i);
+ * Set to false the flag corresponding to the index.
+ * @param i		Index of the flag to clear.
  */
 
 };

@@ -6,8 +6,8 @@
  */
 
 #include <elm/imm/list.h>
-#include <elm/genstruct/Vector.h>
-#include "../include/elm/test.h"
+#include <elm/data/Vector.h>
+#include <elm/test.h>
 
 using namespace elm;
 using namespace elm::imm;
@@ -32,8 +32,8 @@ private:
 
 
 static list<int> l, l2;
-static genstruct::Vector<list<int> > lists;
-static genstruct::Vector<genstruct::Vector<int> > vecs;
+static Vector<list<int> > lists;
+static Vector<Vector<int> > vecs;
 class MyCollector: public list<int>::Collector {
 public:
 	virtual void collect(void) {
@@ -110,7 +110,7 @@ TEST_BEGIN(ilist)
 			if(!lists || action < 20) {
 				LOG("creating list " << lists.count());
 				lists.add(list<int>::null);
-				vecs.add(genstruct::Vector<int>());
+				vecs.add(Vector<int>());
 			}
 			else if(action < 60) {
 				int l = ((r >> 8) & 0xff) % lists.count();
