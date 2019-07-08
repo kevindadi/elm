@@ -135,10 +135,7 @@ TEST_BEGIN(bidilist)
 
 	// special equivalence
 	{
-		Eq e;
-		typedef EquivManager<int, Eq> man_t;
-		man_t m(e);
-		BiDiList<int, man_t> l(m);
+		BiDiList<int, Eq> l;
 	}
 	{
 		BiDiList<int, EquivManager<Eq> > l;

@@ -25,27 +25,27 @@
 #include <elm/inhstruct/DLList.h>
 #include <elm/PreIterator.h>
 #include <elm/data/Manager.h>
+#include "custom.h"
 
 namespace elm {
 
-template <class T, class M = EquivManager<T> >
-class BiDiList {
+template <class T, class E = Equiv<T>, class A =  DefaultAlloc>
+class BiDiList: public E, public A {
 
 	class Node: public inhstruct::DLNode {
 	public:
 		T val;
 		inline Node(const T& v): val(v) { }
-		inline static void *operator new(size_t s, M& a) { return a.alloc.allocate(s); }
-		inline void free(M& a) { this->~Node(); a.alloc.free(this); }
+		inline static void *operator new(size_t s, BiDiList<T, E, A> *l) { return l->A::allocate(s); }
+		inline void free(BiDiList<T, E, A> *l) { this->~Node(); l->A::free(this); }
 	private:
 		inline ~Node(void) { }
 	};
 
 public:
 
-	inline BiDiList(void): _man(single<M>()) { }
-	inline BiDiList(const BiDiList<T>& list): _man(list._man) { copy(list); }
-	inline BiDiList(M& man): _man(man) { }
+	inline BiDiList(void) { }
+	inline BiDiList(const BiDiList<T>& list) { copy(list); }
 	inline ~BiDiList(void) { clear(); }
 
 	class BackIter;
@@ -78,16 +78,16 @@ public:
 	inline Iter reversedItems(void) const { return BackIter(*this); }
 
 	// Collection concept
-	static const BiDiList<T, M> null;
+	static const BiDiList<T, E, A> null;
 	inline int count(void) const { return _list.count(); }
 	inline bool contains (const T &item) const
-		{ for(Iter iter(*this); iter(); iter++) if(_man.eq.isEqual(item, *iter)) return true; return false; }
+		{ for(Iter iter(*this); iter(); iter++) if(E::isEqual(item, *iter)) return true; return false; }
 	inline bool isEmpty(void) const { return _list.isEmpty(); };
 	inline operator bool(void) const { return !isEmpty(); }
 	bool equals(const BiDiList<T>& l) const
-		{ Iter i1(*this), i2(l); while(i1() && i2()) { if(!_man.eq.isEqual(*i1, *i2)) return false; i1++; i2++; } return !i1 && !i2; }
+		{ Iter i1(*this), i2(l); while(i1() && i2()) { if(!E::isEqual(*i1, *i2)) return false; i1++; i2++; } return !i1 && !i2; }
 	bool includes(const BiDiList<T>& l) const
-		{ Iter i1(*this), i2(l); while(i1() && i2()) { if(_man.eq.isEqual(*i1, *i2)) i2++; i1++; } ; return !i2; }
+		{ Iter i1(*this), i2(l); while(i1() && i2()) { if(E::isEqual(*i1, *i2)) i2++; i1++; } ; return !i2; }
 	inline Iter begin(void) const { return Iter(*this); }
 	inline Iter end(void) const { return Iter(*this, true); }
 	inline Iter operator*(void) const { return begin(); }
@@ -96,7 +96,7 @@ public:
 	// MutableCollection concept
 	void copy(const BiDiList<T>& l) { clear(); for(Iter i(l); i(); i++) addLast(*i); }
 	inline void clear(void)
-		{ while(!_list.isEmpty()) { Node *node = _(_list.first()); _list.removeFirst(); node->free(_man); } }
+		{ while(!_list.isEmpty()) { Node *node = _(_list.first()); _list.removeFirst(); node->free(this); } }
 	inline void add(const T& value) { addFirst(value); }
 	template <class C> inline void addAll(const C& items)
 		{ for(typename C::Iter iter(items); iter; iter++) add(iter); }
@@ -112,16 +112,16 @@ public:
 	inline const T& last(void) const { return _(_list.first())->val; }
 	inline Iter nth(int n) { Iter i(*this); while(n) { ASSERT(i); i++; n--; } ASSERT(i); return i; };
 	Iter find(const T& item) const
-		{ Iter i; for(i = begin(); i(); i++) if(_man.eq.isEqual(item, *i)) break; return i; }
+		{ Iter i; for(i = begin(); i(); i++) if(E::isEqual(item, *i)) break; return i; }
 	Iter find(const T& item, const Iter& pos) const
-		{ Iter i = pos; for(i++; i; i++) if(_man.eq.isEqual(item, i)) break; return i; }
+		{ Iter i = pos; for(i++; i; i++) if(E::isEqual(item, i)) break; return i; }
 
 	// MutableList concept
-	inline void addFirst(const T& v) { _list.addFirst(new(_man) Node(v)); }
-	inline void addLast(const T& v) { _list.addLast(new(_man) Node(v)); }
-	inline void addAfter(const Iter& i, const T& value) { ASSERT(i); i.n->insertAfter(new(_man) Node(value)); }
-	inline void addBefore(const Iter& i, const T& v) { ASSERT(i); i.n->addBefore(new(_man) Node(v)); }
-	inline void removeFirst(void) { Node *node = _(_list.first()); _list.removeFirst(); node->free(_man); }
+	inline void addFirst(const T& v) { _list.addFirst(new(this) Node(v)); }
+	inline void addLast(const T& v) { _list.addLast(new(this) Node(v)); }
+	inline void addAfter(const Iter& i, const T& value) { ASSERT(i); i.n->insertAfter(new(this) Node(value)); }
+	inline void addBefore(const Iter& i, const T& v) { ASSERT(i); i.n->addBefore(new(this) Node(v)); }
+	inline void removeFirst(void) { Node *node = _(_list.first()); _list.removeFirst(); node->free(this); }
 	inline void removeLast(void) { Node *node = _(_list.last()); _list.removeLast(); delete node; }
 	inline void set(const Iter &i, const T &v) { ASSERT(i); i.n->val = v; }
 
@@ -154,11 +154,10 @@ public:
 
 private:
 	inhstruct::DLList _list;
-	M& _man;
 	static inline Node *_(inhstruct::DLNode *n) { return static_cast<Node *>(n); }
 };
 
-template <class T, class E> const BiDiList<T, E> BiDiList<T, E>::null;
+template <class T, class E, class A> const BiDiList<T, E, A> BiDiList<T, E, A>::null;
 
 }	// elm
 
