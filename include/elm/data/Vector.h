@@ -21,28 +21,28 @@
 #ifndef INCLUDE_ELM_DATA_VECTOR_H_
 #define INCLUDE_ELM_DATA_VECTOR_H_
 
-#include "Manager.h"
+#include "custom.h"
 #include "Array.h"
+#include <elm/equiv.h>
 
 #include <elm/array.h>
 #include <elm/compat.h>
 
 namespace elm {
 
-template <class T, class M = EquivManager<T> >
-class Vector {
-	inline T *allocate(int size)
-		{	T *t = static_cast<T *>(_man.alloc.allocate(size * sizeof(T)));
+template <class T, class E = Equiv<T>, class A = DefaultAlloc >
+class Vector: public E, public A {
+	inline T *newVec(int size)
+		{	T *t = static_cast<T *>(A::allocate(size * sizeof(T)));
 			array::construct(t, size); return t; }
-	inline void free(T *t, int size) { array::destruct(t, size); _man.alloc.free(t); }
+	inline void deleteVec(T *t, int size) { array::destruct(t, size); A::free(t); }
 
 public:
 	typedef T t;
 
-	inline Vector(int _cap = 8, M& m = single<M>()): _man(m), tab(allocate(_cap)), cap(_cap), cnt(0) { }
-	inline Vector(const Vector<T>& vec): _man(vec._man), tab(0), cap(0), cnt(0) { copy(vec); }
-	inline ~Vector(void) { if(tab) free(tab, cap); }
-	inline M& manager(void) const { return _man; }
+	inline Vector(int _cap = 8): tab(newVec(_cap)), cap(_cap), cnt(0) { }
+	inline Vector(const Vector<T>& vec): tab(0), cap(0), cnt(0) { copy(vec); }
+	inline ~Vector(void) { if(tab) deleteVec(tab, cap); }
 	inline Array<const T>& asArray(void) const { return Array<const T>(count, tab); }
 	inline Array<T>& asArray(void) { return Array<T>(count, tab); }
 
@@ -65,19 +65,19 @@ public:
 	inline int capacity(void) const { return cap; }
 	void grow(int new_cap)
 		{	ASSERTP(new_cap >= cap, "new capacity must be bigger than old one");
-			T *new_tab = allocate(new_cap); array::copy(new_tab, tab, cnt); free(tab, cap); tab = new_tab; cap = new_cap; }
+			T *new_tab = newVec(new_cap); array::copy(new_tab, tab, cnt); deleteVec(tab, cap); tab = new_tab; cap = new_cap; }
 	void setLength(int new_length)
 		{	int new_cap; ASSERTP(new_length >= 0, "new length must be >= 0");
 			for(new_cap = 1; new_cap < new_length; new_cap *= 2);
 			if (new_cap > cap) grow(new_cap); cnt = new_length; }
 	void copy(const Vector& vec)
-		{	if(!tab || vec.cnt > cap) { if(tab) free(tab, cap); cap = vec.cap; tab = allocate(vec.cap); }
+		{	if(!tab || vec.cnt > cap) { if(tab) deleteVec(tab, cap); cap = vec.cap; tab = newVec(vec.cap); }
 			cnt = vec.cnt; array::copy(tab, vec.tab, cnt); }
 	inline Array<T> detach(void)
 		{ T *rt = tab; int rc = cnt; tab = 0; cnt = 0; return Array<T>(rc, rt); }
 
 	// Collection concept
-	static const Vector<T, M> null;
+	static const Vector<T, E, A> null;
 	inline int count(void) const { return cnt; }
 	bool contains(const T& v) const
 		{ for(Iter i(*this); i(); i++) if(v == *i) return true; return false; }
@@ -107,10 +107,10 @@ public:
 	inline const T& get(const Iter& i) const { return get(i.index()); }
 	inline int indexOf(const T& v, int p = 0) const
 		{ ASSERTP(0 <= p && p <= cnt, "index out of bounds");
-		for(int i = p; i < cnt; i++) if(_man.eq.isEqual(v, tab[i])) return i; return -1; }
+		for(int i = p; i < cnt; i++) if(E::isEqual(v, tab[i])) return i; return -1; }
 	inline int lastIndexOf(const T& v, int p = -1) const
 		{	ASSERTP(p <= cnt, "index out of bounds");
-			for(int i = (p < 0 ? cnt : p) - 1; i >= 0; i--) if(_man.eq.isEqual(v, tab[i])) return i; return -1; }
+			for(int i = (p < 0 ? cnt : p) - 1; i >= 0; i--) if(E::isEqual(v, tab[i])) return i; return -1; }
 	inline const T & operator[](int i) const { return get(i); }
 	inline const T & operator[](const Iter& i) const { return get(i); }
 
@@ -139,9 +139,9 @@ public:
 	inline const T& first(void) const { ASSERT(cnt > 0); return tab[0]; }
 	inline const T& last(void) const { ASSERT(cnt > 0); return tab[cnt - 1]; }
 	inline Iter find(const T &v)
-		{ Iter i(*this); while(i && !_man.eq.isEquals(*i, v)) i++; return i; }
+		{ Iter i(*this); while(i && !E::isEqual(*i, v)) i++; return i; }
 	inline Iter find (const T &v, const Iter &p)
-		{ Iter i(p); while(i && !_man.eq.isEquals(*i, v)) i++; return i; }
+		{ Iter i(p); while(i && !E::isEqual(*i, v)) i++; return i; }
 
 	// MutableList concept
 	inline T& first(void) { ASSERT(cnt > 0); return tab[0]; }
@@ -170,13 +170,12 @@ public:
 	inline T& addNew(void) { if(cnt >= cap) grow(cap * 2); return tab[cnt++]; }
 
 private:
-	M& _man;
 	T *tab;
 	int cap, cnt;
 };
 
-template <class T, class M>
-const Vector<T, M> Vector<T, M>::null;
+template <class T, class E, class A>
+const Vector<T, E, A> Vector<T, E, A>::null;
 
 }	// elm
 

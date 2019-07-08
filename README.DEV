@@ -23,14 +23,12 @@ Under Windows (MINGW required):
 
 Auto-documentation:
 <code>
+	doxygen
 	xdg-open autodoc/index.html
 </code>
 
-Re-generating the autodocumentation:
-	cmake . -DAUTODOC=ON
-
 Activating the test compilation:
-	cmake . -DELM_TEST=ON
+	cmake . -DWITH_TEST=yes
 
 Testing:
 	cd test

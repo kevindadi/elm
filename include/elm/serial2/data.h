@@ -26,7 +26,7 @@
 
 namespace elm {
 
-template <class T, class M> class Vector;
+template <class T, class E, class A> class Vector;
 
 namespace serial2 {
 

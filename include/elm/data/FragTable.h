@@ -22,38 +22,35 @@
 #define ELM_DATA_FRAGTABLE_H
 
 #include <elm/assert.h>
-#include "Manager.h"
 #include "Vector.h"
 
 namespace elm {
 
 // FragTable class
-template <class T, class M = EquivManager<T> >
-class FragTable {
-	typedef EquivManager<T *, Equiv<T *>, typename M::alloc_t> vec_equiv_t;
+template <class T, class E = Equiv<T>, class A = DefaultAlloc>
+class FragTable: public E, public A {
 public:
-	typedef FragTable<T, M> self_t;
+	typedef FragTable<T, E, A> self_t;
 
-	inline FragTable(int size_pow = 8, M& man = single<M>())
-		: vec_equiv(single<Equiv<T *> >(), man.alloc), tab(8, vec_equiv), _man(man), size(1 << size_pow), msk(size - 1), shf(size_pow), used(size)
+	inline FragTable(int size_pow = 8)
+		: tab(8), size(1 << size_pow), msk(size - 1), shf(size_pow), used(size)
 		{ ASSERTP(size_pow > 0, "size must be greater than 0"); }
 	inline FragTable(const FragTable& t)
-		: vec_equiv(single<Equiv<T *> >(), t._man.alloc), tab(8, vec_equiv), _man(t._man), size(t.size), msk(size - 1), shf(t.shf), used(0)
+		: tab(8), size(t.size), msk(size - 1), shf(t.shf), used(0)
 		{ addAll(tab); }
 	inline ~FragTable(void) { clear(); }
-	inline M& manager(void) const { return tab.manager(); }
 
 	class Iter: public InplacePreIterator<Iter, const T&> {
 	public:
 		inline Iter(void): arr(0), i(0), len(0) { }
-		inline Iter(const FragTable<T, M>& array, int pos = 0): arr(&array), i(pos), len(array.count()) { }
+		inline Iter(const FragTable<T, E, A>& array, int pos = 0): arr(&array), i(pos), len(array.count()) { }
 		inline void next(void) { ASSERT(i < len); i++; }
 		inline const T& item(void) const { return arr->get(i); }
 		inline bool ended(void) const { return i >= len; }
 		inline bool equals(const Iter& it) const { return arr == it.arr && i == it.i; }
 	protected:
 		friend class FragTable;
-		const FragTable<T, M> *arr;
+		const FragTable<T, E, A> *arr;
 		int i, len;
 	};
  	
@@ -139,14 +136,12 @@ public:
 			used += count; return res; }
 
 private:
-	vec_equiv_t vec_equiv;
-	Vector<T *> tab;
-	M& _man;
+	Vector<T *, Equiv<T *>, A> tab;
 	int size, msk, shf, used;
 };
 
-template <class T, class M>
-inline bool operator<=(const T& v, const FragTable<T, M>& t) { return t.contains(v); }
+template <class T, class E, class A>
+inline bool operator<=(const T& v, const FragTable<T, E, A>& t) { return t.contains(v); }
 
 } // elm
 
