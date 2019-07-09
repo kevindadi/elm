@@ -19,7 +19,6 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #include "../include/elm/test.h"
-#include <elm/genstruct/Vector.h>
 #include <elm/avl/Set.h>
 #include <elm/avl/Map.h>
 #include <elm/genstruct/HashTable.h>

@@ -20,12 +20,11 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <iostream>
 #include <elm/type_info.h>
 #include <elm/util/Option.h>
-#include <elm/genstruct/HashTable.h>
-#include <elm/genstruct/Vector.h>
-#include "../include/elm/test.h"
+#include <elm/test.h>
+#include <elm/data/Vector.h>
+#include <elm/data/HashMap.h>
 
 using namespace elm;
 
@@ -173,8 +172,8 @@ TEST_BEGIN(type_info)
 
 	// embed a class
 	{
-		typedef genstruct::Vector<int> v_t;
-		genstruct::HashTable<int, v_t> h;
+		typedef Vector<int> v_t;
+		HashMap<int, v_t> h;
 		v_t v1;
 		v1.add(0);
 		h.put(0, v1);

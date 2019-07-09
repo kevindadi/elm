@@ -5,11 +5,10 @@
  * test/test_vector_queue.cpp -- VectorQueue class test.
  */
 
-#include <elm/genstruct/VectorQueue.h>
+#include <elm/data/VectorQueue.h>
 #include <stdlib.h>
-#include "../include/elm/test.h"
+#include <elm/test.h>
 
-using namespace elm::genstruct;
 using namespace elm;
 
 TEST_BEGIN(vector_queue)

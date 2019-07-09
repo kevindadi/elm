@@ -10,8 +10,6 @@
 #include <elm/assert.h>
 #include <elm/serial2/serial.h>
 #include <elm/data/Vector.h>
-#include <elm/genstruct/Vector.h>
-#include <elm/genstruct/Table.h>
 
 namespace elm { namespace serial2 {
 
@@ -94,52 +92,6 @@ void __serialize(Serializer& serializer, const AllocArray<T>& tab)
 
 
 
-
-
-/****** Old Serialization ******/
-
-// Table serialization
-template <class T>
-void __serialize(Serializer& serializer, const genstruct::Table<T>& tab) {
-	serializer.beginCompound(&tab);
-	for(int i = 0; i < tab.count(); i++) {
-		serializer.onItem();
-		__serialize(serializer, tab[i]);
-	}
-	serializer.endCompound(&tab);
-}
-template <class T>
-void __serialize(Serializer& serializer, genstruct::Table<T>& tab) {
-	__serialize(serializer, (const genstruct::Table<T>&)tab);
-}
-template <class T>
-void __serialize(Serializer& serializer, const genstruct::AllocatedTable<T>& tab) {
-	__serialize(serializer, (const genstruct::Table<T>&)tab);
-}
-template <class T>
-void __serialize(Serializer& serializer, genstruct::AllocatedTable<T>& tab) {
-	__serialize(serializer, (const genstruct::Table<T>&)tab);
-}
-
-
-// Table unserialization
-template <class T>
-void __unserialize(Unserializer& serializer, genstruct::AllocatedTable<T>& tab) {
-	int cnt = serializer.countItems();
-	if(!cnt)
-		tab.allocate(0);
-	else {
-		tab.allocate(cnt);
-		ASSERT(serializer.beginCompound(&tab));
-		for(int i = 0; i < cnt; i++) {
-			__unserialize(serializer, tab[i]);
-			serializer.nextItem();
-		}
-		serializer.endCompound(&tab);
-	}
-}
-
-
 // Collection serialization
 
 // common template
@@ -190,10 +142,6 @@ template <template <class I> class Coll, class T>
 CollecAC<Coll,T> CollecAC<Coll,T>::__type;
 
 
-
-// vector handling
-template <class T> struct from_class<genstruct::Vector<T> > : public CollecAC<genstruct::Vector, T> {
-};
 
 } } // elm::serial2
 

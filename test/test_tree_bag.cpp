@@ -5,9 +5,8 @@
  * test_sorted_bintree.cpp -- unit tests for SortedBinTree class.
  */
 
+#include <elm/data/TreeBag.h>
 #include <elm/sys/System.h>
-#include <elm/genstruct/SortedBinTree.h>
-#include <elm/genstruct/SortedBinMap.h>
 #include "../include/elm/test.h"
 
 using namespace elm;
@@ -16,11 +15,36 @@ using namespace elm;
 #define MAX		10000
 
 // test routine
-TEST_BEGIN(sorted_bintree)
+TEST_BEGIN(tree_bag)
 	
+	// instantiation test
+	{
+		if(false) {
+			TreeBag<int> t;
+			const TreeBag<int> ct(t);
+			t.comparator();
+			ct.comparator();
+			t.count();
+			t.contains(1);
+			t.isEmpty();
+			static_cast<bool>(t);
+			t.begin();
+			t.end();
+			volatile int s;
+			for(const auto x: t) s += x;
+			t.clear();
+			t.add(1);
+			t.addAll(t);
+			t.remove(1);
+			t.removeAll(t);
+			t.remove(t.begin());
+
+		}
+	}
+
 	// Base test
 	{
-		genstruct::SortedBinTree<int> tree;
+		TreeBag<int> tree;
 		tree.add(5);
 		tree.add(0);
 		tree.add(1);
@@ -36,20 +60,22 @@ TEST_BEGIN(sorted_bintree)
 		CHECK(tree.contains(5));
 
 		int field = 0, cnt = 0;
-		for(genstruct::SortedBinTree<int>::Iterator iter(tree); iter(); iter++) {
+		for(const auto x: tree) {
 			cnt++;
-			field |= 1 << *iter;
+			field |= 1 << x;
 		}
 		CHECK(cnt == 6);
 		CHECK(field == 0x3f);
 		int n = 0;
-		for(genstruct::SortedBinTree<int>::Iterator i(tree); i(); i++, n++)
-			CHECK_EQUAL(*i, n);
+		for(const auto i: tree) {
+			CHECK_EQUAL(i, n);
+			n++;
+		}
 	}
 	
 	{
 		int cnt = 0, vals[COUNT];
-		genstruct::SortedBinTree<int> tree;
+		TreeBag<int> tree;
 		for(int i = 0; i < COUNT; i++) {
 			int v = sys::System::random(MAX * 2);
 			
@@ -79,6 +105,7 @@ TEST_BEGIN(sorted_bintree)
 		cerr << io::endl;*/
 	}
 	
+#	if 0
 	{
 		bool error = false;
 		genstruct::SortedBinMap<int, int *> map;
@@ -131,6 +158,7 @@ TEST_BEGIN(sorted_bintree)
 		for(genstruct::SortedBinMap<int, int *>::Iterator v(map); v(); v++)
 			delete *v;
 	}
-	
+#	endif
+
 TEST_END
 
