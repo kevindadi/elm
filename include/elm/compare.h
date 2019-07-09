@@ -33,6 +33,7 @@ namespace elm {
 template <class T>
 class Comparator {
 public:
+	typedef T t;
 	static inline int compare(const T& v1, const T& v2)
 		{ if(v1 == v2) return 0; else if(v1 > v2) return 1; else return -1; }
 	int doCompare(const T& v1, const T& v2) const { return compare(v1, v2); }
@@ -42,6 +43,7 @@ public:
 template <class T, class C>
 class StaticComparator {
 public:
+	typedef T t;
 	static inline int compare(const T& v1, const T& v2) { return C::compare(v1, v2); }
 	inline int doCompare(const T& v1, const T& v2) const { return compare(v1, v2); }
 };
@@ -50,6 +52,7 @@ public:
 template <class T>
 class DynamicComparator {
 public:
+	typedef T t;
 	static inline int compare(const T& v1, const T& v2) { return v1.compare(v2); }
 	inline int doCompare(const T& v1, const T& v2) const { return v1.compare(v2); }
 };
@@ -61,11 +64,13 @@ template <class K, class T, class C = Comparator<K> >
 class AssocComparator {
 public:
 	typedef Pair<K, T> pair_t;
+	typedef pair_t t;
 	inline AssocComparator(const C& c = single<C>()): _c(c) { }
 	static inline int compare(const pair_t& v1, const pair_t& v2)
 		{ return C::compare(v1.fst, v2. fst); }
-	inline int doCompare(const pair_t& v1, const pair_t& v2)
+	inline int doCompare(const pair_t& v1, const pair_t& v2) const
 		{ return _c.compare(v1.fst, v2. fst); }
+	inline int compareKey(const K& k1, const K& k2) const { return _c.doCompare(k1, k2); }
 private:
 	const C& _c;
 };
@@ -76,6 +81,7 @@ template <class K, class T> class Comparator<Pair<K, T> >
 template <class T, class C>
 class ReverseComparator {
 public:
+	typedef T t;
 	inline ReverseComparator(const C& c = single<C>()): _c(c) { }
 	static inline int compare(const T& v1, const T& v2)
 		{ return -C::compare(v1, v2); }
@@ -85,23 +91,11 @@ private:
 	const C& _c;
 };
 
-// CompareEquiv class
-template <class T, class C = Comparator<T> >
-class CompareEquiv {
-public:
-	inline CompareEquiv(const C& c = single<C>()): _c(c) { }
-	static inline bool equals(const T& v1, const T& v2)
-		{ return C::compare(v1, v2) == 0; }
-	inline bool isEqual(const T& v1, const T& v2)
-		{ return _c.compare(v1, v2) == 0; }
-private:
-	const C& _c;
-};
-
 // GlobalComparator class
 template <class T>
 class GlobalComparator {
 public:
+	typedef T t;
 	static inline int compare(const T& v1, const T& v2)
 		{ return compare(v1, v2); }
 };

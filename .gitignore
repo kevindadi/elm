@@ -1,1 +1,13 @@
 /.cproject
+/.project
+/CMakeCache.txt
+/Makefile
+CMakeFiles
+*.o
+*.so
+Makefile
+install_manifest.txt
+.settings
+/.gitignore~
+/config.h
+**/cmake_install.cmake

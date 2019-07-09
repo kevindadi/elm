@@ -49,7 +49,7 @@ public:
 
 	class Iterator: public map_t::PairIter {
 	public:
-		inline Iterator(Section *s): map_t::PairIter(s->values.pairs()) { }
+		inline Iterator(Section *s): map_t::PairIter(s->values.pairs().begin()) { }
 		inline const string& key(void) const { return item().fst; }
 		inline const string& value(void) const { return item().snd; }
 	};

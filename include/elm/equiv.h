@@ -31,6 +31,7 @@ namespace elm {
 template <class T>
 class Equiv {
 public:
+	typedef T t;
 	static inline bool equals(const T& v1, const T& v2) { return v1 == v2; }
 	inline bool isEqual(const T& v1, const T& v2) const { return equals(v1, v2); }
 	static Equiv<T> def;
@@ -42,6 +43,7 @@ template <class T> Equiv<T> Equiv<T>::def;
 template <class T>
 class EqualsEquiv {
 public:
+	typedef T t;
 	static inline int equal(const T& v1, const T& v2) { return v1.equals(v2); }
 	inline bool isEqual(const T& v1, const T& v2) const { return equals(v1, v2); }
 	static EqualsEquiv<T> def;
@@ -54,11 +56,22 @@ template <class K, class T, class E = Equiv<K> >
 class AssocEquiv {
 public:
 	typedef Pair<K, T> pair_t;
+	typedef pair_t t;
 	static inline bool equals(const pair_t& v1, const pair_t& v2) { return E::equals(v1.fst, v2. fst); }
-	inline bool isEqual(const pair_t& v1, const pair_t& v2) { return equals(v1, v2); }
+	inline bool isEqual(const pair_t& v1, const pair_t& v2) const { return equals(v1, v2); }
 	static AssocEquiv<K, T, E> def;
 };
 template <class K, class T, class E> AssocEquiv<K, T, E> AssocEquiv<K, T, E>::def;
+
+
+// CompareEquiv class
+template <class C>
+class CompareEquiv: public C {
+public:
+	typedef typename C::t t;
+	inline bool isEqual(const t& v1, const t& v2) const { return C::doCompare(v1, v2) == 0; }
+	static inline bool equals(const t& v1, const t& v2) { return C::compare(v1, v2) == 0; }
+};
 
 } // elm
 

@@ -26,6 +26,20 @@
 namespace elm {
 
 template <class I>
+class SimpleRange {
+public:
+	typedef typename I::t t;
+	SimpleRange(const I& begin, const I& end): b(begin), e(end) { }
+	inline const I& begin() const { return b; }
+	inline const I& end() const { return e; }
+private:
+	I b, e;
+};
+
+template <class I>
+SimpleRange<I> srange(const I& b, const I& e) { return SimpleRange<I>(b, e); }
+
+template <class I>
 class Range {
 public:
 	typedef typename I::t t;

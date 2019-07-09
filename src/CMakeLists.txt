@@ -122,17 +122,6 @@ set(LIBELM_LA_SOURCES
 	"util_WAHVector.cpp"
 	"utility.cpp"
 	"type_info.cpp"
-
-	# deprecated
-	"genstruct.h"
-	"genstruct_AssocList.cpp"
-	"genstruct_DLList.cpp"
-	"genstruct_FragTable.cpp"
-	"genstruct_DAGNode.cpp"
-	"genstruct_SortedBinMap.cpp"
-	"genstruct_SortedBinTree.cpp"
-	"genstruct_VectorQueue.cpp"
-	"genstruct_Table.cpp"
 	)
 
 

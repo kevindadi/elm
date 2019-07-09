@@ -24,13 +24,14 @@
 #include <elm/assert.h>
 #include <elm/PreIterator.h>
 #include <elm/inhstruct/SLList.h>
-#include <elm/data/Manager.h>
+#include "custom.h"
+#include <elm/equiv.h>
 
 namespace elm {
 
 // SLList class
-template <class T, class M = EquivManager<T> >
-class List {
+template <class T, class E = Equiv<T>, class A = DefaultAlloc>
+class List: public E, public A {
 
 	// Node class
 	class Node: public inhstruct::SLNode {
@@ -39,23 +40,24 @@ class List {
 		T val;
 		inline Node *next(void) const { return nextNode(); }
 		inline Node *nextNode(void) const { return static_cast<Node *>(SLNode::next()); }
-		inline static void *operator new(size_t s, M& a) { return a.allocate(s); }
-		inline void free(M& a) { this->~Node(); a.free(this); }
+		inline static void *operator new(size_t s, List<T, E, A> *l) { return l->A::allocate(s); }
+		inline void free(List<T, E, A> *l) { this->~Node(); l->A::free(this); }
 	private:
 		inline ~Node(void) { }
 	};
 
 public:
 
-	inline List(void): _man(single<M>()) { }
-	inline List(const List<T, M>& list): _man(list._man) { copy(list); }
-	inline List(M& man): _man(man) { }
+	inline List() { }
+	inline List(const List<T>& list) { copy(list); }
 	inline ~List(void) { clear(); }
-	inline M& manager(void) const { return _man; }
+	inline E& equivalence() { return *this; }
+	inline const E& equivalence() const { return *this; }
+	inline A& allocator() { return *this; }
 
-	void copy(const List<T, M>& list) {
+	void copy(const List<T, E, A>& list) {
 		clear(); Iter item(list); if(!item) return; addFirst(*item); Node *cur = firstNode();
-		for(item++; item(); item++) { cur->insertAfter(new(_man) Node(*item)); cur = cur->next(); }
+		for(item++; item(); item++) { cur->insertAfter(new(this) Node(*item)); cur = cur->next(); }
 	}
 
 	// Iter class
@@ -113,30 +115,30 @@ public:
 	};
 
 	// Collection concept
-	static List<T, M> null;
+	static List<T, E, A> null;
 	inline int count(void) const { return _list.count(); }
 	inline bool contains (const T &item) const
-		{ for(Iter iter(*this); iter(); iter++) if(_man.eq.isEqual(item, *iter)) return true; return false; }
+		{ for(Iter iter(*this); iter(); iter++) if(E::isEqual(item, *iter)) return true; return false; }
 	inline bool isEmpty(void) const { return _list.isEmpty(); };
 	inline operator bool(void) const { return !isEmpty(); }
 	bool equals(const List<T>& l) const
-		{ Iter i1(*this), i2(l); while(i1() && i2()) { if(!_man.eq.isEqual(*i1, *i2)) return false; i1++; i2++; } return !i1 && !i2; }
+		{ Iter i1(*this), i2(l); while(i1() && i2()) { if(!E::isEqual(*i1, *i2)) return false; i1++; i2++; } return !i1 && !i2; }
 	bool includes(const List<T>& l) const
-		{ Iter i1(*this), i2(l); while(i1() && i2()) { if(_man.eq.isEqual(*i1, *i2)) i2++; i1++; } ; return !i2; }
+		{ Iter i1(*this), i2(l); while(i1() && i2()) { if(E::isEqual(*i1, *i2)) i2++; i1++; } ; return !i2; }
 	inline const T& at(const Iter& i) const { return i.node->val; }
 
 	// MutableCollection concept
 	inline void clear(void)
-		{ while(!_list.isEmpty()) { Node *node = firstNode(); _list.removeFirst(); node->free(_man); } }
+		{ while(!_list.isEmpty()) { Node *node = firstNode(); _list.removeFirst(); node->free(this); } }
 	inline void add(const T& value) { addFirst(value); }
 	template <class C> inline void addAll(const C& items)
 		{ for(typename C::Iter i(items); i(); i++) add(*i); }
 	template <class C> inline void removeAll(const C& items)
-		{ for(typename C::Iter i(items); i; i++) remove(i);	}
+		{ for(const auto i: items) remove(i);	}
 	void remove(const T& value) {
-		if(isEmpty()) return; else if(_man.equals(first(), value)) removeFirst(); else
+		if(isEmpty()) return; else if(E::isEqual(first(), value)) removeFirst(); else
 		for(Node *prev = firstNode(), *cur = prev->nextNode(); cur; prev = cur, cur = cur->nextNode())
-		if(_man.equals(cur->val, value)) { prev->removeNext(); cur->free(_man); return; }
+		if(E::isEqual(cur->val, value)) { prev->removeNext(); cur->free(this); return; }
 	}
 	inline T& at(const Iter& i) { return i.node->val; }
 	inline void remove(PrecIter &iter) { remove(iter.prev, iter.node); }
@@ -149,20 +151,20 @@ public:
 	inline T& nth(int n) { Iter i(*this); while(n) { ASSERT(i); i++; n--; } ASSERT(i); return i.node->val; };
 	inline const T& nth(int n) const { Iter i(*this); while(n) { ASSERT(i); i++; n--; } ASSERT(i); return *i; };
 	Iter find(const T& item) const
-		{ Iter i; for(i = items(); i; i++) if(_man.eq.isEqual(item, i)) break; return i; }
+		{ Iter i; for(i = items(); i(); i++) if(E::isEqual(item, *i)) break; return i; }
 	Iter find(const T& item, const Iter& pos) const
-		{ Iter i = pos; for(i++; i; i++) if(_man.eq.isEqual(item, i)) break; return i; }
+		{ Iter i = pos; for(i++; i(); i++) if(E::isEqual(item, *i)) break; return i; }
 
 	// MutableList concept
-	inline void addFirst(const T& value) { _list.addFirst(new(_man) Node(value)); }
-	inline void addLast(const T& value) { _list.addLast(new(_man) Node(value)); }
+	inline void addFirst(const T& value) { _list.addFirst(new(this) Node(value)); }
+	inline void addLast(const T& value) { _list.addLast(new(this) Node(value)); }
 	inline void addAfter(const Iter& pos, const T& value)
-		{ ASSERT(pos.node); pos.node->insertAfter(new(_man) Node(value)); }
+		{ ASSERT(pos.node); pos.node->insertAfter(new(this) Node(value)); }
 	inline void addBefore(PrecIter& pos, const T& value)
 		{ 	if(!pos.prev) { addFirst(value); pos.prev = firstNode(); }
-			else { pos.prev->insertAfter(new(_man) Node(value)); pos.prev = pos.prev->next(); } }
-	inline void removeFirst(void) { Node *node = firstNode(); _list.removeFirst(); node->free(_man); }
-	inline void removeLast(void) { Node *node = lastNode(); _list.removeLast(); delete node; }
+			else { pos.prev->insertAfter(new(this) Node(value)); pos.prev = pos.prev->next(); } }
+	inline void removeFirst(void) { Node *node = firstNode(); _list.removeFirst(); node->free(this); }
+	inline void removeLast(void) { Node *node = lastNode(); _list.removeLast(); node->free(this); }
 	inline void set(const Iter &pos, const T &item) { ASSERT(pos.node); pos.node->val = item; }
 
 	// Stack concept
@@ -189,16 +191,15 @@ public:
 
 private:
 	inhstruct::SLList _list;
-	M& _man;
 
 	inline Node *firstNode(void) const { return static_cast<Node *>(_list.first()); }
 	inline Node *lastNode(void) const { return static_cast<Node *>(_list.last()); }
 	void remove(Node* prev, Node*& cur)
 		{	ASSERT(cur); if(!prev) { removeFirst(); cur = firstNode(); }
-			else { prev->removeNext(); cur->free(_man); cur = prev->next(); } }
+			else { prev->removeNext(); cur->free(this); cur = prev->next(); } }
 };
 
-template <class T, class E> List<T, E> List<T, E>::null;
+template <class T, class E, class A> List<T, E, A> List<T, E, A>::null;
 
 } // elm
 

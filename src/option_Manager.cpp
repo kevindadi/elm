@@ -635,7 +635,7 @@ void Manager::displayHelp(void) {
 	// display the arguments
 	Vector<Option *> done;
 	typedef ListMap<string, Option *>::PairIter iter;
-	for(iter cmd = cmds.pairs(); cmd(); cmd++) {
+	for(iter cmd = cmds.pairs().begin(); cmd(); cmd++) {
 
 		// already done?
 		Option *option = (*cmd).snd;

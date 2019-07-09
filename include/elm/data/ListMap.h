@@ -25,47 +25,25 @@
 
 namespace elm {
 
-template <class K, class T, class KC = Comparator<K>, class TE = Equiv<K>, class A = DefaultAllocator>
-class ListMapManager {
+template <class K, class T, class C = Comparator<K>, class E = Equiv<T>, class A = DefaultAlloc >
+class ListMap: private SortedList<Pair<K, T>, AssocComparator<K, T, C>, A>, public E {
+	typedef SortedList<Pair<K, T>, AssocComparator<K, T, C>, A> base_t;
 public:
-	inline ListMapManager(KC& kcmp = single<KC>(), TE& tequ = single<TE>(), A& alloc = DefaultAllocator::DEFAULT)
-		: _kcmp(kcmp), _tequ(tequ), _alloc(alloc) { }
-
-	inline void *allocate(t::size size) { return _alloc.allocate(size); }
-	inline void free(t::ptr p) { _alloc.free(p); }
-
-	inline int compareKey(const K& k1, const K& k2) { return _kcmp.doCompare(k1, k2); }
-	inline bool equalsValue(const T& v1, const T& v2) { return _tequ.isEqual(v1, v2); }
-
-	// for compatibility with CompareManager
-	typedef Pair<K, T> pair_t;
-	inline int compare(const pair_t& p1, const pair_t& p2) { return _kcmp.doCompare(p1.fst, p2.fst); }
-	inline bool equals(const pair_t& p1, const pair_t& p2) { return _kcmp.doCompare(p1.fst, p2.fst) == 0; }
-
-private:
-	KC& _kcmp;
-	TE& _tequ;
-	A& _alloc;
-};
-
-template <class K, class T, class M = ListMapManager<K, T> >
-class ListMap: private SortedList<typename M::pair_t, M> {
-	typedef SortedList<typename M::pair_t, M> base_t;
-public:
-	typedef ListMap<K, T, M> self_t;
-
-	inline ListMap(M& man = single<M>()): base_t(man) { }
-	inline ListMap(const ListMap<K, T, M>& l): base_t::type_t(l) { }
-	inline M& manager(void) const { return base_t::manager(); }
-
+	typedef ListMap<K, T, C, E, A> self_t;
 	typedef typename base_t::Iter PairIter;
 
+	inline ListMap() { }
+	inline ListMap(const ListMap<K, T>& l): base_t::type_t(l) { }
+	inline E& equivalence() { return *this; }
+
 	class Iter: public PreIterator<Iter, T> {
+		friend class ListMap;
 	public:
-		inline Iter(const ListMap<K,T, M>& l): i(l) { }
+		inline Iter(const ListMap<K, T>& l): i(l) { }
 		inline bool ended(void) const { return i.ended(); }
 		inline const T& item(void) const { return (*i).snd; }
 		inline void next(void) { i.next(); }
+		inline bool equals(const Iter& ii) const { return i.equals(ii.i); }
 	private:
 		PairIter i;
 	};
@@ -73,7 +51,7 @@ public:
 	class KeyIter: public PreIterator<KeyIter, T> {
 	public:
 		inline KeyIter(void) { }
-		inline KeyIter(const ListMap<K,T, M>& l): i(l) { }
+		inline KeyIter(const ListMap<K, T>& l): i(l) { }
 		inline bool ended(void) const { return i.ended(); }
 		inline const K& item(void) const { return (*i).fst; }
 		inline void next(void) { i.next(); }
@@ -83,12 +61,12 @@ public:
 
 	// Collection concept
 	inline Iter begin(void) const { return Iter(*this); }
-	inline Iter end(void) const { return Iter(); }
+	inline Iter end(void) const { return Iter(*this); }
 	inline int count(void) const { return base_t::count(); }
 	inline bool contains(const T& v) const
-		{ for(Iter i = begin(); i; i++) if(manager().equals(*i, v)) return true; return false; }
-	template <class C> inline bool containsAll(const C& c) const
-		{ for(typename C::Iter i = c.items(); i; i++) if(!contains(*i)) return false; return true; }
+		{ for(const auto i: *this) if(E::isEqual(i, v)) return true; return false; }
+	template <class CC> inline bool containsAll(const CC& c) const
+		{ for(const auto i: c) if(!contains(i)) return false; return true; }
 	inline bool isEmpty(void) const { return base_t::isEmpty(); }
 	inline operator bool(void) const { return !isEmpty(); }
 	inline Iter items(void) const { return begin(); }
@@ -109,10 +87,9 @@ public:
 	inline const T &get(const K &k, const T &d) const
 		{ PairIter i = lookup(k); if(i()) return (*i).snd; else return d; }
 	inline bool hasKey(const K &k) const { return lookup(k)(); }
-	inline KeyIter keys(void) const { return KeyIter(*this); }
-	inline KeyIter keys_end(void) const { return KeyIter(); }
-	inline PairIter pairs(void) const { return PairIter(*this); }
-	inline PairIter pairs_end(void) const { return PairIter(); }
+
+	inline SimpleRange<KeyIter> keys() const { return srange(KeyIter(*this), KeyIter()); }
+	inline SimpleRange<PairIter> pairs() const { return srange(PairIter(*this), PairIter()); }
 
 	// MutableMap concept
 	void put(const K& k, const T& v) {
@@ -122,14 +99,14 @@ public:
 		else
 			base_t::add(pair(k, v));
 	}
-	inline void remove(const Iter& i) { base_t::remove(*i); }
+	inline void remove(const Iter& i) { base_t::remove(i.i); }
 	inline void remove(const K& k)
 		{ PairIter i = lookup(k); if(i()) base_t::remove(*i); }
 
 private:
 	PairIter lookup(const K& k) const {
 		for(PairIter i = base_t::begin(); i(); i++) {
-			int cmp = base_t::manager().compareKey(k, (*i).fst);
+			int cmp = base_t::comparator().compareKey(k, (*i).fst);
 			if(cmp == 0)
 				return i;
 			else if(cmp < 0)

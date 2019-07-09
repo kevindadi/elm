@@ -1,5 +1,5 @@
 /*
- *	SortedList class test
+ *	list class test
  *
  *	This file is part of OTAWA
  *	Copyright (c) 2005, IRIT UPS.
@@ -22,6 +22,7 @@
 #include <elm/data/List.h>
 #include <elm/data/ListSet.h>
 #include <elm/data/SortedList.h>
+#include <elm/data/ListMap.h>
 #include <elm/data/Vector.h>
 #include "../include/elm/test.h"
 
@@ -33,6 +34,55 @@ public:
 };
 
 TEST_BEGIN(list)
+
+	// instantiate at least once each item
+	{
+		if(false) {
+			List<int> l;
+			l.equivalence();
+			l.allocator();
+			l.copy(l);
+			l.items();
+			*l;
+			l.begin();
+			l.end();
+			l.count();
+			l.contains(0);
+			l.isEmpty();
+			l.equals(l);
+			l.includes(l);
+			l.at(l.begin());
+			l.clear();
+			l.add(0);
+			l.addAll(l);
+			l.removeAll(l);
+			l.remove(0);
+			List<int>::PrecIter pi(l);
+			l.remove(pi);
+			l.first();
+			l.last();
+			l.nth(0);
+			l.find(0);
+			l.find(0, *l);
+			l.addFirst(0);
+			l.addLast(0);
+			l.addAfter(pi, 0);
+			l.addBefore(pi, 0);
+			l.removeFirst();
+			l.removeLast();
+			l.set(*l, 0);
+			l.top();
+			l.pop();
+			l.push(0);
+			l.reset();
+
+			const List<int> cl;
+			cl.at(cl.begin());
+			cl.first();
+			cl.last();
+			l.nth(0);
+		}
+	}
 
 	// Test initial
 	{
@@ -97,6 +147,24 @@ TEST_BEGIN(list)
 		CHECK(l.contains(3));
 	}
 
+	// duplication
+	{
+		List<int> l1;
+		for(int i = 0; i < 10; i++)
+			l1 += i;
+		List<int> l2;
+		int i = 9;
+		bool eq = true;
+		for(const auto ii: l2) {
+			if(ii != i) {
+				eq = false;
+				break;
+			}
+			i--;
+		}
+		CHECK(eq);
+	}
+
 	// test remove with iterator
 	{
 		List<int> l;
@@ -156,18 +224,38 @@ TEST_BEGIN(list)
 
 	// special equivalence
 	{
-		Eq e;
-		typedef EquivManager<int, Eq> man_t;
-		man_t m(e);
-		List<int, man_t> l(m);
-	}
-	{
-		List<int, EquivManager<Eq> > l;
+		List<int, Eq > l;
 	}
 
 	// sorted list
 	{
 		SortedList<int> s;
+
+		if(false) {
+			SortedList<int> cs;
+			s.comparator();
+			cs.comparator();
+			s.allocator();
+			s.removeFirst();
+			s.removeLast();
+			s.count();
+			s.contains(0);
+			s.containsAll(s);
+			s.isEmpty();
+			s.items();
+			s.equals(s);
+			s.contains(s);
+			s.clear();
+			s.add(0);
+			s.addAll(s);
+			s.removeAll(s);
+			s.remove(s.begin());
+			s.first();
+			s.last();
+			s.find(0);
+			s.at(s.begin());
+		}
+
 		s.add(0);
 		s.add(10);
 		s.add(5);
@@ -181,9 +269,18 @@ TEST_BEGIN(list)
 		CHECK(i.ended());
 	}
 
-	// set test
+	// list set test
 	{
 		ListSet<int> l;
+
+		if(false) {
+			l.insert(0);
+			l.join(l);
+			l.meet(l);
+			l.diff(l);
+			l.add(0);
+		}
+
 		CHECK_EQUAL(l.count(), 0);
 		CHECK(!l.contains(0));
 		l.insert(0);
@@ -258,6 +355,28 @@ TEST_BEGIN(list)
 			i--;
 		}
 		CHECK(ok);
+	}
+
+	{
+		if(false) {
+			ListMap<int, int> m;
+			const ListMap<int, int> cm;
+			m.equivalence();
+			m.begin();
+			m.end();
+			m.count();
+			m.contains(0);
+			m.containsAll(m);
+			m.isEmpty();
+			m.get(0);
+			m.get(0, 0);
+			m.hasKey(0);
+			m.keys();
+			m.pairs();
+			m.put(1, 1);
+			m.remove(m.begin());
+			m.remove(1);
+		}
 	}
 
 #if 0

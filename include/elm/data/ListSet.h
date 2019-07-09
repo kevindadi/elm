@@ -25,14 +25,14 @@
 
 namespace elm {
 
-template <class T, class M = CompareManager<T> >
-class ListSet: public SortedList<T, M>  {
-	typedef SortedList<T, M> base_t;
+template <class T, class C = Comparator<T>, class A = DefaultAlloc >
+class ListSet: public SortedList<T, C, A>  {
+	typedef SortedList<T, C, A> base_t;
 public:
-	typedef ListSet<T, M> self_t;
+	typedef T t;
+	typedef ListSet<T, C, A> self_t;
 	inline ListSet(void) { }
-	inline ListSet(const M& man): base_t(man) { }
-	inline ListSet(const self_t& set): base_t(set) { }
+	inline ListSet(ListSet<T, C>& set): base_t(set) { }
 
 	// Set concept
 	inline void insert(const T& v)
@@ -42,7 +42,7 @@ public:
 		typename base_t::list_t::PrecIter i(base_t::list);
 		typename base_t::Iter j(set);
 		while(i() && j()) {
-			int c =  base_t::manager().compare(*i, *j);
+			int c = base_t::comparator().doCompare(*i, *j);
 			if(c == 0) { i++; j++; }
 			else if(c < 0) i++;
 			else { base_t::list.addBefore(i, *j); j++; }
@@ -54,7 +54,7 @@ public:
 		typename base_t::list_t::PrecIter i(base_t::list);
 		typename base_t::Iter j(set);
 		while(i() && j()) {
-			int c =  base_t::manager().compare(*i, *j);
+			int c =  base_t::comparator().doCompare(*i, *j);
 			if(c == 0) { i++; j++; }
 			else if(c < 0) base_t::list.remove(i);
 			else j++;
@@ -66,7 +66,7 @@ public:
 		typename base_t::list_t::PrecIter i(base_t::list);
 		typename base_t::Iter j(set);
 		while(i() && j()) {
-			int c =  base_t::manager().compare(*i, *j);
+			int c =  base_t::comparator().doCompare(*i, *j);
 			if(c == 0) { base_t::list.remove(i); j++; }
 			else if(c < 0) i++;
 			else j++;
@@ -87,8 +87,8 @@ public:
 
 	// MutableCollection concept fix
 	inline void add(const T& v) { insert(v); }
-	inline self_t operator+=(const T& val) { insert(val); return *this; }
-	inline self_t operator-=(const T& val) { base_t::remove(val); return *this; }
+	inline self_t& operator+=(const T& val) { insert(val); return *this; }
+	inline self_t& operator-=(const T& val) { base_t::remove(val); return *this; }
 
 };
 

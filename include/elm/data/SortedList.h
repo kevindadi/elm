@@ -23,25 +23,26 @@
 
 #include "Adapter.h"
 #include "List.h"
-#include "Manager.h"
 #include "util.h"
+#include <elm/compare.h>
 #include <elm/util/Option.h>
 
 namespace elm {
 
 // SortedList class
-template <class T, class M = CompareManager<T> >
+template <class T, class C = Comparator<T>, class A = DefaultAlloc >
 class SortedList {
 protected:
-	typedef List<T, M> list_t;
+	typedef List<T, CompareEquiv<C>, A> list_t;
 public:
 	typedef T t;
-	typedef SortedList<T, M> self_t;
+	typedef SortedList<T, C, A> self_t;
 
 	inline SortedList(void) { }
-	inline SortedList(M& man): list(man) { }
-	SortedList(const SortedList<T, M> &l): list(l.list) { }
-	inline M& manager(void) const { return list.manager(); }
+	SortedList(const SortedList<T> &l): list(l.list) { }
+	inline C& comparator() { return list.equivalence(); }
+	inline const C& comparator() const { return list.equivalence(); }
+	inline A& allocator() { return list.allocator(); }
 
 	inline void removeFirst(void) { list.removeFirst(); }
 	inline void removeLast(void) { list.removeLast(); }
@@ -50,8 +51,8 @@ public:
 	inline int count (void) const { return list.count(); }
 
 	inline bool contains(const T &item) const { return find(item) != end(); }
-	template <class C> bool containsAll(const C& c) const
-		{ for(typename C::Iter i(c); i; i++) if(!contains(*i)) return false; return true; }
+	template <class CC> bool containsAll(const CC& c) const
+		{ for(const auto i: c) if(!contains(i)) return false; return true; }
 
 	inline bool isEmpty(void) const { return list.isEmpty(); }
 	inline operator bool(void) const { return !list.isEmpty(); }
@@ -67,21 +68,20 @@ public:
 	inline Iter begin(void) const { return items(); }
 	inline Iter end(void) const { return Iter(); }
 
-
-	bool equals(const SortedList<T, M>& l) const {
-		Iter i = *this, j = *l;
-		for(; i && j; i++, j++)
-			if(!list.manager().equals(*i, *j))
+	bool equals(const SortedList<T>& l) const {
+		Iter i = begin(), j = l.begin();
+		for(; i() && j(); i++, j++)
+			if(!comparator().doCompare(*i, *j) == 0)
 				return false;
 		return !i && !j;
 	}
-	inline bool operator==(const SortedList<T, M>& l) const { return equals(l); }
-	inline bool operator!=(const SortedList<T, M>& l) const { return !equals(l); }
+	inline bool operator==(const SortedList<T>& l) const { return equals(l); }
+	inline bool operator!=(const SortedList<T>& l) const { return !equals(l); }
 
-	bool contains(const SortedList<T, M>& l) const {
-		Iter i = *this, j = *l;
-		for(; i && j; i++) {
-			int cmp = list.manager().compare(*i, *j);
+	bool contains(const SortedList<T>& l) const {
+		Iter i = begin(), j = l.begin();
+		for(; i() && j(); i++) {
+			int cmp = comparator().doCompare(*i, *j);
 			if(cmp > 0)
 				return false;
 			if(cmp == 0)
@@ -89,10 +89,10 @@ public:
 		}
 		return !j;
 	}
-	inline bool operator<=(const SortedList<T, M>& l) const { return l.contains(*this); }
-	inline bool operator<(const SortedList<T, M>& l) const { return l.contains(*this) && !equals(l); }
-	inline bool operator>=(const SortedList<T, M>& l) const { return contains(l); }
-	inline bool operator>(const SortedList<T, M>& l) const { return contains(l) && !equals(l); }
+	inline bool operator<=(const SortedList<T>& l) const { return l.contains(*this); }
+	inline bool operator<(const SortedList<T>& l) const { return l.contains(*this) && !equals(l); }
+	inline bool operator>=(const SortedList<T>& l) const { return contains(l); }
+	inline bool operator>(const SortedList<T>& l) const { return contains(l) && !equals(l); }
 
 
 	// MutableCollection concept
@@ -100,36 +100,37 @@ public:
 
 	void add(const T &value) {
 		for(typename list_t::PrecIter current(list); current(); current++)
-			if(list.manager().compare(value,  *current) < 0) {
+			if(comparator().compare(value,  *current) < 0) {
 				list.addBefore(current, value);
 				return;
 			}
 		list.addLast(value);
 	}
 
-	template <template <class _> class CC> inline void addAll (const CC<T> &items)
-		{ for(typename CC<T>::Iterator item(items); item; item++) add(item); }
+	template <class CC> inline void addAll (const CC &c)
+		{ list.addAll(c); }
 	inline void remove(const T &item) { list.remove(item); }
-	template <template <class _> class CC> inline void removeAll(const CC<T> &items)
-		{ list.removeAll(items); }
+	template <class CC> inline void removeAll(const CC &c)
+		{ list.removeAll(c); }
 	inline void remove(const Iter &iter) { list.remove(*iter); }
-	inline SortedList<T, M>& operator+=(const T& v) { add(v); return *this; }
-	inline SortedList<T, M>& operator-=(const T& v) { remove(v); return *this; }
+	inline SortedList<T>& operator+=(const T& v) { add(v); return *this; }
+	inline SortedList<T>& operator-=(const T& v) { remove(v); return *this; }
 
 	// List concept
 	inline const T& first(void) const { return list.first(); }
 	inline const T& last(void) const { return list.last(); }
 	Iter find(const T& item, const Iter& iter) const {
 		Iter i = iter; for(; i(); i++) {
-			int cmp = list.manager().compare(item, *i);
+			int cmp = comparator().doCompare(item, *i);
 			if(cmp > 0) continue; else if(!cmp) return i; else return end();
 		}
 		return i;
 	}
 	inline Iter find(const T& item) const { return find(item, begin()); }
+	inline T& at(const Iter& i) { return list.at(i); }
 
 	// operators
-	inline SortedList<T, M>& operator=(const SortedList<T, M>& sl) { list.copy(sl.list); return *this; }
+	inline SortedList<T>& operator=(const SortedList<T, C>& sl) { list.copy(sl.list); return *this; }
 	inline bool operator&(const T& e) const { return list.contains(e); }
 	inline T& operator[](int k) { return list[k]; }
 	inline const T& operator[](int k) const { return list[k]; }
