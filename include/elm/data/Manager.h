@@ -49,13 +49,14 @@ public:
 template <class T, class C = Comparator<T>, class E = Equiv<T>, class A = DefaultAllocator>
 class CompareManager {
 public:
+	typedef T t;
 	inline CompareManager(const C& c = single<C>(), const E& e = single<E>(), A& a = DefaultAllocator::DEFAULT)
 		: cmp(c), eq(e), alloc(a) { }
 
 	inline int compare(const T& v1, const T& v2) const { return cmp.doCompare(v1, v2); }
 	inline bool equals(const T& v1, const T& v2) const { return eq.isEqual(v1, v2); }
-	inline void *allocate(t::size size) const { return alloc.allocate(size); }
-	inline void free(t::ptr p) const { alloc.free(p); }
+	inline void *allocate(elm::t::size size) const { return alloc.allocate(size); }
+	inline void free(elm::t::ptr p) const { alloc.free(p); }
 
 	const C& cmp;
 	const E& eq;

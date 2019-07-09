@@ -100,7 +100,7 @@ public:
 
 	void add(const T &value) {
 		for(typename list_t::PrecIter current(list); current(); current++)
-			if(comparator().compare(value,  *current) < 0) {
+			if(comparator().doCompare(value,  *current) < 0) {
 				list.addBefore(current, value);
 				return;
 			}
