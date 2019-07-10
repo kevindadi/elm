@@ -82,6 +82,13 @@ private:
 };
 
 
+// KeyException class
+class KeyException: public elm::Exception {
+public:
+	string message(void) override;
+};
+
+
 // MapDelegate class
 template <class C>
 class StrictMapDelegate {
@@ -93,10 +100,12 @@ public:
 	inline StrictMapDelegate(C& map, const key_t& key)
 		: _map(map), _key(key) { }
 
-	inline val_t get(void) const
-		{  Option<val_t> v = _map.get(_key); ASSERT(!v.isNone()); return *v; }
+	inline val_t get(void) const {
+		Option<val_t> v = _map.get(_key);
+		if(v.isNone()) throw KeyException();
+		return *v;
+	}
 	inline void put(const val_t& val) { _map.put(_key, val); }
-
 
 	inline operator val_t(void) const { return get(); }
 	inline val_t operator*(void) const { return get(); }

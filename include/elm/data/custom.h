@@ -27,8 +27,9 @@ namespace elm {
 
 class DefaultAlloc {
 public:
-	inline void *allocate(t::size size) const { return DefaultAllocator::DEFAULT.allocate(size); }
+	inline t::ptr allocate(t::size size) const { return DefaultAllocator::DEFAULT.allocate(size); }
 	inline void free(t::ptr p) const { DefaultAllocator::DEFAULT.free(p); }
+	template <class T> T *alloc() const { return static_cast<T *>(allocate(sizeof(T))); }
 };
 
 }	// elm

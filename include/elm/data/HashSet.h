@@ -21,21 +21,35 @@
 #ifndef ELM_DATA_HASHSET_H_
 #define ELM_DATA_HASHSET_H_
 
+#include "List.h"
 #include "HashTable.h"
 #include <elm/adapter.h>
 
 namespace elm {
 
-template <class T, class M = HashManager<T> >
+template <class T, class H = HashKey<T>, class A = DefaultAlloc>
 class HashSet {
-	typedef HashTable<T, IdAdapter<T>, M> tab_t;
+	typedef HashTable<T, H, A> tab_t;
 public:
-	typedef HashSet<T, M> self_t;
+	typedef HashSet<T, H, A> self_t;
 
 	inline HashSet(int size = 211): _tab(size) { }
-	inline HashSet(M& man, int size = 211): _tab(man, size) { }
+	inline HashSet(const HashSet<T>& s): _tab(s._tab) { }
+	inline const H& hash() const { return _tab.hash(); }
+	inline H& hash() { return _tab.hash(); }
+	inline const A& allocator() const { return _tab.allocator(); }
+	inline A& allocator() { return _tab.allocator(); }
+
+	// Collection concept
+	inline int count(void) const { return _tab.count(); }
+	inline bool contains(const T& val) const { return _tab.hasKey(val); }
+	template <class C> inline bool containsAll(const C& coll)
+		{ for(typename C::Iter i(coll); i(); i++) if(!contains(*i)) return false; return true; }
+	inline bool isEmpty(void) const { return _tab.isEmpty(); }
+	inline operator bool(void) const { return !isEmpty(); }
 
 	class Iter: public InplacePreIterator<Iter, T> {
+		friend class HashSet;
 	public:
 		inline Iter(const HashSet& set): i(set._tab) { }
 		inline Iter(const HashSet& set, bool end): i(set._tab, end) { }
@@ -49,26 +63,63 @@ public:
 	inline Iter begin(void) const { return Iter(*this); }
 	inline Iter end(void) const { return Iter(*this, true); }
 
-	inline int count(void) const { return _tab.count(); }
-	inline bool contains(const T& val) { return _tab.hasKey(val); }
-	template <class C> inline bool containsAll(const C& coll)
-		{ for(typename C::Iter i(coll); i(); i++) if(!contains(*i)) return false; return true; }
-	inline bool isEmpty(void) const { return _tab.isEmpty(); }
-	inline Iter items(void) const { return Iter(*this); }
+	inline bool equals(const HashSet<T>& s) const
+		{ return _tab.equals(s._tab); }
+	inline bool operator==(const HashSet<T>& s) const { return equals(s); }
+	inline bool operator!=(const HashSet<T>& s) const { return !equals(s); }
 
+	inline bool includes(const HashSet<T>& s) const
+		{ return _tab.includes(s._tab); }
+	inline bool operator<=(const HashSet<T>& s) const { return s.includes(*this); }
+	inline bool operator>=(const HashSet<T>& s) const { return includes(s); }
+
+	inline bool operator<(const HashSet<T>& s) const { return _tab < s._tab; }
+	inline bool operator>(const HashSet<T>& s) const { return _tab > s._tab; }
+
+	// MutableCollection concept
 	inline void clear(void) { _tab.clear(); }
-	inline void add(const T& val) { _tab.put(val); }
+	inline void add(const T& val) { insert(val); }
 	template <class C> void addAll(const C& coll)
 		{ for(typename C::Iter i(coll); i(); i++) add(*i); }
 	inline void remove(const T& val) { _tab.remove(val); }
-	template <class C> void removeAll(const C& coll)
-		{ for(typename C::Iter i(coll); i(); i++) remove(*i); }
-	inline void remove(const Iter& i) { remove(*i); }
+	template <class C> void removeAll(const C& c)
+		{ for(const auto x: c) remove(x); }
+	inline void remove(const Iter& i) { _tab.remove(i.i); }
+	inline void copy(const HashSet<T>& s) { _tab.copy(s._tab); }
+	inline self_t operator=(const HashSet<T>& s) { copy(s); return *this; }
+	inline self_t operator+=(const T& x) { add(x); return *this; }
+	inline self_t operator-=(const T& x) { remove(x); return *this; }
 
-	inline void insert(const T& val) { add(val); }
+	// Set concept
+	inline void insert(const T& val) { _tab.put(val); }
+	inline void join(const HashSet<T>& c)
+		{ for(const auto x: c) insert(x); }
+	inline void diff(const HashSet<T>& c)
+		{ for(const auto x: c) remove(x); }
+	void meet(const HashSet<T>& c) {
+		List<T> l;
+		for(const auto x: *this)
+			if(!c.contains(x))
+				l.add(x);
+		for(const auto x: l)
+			remove(x);
+	}
+	inline self_t& operator+=(const HashSet<T>& s) { join(s); return *this; }
+	inline self_t& operator|=(const HashSet<T>& s) { join(s); return *this; }
+	inline self_t& operator-=(const HashSet<T>& s) { diff(s); return *this; }
+	inline self_t& operator&=(const HashSet<T>& s) { meet(s); return *this; }
+	inline self_t& operator*=(const HashSet<T>& s) { meet(s); return *this; }
+	inline self_t operator+(const HashSet<T>& s) const
+		{ self_t r(*this); r.join(s); return r; }
+	inline self_t operator|(const HashSet<T>& s) const
+		{ self_t r(*this); r.join(s); return r; }
+	inline self_t operator-(const HashSet<T>& s) const
+		{ self_t r(*this); r.diff(s); return r; }
+	inline self_t operator&(const HashSet<T>& s) const
+		{ self_t r(*this); r.meet(s); return r; }
+	inline self_t operator*(const HashSet<T>& s) const
+		{ self_t r(*this); r.meet(s); return r; }
 
-	inline operator bool(void) const { return !isEmpty(); }
-	inline Iter operator*(void) const { return items(); }
 	static const self_t null;
 
 #	ifdef ELM_STAT
@@ -78,12 +129,16 @@ public:
 		int size(void) const { return _tab.size(); }
 #	endif
 
+	// deprecated
+	inline Iter items(void) const { return Iter(*this); }
+	inline Iter operator*(void) const { return items(); }
+
 private:
 	tab_t _tab;
 };
 
-template <class T, class M>
-const HashSet<T, M> HashSet<T, M>::null(1);
+template <class T, class H, class A>
+const HashSet<T, H, A> HashSet<T, H, A>::null(1);
 
 }	// elm
 

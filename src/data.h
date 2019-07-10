@@ -64,11 +64,85 @@ namespace elm {
  *  * random -- List, BiDiList
  *  * uniqueness of elements (set) -- ListSet, avl::Set, HashSet
  *  * key access (map) -- ListMap, HashMap, avl::Map, TreeMap
+ *  * inter-set operation (efficient) -- BitVector
  *
  * Memory footprint:
  *	* light -- Array, Vector, VectorQueue, BitVector, StaticStack, List, ListQueue, SortedList, ListMap
  *	* medium -- BiDiList, TreeBag, TreeMap, avl::Tree, avl::Map, avl::Set, FragTable
  *	* heavy at startup -- HashTable, HashMap, HashSet
+ *
+ * The array below sum complexity of operations for the data structures
+ * described above. When 2 complexity are give o1/o2, o1 is the average case
+ * and o2 the worst case.
+ *
+ * For simple collections, we get:
+ * Data Structure | adding         | lookup         | insertion    | removal
+ * -------------- | -------------- | -------------- | ------------ | -------
+ * Vector         | O(1)           | O(n)           | O(n)         | O(n)
+ * List           | O(1)           | O(n)           | O(1)         | O(1)
+ * BiDiList       | O(1)           | O(n)           | O(1)         | O(1)
+ * ListBag        | O(log(n))/O(n) | O(log(n))/O(n) | O(1)         | O(1)
+ * FragTable      | O(1)           | O(n)           | O(n)         | O(n)
+ * HashTable      | O(b)           | O(b)           | O(1)         | O(1)
+ * HashSet        | O(b)           | O(b)           | O(1)         | O(1)
+ * avl::Tree      | O(log(n))      | O(log(n))      | O(1)         | O(log(n))
+ * avl::Set       | O(log(n))      | O(log(n))      | O(1)         | O(log(n))
+ *
+ * * n -- number of elements in the data structure
+ * * b -- number of elements in a bucket of a hash table
+ * * adding -- simple addition any way in the data structure
+ * * lookup -- look up of a particular element
+ * * insertion -- insertion relative at an iterator position
+ * * removal -- removal relative of an element pointed by an iterator
+ *
+ * Classic collection operations:
+ * Data Structure | lookup         | insertion      | removal
+ * -------------- | -------------- | -------------- | --------------
+ * HashMap        | O(b)           | O(b)           | O(b)
+ * avl::Map       | O(log(n))      | O(log(n))      | O(log(n))
+ * TreeMap        | O(log(n))/O(n) | O(log(n))/O(n) | O(log(n))/O(n)
+ * ListMap        | O(n)           | O(n)           | O(n)
+ *
+ * * n -- number of elements in the data structure
+ * * b -- number of elements in a bucket of a hash table
+ * * lookup -- look up of a particular element
+ * * insertion -- insertion in the map (including lookup)
+ * * removal -- removal from the map (including lookup)
+ *
+ * Random access to array elements:
+ * Data Structure | Indexed Access
+ * -------------- | --------------
+ * Array          | O(1)
+ * FragTable      | O(1)
+ * Vector         | O(1)
+ * List           | O(n)
+ * BiDiList       | O(n)
+ *
+ * Stack (LIFO) operations:
+ * Data Structure | push | pop
+ * -------------- | ---- | ----
+ * Vector         | O(1) | O(1)
+ * List           | O(1) | O(1)
+ * BiDiList       | O(1) | O(1)
+ * FragTable      | O(1) | O(1)
+ *
+ * Queue (FIFO) operations:
+ * Data Structure | put  | get
+ * -------------- | ---- | ----
+ * Vector         | O(n) | O(1)
+ * List           | O(1) | O(n)
+ * BiDiList       | O(1) | O(1)
+ * FragTable      | O(n) | O(1)
+ * VectorQueue    | O(1) | O(1)
+ * ListQueue      | O(1) | O(1)
+ *
+ * Set operations:
+ * Data Structure | join   | meet   | difference
+ * -------------- | ------ | ------ | ----------
+ * HashSet        | O(bn)  | O(bn)  | O(bn)
+ * avl::Set       | O(n)   | O(n)   | O(n)
+ * BitVector      | O(n)   | O(n)   | O(n)
+ *
  *
  * @par Iterator Helper Classes
  *
@@ -91,6 +165,7 @@ namespace elm {
  *			inline bool ended(void) const { return ...; }
  *			inline const T& item(void) const { return ...; }
  *			inline void next(void) { ... }
+ *			inline bool equals(const MyIter& i) { ... }
  *		private:
  *			...
  *		};
@@ -98,19 +173,19 @@ namespace elm {
  *
  * And the use of such an iterator becomes:
  *	@code
- *		for(MyIter i(...); i; ++i)
+ *		for(MyIter i(...); i(); ++i)
  *			use(*i);
  *	@endcode
  *
  * Notices that if T is a pointer, the arrow iterator may be used without a star:
  * @code
- *		for(MyIter i(...); i; ++i)
+ *		for(MyIter i(...); i(); ++i)
  *			use(i->to_something);
  * @endcode
  *
  * Likely, @ref PreIterator provides automatic conversion to T:
  * @code
- *		for(MyIter i(...); i; ++i) {
+ *		for(MyIter i(...); i(); ++i) {
  *			T v = i;
  *			...
  *		}
@@ -192,6 +267,34 @@ namespace elm {
  * @li @ref elm::MapDelegate allows to use values from a
  * 			@ref elm::concept::MutableMap whose access is based on get()/put()
  * 			methods and an identifier.
+ *
+ * @li @ref elm::StrictMapDelegate is like MapDelegate but thow a KeyError
+ * 			exception if a non-existing key is used.
+ */
+
+/**
+ * @class StrictMapDelegate
+ * Delegate class to access functions get/put() of map using the overload of
+ * [i] operators. In the opposite to MapDelegate, this class throws a
+ * KeyException if the key of a read item does not exist.
+ *
+ * A common use of this delegate in a class implementing a mutable map:
+ * @code
+ * template <class K, class T>
+ * class MyMap {
+ * public:
+ *	typedef K key_t;
+ *	typedef T val_t;
+ * 	...
+ *	inline StricMapDelegate<MyMap> operator[](const K& k)
+ *		{ return StrictMapDelegate<MyMap>(*this, k); }
+ *	...
+ * };
+ * @endcode
+ *
+ * @param T		Type of map element values.
+ * @see MapDelegate
+ * @ingroup data
  */
 
 namespace concept {

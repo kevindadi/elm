@@ -16,6 +16,133 @@ using namespace elm;
 // test_hashtable()
 TEST_BEGIN(hashtable)
 
+	// HashTable
+	{
+		if(false) {
+			HashTable<int> t;
+			HashTable<int> ct(t);
+			t.hash();
+			ct.hash();
+			t.allocator();
+			ct.allocator();
+			t.isEmpty();
+			t.count();
+			t.get(1);
+			t.hasKey(1);
+			t.put(1);
+			t.add(1);
+			t.putAll(t);
+			t.remove(1);
+			t.remove(t.begin());
+			t.clear();
+			t.begin();
+			t.end();
+			t = ct;
+			t.equals(t);
+			t.contains(t);
+			t == t;
+			t != t;
+			t <= t;
+			t >= t;
+			t < t;
+			t > t;
+			t += 1;
+			t -= 1;
+		}
+	}
+
+	// HashMap
+	{
+		if(false) {
+			HashMap<int, int> m;
+			HashMap<int, int> cm;
+			m.hash();
+			cm.hash();
+			m.allocator();
+			cm.allocator();
+			m.equivalence();
+			cm.equivalence();
+			m.clear();
+			m.add(1, 1);
+			m.get(1);
+			m.get(1, 2);
+			m.hasKey(1);
+			m.keys();
+			m.pairs();
+			m.count();
+			m.isEmpty();
+			static_cast<bool>(m);
+			m.begin();
+			m.end();
+			m.contains(1);
+			m.containsAll(m);
+			m.equals(m);
+			m == m;
+			m != m;
+			m.includes(m);
+			m <= m;
+			m >= m;
+			m < m;
+			m > m;
+			m.put(1, 1);
+			m.remove(1);
+			m.remove(m.begin());
+			m.putAll(m);
+			m[1];
+			cm[1];
+			m[1] = 1;
+		}
+	}
+
+	// HashSet
+	{
+		if(false) {
+			HashSet<int> s;
+			const HashSet<int> cs(s);
+			s.hash();
+			cs.hash();
+			s.allocator();
+			cs.allocator();
+			s.count();
+			s.contains(1);
+			s.isEmpty();
+			static_cast<bool>(s);
+			s.begin();
+			s.end();
+			s.equals(s);
+			s == s;
+			s != s;
+			s.includes(s);
+			s <= s;
+			s >= s;
+			s < s;
+			s > s;
+			s.clear();
+			s.add(1);
+			s.addAll(s);
+			s.remove(1);
+			s.removeAll(s);
+			s.remove(s.begin());
+			s.copy(s);
+			s = s;
+			s += 1;
+			s -= 1;
+			s.insert(1);
+			s.join(s);
+			s.diff(s);
+			s.meet(s);
+			s += s;
+			s |= s;
+			s -= s;
+			s *= s;
+			s &= s;
+			HashSet<int> r = s + s;
+			r = s | s;
+			r = s - s;
+			r = s * s;
+			r = s & s;
+		}
+	}
 
 	// Simple key
 	{

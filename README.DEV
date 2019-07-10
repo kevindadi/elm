@@ -66,7 +66,6 @@ list of markdown syntax:
   * ![alternate text](url) to include an image
   * ![alternate text](url caption) to include an image with caption
   * <url> for explicit link
-  * 
 
 An important rule must be applied: no documentation must be put in the header
 file. Classes has to be described in the source file. For a class, a special comment

@@ -22,39 +22,71 @@
 #define ELM_DATA_HASHMAP_H_
 
 #include "HashTable.h"
+#include "util.h"
 #include <elm/delegate.h>
 
 namespace elm {
 
-template <class K, class T, class M = HashManager<K> >
-class HashMap {
-	typedef HashTable<Pair<K, T>, PairAdapter<K, T>, M> tab_t;
+template <class K, class T, class H = HashKey<K>, class A = DefaultAlloc, class E = Equiv<T> >
+class HashMap: public E {
+	typedef HashTable<Pair<K, T>, AssocHashKey<K, T, H>, A> tab_t;
 public:
-	typedef HashMap<K, T, M> self_t;
-	typedef typename tab_t::key_t key_t;
-	typedef typename tab_t::val_t val_t;
+	typedef K key_t;
+	typedef T val_t;
+	typedef HashMap<K, T, H, A, E> self_t;
 
 	inline HashMap(int _size = 211): _tab(_size) { }
-	inline HashMap(M& man, int _size = 211): _tab(man, _size) { }
 	inline HashMap(const self_t& h): _tab(h._tab) { }
-	inline M& manager() const { return _tab.manager(); }
+	inline const H& hash() const { return _tab.hash().keyHash(); }
+	inline H& hash() { return _tab.hash().keyHash(); }
+	inline const A& allocator() const { return _tab.allocator(); }
+	inline A& allocator() { return _tab.allocator(); }
+	inline const E& equivalence() const { return *this; }
+	inline E& equivalence() { return *this; }
 
-	inline bool isEmpty(void) const { return _tab.isEmpty(); }
-	inline int count(void) const { return _tab.count(); }
-
-	inline Option<T> get(const K& key) const
-		{ const typename tab_t::data_t *r = _tab.get(key); if(r) return some((*r).snd); else return none; }
-	inline const T& get(const K& key, const T& def) const
-		{ const typename tab_t::data_t *r = _tab.get(key); if(r) return (*r).snd; else return def; }
-	inline bool hasKey(const K& key) const { return _tab.hasKey(key); }
-	inline bool exists(const K& key) const { return hasKey(key); }
-
-	inline void put(const K& key, const T& val) { _tab.put(pair(key, val)); }
-	inline void add(const K& key, const T& val) { _tab.add(pair(key, val)); }
-	inline void remove(const K& key) { _tab.remove(key); }
 	inline void clear(void) { _tab.clear(); }
+	inline void add(const K& key, const T& val) { _tab.add(pair(key, val)); }
+
+	// Map concept
+	inline Option<T> get(const K& k) const
+		{ auto *r = _tab.get(key(k)); if(r) return some(r->snd); else return none; }
+	inline const T& get(const K& k, const T& def) const
+		{ auto r = _tab.get(key(k)); if(r) return r->snd; else return def; }
+	inline bool hasKey(const K& k) const { return _tab.hasKey(key(k)); }
+
+	class KeyIter: public InplacePreIterator<KeyIter, K> {
+	public:
+		inline KeyIter(const self_t& htab): i(htab._tab) { };
+		inline KeyIter(const self_t& htab, bool end): i(htab._tab, end) { };
+		inline bool ended(void) const { return i.ended(); }
+		inline const K& item(void) const { return i.item().fst; }
+		inline void next(void) { i.next(); }
+		inline bool equals(const KeyIter& it) const { return i.equals(it.i); }
+	private:
+		typename tab_t::Iter i;
+	};
+	inline Iterable<KeyIter> keys() const { return iter(KeyIter(*this), KeyIter(*this, true)); }
+
+	class PairIter: public InplacePreIterator<PairIter, Pair<K, T> > {
+	public:
+		inline PairIter(const self_t& htab): i(htab._tab) { };
+		inline PairIter(const self_t& htab, bool end): i(htab._tab, end) { };
+		inline bool ended(void) const { return i.ended(); }
+		inline const Pair<K, T>& item(void) const { return i.item(); }
+		inline void next(void) { i.next(); }
+		inline bool equals(const PairIter& it) const { return i.equals(it.i); }
+	private:
+		typename tab_t::Iter i;
+	};
+	inline Iterable<PairIter> pairs() const { return iter(PairIter(*this), PairIter(*this, true)); }
+
+	// Collection concept
+	inline int count() const { return _tab.count(); }
+	inline bool isEmpty() const { return _tab.isEmpty(); }
+	inline operator bool() const { return !isEmpty(); }
 
 	class Iter: public InplacePreIterator<Iter, T> {
+		friend class HashMap;
 	public:
 		inline Iter(const self_t& htab): i(htab._tab) { };
 		inline Iter(const self_t& htab, bool end): i(htab._tab, end) { };
@@ -69,63 +101,29 @@ public:
 	inline Iter begin(void) const { return Iter(*this); }
 	inline Iter end(void) const { return Iter(*this, true); }
 
-	class KeyIter: public InplacePreIterator<KeyIter, K> {
-	public:
-		inline KeyIter(const self_t& htab): i(htab._tab) { };
-		inline KeyIter(const self_t& htab, bool end): i(htab._tab, end) { };
-		inline bool ended(void) const { return i.ended(); }
-		inline const K& item(void) const { return i.item().fst; }
-		inline void next(void) { i.next(); }
-		inline bool equals(const KeyIter& it) const { return i.equals(it.i); }
-	private:
-		typename tab_t::Iter i;
-	};
-	inline KeyIter beginKeys(void) const { return KeyIter(*this); }
-	inline KeyIter endKeys(void) const { return KeyIter(*this, true); }
-
-	class KeyAccess {
-	public:
-		inline KeyAccess(const self_t& self): _self(self) { }
-		inline KeyIter begin(void) const { return _self.beginKeys(); }
-		inline KeyIter end(void) const { return _self.endKeys(); }
-	private:
-		const self_t& _self;
-	};
-	inline KeyAccess keys(void) const { return KeyAccess(*this); }
-
-	class PairIter: public InplacePreIterator<PairIter, Pair<K, T> > {
-	public:
-		inline PairIter(const self_t& htab): i(htab._tab) { };
-		inline PairIter(const self_t& htab, bool end): i(htab._tab, end) { };
-		inline bool ended(void) const { return i.ended(); }
-		inline const Pair<K, T>& item(void) const { return i.item(); }
-		inline void next(void) { i.next(); }
-		inline bool equals(const PairIter& it) const { return i.equals(it.i); }
-	private:
-		typename tab_t::Iter i;
-	};
-	inline PairIter beginPairs(void) const { return PairIter(*this); }
-	inline PairIter endPairs(void) const { return PairIter(*this, true); }
-
-	class PairAccess {
-	public:
-		inline PairAccess(const self_t& self): _self(self) { }
-		inline PairIter begin(void) const { return _self.beginPairs(); }
-		inline PairIter end(void) const { return _self.endPairs(); }
-	private:
-		const self_t& _self;
-	};
-	inline PairAccess pairs(void) const { return PairAccess(*this); }
-
-	inline bool contains(const T& item)
-		{ for(Iter i(*this); i; i++) if(*i == item) return true; return false; }
-	template <class C>
-	inline bool containsAll(const C& c)
+	bool contains(const T& item) const
+		{ for(const auto x: *this) if(x == item) return true; return false; }
+	template <class C> bool containsAll(const C& c) const
 		{ for(typename C::Iter i(c); c; i++) if(!contains(*i)) return false; return true; }
-	inline void remove(Iter& i) const { const K& key = i.key(); i++; remove(i.key()); }
 
-	inline Iter operator*(void) const { return begin(); }
-	inline operator bool(void) const { return !isEmpty(); }
+	inline bool equals(const HashMap<K, T>& t) const
+		{ return containsAll(t) && t.containsAll(*this); }
+	inline bool operator==(const HashMap<K, T>& t) const { return equals(t); }
+	inline bool operator!=(const HashMap<K, T>& t) const { return !equals(t); }
+
+	inline bool includes(const HashMap<K, T>& t) const
+		{ return containsAll(t); }
+	inline bool operator <=(const HashMap<K, T>& t) const { return t.contains(*this); }
+	inline bool operator >=(const HashMap<K, T>& t) const { return contains(t); }
+
+	inline bool operator<(const HashMap<K, T>& t) const { return !equals(t) && t.contains(*this); }
+	inline bool operator>(const HashMap<K, T>& t) const { return !equals(t) && contains(t); }
+
+	// MutableMap concept
+	inline void put(const K& key, const T& val) { _tab.put(pair(key, val)); }
+	inline void remove(const K& k) { _tab.remove(key(k)); }
+	inline void remove(const Iter& i) { _tab.remove(i.i); }
+
 	inline const T& operator[](const K& key) const { const typename tab_t::data_t *r = _tab.get(key); ASSERT(r); return (*r).snd; }
 	inline StrictMapDelegate<self_t> operator[](const K& key) { return StrictMapDelegate<self_t>(*this, key); }
 	inline const T& operator[](const Iter& i) const { const typename tab_t::data_t *r = _tab.get(i.key()); ASSERT(r); return (*r).snd; }
@@ -141,7 +139,12 @@ public:
 		int size(void) const { return _tab.size(); }
 #	endif
 
+	// deprecated
+	inline bool exists(const K& k) const { return hasKey(k); }
+	inline Iter operator*(void) const { return begin(); }
+
 private:
+	inline Pair<K, T> key(const K& k) const { return pair(k, T()); }
 	tab_t _tab;
 };
 

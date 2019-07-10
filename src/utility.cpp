@@ -19,6 +19,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <elm/delegate.h>
 #include <elm/utility.h>
 
 namespace elm {
@@ -78,6 +79,17 @@ Exception::~Exception(void) {
 String Exception::message(void) {
 	//cerr << "elm::Exception::message() = \"\"\n";
 	return "";	
+}
+
+
+/**
+ * @class KeyException
+ * Exception raised when a key is not available in a map.
+ */
+
+///
+string KeyException::message(void) {
+	return "key not available";
 }
 
 

@@ -50,9 +50,9 @@ STRONG_TYPE(inode_t, ino_t);
 	template <>
 	class HashKey<inode_t> {
 	public:
-		t::hash computeHash(inode_t v)
+		t::hash computeHash(inode_t v) const
 			{ return t::hash(v); }
-		bool isEqual(inode_t key1, inode_t key2)
+		bool isEqual(inode_t key1, inode_t key2) const
 			{ return key1 == key2; }
 	};
 

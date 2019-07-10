@@ -22,6 +22,7 @@
 #ifndef ELM_ALLOC_DEFAULTALLOCATOR_H_
 #define ELM_ALLOC_DEFAULTALLOCATOR_H_
 
+#include <new>
 #include <elm/types.h>
 #include <elm/util/Exception.h>
 
@@ -38,7 +39,7 @@ public:
 class DefaultAllocator {
 public:
 	static DefaultAllocator DEFAULT;
-	virtual void *allocate(t::size size);
+	void *allocate(t::size size);
 	virtual bool mark(void *data, t::size size);
 	inline void free(void *block) { delete [] (char *)block; }
 	virtual ~DefaultAllocator() { }

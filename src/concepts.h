@@ -203,7 +203,7 @@ public:
 	 * Iterator on the items of the collection. No assertion can be made
 	 * about the order of traversal of the collection items.
 	 */
-	class Iter: public concept::Iterator<T> {
+	class Iter: public concept::Iter<T> {
 	public:
 	
 		/**
@@ -244,7 +244,7 @@ public:
 	 * @param coll	Collection to test.
 	 * @return		True if the coll is contained in the current one, false else.
 	 */
-	bool contains(const Collection& coll);
+	bool includes(const Collection& coll);
 
 	/**
 	 * Same as equals().
@@ -340,12 +340,6 @@ public:
 	void remove(const Iterator<T>& iter);
 
 	/**
-	 * Reset the current collection and copy the given one.
-	 * @param items		Collection to copy.
-	 */
-	void copy(const Collection<T>& items);
-
-	/**
 	 * Same as insert().
 	 */
 	MutableCollection<T>& operator+=(const T& item);
@@ -354,6 +348,19 @@ public:
 	 * Same as remove().
 	 */
 	MutableCollection<T>& operator-=(const T& item);
+
+	/**
+	 * Reset the current collection and copy the given one.
+	 * @param items		Collection to copy.
+	 */
+	void copy(const Collection<T>& items);
+
+	/**
+	 * Copy in the current collection the given collection.
+	 * @param c	Collection to copy.
+	 * @return	This collection.
+	 */
+	MutableCollection& operator=(const Collection<T>& c);
 
 };
 
@@ -896,7 +903,7 @@ public:
  * @ingroup concepts
  */
 template <class K, class T>
-class Map: public  Collection<Pair<K, T> > {
+class Map: public Collection<T> {
 public:
 	
 	/**
@@ -968,6 +975,15 @@ public:
 	 * Get the collection pairs (key, value).
 	 */
 	Iterable<PairIter> pairs() const;
+
+	/**
+	 * Get a value by its key.
+	 * @param k				Looked key.
+	 * @return				Value for the key.
+	 * @throw KeyException	If the key does not exist in the map.
+	 */
+	const T& operator[](const K& k) const;
+
 };
 
 
@@ -981,7 +997,7 @@ public:
  * @ingroup concepts
  */
 template <class K, class T>
-class MutableMap: public  Map<K, T>, public Collection<Pair<K, T> > {
+class MutableMap: public Map<K, T> {
 public:
 	
 	/**
@@ -1001,7 +1017,16 @@ public:
 	 * Remove an item using an iterator.
 	 * @param iter	Iterator to use.
 	 */
-	void remove(const PairIterator& iter);
+	void remove(const Collection<T>::Iter& iter);
+
+	/**
+	 * Get a value by its key, value that can be modified.
+	 * If a value corresponding to the key is not available,
+	 * creates it.
+	 * @param k	Looked key.
+	 * @return	Corresponding value.
+	 */
+	T& operator[](const K& k);
 };
 
 

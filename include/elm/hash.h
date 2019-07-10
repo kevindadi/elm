@@ -134,6 +134,18 @@ public:
 	inline bool isEqual(const T& key1, const T& key2) const { return equals(key1, key2); }
 };
 
+
+template <class K, class T, class H = HashKey<K> >
+class AssocHashKey: public H {
+public:
+	typedef Pair<K, T> t;
+	const H& keyHash() const { return *this; }
+	H& keyHash() { return *this; }
+
+	inline elm::t::hash computeHash(const t& k) const { return H::computeHash(k.fst); }
+	inline bool isEqual(const t& k1, const t& k2) const { return H::isEqual(k1.fst, k2.fst); }
+};
+
 };	// elm
 
 #endif /* ELM_HASH_H_ */
