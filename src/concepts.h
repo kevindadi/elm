@@ -240,13 +240,6 @@ public:
 	bool equals(const Collection& coll);
 
 	/**
-	 * Test if the current collection contains the given one.
-	 * @param coll	Collection to test.
-	 * @return		True if the coll is contained in the current one, false else.
-	 */
-	bool includes(const Collection& coll);
-
-	/**
 	 * Same as equals().
 	 */
 	bool operator==(const Collection& coll);
@@ -257,30 +250,9 @@ public:
 	bool operator!=(const Collection& coll);
 
 	/**
-	 * Same as contains().
+	 * Empty instance of the collection.
 	 */
-	bool operator>=(const Collection& coll);
-
-	/**
-	 * Same as reversed argument contains().
-	 */
-	bool operator<=(const Collection& coll);
-
-	/**
-	 * Same as contains() and not equals().
-	 */
-	bool operator>(const Collection& coll);
-
-	/**
-	 * Same as contains() with reversed arguments and not equals().
-	 */
-	bool operator<(const Collection& coll);
-
-	/**
-	 * Same as contains.
-	 */
-	bool operator<=(const T& item);
-
+	static const Collection<T> null;
 };
 
 
@@ -393,6 +365,39 @@ public:
 	 *			implemented as an insert.
 	 */
 	void insert(const T& item);
+
+	/**
+	 * Test if the current collection is a subet of the given one.
+	 * @param coll	Collection to test.
+	 * @return		True if the current collection is a subet of coll, false else.
+	 */
+	bool subsetOf(const Set& coll);
+
+	/**
+	 * Same as contains().
+	 */
+	bool operator>=(const Set& coll);
+
+	/**
+	 * Same as reversed argument contains().
+	 */
+	bool operator<=(const Set& coll);
+
+	/**
+	 * Same as contains() and not equals().
+	 */
+	bool operator>(const Set& coll);
+
+	/**
+	 * Same as contains() with reversed arguments and not equals().
+	 */
+	bool operator<(const Collection& coll);
+
+	/**
+	 * Same as contains.
+	 */
+	bool operator<=(const T& item);
+
 
 	/**
 	 * Perform the join of the current set and the given one.
@@ -628,6 +633,13 @@ public:
 	 */
 	const T& top(void) const;
 	
+	/**
+	 * Get the item at the top of the stack. The returned reference can be
+	 * assigned.
+	 * @return	Reference to the top item of the stack.
+	 */
+	T& top();
+
 	/**
 	 * Pop the top item of the stack.
 	 * @return	Top item.

@@ -26,6 +26,75 @@ using namespace elm;
 // test_vector()
 TEST_BEGIN(vector)
 	
+	{
+		if(false) {
+			Vector<int> v;
+			const Vector<int> cv(v);
+			v.equivalence();
+			cv.equivalence();
+			v.allocator();
+			cv.allocator();
+			v.capacity();
+			v.asArray();
+			cv.asArray();
+			v.detach();
+			v.grow(1);
+			v.setLength(3);
+
+			v.count();
+			v.contains(1);
+			v.isEmpty();
+			static_cast<bool>(v);
+			v.begin();
+			v.end();
+			v.equals(v);
+			v == v;
+			v != v;
+
+			v.clear();
+			v.addAll(v);
+			v.remove(1);
+			v.removeAll(v);
+			v.remove(v.begin());
+			v.copy(v);
+			v += 1;
+			v -= 1;
+			v = v;
+
+			v.length();
+			v.get(1);
+			v.indexOf(1);
+			v.lastIndexOf(1);
+			cv[1];
+
+			v.shrink(1);
+			v.set(1, 1);
+			v.set(v.begin(), 1);
+			v.insert(1, 1);
+			v.insert(v.begin(), 1);
+			v.removeAt(1);
+			v.removeAt(v.begin());
+
+			v.first();
+			v.last();
+			v.find(1);
+			v.find(1, v.begin());
+
+			v.addFirst(1);
+			v.addLast(1);
+			v.removeFirst();
+			v.removeLast();
+			v.addAfter(v.begin(), 1);
+			v.addBefore(v.begin(), 1);
+
+			v.top();
+			cv.top();
+			v.pop();
+			v.push(1);
+			v.reset();
+		}
+	}
+
 	// Simple test
 	{
 		Vector<int> v;

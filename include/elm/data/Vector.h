@@ -43,10 +43,26 @@ public:
 	inline Vector(int _cap = 8): tab(newVec(_cap)), cap(_cap), cnt(0) { }
 	inline Vector(const Vector<T>& vec): tab(0), cap(0), cnt(0) { copy(vec); }
 	inline ~Vector(void) { if(tab) deleteVec(tab, cap); }
-	inline Array<const T>& asArray(void) const { return Array<const T>(count, tab); }
-	inline Array<T>& asArray(void) { return Array<T>(count, tab); }
+	inline const E& equivalence() const { return *this; }
+	inline E& equivalence() { return *this; }
+	inline const A& allocator() const { return *this; }
+	inline A& allocator() { return *this; }
 
-	// Iterator
+	inline int capacity(void) const { return cap; }
+	inline Array<const T> asArray(void) const { return Array<const T>(count(), tab); }
+	inline Array<T> asArray(void) { return Array<T>(count(), tab); }
+	inline Array<T> detach(void)
+		{ T *rt = tab; int rc = cnt; tab = 0; cnt = 0; return Array<T>(rc, rt); }
+	void grow(int new_cap)
+		{	ASSERTP(new_cap >= cap, "new capacity must be bigger than old one");
+			T *new_tab = newVec(new_cap); array::copy(new_tab, tab, cnt); deleteVec(tab, cap); tab = new_tab; cap = new_cap; }
+	void setLength(int new_length)
+		{	int new_cap; ASSERTP(new_length >= 0, "new length must be >= 0");
+			for(new_cap = 1; new_cap < new_length; new_cap *= 2);
+			if (new_cap > cap) grow(new_cap); cnt = new_length; }
+	inline T& addNew(void) { if(cnt >= cap) grow(cap * 2); return tab[cnt++]; }
+
+	// Collection concept
 	class Iter: public InplacePreIterator<Iter, T> {
 	public:
 		friend class Vector;
@@ -61,23 +77,6 @@ public:
 		int i;
 	};
 
-	// specific methods
-	inline int capacity(void) const { return cap; }
-	void grow(int new_cap)
-		{	ASSERTP(new_cap >= cap, "new capacity must be bigger than old one");
-			T *new_tab = newVec(new_cap); array::copy(new_tab, tab, cnt); deleteVec(tab, cap); tab = new_tab; cap = new_cap; }
-	void setLength(int new_length)
-		{	int new_cap; ASSERTP(new_length >= 0, "new length must be >= 0");
-			for(new_cap = 1; new_cap < new_length; new_cap *= 2);
-			if (new_cap > cap) grow(new_cap); cnt = new_length; }
-	void copy(const Vector& vec)
-		{	if(!tab || vec.cnt > cap) { if(tab) deleteVec(tab, cap); cap = vec.cap; tab = newVec(vec.cap); }
-			cnt = vec.cnt; array::copy(tab, vec.tab, cnt); }
-	inline Array<T> detach(void)
-		{ T *rt = tab; int rc = cnt; tab = 0; cnt = 0; return Array<T>(rc, rt); }
-
-	// Collection concept
-	static const Vector<T, E, A> null;
 	inline int count(void) const { return cnt; }
 	bool contains(const T& v) const
 		{ for(Iter i(*this); i(); i++) if(v == *i) return true; return false; }
@@ -85,10 +84,18 @@ public:
 		{ for(typename C<T>::Iter item(items); item; item++) if(!contains(item)) return false; return true; }
 	inline bool isEmpty(void) const { return cnt == 0; }
 	inline operator bool(void) const { return cnt != 0; }
-	inline Iter items(void) const { return Iter(*this); }
-	inline Iter operator*(void) const { return items(); }
 	inline Iter begin(void) const { return Iter(*this); }
 	inline Iter end(void) const { return Iter(*this, count()); }
+
+	inline bool equals(const Vector<T>& v) const {
+		if(cnt != v.cnt) return false;
+		for(int i = 0; i < cnt; i++) if(E::isEqual(tab[cnt], v.tab[cnt])) return false;
+		return true;
+	}
+	inline bool operator==(const Vector<T>& v) const { return equals(v); }
+	inline bool operator!=(const Vector<T>& v) const { return !equals(v); }
+
+	static const Vector<T, E, A> null;
 
 	// MutableCollection concept
 	inline void clear(void) { cnt = 0; }
@@ -96,15 +103,20 @@ public:
 	template <class C> inline void addAll(const C& c)
 		{ for(typename C::Iter i(c); i(); i++) add(*i); }
 	inline void remove(const T& value) { int i = indexOf(value); if(i >= 0) removeAt(i); }
-	template <template <class _> class C> inline void removeAll(const C<T>& items)
-		{ for(typename C<T>::Iter item(items); item; item++) remove(item); }
+	template <class C> inline void removeAll(const C& c)
+		{ for(const auto x: c) remove(x); }
 	inline void remove(const Iter& i) { removeAt(i.i); }
+	inline Vector<T>& operator+=(const T x) { add(x); return *this; }
+	inline Vector<T>& operator-=(const T x) { remove(x); return *this; }
+	void copy(const Vector& vec)
+		{	if(!tab || vec.cnt > cap) { if(tab) deleteVec(tab, cap); cap = vec.cap; tab = newVec(vec.cap); }
+			cnt = vec.cnt; array::copy(tab, vec.tab, cnt); }
+	inline Vector<T>& operator=(const Vector& vec) { copy(vec); return *this; };
 
 	// Array concept
 	inline int length(void) const { return count(); }
 	inline const T& get(int i) const
 		{ ASSERTP(0 <= i && i < cnt, "index out of bounds"); return tab[i]; }
-	inline const T& get(const Iter& i) const { return get(i.index()); }
 	inline int indexOf(const T& v, int p = 0) const
 		{ ASSERTP(0 <= p && p <= cnt, "index out of bounds");
 		for(int i = p; i < cnt; i++) if(E::isEqual(v, tab[i])) return i; return -1; }
@@ -112,7 +124,6 @@ public:
 		{	ASSERTP(p <= cnt, "index out of bounds");
 			for(int i = (p < 0 ? cnt : p) - 1; i >= 0; i--) if(E::isEqual(v, tab[i])) return i; return -1; }
 	inline const T & operator[](int i) const { return get(i); }
-	inline const T & operator[](const Iter& i) const { return get(i); }
 
 	// MutableArray concept
 	inline void shrink(int l)
@@ -139,13 +150,11 @@ public:
 	inline const T& first(void) const { ASSERT(cnt > 0); return tab[0]; }
 	inline const T& last(void) const { ASSERT(cnt > 0); return tab[cnt - 1]; }
 	inline Iter find(const T &v)
-		{ Iter i(*this); while(i && !E::isEqual(*i, v)) i++; return i; }
+		{ Iter i(*this); while(i() && !E::isEqual(*i, v)) i++; return i; }
 	inline Iter find (const T &v, const Iter &p)
-		{ Iter i(p); while(i && !E::isEqual(*i, v)) i++; return i; }
+		{ Iter i(p); while(i() && !E::isEqual(*i, v)) i++; return i; }
 
 	// MutableList concept
-	inline T& first(void) { ASSERT(cnt > 0); return tab[0]; }
-	inline T& last(void) { ASSERT(cnt > 0); return tab[cnt - 1]; }
 	inline void addFirst(const T &v) { insert(0, v); }
 	inline void addLast(const T &v) { add(v); }
 	inline void removeFirst(void) { removeAt(0); }
@@ -155,19 +164,14 @@ public:
 
 	// Stack concept
 	inline const T &top(void) const { return last(); }
-	inline T &top(void) { return last(); }
+	inline T &top(void) { return tab[cnt - 1]; }
 	inline T pop(void) { ASSERTP(cnt > 0, "no more data to pop"); cnt--; return tab[cnt]; }
 	inline void push(const T &v) { add(v); }
 	inline void reset(void) { clear(); }
 
-	// operators
-	inline Vector<T>& operator=(const Vector& vec) { copy(vec); return *this; };
-	inline bool operator==(const Vector<T>& v) const
-		{ if(length() != v.length()) return false; for(int i = 0; i < length(); i++) if(get(i) != v[i]) return false; return true; }
-	inline bool operator!=(const Vector<T>& v) const { return !(*this == v); }
-
-	// serialization compatibility
-	inline T& addNew(void) { if(cnt >= cap) grow(cap * 2); return tab[cnt++]; }
+	// deprecated
+	inline Iter operator*(void) const { return items(); }
+	inline Iter items(void) const { return Iter(*this); }
 
 private:
 	T *tab;
