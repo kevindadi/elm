@@ -32,13 +32,17 @@
 namespace elm {
 
 template <class T, class C = Comparator<T>, class A = DefaultAlloc >
-class TreeBag: public C {
+class TreeBag: public C, public A {
 private:
 
 	class Node: public inhstruct::BinTree::Node {
 	public:
 		inline Node(const T& value): val(value) { }
 		T val;
+		inline void *operator new(size_t size, TreeBag<T, C, A> *t)
+			{ return t->A::allocate(size); }
+		inline void free(TreeBag<T, C, A> *t)
+			{ this->~Node(); t->A::free(this); }
 	};
 
 public:
@@ -49,12 +53,16 @@ public:
 	inline ~TreeBag(void) { clear(); }
 	const C& comparator() const { return *this; }
 	C& comparator() { return *this; }
+	A& allocator() { return *this; }
 
 	// Collection concept
 	inline int count(void) const { return root.count(); }
-	inline bool contains(const T& x) const { return find(x); }
+	inline bool contains(const T& x) const { return find(x) != nullptr; }
 	inline bool isEmpty(void) const { return root.isEmpty(); }
  	inline operator bool(void) const { return !isEmpty(); }
+
+ 	template <class CC> bool containsAll(const CC& c) const
+ 		{ for(const auto x: c) if(!contains(x)) return false; return true; }
 
 	class Iter: public PreIterator<Iter, const T&> {
 		friend class TreeBag;
@@ -120,14 +128,14 @@ public:
 				todo.put((Node *)node->left());
 			if(node->right())
 				todo.put((Node *)node->right());
-			delete node;
+			node->free(this);
 		}
 	}
 
 
 	void add(const T &x) {
 		Node *node = (Node *)root.root();
-		Node *new_node = new Node(x);
+		Node *new_node = new(this) Node(x);
 		if(!node)
 			root.setRoot(new_node);
 		else
@@ -168,7 +176,7 @@ public:
 				node = (Node *)node->left();
 		}
 		Node *left = (Node *)node->left(), *right = (Node *)node->right();
-		delete node;
+		node->free(this);
 		if(!left)
 			replace(parent, node, right);
 		else if(!right)
@@ -190,22 +198,22 @@ public:
 		addAll(t);
 	}
 
-private:
-	inhstruct::BinTree root;
-
-	Node *find(const T& x) const {
+	const T *find(const T& x) const {
 		Node *node = (Node *)root.root();
 		while(node) {
 			int cmp = C::compare(x, node->val);
 			if(cmp == 0)
-				break;
+				return &node->val;
 			else if(cmp > 0)
 				node = (Node *)node->right();
 			else
 				node = (Node *)node->left();
 		}
-		return node;
+		return nullptr;
 	}
+
+private:
+	inhstruct::BinTree root;
 
 	void replace(Node *parent, Node *old, Node *_new)  {
 		if(!parent)

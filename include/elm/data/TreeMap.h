@@ -21,83 +21,94 @@
 #ifndef ELM_DATA_TREEMAP_H
 #define ELM_DATA_TREEMAP_H
 
-#include <elm/utility.h>
-#include <elm/util/Pair.h>
 #include <elm/data/TreeBag.h>
+#include <elm/data/util.h>
 
 namespace elm {
 
 // SortedBinMap class
-template <class K, class T, class C = Comparator<K>, class E = Equiv<T> >
-class SortedBinMap: public E {
+template <class K, class T, class C = Comparator<K>, class E = Equiv<T>, class A = DefaultAlloc >
+class TreeMap: public E {
 	typedef Pair<K, T> value_t;
-	typedef genstruct::GenSortedBinTree<value_t, PairAdapter<K, T>, C> tree_t;
+	typedef TreeBag<value_t, AssocComparator<K, T, C> > tree_t;
 public:
-	inline SortedBinMap(void) { }
-	inline SortedBinMap(const SortedBinMap& map): tree(map.tree) { }
+	inline TreeMap() { }
+	inline TreeMap(const TreeMap<K, T, C>& map): tree(map.tree) { }
+	inline const Comparator<K>& comparator() const { return tree.comparator(); }
+	inline Comparator<K>& comparator() { return tree.comparator(); }
+	inline E& equivalence() { return *this; }
+	inline A& allocator() { return tree.allocator(); }
 	
 	// Collection concept
 	inline int count(void) const { return tree.count(); }
-	inline bool contains(const K &item) const { return tree.look(item); }
+	inline bool contains(const K &k) const { return tree.find(key(k)) != nullptr; }
 	inline bool isEmpty(void) const { return tree.isEmpty(); }
  	inline operator bool(void) const { return !isEmpty(); }
 
-	// Iterator class
-	class Iterator: public PreIterator<Iterator, const T&> {
+	class Iter: public PreIterator<Iter, const T&> {
+		friend class TreeMap;
 	public:
-		inline Iterator(const SortedBinMap& map): iter(map.tree) { }
-		inline Iterator(const Iterator& _): iter(_) { }
+		inline Iter(const TreeMap& map): iter(map.tree) { }
 		inline bool ended(void) const { return iter.ended(); }
 		inline void next(void) { iter.next(); }
-		const T &item(void) const { return iter.item().snd; }
+		inline const T &item(void) const { return iter.item().snd; }
+		inline bool equals(const Iter& ii) const { return iter.equals(ii.iter); }
 	private:
-		typename tree_t::Iterator iter;
+		inline Iter(const typename  tree_t::Iter& i): iter(i) { }
+		typename tree_t::Iter iter;
 	};
+	inline Iter begin() const { return Iter(tree.begin()); }
+	inline Iter end() const { return Iter(tree.end()); }
 	
 	// Map concept
 	inline const T& get(const K &key, const T &def) const {
-		const value_t *val = tree.look(key);
+		const value_t *val = tree.find(pair(key, T()));
 		return val ? val->snd : def;
 	}
 	inline Option<T> get(const K &key) const {
-		const value_t *res = tree.look(key);
+		const value_t *res = tree.find(pair(key, T()));
 		return res ? Option<T>(res->snd) : none;
 	}
-	inline bool hasKey(const K &key) const { return tree.look(key); }
+	inline bool hasKey(const K &k) const { return tree.contains(key(k)); }
 
-	// KeyIterator class
-	class KeyIterator: public PreIterator<KeyIterator, const K&> {
+	class KeyIter: public PreIterator<KeyIter, const K&> {
+		friend class TreeMap;
 	public:
-		inline KeyIterator(const SortedBinMap& map): iter(map.tree) { }
-		inline KeyIterator(const KeyIterator& _): iter(_) { }
+		inline KeyIter(const TreeMap& map): iter(map.tree) { }
 		inline bool ended(void) const { return iter.ended(); }
 		inline void next(void) { iter.next(); }
 		const K &item(void) const { return iter.item().fst; }
+		inline bool equals(const KeyIter& ii) const { return iter.equals(ii.iter); }
 	private:
-		typename tree_t::Iterator iter;
+		inline KeyIter(const Iter& i): iter(i.iter) { }
+		typename tree_t::Iter iter;
 	};
+	inline Iterable<KeyIter> keys() const { return iter(KeyIter(*this), KeyIter(end())); }
 	
-	// PairIterator class
-	class PairIterator: public PreIterator<PairIterator, const value_t&> {
+	class PairIter: public PreIterator<PairIter, const value_t&> {
+		friend class TreeMap;
 	public:
-		inline PairIterator(const SortedBinMap& map): iter(map.tree) { }
-		inline PairIterator(const PairIterator& _): iter(_.iter) { }
+		inline PairIter(const TreeMap& map): iter(map.tree) { }
 		inline bool ended(void) const { return iter.ended(); }
 		inline void next(void) { iter.next(); }
 		const value_t &item(void) const { return iter.item(); }
+		inline bool equals(const PairIter& ii) const { return iter.equals(ii.iter); }
 	private:
-		typename tree_t::Iterator iter;
+		inline PairIter(const Iter& i): iter(i.iter) { }
+		typename tree_t::Iter iter;
 	};
+	inline Iterable<PairIter> pairs() const { return iter(PairIter(*this), PairIter(end())); }
 	
 	// MutableMap concept
 	inline void put(const K& key, const T& value)
 		{ tree.add(value_t(key, value)); }
 	inline void remove(const K& key)
-		{ value_t *val = tree.look(key); if(val) tree.remove(*val); }
-	inline void remove(const PairIterator& iter)
+		{ tree.remove(pair(key, T())); }
+	inline void remove(const Iter& iter)
 		{ tree.remove(iter.iter); }
 
 private:
+	inline Pair<K, T> key(const K& k) const { return pair(k, T()); }
 	tree_t tree;
 };
 

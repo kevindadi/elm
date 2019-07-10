@@ -11,3 +11,6 @@ install_manifest.txt
 /.gitignore~
 /config.h
 **/cmake_install.cmake
+autodoc
+xml
+doxygen.log

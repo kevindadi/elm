@@ -17,12 +17,13 @@ namespace elm {
  *
  * @par Principles
  * This module groups together classes implementing storage data structure. It is new in ELM 2.0
- * and try to extend and to make easier the use of classes from @ref gen_datastruct module.
+ * and try to extend and to make easier the use of classes from the old @ref gen_datastruct module.
  * The main differences includes:
  * @li shorter names for classes and for iterators,
- * @li include in the @ref main elm name space,
+ * @li included in the @ref main elm name space,
  * @li more STL compliance,
- * @li more operators overloaded.
+ * @li more operators overloading,
+ * @li versatile system for configuration (comparator, allocator, etc).
  *
  * In addition, their documentation includes several topic allowing a better understanding
  * of their work to help choosing the better data structure:
@@ -31,8 +32,43 @@ namespace elm {
  *
  * As for old data structures, the following topics applies:
  * @li concepts implemented by the data structure are provided,
- * @li a data structure must not be modified while an iterator is active on it unless specific methods are provided.
+ * @li a data structure must not be modified while an iterator is active on it
+ * unless specific methods are provided.
  *
+ *
+ * @par Selecting a data structure
+ *
+ * This sections aims to help a developer to select a data structure fittings
+ * his needs. They are sorted according to different criteria: the right
+ * data structure to use is the one matching most of them. The criteria
+ * includes access type, collection size, etc.
+ *
+ * Collection size:
+ * 	* fixed -- Array, BitVector, StaticStack
+ * 	* small -- Vector, VectorQueue
+ * 	* medium -- List, SortedList, BiDiList, TreeBag, TreeMap
+ * 	* big -- FragTable, avl::Tree, avl::Map,
+ * avl::Set, ListQueue, HashMap, HashSet
+ *
+ * Access type:
+ *  * indexed -- Vector, FragTable
+ *	* sequential -- Vector, List, SortedList, BiDiList, FragTable, avl::Tree
+ *	* fast lookup -- avl::Tree, TreeBag, SortedList
+ *	* key access -- ListMap, HashMap, avl::Map, TreeMap
+ *
+ * Modification type:
+ *  * append -- Vector, FragTable, BiDiList
+ * 	* prepend -- List
+ * 	* push / pop (stack) -- StaticStack, Vector, List, BiDiList, FragTable
+ * 	* append / remove first (queue) -- BiDiList, VectorQueue, ListQueue
+ *  * random -- List, BiDiList
+ *  * uniqueness of elements (set) -- ListSet, avl::Set, HashSet
+ *  * key access (map) -- ListMap, HashMap, avl::Map, TreeMap
+ *
+ * Memory footprint:
+ *	* light -- Array, Vector, VectorQueue, BitVector, StaticStack, List, ListQueue, SortedList, ListMap
+ *	* medium -- BiDiList, TreeBag, TreeMap, avl::Tree, avl::Map, avl::Set, FragTable
+ *	* heavy at startup -- HashTable, HashMap, HashSet
  *
  * @par Iterator Helper Classes
  *

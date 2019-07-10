@@ -72,7 +72,7 @@ namespace elm { namespace concept {
  * @ingroup concepts
  */
 template <class T>
-class Iterator {
+class Iter {
 public:
 
 	/**
@@ -106,14 +106,31 @@ public:
 	/**
 	 * Same as @ref next().
 	 */
-	Iterator& operator++(int);
+	Iter& operator++(int);
 	
 	/**
 	 * Assign an operator position to the current one.
 	 * @param iterator	Iterator to set the position of.
 	 * @return			Current iterator.
 	 */
-	Iterator& operator=(const Iterator& iterator);
+	Iter& operator=(const Iter& iterator);
+
+	/**
+	 * Test if two iterators are equal.
+	 * @param iterator	Iterator to test with.
+	 * @return			True if they are equal, false else.
+	 */
+	bool equals(const Iter& iterator) const;
+
+	/**
+	 * Test for equality.
+	 */
+	bool operator==(const Iter& iterator) const;
+
+	/**
+	 * Test for inequality.
+	 */
+	bool operator!=(const Iter& iterator) const;
 };
 
 
@@ -196,18 +213,6 @@ public:
 		Iter(const Collection<T>& collection);
 	
 	};
-
-	/**
-	 * Get an iterator on the collection.
-	 * @return	Iterator.
-	 */
-	Iter items(void) const;
-
-	/**
-	 * Get an iterator on the collection.
-	 * @return	Iterator.
-	 */
-	Iter operator*(void) const;
 
 	/**
 	 * Get an iterator on the collection.
@@ -333,6 +338,12 @@ public:
 	 * @param iter	Iter giving the item to remove.
 	 */
 	void remove(const Iterator<T>& iter);
+
+	/**
+	 * Reset the current collection and copy the given one.
+	 * @param items		Collection to copy.
+	 */
+	void copy(const Collection<T>& items);
 
 	/**
 	 * Same as insert().
@@ -913,26 +924,31 @@ public:
 	/**
 	 * Iterator on the keys stored in the map.
 	 */
-	class KeyIterator: public Iterator<K> {
+	class KeyIter: public Iter<K> {
 	public:
 	
 		/**
 		 * Iterates on the given map.
 		 * @param map	Map to iterate on.
 		 */
-		KeyIterator(const Map<K, T>& map);
+		KeyIter(const Map<K, T>& map);
 		
 		/**
 		 * Copy the given iterator.
 		 * @param iter	Iterator to copy.
 		 */
-		KeyIterator(const KeyIterator& iter);
+		KeyIter(const KeyIter& iter);
 	};
 	
 	/**
+	 * Get the collection of keys.
+	 */
+	Iterable<KeyIter> keys() const;
+
+	/**
 	 * Iterator giving access to keys and values stored in the map.
 	 */
-	class PairIterator: public Iterator<Pair<K, T> > {
+	class PairIterator: public Iter<Pair<K, T> > {
 	public:
 	
 		/**
@@ -947,6 +963,11 @@ public:
 		 */
 		PairIterator(const ValueIterator& iter);
 	};
+
+	/**
+	 * Get the collection pairs (key, value).
+	 */
+	Iterable<PairIter> pairs() const;
 };
 
 

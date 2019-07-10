@@ -176,6 +176,20 @@ template <class C, class P>
 inline Range<SelectIter<typename C::Iter, P> > select(const C& c, const P& p)
 	{ return range(select_iter(c.begin(), p), select_iter(c.end(), p)); }
 
+template <class I>
+class Iterable {
+public:
+	typedef typename I::t t;
+	Iterable(const I& begin, const I& end): b(begin), e(end) { }
+	inline const I& begin() const { return b; }
+	inline const I& end() const { return e; }
+private:
+	I b, e;
+};
+
+template <class I>
+Iterable<I> iter(const I& b, const I& e) { return Iterable<I>(b, e); }
+
 } // elm
 
 #endif /* ELM_DATA_UTIL_H_ */

@@ -61,7 +61,7 @@ template <> class Comparator<string>: public DynamicComparator<string> { };
 
 // AssocComparator class
 template <class K, class T, class C = Comparator<K> >
-class AssocComparator {
+class AssocComparator: public C {
 public:
 	typedef Pair<K, T> pair_t;
 	typedef pair_t t;

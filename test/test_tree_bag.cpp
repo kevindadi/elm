@@ -6,6 +6,7 @@
  */
 
 #include <elm/data/TreeBag.h>
+#include <elm/data/TreeMap.h>
 #include <elm/sys/System.h>
 #include "../include/elm/test.h"
 
@@ -38,7 +39,7 @@ TEST_BEGIN(tree_bag)
 			t.remove(1);
 			t.removeAll(t);
 			t.remove(t.begin());
-
+			t.containsAll(t);
 		}
 	}
 
@@ -105,10 +106,35 @@ TEST_BEGIN(tree_bag)
 		cerr << io::endl;*/
 	}
 	
-#	if 0
+	// TreeMap
+	{
+		if(false) {
+			TreeMap<int, int> t;
+			const TreeMap<int, int> ct(t);
+			t.comparator();
+			ct.comparator();
+			t.equivalence();
+			t.allocator();
+			t.count();
+			t.contains(1);
+			t.isEmpty();
+			static_cast<bool>(t);
+			t.begin();
+			t.end();
+			t.get(1, 2);
+			t.get(1);
+			t.hasKey(1);
+			t.put(1, 2);
+			t.remove(1);
+			t.remove(t.begin());
+			t.keys();
+			t.pairs();
+		}
+	}
+
 	{
 		bool error = false;
-		genstruct::SortedBinMap<int, int *> map;
+		TreeMap<int, int *> map;
 		int cnt = 0, vals[COUNT];
 		for(int i = 0; !error && i < COUNT; i++) {
 			int v = sys::System::random(MAX * 4);
@@ -155,10 +181,9 @@ TEST_BEGIN(tree_bag)
 		CHECK(!error);
 
 		// cleanup in the end
-		for(genstruct::SortedBinMap<int, int *>::Iterator v(map); v(); v++)
-			delete *v;
+		for(const auto p: map)
+			delete p;
 	}
-#	endif
 
 TEST_END
 
