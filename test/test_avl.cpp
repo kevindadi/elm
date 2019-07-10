@@ -21,7 +21,6 @@
 #include "../include/elm/test.h"
 #include <elm/avl/Set.h>
 #include <elm/avl/Map.h>
-#include <elm/genstruct/HashTable.h>
 #include <elm/sys/System.h>
 #include <elm/io.h>
  
