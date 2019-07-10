@@ -123,8 +123,6 @@ public:
 	inline operator bool(void) const { return !isEmpty(); }
 	bool equals(const List<T>& l) const
 		{ Iter i1(*this), i2(l); while(i1() && i2()) { if(!E::isEqual(*i1, *i2)) return false; i1++; i2++; } return !i1 && !i2; }
-	bool includes(const List<T>& l) const
-		{ Iter i1(*this), i2(l); while(i1() && i2()) { if(E::isEqual(*i1, *i2)) i2++; i1++; } ; return !i2; }
 	inline const T& at(const Iter& i) const { return i.node->val; }
 
 	// MutableCollection concept
@@ -180,10 +178,6 @@ public:
 	inline const T& operator[](int k) const { return nth(k); }
 	inline bool operator==(const List<T>& l) const { return equals(l); }
 	inline bool operator!=(const List<T>& l) const { return !equals(l); }
-	inline bool operator>=(const List<T>& l) const { return includes(l); }
-	inline bool operator>(const List<T>& l) const { return includes(l) && !equals(l); }
-	inline bool operator<=(const List<T>& l) const { return l.includes(*this); }
-	inline bool operator<(const List<T>& l) const { return l.includes(*this) && !equals(l); }
 	inline List<T>& operator+=(const T& h) { add(h); return *this; }
 	inline List<T>& operator+=(const List<T>& l) { addAll(l); return *this; }
 	inline List<T>& operator-=(const T& h) { remove(h); return *this; }

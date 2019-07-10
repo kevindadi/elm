@@ -101,21 +101,6 @@ public:
 	inline bool operator==(const TreeBag<T, C>& t) const { return equals(t); }
 	inline bool operator!=(const TreeBag<T, C>& t) const { return !equals(t); }
 
-	inline bool contains(const TreeBag<T, C>& t) const {
-		Iter i(*this), j(t);
-		while(i() && j()) {
-			if(comparator().doComparator(*i, *j) == 0)
-				j++;
-			i++;
-		}
-		return !j();
-	}
-	inline bool operator<=(const TreeBag<T, C>& t) const { return t.contains(*this); }
-	inline bool operator>=(const TreeBag<T, C>& t) const { return contains(t); }
-
-	inline bool operator<(const TreeBag<T, C>& t) const { return !equals(t) && t.contains(*this); }
-	inline bool operator>(const TreeBag<T, C>& t) const { return !equals(t) && contains(t); }
-
 	// MutableCollection concept
 	void clear(void)  {
 		if(isEmpty())

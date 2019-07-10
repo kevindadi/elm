@@ -68,14 +68,6 @@ public:
 	inline bool operator==(const HashSet<T>& s) const { return equals(s); }
 	inline bool operator!=(const HashSet<T>& s) const { return !equals(s); }
 
-	inline bool includes(const HashSet<T>& s) const
-		{ return _tab.includes(s._tab); }
-	inline bool operator<=(const HashSet<T>& s) const { return s.includes(*this); }
-	inline bool operator>=(const HashSet<T>& s) const { return includes(s); }
-
-	inline bool operator<(const HashSet<T>& s) const { return _tab < s._tab; }
-	inline bool operator>(const HashSet<T>& s) const { return _tab > s._tab; }
-
 	// MutableCollection concept
 	inline void clear(void) { _tab.clear(); }
 	inline void add(const T& val) { insert(val); }
@@ -92,6 +84,12 @@ public:
 
 	// Set concept
 	inline void insert(const T& val) { _tab.put(val); }
+	inline bool subsetOf(const HashSet<T>& s) const
+		{ for(const auto x: *this) if(!s.contains(x)) return false; return true; }
+	inline bool operator<=(const HashSet<T>& s) const { return subsetOf(s); }
+	inline bool operator>=(const HashSet<T>& s) const { return s.subsetOf(*this); }
+	inline bool operator<(const HashSet<T>& s) const { return _tab < s._tab; }
+	inline bool operator>(const HashSet<T>& s) const { return _tab > s._tab; }
 	inline void join(const HashSet<T>& c)
 		{ for(const auto x: c) insert(x); }
 	inline void diff(const HashSet<T>& c)

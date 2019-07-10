@@ -124,14 +124,6 @@ public:
 	inline bool operator==(const HashTable<T>& t) const { return equals(t); }
 	inline bool operator!=(const HashTable<T>& t) const { return !equals(t); }
 
-	inline bool includes(const HashTable<T>& h) const
-		{ return containsAll(h); }
-	inline bool operator<=(const HashTable<T>& h) const { return h.contains(*this); }
-	inline bool operator>=(const HashTable<T>& h) const { return contains(h); }
-
-	inline bool operator<(const HashTable<T>& h) const { return !equals(h) && h.contains(*this); }
-	inline bool operator>(const HashTable<T>& h) const { return !equals(h) && contains(h); }
-
 	// MutableCollection concept
 	void clear(void) {
 		for(int i = 0; i < _size; i++) {

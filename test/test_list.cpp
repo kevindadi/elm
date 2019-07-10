@@ -50,7 +50,8 @@ TEST_BEGIN(list)
 			l.contains(0);
 			l.isEmpty();
 			l.equals(l);
-			l.includes(l);
+			l == l;
+			l != l;
 			l.at(l.begin());
 			l.clear();
 			l.add(0);

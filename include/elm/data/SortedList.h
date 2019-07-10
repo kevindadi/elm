@@ -78,23 +78,6 @@ public:
 	inline bool operator==(const SortedList<T>& l) const { return equals(l); }
 	inline bool operator!=(const SortedList<T>& l) const { return !equals(l); }
 
-	bool contains(const SortedList<T>& l) const {
-		Iter i = begin(), j = l.begin();
-		for(; i() && j(); i++) {
-			int cmp = comparator().doCompare(*i, *j);
-			if(cmp > 0)
-				return false;
-			if(cmp == 0)
-				j++;
-		}
-		return !j;
-	}
-	inline bool operator<=(const SortedList<T>& l) const { return l.contains(*this); }
-	inline bool operator<(const SortedList<T>& l) const { return l.contains(*this) && !equals(l); }
-	inline bool operator>=(const SortedList<T>& l) const { return contains(l); }
-	inline bool operator>(const SortedList<T>& l) const { return contains(l) && !equals(l); }
-
-
 	// MutableCollection concept
 	inline void clear(void) { list.clear(); }
 

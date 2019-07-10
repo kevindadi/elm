@@ -38,6 +38,22 @@ public:
 	inline void insert(const T& v)
 		{ if(!base_t::contains(v)) base_t::add(v); }
 
+	bool subsetOf(const SortedList<T>& l) const {
+		auto i = l.base_t::begin(), j = base_t::begin();
+		for(; i() && j(); i++) {
+			int cmp = base_t::comparator().doCompare(*i, *j);
+			if(cmp > 0)
+				return false;
+			if(cmp == 0)
+				j++;
+		}
+		return !j();
+	}
+	inline bool operator<=(const SortedList<T>& l) const { return subsetOf(l); }
+	inline bool operator<(const SortedList<T>& l) const { return !equals(l) && subsetOf(l); }
+	inline bool operator>=(const SortedList<T>& l) const { return l.subsetOf(*this); }
+	inline bool operator>(const SortedList<T>& l) const { return !equals(l) && l.subsetOf(*this); }
+
 	void join(const self_t& set) {
 		typename base_t::list_t::PrecIter i(base_t::list);
 		typename base_t::Iter j(set);

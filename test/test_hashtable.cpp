@@ -39,13 +39,8 @@ TEST_BEGIN(hashtable)
 			t.end();
 			t = ct;
 			t.equals(t);
-			t.contains(t);
 			t == t;
 			t != t;
-			t <= t;
-			t >= t;
-			t < t;
-			t > t;
 			t += 1;
 			t -= 1;
 		}
@@ -112,7 +107,7 @@ TEST_BEGIN(hashtable)
 			s.equals(s);
 			s == s;
 			s != s;
-			s.includes(s);
+			s.subsetOf(s);
 			s <= s;
 			s >= s;
 			s < s;

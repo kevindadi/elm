@@ -71,12 +71,6 @@ public:
  		{ Iter i = begin(), j = t.begin(); for(; i && j; i++, j++) if(*i != *j) return false; return !i && !j; }
  	inline bool operator==(const self_t& t) const { return equals(t); }
  	inline bool operator!=(const self_t& t) const { return !equals(t); }
- 	inline bool contains(const self_t& t) const
- 		{ for(Iter i = t.begin(); i; i++) if(!contains(*i)) return false; return true; }
- 	inline bool operator<=(const self_t& t) { return t.contains(*this); }
- 	inline bool operator<(const self_t& t) { return t.contains(*this) && !equals(t); }
- 	inline bool operator>=(const self_t& t) { return contains(t); }
- 	inline bool operator>(const self_t& t) { return contains(t) && !equals(t); }
 
 	// MutableCollection concept
 	inline void clear(void)
