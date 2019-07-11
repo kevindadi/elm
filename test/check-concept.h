@@ -1,0 +1,113 @@
+/*
+ *	templates to check concepts
+ *
+ *	This file is part of OTAWA
+ *	Copyright (c) 2019, IRIT UPS.
+ *
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+#ifndef ELM_TEST_CHECK_CONCEPT_H_
+#define ELM_TEST_CHECK_CONCEPT_H_
+
+namespace elm {
+
+template <class C, class T>
+void checkCollection(C& c, const C& cc, const T& x) {
+	if(false) {
+		c.count();
+		c.contains(1);
+		c.containsAll(cc);
+		c.isEmpty();
+		static_cast<bool>(c);
+		c.begin();
+		c.end();
+		c.equals(cc);
+		c == cc;
+		c != cc;
+	}
+}
+
+template <class C, class T>
+void checkMutableCollection(C& c, const T& x) {
+	if(false) {
+		c.clear();
+		c.add(x);
+		c.addAll(c);
+		c.remove(x);
+		c.removeAll(c);
+		c.remove(c.begin());
+		c += x;
+		c -= x;
+		c.copy(c);
+		c = c;
+	}
+}
+
+template <class L, class T>
+void checkList(const L& l, const T& x) {
+	if(false) {
+		l.first();
+		l.last();
+		l.find(x);
+		l.find(x, l.begin());
+		l.nth(1);
+		l[1];
+	}
+}
+
+template <class L, class T>
+void checkMutableList(L& l, const T& x) {
+	if(false) {
+		l.first() = x;
+		l.last() = x;
+		l.addFirst(x);
+		l.addLast(x);
+		l.removeFirst();
+		l.removeLast();
+		l.addAfter(l.begin(), x);
+		l.addBefore(l.begin(), x);
+		l.removeBefore(l.begin());
+		l.removeAfter(l.begin());
+		l.set(l.begin(), x);
+		l[1] = x;
+	}
+}
+
+template <class S, class T>
+void checkStack(S& s, const S& cs, const T& x) {
+	if(false) {
+		s.isEmpty();
+		s.top() = x;
+		cs.top();
+		s.pop();
+		s.push(x);
+		s.reset();
+	}
+}
+
+template <class Q, class T>
+void checkQueue(Q& q, const T& x) {
+	if(false) {
+		q.isEmpty();
+		q.head();
+		T y = q.get();
+		q.put(y);
+		q.reset();
+	}
+}
+
+}
+
+#endif /* ELM_TEST_CHECK_CONCEPT_H_ */

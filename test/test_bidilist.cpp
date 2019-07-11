@@ -19,7 +19,8 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #include <elm/data/BiDiList.h>
-#include "../include/elm/test.h"
+#include <elm/test.h>
+#include "check-concept.h"
 
 using namespace elm;
 
@@ -29,6 +30,24 @@ public:
 };
 
 TEST_BEGIN(bidilist)
+
+	{
+		if(false) {
+			BiDiList<int> l;
+			const BiDiList<int> cl(l);
+			l.equivalence();
+			cl.equivalence();
+			l.allocator();
+			cl.allocator();
+
+			checkCollection(l, cl, 1);
+			checkMutableCollection(l, 1);
+			checkList(cl, 1);
+			checkMutableList(l, 1);
+			checkStack(l, cl, 1);
+			checkQueue(l, 1);
+		}
+	}
 
 	// Test initial
 	{
@@ -126,10 +145,6 @@ TEST_BEGIN(bidilist)
 		}
 		CHECK(l1 == l1);
 		CHECK(l1 != l2);
-		CHECK(l1 >= l1);
-		CHECK(!(l1 > l1));
-		CHECK(l1 >= l2);
-		CHECK(l1 > l2);
 	}
 
 	// special equivalence

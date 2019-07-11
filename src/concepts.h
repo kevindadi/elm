@@ -1060,20 +1060,20 @@ public:
 	 * Get the first item of the list.
 	 * @return	First item.
 	 */
-	const T& first(void);
+	const T& first(void) const;
 	
 	/**
 	 * Get the last item of the list.
 	 * @return	Last item.
 	 */ 
-	const T& last(void);
+	const T& last(void) const;
 	
 	/**
 	 * Find the iterator of the item equal to the given one in the list.
 	 * @param item	Item to look for.
 	 * @return		Iterator on the found item, ended item if not found.
 	 */
-	Iterator<T> find(const T& item);
+	Iter<T> find(const T& item);
 
 	/**
 	 * Find the iterator of the item equal to the given one in the list.
@@ -1081,7 +1081,24 @@ public:
 	 * @param iter	Position to start from.
 	 * @return		Iterator on the found item, ended item if not found.
 	 */
-	Iterator<T> find(const T& item, const Iterator& start);
+	Iter<T> find(const T& item, const Iterator& start);
+
+	/**
+	 * Get the nth item of the list. Calling this function with a i greater
+	 * than the size of the list is forbidden.
+	 * @param i					Index of the requested item.
+	 * @return					Nth element.
+	 */
+	Iter<T> nth(int i);
+
+	/**
+	 * Get the ith element. It is an error if this function is call with
+	 * a i greater than list length.
+	 * @param i		Index of looked element.
+	 * @return		ith element.
+	 */
+	const T& operator[](int i) const;
+
 };
 
 
@@ -1099,6 +1116,18 @@ template <class T>
 class MutableList: public List<T>, public MutableCollection<T> {
 public:
 	
+	/**
+	 * Get the reference to the first item of the list.
+	 * @return	First item reference.
+	 */
+	T& first(void);
+
+	/**
+	 * Get the reference to the the last item of the list.
+	 * @return	Last item reference.
+	 */
+	T& last(void);
+
 	/**
 	 * Add an item as the first item before other items..
 	 * @param item	Item to add.
@@ -1126,14 +1155,27 @@ public:
 	 * @param pos	Position to add after.
 	 * @param item	Item to add.
 	 */
-	void addAfter(const Iterator<T>& pos, const T& item);
+	void addAfter(const Iter<T>& pos, const T& item);
 	
 	/**
 	 * Add an item before another one.
 	 * @param pos	Position to add before.
 	 * @param item	Item to add.
 	 */
-	void addBefore(const Iterator<T>& pos, const T& item);
+	void addBefore(const Iter<T>& pos, const T& item);
+
+	/**
+	 * Remove element before the given position. It is an error to call
+	 * this function with pos pointing on the first element.
+	 * @param pos	Position to remove before.
+	 */
+	void removeBefore(const Iter<T>& pos);
+
+	/**
+	 * Remove element after the given position. It is an error to call
+	 * this function with pos pointing on the last element.
+	 */
+	void removeAfter(const Iter<T>& pos);
 	
 	/**
 	 * Change an item in the list.
@@ -1141,6 +1183,15 @@ public:
 	 * @param item	New item to replace with.
 	 */
 	void set(const Iterator<T>& pos, const T& item);
+
+	/**
+	 * Get the reference on the ith element. It is an error if this function is call with
+	 * a i greater than list length.
+	 * @param i		Index of looked element.
+	 * @return		ith element reference.
+	 */
+	T& operator[](int i);
+
 };
 
 

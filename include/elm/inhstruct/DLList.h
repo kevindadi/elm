@@ -65,7 +65,7 @@ public:
 
 // DLList class
 class DLList {
-	DLNode hd, tl;
+	mutable DLNode hd, tl;
 public:
 	inline DLList(void) {
 		hd.nxt = &tl; hd.prv = 0;
@@ -93,8 +93,8 @@ public:
 	inline DLNode *first(void) const { return hd.nxt; }
 	inline DLNode *last(void) const { return tl.prv; }
 	inline bool isEmpty(void) const { return hd.nxt == &tl; }
-	inline const DLNode *head(void) const { return &hd; }
-	inline const DLNode *tail(void) const { return &tl; }
+	inline DLNode *head(void) const { return &hd; }
+	inline DLNode *tail(void) const { return &tl; }
 
 	inline int count(void) const {
 		int cnt = 0;

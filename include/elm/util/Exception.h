@@ -26,7 +26,6 @@
 
 namespace elm {
 	
-// Exception class
 class Exception {
 public:
 	virtual ~Exception(void);
