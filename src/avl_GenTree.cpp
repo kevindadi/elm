@@ -50,6 +50,128 @@ using namespace elm;
  */
 
 
+#ifdef ELM_AVL_INVARIANT
+bool AbstractTree::invariant(Node *n, int& h, Node *& max, Node *& min) {
+
+	// empty tree
+	if(n == nullptr) {
+		h = 0;
+		max = nullptr;
+		min = nullptr;
+	}
+
+	else {
+
+		// recursive call
+		int lh, rh;
+		Node *lmax, *rmax;
+		Node *lmin, *rmin;
+		if(!invariant(n->_left, lh, lmax, lmin))
+			return false;
+		if(!invariant(n->_right, rh, rmax, rmin))
+			return false;
+
+		// compute results
+		h = elm::max(lh, rh) + 1;
+		if(rmax == nullptr)
+			max = n;
+		else
+			max = rmax;
+		if(rmin == nullptr)
+			min = n;
+		else
+			min = rmin;
+
+		// check and compute heights
+		if(rh - lh != n->_bal) {
+			cerr << "bad balance factor at ";
+			print(cerr, n);
+			cerr << "(expected " << (rh - lh) << ")\n";
+			return false;
+		}
+
+		// check maximum at left
+		if(lmax != nullptr && !(cmp(lmax, n) < 0)) {
+			cerr << "not left ordered at ";
+			print(cerr, n);
+			cerr << io::endl;
+			return false;
+		}
+
+		// check minimum at right
+		if(rmin != nullptr && !(cmp(rmin, n) > 0)) {
+			cerr << "not right ordered at ";
+			print(cerr, n);
+			cerr << io::endl;
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool AbstractTree::invariant(Node *n) {
+	int h;
+	Node *max, *min;
+	bool r = invariant(n, h, max, min);
+	if(!r)
+		printTree(cout);
+	return r;
+}
+
+AbstractTree::Node *AbstractTree::pointed(const Stack& s) const {
+	if(s.isEmpty())
+		return _root;
+	else if(s.topDir() == LEFT)
+		return s.topNode()->_left;
+	else
+		return s.topNode()->_right;
+}
+
+void AbstractTree::printTree(io::Output& out, Node *n, t::uint32 m, int l, dir_t d) const {
+	if(n == nullptr)
+		return;
+
+	// print right
+	t::uint32 rm = m | (1 << l);
+	if(l != 0 && d == RIGHT)
+		rm &= ~(1 << (l - 1));
+	printTree(out, n->_right, rm, l + 1, RIGHT);
+
+	// print node
+	for(int i = 0; i < l; i++)
+		if((m & (1 << i)) == 0)
+			cout << "    ";
+		else
+			cout << "   |";
+	print(out, n);
+	out << " (" << n->_bal << ")\n";
+
+	// print left
+	t::uint32 lm = m | (1 << l);
+	if(l != 0 && d == LEFT)
+		lm &= ~(1 << (l - 1));
+	printTree(out, n->_left, lm, l + 1, LEFT);
+
+}
+
+void AbstractTree::printTree(io::Output& out, Node *n) {
+	if(n == nullptr)
+		out << "empty";
+	else
+		printTree(out, n, 0, 0, NONE);
+}
+
+void AbstractTree::printTree(io::Output& out) {
+	printTree(out, _root);
+}
+
+#	define INVARIANT(n)		ASSERT(invariant(n))
+#else
+#	define INVARIANT(n)
+#endif
+
+
 /**
  * Get the link to the pointer of the top-node corresponding
  * to the followed path (basically used to relink nodes).
@@ -159,7 +281,7 @@ void AbstractTree::insert(Stack& s, Node *node) {
 
 		// balanced!
 		if(n->_bal == 0)
-			return;
+			break;
 
 		// too high on left
 		else if(n->_bal < -1) {
@@ -168,7 +290,7 @@ void AbstractTree::insert(Stack& s, Node *node) {
 				rotateLeft(s);
 			}
 			rotateRight(s);
-			return;
+			break;
 		}
 
 		// too high on right
@@ -178,72 +300,137 @@ void AbstractTree::insert(Stack& s, Node *node) {
 				rotateRight(s);
 			}
 			rotateLeft(s);
-			return;
+			break;
 		}
 
 		// propagate addition
 		s.pop();
 	}
+
 }
 
 
 /**
- * Perform removal and rebalance operation.
+ * Perform removal and re-balance operation.
  * @param s		Parent stack.
  * @param n		Replacing node.
  */
 void AbstractTree::remove(Stack& s, Node *n) {
 
 	// relink
-	//cerr << "n = " << (void *)n << io::endl;
 	_cnt--;
-	*link(s) = nullptr;
+	*link(s) = n;
 
 	// propagate the balance update
 	while(!s.isEmpty()) {
-
-		// propagate modification
 		Node *p = s.topNode();
 		dir_t d = s.topDir();
-		//cerr << "top = " << (void *)s.topNode() << io::endl;
-		//cerr << "dir = " << (void *)s.topDir() << io::endl;
-		if(d == LEFT)
-			p->_bal++;
-		else
-			p->_bal--;
-		if(p->_bal == -1 || p->_bal == +1)
-			return;
-		//cerr << "bal = " << p->_bal;
+		ASSERT(d == LEFT || d == RIGHT);
 
-		// left unbalanced?
-		if(p->_bal < -1) {
-			if(p->_left->_bal > 0) {
-				cerr << "double right\n";
-				s.push(p->_left, LEFT);
+		// removed on left
+		if(d == LEFT) {
+
+			// fix balance factor
+			p->_bal++;
+			//cout << "DEBUG: LEFT "; print(cerr, p); cout << " (" << p->_bal << ") ";
+
+			// done: height reduction
+			// remove B: (B) <-- (A)
+			if(p->_bal == 0) {
+				//cerr << " cleared!\n";
+				s.pop();
+			}
+
+			// done: no height reduction
+			// remove B: (B) <-- (A) --> (C)
+			else if(p->_bal == +1) {
+				//cerr << "done\n";
+				break;
+			}
+
+			// re-balance needed (BAL = +2)
+
+			// right full: single left rotate and no height reduction
+			// remove B: (B) <-- (A) --> (D <-- C --> E)
+			else if(p->_right->_bal == 0){
+				//cerr << "single left and done\n";
+				rotateLeft(s);
+				break;
+			}
+
+			// left left: single left rotate and level reduction
+			// remove B: (D <-- C) <-- (A) --> (B)
+			else if(p->_right->_bal == +1) {
+				//cerr << "single left\n";
 				rotateLeft(s);
 			}
-			else
-				cerr << "single right\n";
-			rotateRight(s);
-			return;
+
+			// left right: double left rotate and level reduction
+			// remove B:  (B) <-- (A) --> (D <-- C)
+			else {
+				//cerr << "double left\n";
+				s.pop();
+				s.push(p, RIGHT);
+				s.push(p->_right, NONE);
+				rotateRight(s);
+				rotateLeft(s);
+			}
 		}
 
-		// right unbalanced?
-		else if(p->_bal > +1) {
-			if(p->_right->_bal < 0) {
-				cerr << "double left\n";
-				s.push(p->_right, RIGHT);
+		// removed on right
+		else {
+
+			// fix balance factor
+			p->_bal--;
+			//cout << "DEBUG: RIGHT "; print(cerr, p); cout << " (" << p->_bal << ") ";
+
+			// done: height reduction
+			// remove B: (A) --> (B)
+			if(p->_bal == 0) {
+				//cerr << " cleared!\n";
+				s.pop();
+			}
+
+			// done: no height reduction
+			// remove B: (C) <-- (A) --> (B)
+			else if(p->_bal == -1) {
+				//cerr << "done\n";
+				break;
+			}
+
+			// re-balance needed (BAL = -2)
+
+			// left full: single right rotate and no height reduction
+			// remove B: (D <-- C --> E) <-- (A) --> (B)
+			else if(p->_left->_bal == 0){
+				//cerr << "single right and done\n";
+				rotateRight(s);
+				break;
+			}
+
+			// left left: single right rotate and level reduction
+			// remove B: (D <-- C) <-- (A) --> (B)
+			else if(p->_left->_bal == -1) {
+				//cerr << "single right\n";
 				rotateRight(s);
 			}
-			else
-				cerr << "single left\n";
-			rotateLeft(s);
-			return;
+
+			// left right: double right rotate and level reduction
+			// remove B:  (C --> D) <-- (A) --> (B)
+			else {
+				//cerr << "double right\n";
+				s.pop();
+				s.push(p, LEFT);
+				s.push(p->_left, NONE);
+				rotateLeft(s);
+				rotateRight(s);
+			}
 		}
 
-		// propagate to parent
-		s.pop();
+		INVARIANT(pointed(s))
 	}
+
+	INVARIANT(_root);
 }
 
 

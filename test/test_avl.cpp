@@ -28,89 +28,7 @@ using namespace elm;
 using namespace elm::avl;
 
 static const int maxv = 10000;
-static const int _count = 100;
-
-
-
-// Invariant definition
-namespace elm { namespace avl {
-
-template <class T>
-class Debug {
-	typedef typename GenTree<T>::Node Node;
-	typedef GenTree<T> Tree;
-public:
-
-	static bool leftSorted(const Tree& t, Node *n) {
-		return n == nullptr
-			|| (	(n->left() == nullptr || t.compare(n->left()->key(), n->key()) < 0)
-				&&	leftSorted(t, n->left())
-				&&	leftSorted(t, n->right()));
-	}
-
-	static bool rightSorted(const Tree& t, Node *n) {
-		return n == nullptr
-			|| (	(n->right() == nullptr || t.compare(n->key(), n->right()->key()) < 0)
-				&&	rightSorted(t, n->left())
-				&&	rightSorted(t, n->right()));
-	}
-
-	static bool balanced(Node *n) {
-		return n == nullptr
-			|| 		(n->_bal == height(n->right()) - height(n->left())
-				&&	-1 <= n->_bal && n->_bal <= 1);
-	}
-
-	static int height(Node *n) {
-		return n == nullptr ? 0 : (1 + max(height(n->left()), height(n->right())));
-	}
-
-	static bool invariant(const GenTree<T>& tree) {
-		return leftSorted(tree, tree.root())
-			&& rightSorted(tree, tree.root())
-			&& balanced(tree.root());
-	}
-
-	static void dump(Node *n, int t = 0) {
-		for(int i = 0; i < t; i++)
-			cout << "  ";
-		if(n == nullptr)
-			cout << "-\n";
-		else {
-			cout << n->data << " (" << (void *)n << ") (" << n->_bal << ")" << io::endl;
-			if(n->left() != nullptr || n->right() != nullptr) {
-				dump(n->left(), t+1);
-				dump(n->right(), t+1);
-			}
-		}
-	}
-
-	static void dump(const GenTree<T>& tree) {
-		if(tree.root() == nullptr)
-			cout << "empty\n";
-		else
-			dump(tree.root());
-	}
-
-	static void checkLoop(Node *n, Vector<Node *> s) {
-		if(n == nullptr)
-			return;
-		for(auto i = *s; i(); i++)
-			ASSERT(*i != n);
-		s.push(n);
-		checkLoop(n->left(), s);
-		checkLoop(n->right(), s);
-		s.pop();
-	}
-
-	static void checkLoop(Tree& t) {
-		Vector<Node *> s;
-		checkLoop(t.root(), s);
-	}
-};
-
-} };
-
+static const int _count = 10000;
 
 // Entry point
 TEST_BEGIN(avl)
@@ -118,19 +36,15 @@ TEST_BEGIN(avl)
 	// small tree
 	{
 		avl::Set<int> set;
-		CHECK(Debug<int>::invariant(set));
 		set.add(10);
-		CHECK(Debug<int>::invariant(set));
 		CHECK(set.contains(10));
 		CHECK(!set.contains(5));
 		CHECK(!set.contains(15));
 		set.add(5);
-		CHECK(Debug<int>::invariant(set));
 		CHECK(set.contains(10));
 		CHECK(set.contains(5));
 		CHECK(!set.contains(15));
 		set.add(15);
-		CHECK(Debug<int>::invariant(set));
 		CHECK(set.contains(10));
 		CHECK(set.contains(5));
 		CHECK(set.contains(15));
@@ -141,7 +55,6 @@ TEST_BEGIN(avl)
 		avl::Set<int> set;
 		for(int i = 0; i < 20; i++)
 			set.add(i);
-		CHECK(Debug<int>::invariant(set));
 		bool all = true;
 		for(int i = 0; i < 20; i++)
 			all = all || set.contains(i);
@@ -160,7 +73,6 @@ TEST_BEGIN(avl)
 		avl::Set<int> set;
 		for(int i = 20; i > 0; i--)
 			set.add(i);
-		CHECK(Debug<int>::invariant(set));
 		bool all = true;
 		for(int i = 0; i < 20; i++)
 			all = all || set.contains(i);
@@ -180,10 +92,8 @@ TEST_BEGIN(avl)
 		avl::Set<int> set;
 		for(int i = 0; t[i] >= 0; i++)
 			set.add(t[i]);
-		CHECK(Debug<int>::invariant(set));
 		avl::Set<int> setp;
 		setp = set;
-		CHECK(Debug<int>::invariant(set));
 		CHECK_EQUAL(set.count(), setp.count());
 		auto i = set.begin(), ip = setp.begin();
 		for(; i() && ip(); i++, ip++)
@@ -254,9 +164,7 @@ TEST_BEGIN(avl)
 		set.add(4);
 		set.add(3);
 		set.remove(4);
-		//Debug<int>::dump(set);
 		set.remove(7);
-		//Debug<int>::dump(set);
 		CHECK(set.contains(3));
 		CHECK(set.contains(9));
 		CHECK(!set.contains(7));
@@ -268,11 +176,9 @@ TEST_BEGIN(avl)
 		set.add(10);	// adding 1780
 		set.add(8);		// adding 832
 		set.add(90);	// adding 9819
-		//Debug<int>::dump(set);
 		set.remove(8);	// removing 832
 	}
 
-#ifndef OK
 	// check AVLTree
 	{
 		Vector<int> ints;
@@ -288,7 +194,7 @@ TEST_BEGIN(avl)
 			// remove
 			if(a < maxv && ints.count()) {
 				int n = ints[a % ints.count()];
-				cerr << "removing " << ints[a % ints.count()] << io::endl;
+				//cerr << "removing " << ints[a % ints.count()] << io::endl;
 				ints.remove(n);
 				tree.remove(n);
 				intensive = !tree.contains(n);
@@ -298,7 +204,7 @@ TEST_BEGIN(avl)
 			// insert
 			else {
 				int n = a % maxv;
-				cerr << "adding " << n << io::endl;
+				//cerr << "adding " << n << io::endl;
 				if(!ints.contains(n))
 					ints.add(n);
 				tree.add(n);
@@ -307,14 +213,9 @@ TEST_BEGIN(avl)
 			}
 
 			// check
-			Debug<int>::checkLoop(tree);
-			Debug<int>::dump(tree);
-			bool ok = Debug<int>::invariant(tree);
-			if(!ok) {
-				cerr << "invariant failure!";
-				return;
-			}
-			for(int i = 0; i < ints.count(); i++)
+			//tree.printTree(cout);
+			bool ok = true;
+			for(int i = 0; ok && i < ints.count(); i++)
 				if(!tree.contains(ints[i]))
 					ok = false;
 			intensive = ok;
@@ -325,62 +226,6 @@ TEST_BEGIN(avl)
 			 <<     ", chk_cnt = " << chk_cnt << io::endl;
 		CHECK(intensive);
 	}
-
-#ifdef KO
-	// AVLMap
-	{
-		Map<string, int> map;
-		Option<int> r = map.get("ok");
-		CHECK(!r);
-
-		genstruct::HashTable<string, int> htab;
-
-		bool map_intensive = true;
-		for(int i = 0; map_intensive && i < _count; i++) {
-			int a = sys::System::random(maxv * 4);
-
-			// remove
-			if(a < 2 * maxv && !htab.isEmpty()) {
-				int n = a % htab.count();
-				string kk;
-				for(genstruct::HashTable<string, int>::KeyIterator k(htab); n >= 0; k++, n--)
-					kk = k;
-				map.remove(kk);
-				htab.remove(kk);
-				map_intensive = !map.hasKey(kk);
-			}
-
-			// insert
-			else if(a < maxv) {
-				int n = a % maxv;
-				string k = _ << n;
-				htab.put(k, n);
-				map.put(k, n);
-				map_intensive = map.get(k) == n;
-			}
-
-			// contains
-			else if(a < 2 * maxv) {
-				int n = a % maxv;
-				string k = _ << n;
-				map_intensive = htab.get(k, -1) == map.get(k, -1);
-			}
-
-			// check
-			else {
-				bool ok = true;
-				for(genstruct::HashTable<string, int>::KeyIterator k(htab); k; k++)
-					if(htab.get(k, -1) != map.get(k, -1)) {
-						ok = false;
-						break;
-					}
-				map_intensive = ok;
-			}
-		}
-		CHECK(map_intensive);
-	}
-#endif
-#endif
 
 	// Map::PairIterator test
 	{

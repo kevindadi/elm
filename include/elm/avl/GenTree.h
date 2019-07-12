@@ -29,12 +29,17 @@
 #include <elm/data/Vector.h>
 #include <elm/io.h>
 
+// uncomment for testing
+#define ELM_AVL_INVARIANT
+
 namespace elm { namespace avl {
 
 template <class T> class Debug;
+class Invariant;
 
 // Private class
 class AbstractTree {
+	friend class Invariant;
 public:
 	inline int count(void) const { return _cnt; }
 
@@ -43,6 +48,7 @@ protected:
 	typedef signed char balance_t;
 	typedef enum {
 		LEFT = -1,
+		NONE = 0,
 		RIGHT = +1
 	} dir_t;
 
@@ -74,6 +80,19 @@ protected:
 
 	Node *_root;
 	int _cnt;
+
+#	ifdef ELM_AVL_INVARIANT
+	public:
+		virtual ~AbstractTree() { }
+		virtual int cmp(Node *n1, Node *n2) const = 0;
+		virtual void print(io::Output& out, Node *n) const = 0;
+		bool invariant(Node *n, int& h, Node *& max, Node *& min);
+		bool invariant(Node *n);
+		Node *pointed(const Stack& s) const;
+		void printTree(io::Output& out, Node *n, t::uint32 m, int l, dir_t d) const;
+		void printTree(io::Output& out, Node *n);
+		void printTree(io::Output& out);
+#	endif
 };
 
 // GenAVLTree class
@@ -238,7 +257,6 @@ public:
 		else {
 			s.push(n, RIGHT);
 			Node *p = static_cast<Node *>(leftMost(s, n->right()));
-			cerr << "p = " << (void *)p  << io::endl;
 			exchange(p, n);
 			AbstractTree::remove(s, p->right());
 		}
@@ -259,6 +277,15 @@ public:
 	}
 	inline bool operator==(const GenTree<T, K, C>& tree) const { return equals(tree); }
 	inline bool operator!=(const GenTree<T, K, C>& tree) const { return !equals(tree); }
+
+#	ifdef ELM_AVL_INVARIANT
+		int cmp(AbstractTree::Node *n1, AbstractTree::Node *n2) const override {
+			return compare(static_cast<Node *>(n1)->key(), static_cast<Node *>(n2)->key());
+		}
+		void print(io::Output& out, AbstractTree::Node *n) const override {
+			out << static_cast<Node *>(n)->key();
+		}
+#	endif
 
 private:
 
@@ -301,6 +328,7 @@ private:
 		p->data = n->data;
 		n->data = t;
 	}
+
 };
 
 } }	// elm::avl
