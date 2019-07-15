@@ -18,11 +18,12 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#include "../include/elm/test.h"
+#include <elm/test.h>
 #include <elm/avl/Set.h>
 #include <elm/avl/Map.h>
 #include <elm/sys/System.h>
 #include <elm/io.h>
+#include "check-concept.h"
  
 using namespace elm;
 using namespace elm::avl;
@@ -32,6 +33,28 @@ static const int _count = 10000;
 
 // Entry point
 TEST_BEGIN(avl)
+
+	// syntax tests
+	{
+		GenTree<int> t;
+		const GenTree<int> ct(t);
+		checkCollection(t, ct, 1);
+		checkMutableCollection(t, 1);
+	}
+	{
+		Map<int, int> m;
+		const Map<int, int> cm(m);
+		checkCollection(m, cm, 1);
+		checkMap(m, 1, 2);
+	}
+
+	{
+		Set<int> s;
+		const Set<int> cs(s);
+		checkCollection(s, cs, 1);
+		checkMutableCollection(s, 1);
+		checkSet(s, 1);
+	}
 
 	// small tree
 	{
@@ -236,14 +259,14 @@ TEST_BEGIN(avl)
 		map.put(3, 3);
 		map.put(4, 4);
 		bool equals = true;
-		for(avl::Map<int, int>::PairIterator i(map); i(); i++)
-			if((*i).fst != (*i).snd)
+		for(const auto i: map.pairs())
+			if(i.fst != i.snd)
 				equals = false;
 		CHECK(equals);
 	}
 
 	// map with setting
-	{
+	/*{
 		avl::Map<int, int> map;
 		map.put(0, 0);
 		map.put(1, 1);
@@ -258,7 +281,7 @@ TEST_BEGIN(avl)
 		CHECK(*map.get(2) == 0);
 		CHECK(*map.get(3) == 3);
 		CHECK(*map.get(4) == 0);
-	}
+	}*/
 
 TEST_END
 

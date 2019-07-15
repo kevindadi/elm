@@ -108,6 +108,61 @@ void checkQueue(Q& q, const T& x) {
 	}
 }
 
+template <class M, class K, class T>
+void checkMap(const M& m, const K& k, const T& v) {
+	if(false) {
+		Option<T> o = m.get(k);
+		cout << o;
+		const T& r = m.get(k, v);
+		cout << r;
+		bool b = m.hasKey(k);
+		cout << b;
+		for(const K& k: m.keys())
+			m.get(k);
+		for(const Pair<K, T>& p: m.pairs())
+			m.get(p.fst);
+		const T& rr = m[k];
+		cout << rr;
+	}
 }
+
+template <class M, class K, class T>
+void checkMutableMap(M& m, const K& k, const T& v) {
+	if(false) {
+		m.clear();
+		m.put(k, v);
+		m.removeByKey(k);
+		m.remove(k.begin());
+		T& r = m[k];
+	}
+}
+
+template <class S, class T>
+void checkSet(S& s, const T& x) {
+	if(false) {
+		s.insert(x);
+		bool b = s.subsetOf(s);
+		cout << b;
+		b = s >= s;
+		b = s > s;
+		b = s < s;
+		b = s <= s;
+		s.join(s);
+		s.meet(s);
+		s.diff(s);
+		s += s;
+		s |= s;
+		s -= s;
+		s &= s;
+		s *= s;
+		S ss = s + s;
+		ss = s | s;
+		ss = s * s;
+		ss = s & s;
+		ss = s - s;
+	}
+}
+
+}	// elm
 
 #endif /* ELM_TEST_CHECK_CONCEPT_H_ */

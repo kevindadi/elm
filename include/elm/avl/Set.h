@@ -28,14 +28,57 @@ namespace elm { namespace avl {
 template <class T, class C = elm::Comparator<T> >
 class Set: public GenTree<T, IdAdapter<T>, C> {
 public:
+	typedef T t;
+	typedef Set<T, C> self_t;
+	typedef GenTree<T, IdAdapter<T>, C> base_t;
+
+	// Collection concept
 	static const Set<T, C> null;
-	inline void add(const T& value) { GenTree<T, IdAdapter<T>, C>::set(value); }
-	template <class CC> inline void addAll(const CC& coll)
-		{ for(typename CC::Iterator iter(coll); iter; iter++) GenTree<T, IdAdapter<T>, C>::set(iter); }
+
+	// MutableCollection concept
+	inline void add(const T& x)
+		{ if(!base_t::contains(x)) base_t::add(x); }
+	template <class CC> inline void addAll(const CC& c)
+		{ for(const auto x: c) add(x); }
+	inline self_t& operator+=(const T& x) { add(x); return *this; }
+	inline self_t& operator-=(const T& x) { base_t::remove(x); return *this; }
+	inline self_t& operator=(const Set<T, C>& s) { base_t::copy(s); return *this; }
+
+	// Set concept
+	inline void insert(const T& x) { add(x); }
+
+	bool subsetOf(const Set<T, C>& s) const {
+		auto i = base_t::begin(); auto j = s.begin();
+		while(i() && j()) {
+			int c = C::doCompare(*i, *j);
+			if(c == 0) i++;
+			else if(c < 0) return false;
+			j++;
+		}
+		return !i();
+	}
+
+	inline void join(const Set<T, C>& s) { for(const auto x: s) add(x); }
+	inline void diff(const Set<T, C>& s) { for(const auto x: s) base_t::remove(x); }
+	void meet(const Set<T, C>& s) {
+		self_t is;
+		for(const auto x: *this) if(s.contains(x)) is.add(x);
+		diff(is);
+	}
+	inline self_t& operator+=(const Set<T, C>& s) { join(s); return *this; }
+	inline self_t& operator|=(const Set<T, C>& s) { join(s); return *this; }
+	inline self_t& operator-=(const Set<T, C>& s) { diff(s); return *this; }
+	inline self_t& operator&=(const Set<T, C>& s) { meet(s); return *this; }
+	inline self_t& operator*=(const Set<T, C>& s) { meet(s); return *this; }
+
+	inline self_t operator+(const Set<T, C>& s) const { self_t r(*this); r.join(s); return s; }
+	inline self_t operator|(const Set<T, C>& s) const { self_t r(*this); r.join(s); return s; }
+	inline self_t operator-(const Set<T, C>& s) const { self_t r(*this); r.diff(s); return s; }
+	inline self_t operator*(const Set<T, C>& s) const { self_t r(*this); r.meet(s); return s; }
+	inline self_t operator&(const Set<T, C>& s) const { self_t r(*this); r.meet(s); return s; }
+
 };
 template <class T, class C> const Set<T, C> Set<T, C>::null;
-template <class K, class C> inline Set<K, C>& operator+=(Set<K, C> &t, const K& h) { t.add(h); return t; }
-template <class K, class C> inline Set<K, C>& operator+=(Set<K, C> &t, const Set<K, C>& s) { t.addAll(s); return t; }
 
 } }	// elm::avl
 

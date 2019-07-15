@@ -30,12 +30,9 @@
 #include <elm/io.h>
 
 // uncomment for testing
-#define ELM_AVL_INVARIANT
+//#define ELM_AVL_INVARIANT
 
 namespace elm { namespace avl {
-
-template <class T> class Debug;
-class Invariant;
 
 // Private class
 class AbstractTree {
@@ -96,9 +93,8 @@ protected:
 };
 
 // GenAVLTree class
-template <class T, class K = IdAdapter<T>, class C = elm::Comparator<typename K::key_t> >
-class GenTree: public AbstractTree {
-	friend class Debug<T>;
+template <class T, class K = IdAdapter<T>, class C = elm::Comparator<typename K::key_t>, class A = DefaultAlloc>
+class GenTree: public AbstractTree, public C, public A {
 protected:
 
 	class Node: public AbstractTree::Node {
@@ -129,32 +125,60 @@ protected:
 	};
 
 public:
+	typedef T t;
+	typedef GenTree<T, K, C, A> self_t;
 
 	GenTree(void) { }
 	GenTree(const GenTree<T>& tree) { copy(tree); }
-	~GenTree(void) { /*clear();*/ }
+	~GenTree(void) { clear(); }
+	inline const C& comparator() const { return *this; }
+	inline C& comparator() { return *this; }
+	inline const A& allocator() const { return *this; }
+	inline A& allocator() { return *this; }
 
 	inline T *get(const typename K::key_t& key)
 		{ Node *node = find(key); if(!node) return 0; else return &node->data; }
 	inline const T *get(const typename K::key_t& key) const
 		{ const Node *node = find(key); if(!node) return 0; else return &node->data; }
+	void set(const T& item)
+		{ add(item); }
+
+	void removeByKey(const typename K::key_t& item) {
+
+		// find the node
+		Stack s;
+		Node *n = lookup(s, item);
+		if(n == nullptr)
+			return;
+
+		// simple leaf cases
+		if(n->left() == nullptr)
+			AbstractTree::remove(s, n->right());
+		else if(n->right() == nullptr)
+			AbstractTree::remove(s, n->left());
+
+		// in middle case
+		else {
+			s.push(n, RIGHT);
+			Node *p = static_cast<Node *>(leftMost(s, n->right()));
+			exchange(p, n);
+			AbstractTree::remove(s, p->right());
+		}
+	}
 
 	// Collection concept
 	inline int count(void) const { return _cnt; }
 	inline bool contains(const typename K::key_t& item) const { return find(item) != nullptr; }
+	template <class CC>
+	inline bool containsAll(const CC& c) const
+		{ for(const auto x: c) if(!contains(x)) return false; return true; }
 	inline bool isEmpty(void) const { return _cnt == 0; }
 	inline operator bool(void) const { return !isEmpty(); }
 
-	template <template <class _> class Co>
-	inline bool containsAll(const Co<T>& coll) const
-		{ for(typename Co<T>::Iterator iter(coll); iter; iter++)
-			if(!contains(iter)) return false; return true; }
-
-	// Iterator class
-	class Iterator: public PreIterator<Iterator, const T&> {
+	class Iter: public PreIterator<Iter, const T&> {
 	public:
-		inline Iterator(void) { }
-		inline Iterator(const GenTree<T, K, C>& tree)
+		inline Iter() { }
+		inline Iter(const self_t& tree)
 			{ if(tree.root()) visit(tree.root()); }
 		inline bool ended(void) const { return s.isEmpty(); }
 		void next(void) {
@@ -166,12 +190,9 @@ public:
 			}
 		}
 		inline const T& item(void) const { return s.top()->data; }
-		inline bool operator==(const Iterator& i) const { return s.equals(i.s); }
-		inline bool operator!=(const Iterator& i) const { return !operator==(i); }
-
+		inline bool equals(const Iter& i) const { return s.equals(i.s); }
 	protected:
 		inline T& data(void) { return s.top()->data; }
-
 	private:
 		void visit(Node *node) {
 			if(!node) return;
@@ -181,8 +202,18 @@ public:
 		}
 		VisitStack s;
 	};
-	inline Iterator begin(void) const { return Iterator(*this); }
-	inline Iterator end(void) const { return Iterator(); }
+	inline Iter begin(void) const { return Iter(*this); }
+	inline Iter end(void) const { return Iter(); }
+
+	bool equals(const GenTree<T, K, C>& tree) const {
+		typename GenTree<T, K, C>::Iter ai(*this), bi(tree);
+		for(; ai() && bi(); ai++, bi++)
+			if(!(C::doCompare(K::key(*ai), K::key(*bi)) == 0))
+				return false;
+		return !ai && !bi;
+	}
+	inline bool operator==(const GenTree<T, K, C>& tree) const { return equals(tree); }
+	inline bool operator!=(const GenTree<T, K, C>& tree) const { return !equals(tree); }
 
 	// MutableCollection concept
 	void clear(void) {
@@ -200,6 +231,26 @@ public:
 		_root = nullptr;
 		_cnt = 0;
 	}
+
+	void add(const T& item) {
+		Stack s;
+		Node *n = lookup(s, K::key(item));
+		if(n == nullptr)
+			AbstractTree::insert(s, new Node(item));
+	}
+
+	template <class CC> inline void addAll(const CC& c)
+		{ for(const auto x: c) add(x); }
+
+	inline void remove(const T& x) { removeByKey(K::key(x)); }
+
+	template <class CC> inline void removeAll(const CC& c)
+		{ for(const auto x: c) remove(x); }
+
+	inline void remove(const Iter& iter) { remove(iter.item()); }
+
+	inline self_t& operator+=(const T& x) { add(x); return *this; }
+	inline self_t& operator-=(const T& x) { remove(x); return *this; }
 
 	void copy(const GenTree<T, K, C>& tree) {
 		clear();
@@ -227,56 +278,6 @@ public:
 		}
 	}
 	inline GenTree<T, K, C>& operator=(const GenTree<T, K, C>& tree) { copy(tree); return *this; }
-
-	void add(const T& item) {
-		Stack s;
-		Node *n = lookup(s, K::key(item));
-		if(n == nullptr)
-			AbstractTree::insert(s, new Node(item));
-	}
-
-	void set(const T& item) {
-		add(item);
-	}
-
-	void remove(const typename K::key_t& item) {
-
-		// find the node
-		Stack s;
-		Node *n = lookup(s, item);
-		if(n == nullptr)
-			return;
-
-		// simple leaf cases
-		if(n->left() == nullptr)
-			AbstractTree::remove(s, n->right());
-		else if(n->right() == nullptr)
-			AbstractTree::remove(s, n->left());
-
-		// in middle case
-		else {
-			s.push(n, RIGHT);
-			Node *p = static_cast<Node *>(leftMost(s, n->right()));
-			exchange(p, n);
-			AbstractTree::remove(s, p->right());
-		}
-	}
-
-	inline void remove(const Iterator& iter) { remove(iter.item()); }
-	template <class CC> inline void addAll(const CC& coll)
-		{ for(typename CC::Iterator iter(coll); iter; iter++) add(iter); }
-	template <class CC> inline void removeAll(const CC& coll)
-		{ for(typename CC::Iterator iter(coll); iter; iter++) remove(iter); }
-
-	bool equals(const GenTree<T, K, C>& tree) const {
-		GenTree<T, K, C>:: Iterator ai(*this), bi(tree);
-		for(; ai() && bi(); ai++, bi++)
-			if(!(C::compare(*ai, *bi) == 0))
-				return false;
-		return !ai && !bi;
-	}
-	inline bool operator==(const GenTree<T, K, C>& tree) const { return equals(tree); }
-	inline bool operator!=(const GenTree<T, K, C>& tree) const { return !equals(tree); }
 
 #	ifdef ELM_AVL_INVARIANT
 		int cmp(AbstractTree::Node *n1, AbstractTree::Node *n2) const override {

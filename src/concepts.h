@@ -1013,6 +1013,11 @@ class MutableMap: public Map<K, T> {
 public:
 	
 	/**
+	 * Remove the content of the map.
+	 */
+	void clear();
+
+	/**
 	 * Put a new value in the map.
 	 * @param key	Key of the item to put.
 	 * @param value	Value of the item to put.
@@ -1023,7 +1028,7 @@ public:
 	 * Remove a value by its key.
 	 * @param key	Key of the value to remove.
 	 */
-	void remove(const K& key);
+	void removeByKey(const K& key);
 	
 	/**
 	 * Remove an item using an iterator.

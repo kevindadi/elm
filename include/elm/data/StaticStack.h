@@ -68,9 +68,9 @@ public:
 	inline Iter end(void) const { return Iter(*this, _t); }
 	inline Iter items(void) const { return begin(); }
 	inline Iter operator*(void) const { return begin(); }
-	inline bool equals(const StaticStack<T, N>& s)
+	inline bool equals(const StaticStack<T, N>& s) const
 		{ if(_t != s._t) return false; for(int i = 0; i < _t; i++) if(_s[i] != s._s[i]) return false; return true; }
-	inline bool contains(const StaticStack<T, N>& s)
+	inline bool contains(const StaticStack<T, N>& s) const
 		{ for(int i = 0; i < s._t; i++) if(!contains(s._s[i])) return false; return true; }
 	inline bool operator==(const StaticStack<T, N>& s) const { return equals(s); }
 	inline bool operator!=(const StaticStack<T, N>& s) const { return !equals(s); }
