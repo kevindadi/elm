@@ -1,8 +1,8 @@
 /*
- *	Formatter class interface
+ *	io module test
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2007-09, IRIT UPS.
+ *	Copyright (c) 2019, IRIT UPS.
  *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,29 +18,33 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef ELM_STRING_FORMATTER_H
-#define ELM_STRING_FORMATTER_H
 
-#include <elm/io.h>
+#include <elm/test.h>
+#include <elm/io/VarExpander.h>
+#include <elm/sys/System.h>
 
-namespace elm {
+using namespace elm;
 
-// Formatter class
-class Formatter {
-	char esc;
+class OSExpander: public io::VarExpander {
 protected:
-	static const int DONE = 0;
-	static const int CONTINUE = 1;
-	static const int REJECT = 2;
-	virtual int process(io::OutStream& out, char chr) = 0;
-public:
-	Formatter(char esc = '%');
-	virtual ~Formatter(void) { }
-	int format(io::InStream& in, io::OutStream& out = io::out);
-	inline char escape(void) const { return esc; }
-	inline void escape(char c) { esc = c; }
+	string resolve(string name, bool& rec) override {
+		if(name == "1")
+			return "one";
+		else if(name == "2")
+			return "two";
+		else
+			return "???";
+	}
 };
 
-} // elm
+TEST_BEGIN(io)
 
-#endif	// ELM_STRING_FORMATTER_H
+	OSExpander e;
+	CHECK_EQUAL(e.expand("ok"), string("ok"));
+	CHECK_EQUAL(e.expand("o${1}k"), string("oonek"));
+	CHECK_EQUAL(e.expand("o${1}k${2}o"), string("oonektwoo"));
+	CHECK_EQUAL(e.expand("o${1}k${1}o"), string("oonekoneo"));
+	CHECK_EQUAL(e.expand("ok${3}ko"), string("ok???ko"));
+
+TEST_END
+

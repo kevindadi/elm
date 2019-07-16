@@ -67,6 +67,7 @@ set(LIBELM_LA_SOURCES
 	"io_TeeOutStream.cpp"
 	"io_UnixInStream.cpp"
 	"io_UnixOutStream.cpp"
+	"io_VarExpander.cpp"
 	"io_WinInStream.cpp"
 	"io_WinOutStream.cpp"
 	"Iterator.cpp"

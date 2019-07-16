@@ -89,14 +89,18 @@ inline bool operator>=(const char *s1, const String& s2) { return s2.compare(CSt
 
 
 // Concatenation
-inline String operator+(const CString s1, const CString s2) { return s1.concat(s2); }
-inline String operator+(const CString s1, const char *s2) { return s1.concat(CString(s2)); };
+inline String operator+(const CString& s1, const CString& s2) { return s1.concat(s2); }
+inline String operator+(const CString& s1, const char *s2) { return s1.concat(CString(s2)); };
 inline String operator+(const CString s1, const String& s2) { return s1.concat(s2); };
+inline String operator+(const cstring& s, char c) { char t[2] = { c, '\0' }; return s.concat(cstring(t)); }
 inline String operator+(const String& s1, const CString s2) { return s1.concat(s2); };
 inline String operator+(const String& s1, const char *s2) { return s1.concat(CString(s2)); };
 inline String operator+(const String& s1, const String& s2) { return s1.concat(s2); };
+inline String operator+(const string& s, char c) { char t[2] = { c, '\0' }; return s.concat(cstring(t)); }
 inline String operator+(const char *s1, const CString s2) { return CString(s1).concat(s2); };
 inline String operator+(const char *s1, const String& s2) { return CString(s1).concat(s2); };
+inline String operator+(char c, const cstring s) { char t[2] = { c, '\0' }; return cstring(t).concat(s); };
+inline String operator+(char c, const String& s) { char t[2] = { c, '\0' }; return cstring(t).concat(s); };
 };
 
 #endif // ELM_STRING_H

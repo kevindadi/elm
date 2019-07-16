@@ -76,6 +76,7 @@ int Formatter::format(io::InStream& in, io::OutStream& out) {
 						chr = in.read();
 						if(chr < 0)
 							return chr == InStream::FAILED ? -1 : 0;
+						/* no break */
 					default:
 						return res;
 					}
@@ -94,6 +95,12 @@ int Formatter::format(io::InStream& in, io::OutStream& out) {
  * @fn char Formatter::escape(void) const;
  * Get the escape character.
  * @return	Escape character.
+ */
+
+
+/**
+ * @fn void Formatter::escape(char c);
+ * Change the escape character.
  */
 
 } // elm

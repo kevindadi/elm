@@ -428,5 +428,18 @@ TEST_BEGIN(string)
 		CHECK(ok);
 	}
 
+	{
+		string s = "123", s2 = "456";
+		cstring cs = "123", cs2 = "456";
+		CHECK_EQUAL(s + '4', string("1234"));
+		CHECK_EQUAL('0' + s, string("0123"));
+		CHECK_EQUAL(cs + '4', string("1234"));
+		CHECK_EQUAL('0' + cs, string("0123"));
+		CHECK_EQUAL(s + cs2, string("123456"));
+		CHECK_EQUAL(cs + s2, string("123456"));
+		CHECK_EQUAL(s + s2, string("123456"));
+		CHECK_EQUAL(cs + cs2, string("123456"));
+	}
+
 TEST_END
 

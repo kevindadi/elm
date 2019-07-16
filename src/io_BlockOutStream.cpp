@@ -84,7 +84,7 @@ namespace elm { namespace io {
  */	
 int BlockOutStream::write(const char *buffer, int size) {
 	_block.put(buffer, size);
-	return 0;
+	return size;
 }
 
 
@@ -92,7 +92,7 @@ int BlockOutStream::write(const char *buffer, int size) {
  */
 int BlockOutStream::write(char byte) {
 	_block.put(&byte, 1);
-	return 0;
+	return 1;
 }
 
 

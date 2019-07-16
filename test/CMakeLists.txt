@@ -50,6 +50,7 @@ set(TEST_SOURCES
 	"test_hashtable.cpp"
 	"test_ini.cpp"
 	"test_int.cpp"
+	"test_io.cpp"
 	"test_io_format.cpp"
 	"test_jsched.cpp"
 	"test_json.cpp"
