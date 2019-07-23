@@ -27,7 +27,7 @@ namespace elm { namespace io {
  * @class ANSIManager
  * This class is in charge of displaying ANSI code. Its main action is to disable
  * their display if the output stream does not support them.
- * @ingroup io
+ * @ingroup ios
  */
 
 /**

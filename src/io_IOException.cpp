@@ -158,7 +158,7 @@ namespace elm { namespace io {
  * @li @ref pointer() -- hexadecimal representation of a pointer on a fixed size.
  * @li @ref byte() -- hexadecimal representation of a byte on a fixed size.
  *
- * @section ANSI Codes
+ * @section ansi ANSI Codes
  * On OS's supporting them (Linux and MacOSX), ANSI codes allows to change the look of
  * displayed text. ANSI codes are supported by @ref io::Output class and can be used
  * if the header file <elm/io/ansi.h> is include. The look change is implemented by
@@ -216,6 +216,18 @@ namespace elm { namespace io {
  *	* @ref FileInput -- formatted input from a file,
  *	* @ref StringOutput -- formatted output to a string,
  *	* @ref FileOutput -- formatted output to a file.
+ *
+ * The class io::Tag can be used to display an object in a different as usual
+ * (that is not using the default overload of operator <<). This class takes
+ * a class P as generic parameter that must implement a static print function.
+ * It will be called with, as parameters, the output to use and the object
+ * to display.
+ *
+ * The class io::Printable and the function io::p() allows to perform a
+ * display requiring a third-party object (often called a manager). This
+ * means that the third-party object must define a function named print()
+ * and taking as parameter the object to display and the output.
+ *
  */
 
 

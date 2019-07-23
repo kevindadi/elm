@@ -1119,7 +1119,7 @@ IntFormat byte(t::uint8 b) {
  *
  * @param T		Type of values.
  * @param M		Type of manager.
- * @ingroup	io
+ * @ingroup	ios
  */
 
 /**
@@ -1128,6 +1128,7 @@ IntFormat byte(t::uint8 b) {
  * Look to @ref Printable for more details.
  * @param data	Data to print.
  * @param man	Manager of the data.
+ * @ingroup ios
  */
 
 
