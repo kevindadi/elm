@@ -105,6 +105,8 @@ protected:
 		inline Node *right(void) { return static_cast<Node *>(_right); }
 		inline const typename K::key_t& key(void) const { return K::key(data); }
 		T data;
+		inline static void *operator new(size_t s, A *a) { return a->allocate(s); }
+		inline void free(A& a) { this->~Node(); a.free(this); }
 	};
 
 	inline Node *root(void) const { return static_cast<Node *>(_root); }
@@ -118,10 +120,10 @@ protected:
 	public:
 		inline VisitStack(void) { }
 		inline VisitStack(Node *n) { this->push(n); }
-		inline void copyLeft(VisitStack& s)
-			{ s.top()->_left = new Node(this->top()->left()); s.push(s.top()->left()); this->push(this->top()->left()); }
-		inline void copyRight(VisitStack& s)
-			{ s.top()->_right = new Node(this->top()->right()); s.push(s.top()->right()); this->push(this->top()->right()); }
+		inline void copyLeft(A *a, VisitStack& s)
+			{ s.top()->_left = new(a) Node(this->top()->left()); s.push(s.top()->left()); this->push(this->top()->left()); }
+		inline void copyRight(A *a, VisitStack& s)
+			{ s.top()->_right = new(a) Node(this->top()->right()); s.push(s.top()->right()); this->push(this->top()->right()); }
 	};
 
 public:
@@ -163,6 +165,7 @@ public:
 			Node *p = static_cast<Node *>(leftMost(s, n->right()));
 			exchange(p, n);
 			AbstractTree::remove(s, p->right());
+			p->free(*this);
 		}
 	}
 
@@ -226,7 +229,7 @@ public:
 				s.push(n->left());
 			if(n->right() != nullptr)
 				s.push(n->right());
-			delete n;
+			n->free(*this);
 		}
 		_root = nullptr;
 		_cnt = 0;
@@ -236,7 +239,7 @@ public:
 		Stack s;
 		Node *n = lookup(s, K::key(item));
 		if(n == nullptr)
-			AbstractTree::insert(s, new Node(item));
+			AbstractTree::insert(s, new(this) Node(item));
 	}
 
 	template <class CC> inline void addAll(const CC& c)
@@ -256,12 +259,12 @@ public:
 		clear();
 		if(!tree._root)
 			return;
-		_root = new Node(tree.root());
+		_root = new(this) Node(tree.root());
 		_cnt = tree._cnt;
 		VisitStack ss(tree.root()), st(root());
 		while(!ss.isEmpty()) {
 			if(ss.top()->left() != nullptr)
-				ss.copyLeft(st);
+				ss.copyLeft(this, st);
 			else {
 				while(ss.top()->right() == nullptr) {
 					Node *prv;
@@ -273,7 +276,7 @@ public:
 					}
 					while(ss.top()->right() == prv);
 				}
-				ss.copyRight(st);
+				ss.copyRight(this, st);
 			}
 		}
 	}
