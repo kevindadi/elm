@@ -95,8 +95,11 @@ public:
 	elm::Vector<ItemClass> list2;
 	elm::Vector<ItemClass *> list3;
 	enum_t en;
-	SimpleClass(void): ref(0), x(111), c('a'), f(0.1), str("ok"), en(VAL1) { }
+	SimpleClass(void): ref(0), x(111), c('a'), f(0.1), str("ok"), en(VAL1), completed(false) { }
 	virtual ~SimpleClass(void) { }
+
+	bool completed;
+	void __serial_complete() { completed = true; }
 };
 ENUM(SimpleClass::enum_t);
 
@@ -156,6 +159,7 @@ TEST_BEGIN(serial)
 		CHECK(res.list3[3]);
 		CHECK_EQUAL(res.list3[2], res.list3[3]);
 		CHECK_EQUAL(res.ref, &res.list2[1]);
+		CHECK(res.completed);
 	}
 	catch(Exception& exn) {
 		cerr << "ERROR: " << exn.message() << io::endl;

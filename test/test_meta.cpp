@@ -41,6 +41,20 @@ struct A {
 
 };
 
+
+template <class T> using has_f2 = decltype(meta::declval<T>().f());
+template <class T> using has_f2_int = decltype(meta::declval<T>().f(meta::declval<int>()));
+
+
+class WithF {
+public:
+	void f() { }
+	void f(int) { }
+};
+
+class WithoutF {
+};
+
 TEST_BEGIN(meta)
 
 // new_if test
@@ -56,6 +70,21 @@ TEST_BEGIN(meta)
 	cout << "is_class<int *>::_ = " << is_class<int *>::_ << io::endl;
 	cout << "is_class<string>::_ = " << is_class<string>::_ << io::endl;
 	cout << "is_class<A>::_ = " << is_class<A>::_ << io::endl;
+
+	bool e = meta::is_same<int, int>::_;
+	CHECK(e);
+	e = meta::is_same<int, char>::_;
+	CHECK(!e);
+
+	e = meta::is_supported<WithF, has_f2>::_;
+	CHECK(e);
+	e = meta::is_supported<WithoutF, has_f2>::_;
+	CHECK(!e);
+
+	e = meta::is_supported<WithF, has_f2_int>::_;
+	CHECK(e);
+	e = meta::is_supported<WithoutF, has_f2_int>::_;
+	CHECK(!e);
 }
 
 

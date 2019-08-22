@@ -101,6 +101,13 @@ inline void __unserialize_body(Unserializer& s, T *v) {
 }
 template <> inline void __unserialize_body(Unserializer& s, void *v) { }
 
+template <class T> using supports_complete =
+	decltype(meta::declval<T>().__serial_complete());
+template <class T> typename meta::enable_if<meta::is_supported<T, supports_complete>::_>::_
+	do_complete(T& v) { v.__serial_complete(); }
+template <class T> typename meta::enable_if<!meta::is_supported<T, supports_complete>::_>::_
+	do_complete(T& v) { }
+
 template <class T> struct from_class {
 	static inline void serialize(Serializer& s, const T& v) {
 		s.beginObject(type_of<T>(), &v);
@@ -110,6 +117,7 @@ template <class T> struct from_class {
 	static inline void unserialize(Unserializer& s, T& v) {
 		s.beginObject(type_of<T>(), &v);
 		__unserialize_body(s, &v);
+		do_complete(v);
 		s.endObject(type_of<T>(), &v);
 	}
 };

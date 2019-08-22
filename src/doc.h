@@ -155,6 +155,133 @@ namespace elm {
  *
  */
 
+
+/**
+ * @defgroup meta Meta-programming
+ *
+ * Meta-programming is the use of the C++ template system to implement
+ * compile-time behaviors. Template meta-programming consists in providing
+ * functions working on types and/or to produce values using types. It must
+ * be noted that the value provided by a type is named, in ELM, "_" instead
+ * of "value" used in STL.
+ *
+ * Included in the @ref meta namespace, the following facilities are available:
+ *	* meta::_true -- type which "_" value is 1,
+ *	* meta::_false -- type which "_" value is 0,
+ *	* meta::n <N> -- type which "_" value is N,
+ *	* meta::_if <C, T1, T2> -- if C = true, produce type T1 else produce type T2,
+ *	* meta::declval <T> -- generate an abstract value of type T,
+ *	* meta::is_same <T1, T2> -- type which "_" value is 1 if T1 = T2, 0 else,
+ *	* meta::is_supported<T, C> -- test if the type C is instantiable with T,
+ *	* meta::enable_if <C, T> -- define a type if a condition is true.
+ */
+
+namespace meta {
+
+/**
+ * @struct n
+ * Type which "_" member has for value the template parameter x.
+ * @param x		Stored value.
+ * @ingroup meta
+ */
+
+/**
+ * @struct _true
+ * Type which "_" member is 1. This type is useful in the evaluation of boolean
+ * in meta-programming.
+ * @ingroup meta
+ */
+
+/**
+ * @struct _false
+ * Type which "_" member is 0. This type is useful in the evaluation of boolean
+ * in meta-programming.
+ * @ingroup meta
+ */
+
+/**
+ * @struct _if
+ * This meta-programming construction allows the selection of type depending
+ * on a boolean value. If c is true, the result type is T, else the result
+ * type is E.
+ *
+ * @param c		Condition.
+ * @param T		Result type if c is true.
+ * @param E		Result type if c is false.
+ * @ingroup meta
+ */
+
+/**
+ * @fn T& declval()
+ * Function generating an abstract value of type T. The returned value is
+ * abstract means it does not correspond to any value in memory and therefore
+ * must not be used in classic code. A more consistent use of declval() is
+ * in meta-programming when a value is needed, for instance, to select
+ * a function by parameter overloading.
+ *
+ * For example, the code below selects the return type of a function f() taking
+ * no parameter:
+ * @code
+ *	template <class T>
+ *	decltype(meta::declval<T>().f()) ff(T *v) { return v.f(); }
+ * @endcode
+ *
+ *
+ * @param T	Type of the returned abstract value.
+ * @ingroup meta
+ */
+
+/**
+ * @struct is_supported
+ * Type containing a value "_" which value is 1 if the template C can be
+ * applied to T, 0 else.
+ *
+ * This type is useful to test if some property is available on a type T.
+ * It is commonly used, but not limited to, to test if a function is member
+ * of a type T
+ *
+ * In the example below, the condition has_f tests if T contains a function
+ * named f taking an integer as first parameter:
+ * @code
+ *	template <class T>
+ *	using has_f = decltype(declval<T>().f(int(0)));
+ *
+ *	int main() {
+ *		MyClass o;
+ *		if(meta::is_supported<MyClass, has_f>())
+ * 			o.f(666);
+ *	}
+ * @endcode
+ *
+ * @param T	Type to test.
+ * @param C	Condition to test (template supporting one parameter).
+ * @ingroup meta
+ */
+
+/**
+ * @struct enable_if
+ * This meta-structure is useful to define a type that depends on a condition,
+ * usually #SFINAE function. If the condition B is true, the returned type
+ * contains a type named "_" equal to T. Else the returned structure is void.
+ *
+ * A typical utilization is a template definition that is configured according
+ * to a specific support as in the example below. If the type contains a
+ * function "f" (without argument) it is called. Else it is not.
+ * @code
+ *	template <class T>
+ *	meta::enable_if<meta::is_supported<T, has_f> >::_ void call(T& x) { x.f(); }
+ *
+ *	template <class T>
+ *	meta::enable_if<!meta::is_supported<T, has_f> >::_ void call(T& x) { }
+ * @endcode
+ *
+ * @param B		Condition.
+ * @param T		Type (default to void).
+ * @ingroup meta
+ */
+
+}	// meta
+
 }	// elm
 
-#endif /*ELM_DOC_H_*/
+#endif /* ELM_DOC_H_*/

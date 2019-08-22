@@ -95,29 +95,6 @@ namespace elm {
  * @endcode
  *
  *
- * @par Type Selection Helper
- *
- * A big issue in C++ is the selection of type for parameters and functions results.
- * A common practice is to pass a simple type as is as parameter and to use const
- * references for bigger types. This policy is easy to apply when the type is known
- * but what to do when the parameter method is in a template class. Here, a conservative
- * approach advise to use const reference in any case in the hope that the compiler will
- * optimize the code and use only straight type for scalar types.
- *
- * ELM proposes an alternative to this approach that works with template. Using the
- * type_info<T> class (that is aware of the actual type of the generic parameter),
- * one can obtain the type declaration that fits the best its use:
- * @li type_info<T>::in_t -- for input parameter,
- * @li type_info<T>::out_t -- for output parameter,
- * @li type_info<T>::val_t -- for returning a value,
- * @li type_info<T>::ref_t -- for returning a reference,
- * @li type_info<T>::embed_t -- for storing internally the type.
- *
- * Notice type_info<T>::embed_t that allows storing references: in fact, when T is
- * a reference, it is stored automatically as a pointer. type_info<T>::put() and
- * type_info<T>::get() can then be used to store the generic value or to get it.
- *
- *
  * @par Enumeration Information
  *
  * Users may also benefit from whole facilities of input/output, serialization and like for
