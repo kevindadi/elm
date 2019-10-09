@@ -32,7 +32,7 @@ public:
 	typedef T t;
 	typedef ListSet<T, C, A> self_t;
 	inline ListSet(void) { }
-	inline ListSet(ListSet<T, C>& set): base_t(set) { }
+	inline ListSet(const ListSet<T, C>& set): base_t(set) { }
 
 	// Set concept
 	inline void insert(const T& v)
