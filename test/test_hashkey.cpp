@@ -101,5 +101,12 @@ TEST_BEGIN(hashkey)
 		CHECK(!HK::equals(p1, p4));
 	}
 
+	{
+		int x;
+		CHECK(hash(&x) == hash_ptr(&x));
+		CHECK(HashKey<int *>::hash(&x) == hash_ptr(&x));
+		CHECK(HashKey<const int *>::hash(&x) == hash_ptr(&x));
+	}
+
 	TEST_END
 

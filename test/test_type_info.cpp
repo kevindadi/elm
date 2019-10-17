@@ -37,7 +37,6 @@ typedef enum enm_t {
 class MyClass { };
 
 TEST_BEGIN(type_info)
-
 	CHECK(type_info<t::int8>::null == 0);
 	CHECK(type_info<t::int8>::is_signed == true);
 	CHECK(type_info<t::int8>::min == -0x80);
@@ -116,60 +115,6 @@ TEST_BEGIN(type_info)
 	CHECK(type_info<void *>::is_enum == false);
 	CHECK(type_info<void *>::is_scalar == true);
 
-	// embed test
-	{
-		type_info<bool>::embed_t v;
-		type_info<bool>::put(v, true);
-		CHECK_EQUAL(type_info<bool>::get(v), true);
-
-		int i = 666;
-		type_info<int&>::embed_t ir;
-		type_info<int&>::put(ir, i);
-		CHECK_EQUAL(type_info<int&>::get(ir), 666);
-
-		const int ci = 111;
-		type_info<const int&>::embed_t cir;
-		type_info<const int&>::put(cir, ci);
-		CHECK_EQUAL(type_info<const int&>::get(cir), 111);
-	}
-
-	// embed in option test
-	{
-		Option<int&> o = none;
-		int i = 123;
-		int& ir = i;
-		Option<int&> o2(some<int&>(ir));
-		CHECK_EQUAL(o2.isNone(), false);
-		CHECK_EQUAL(o2.value(), 123);
-		o = o2;
-		CHECK_EQUAL(o.isNone(), false);
-		CHECK_EQUAL(o.value(), 123);
-	}
-
-	// embed in hashtable (const reference)
-	/*{
-		genstruct::HashTable<const int&, int> h;
-		int a = 0, b = 1, c = 2, d = 3;
-		h.put(a, a);
-		h.put(b, b);
-		h.put(c, c);
-		CHECK_EQUAL(a, h.get(a, d));
-		CHECK_EQUAL(b, h.get(b, d));
-		CHECK_EQUAL(c, h.get(c, d));
-	}
-
-	// embed in hashtable (reference)
-	{
-		genstruct::HashTable<int&, int> h;
-		int a = 0, b = 1, c = 2, d = 3;
-		h.put(a, a);
-		h.put(b, b);
-		h.put(c, c);
-		CHECK_EQUAL(a, h.get(a, d));
-		CHECK_EQUAL(b, h.get(b, d));
-		CHECK_EQUAL(c, h.get(c, d));
-	}*/
-
 	// embed a class
 	{
 		typedef Vector<int> v_t;
@@ -178,7 +123,7 @@ TEST_BEGIN(type_info)
 		v1.add(0);
 		h.put(0, v1);
 		Option<v_t> v = h.get(0);
-		CHECK(v);
+		CHECK(v.isOne());
 		CHECK_EQUAL(*v, v1);
 		v = h.get(1);
 		CHECK(!v);

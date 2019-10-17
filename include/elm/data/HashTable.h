@@ -51,6 +51,15 @@ private:
 		return 0;
 	}
 
+	node_t *find_const(const T& key) const {
+		int i = H::computeHash(key) % _size;
+		for(node_t *node = _tab[i], *prev = 0; node; prev = node, node = node->next)
+			if(H::isEqual(node->data, key)) {
+				return node;
+			}
+		return 0;
+	}
+
 	node_t *make(const T& data) {
 		int i = H::computeHash(data) % _size;
 		node_t *node = new(A::allocate(sizeof(node_t))) node_t(data);
@@ -89,9 +98,14 @@ public:
 
 	inline const T *get(const T& key) const
 		{ node_t *node = find(key); return node ? &node->data : 0; }
+	inline const T *get_const(const T& key) const
+		{ node_t *node = find_const(key); return node ? &node->data : 0; }
 	inline bool hasKey(const T& key) const
 	 	{ node_t *node = find(key); return node != 0; }
+	inline bool hasKey_const(const T& key) const
+		{ node_t *node = find_const(key); return node != 0; }
 	inline bool exists(const T& key) const { return hasKey(key); }
+	inline bool exists_const(const T& key) const { return hasKey_const(key); }
 
 	void put(const T& data)
 		{ node_t *node = find(data); if(node) node->data = data; else add(data); }
@@ -107,8 +121,12 @@ public:
 	 	{ int cnt = 0; for(int i = 0; i < _size; i++) for(node_t *cur = _tab[i]; cur; cur = cur->next) cnt++; return cnt; }
 	inline bool contains(const T& x) const
 		{ return find(x) != nullptr; }
+	inline bool contains_const(const T& x) const
+		{ return find_const(x) != nullptr; }
 	template <class CC> bool containsAll(const CC& c) const
 		{ for(const auto x: c) if(!contains(x)) return false; return true; }
+	template <class CC> bool containsAll_const(const CC& c) const
+		{ for(const auto x: c) if(!contains_const(x)) return false; return true; }
 
 	class Iter: public InternIterator, public InplacePreIterator<Iter, T> {
 	public:
@@ -121,6 +139,8 @@ public:
 
 	inline bool equals(const HashTable<T>& h) const
 		{ return containsAll(h) && h.containsAll(*this); }
+	inline bool equals_const(const HashTable<T>& h) const
+		{ return containsAll_const(h) && h.containsAll_const(*this); }
 	inline bool operator==(const HashTable<T>& t) const { return equals(t); }
 	inline bool operator!=(const HashTable<T>& t) const { return !equals(t); }
 

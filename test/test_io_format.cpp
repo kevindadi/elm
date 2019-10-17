@@ -174,8 +174,8 @@ TEST_BEGIN(io_format)
 	// BufferedInStream test
 	{
 		{
-			InFileStream in1("test_io");
-			InFileStream _in("test_io");
+			InFileStream in1("dotest");
+			InFileStream _in("dotest");
 			BufferedInStream in2(_in, 128);
 			char buf1[2], buf2[2];
 			bool done = true;
@@ -197,7 +197,7 @@ TEST_BEGIN(io_format)
 		unsigned long sum1;
 		{
 			checksum::Fletcher sum;
-			InFileStream in("test_io");
+			InFileStream in("dotest");
 			CHECK(in.isReady());
 			sum.put(in);
 			sum1 = sum.sum();
@@ -205,7 +205,7 @@ TEST_BEGIN(io_format)
 		unsigned long sum2;
 		{
 			checksum::Fletcher sum;
-			InFileStream in("test_io");
+			InFileStream in("dotest");
 			CHECK(in.isReady());
 			BufferedInStream buf(in, 129);
 			sum.put(buf);

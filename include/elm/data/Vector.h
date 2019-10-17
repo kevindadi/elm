@@ -89,7 +89,7 @@ public:
 
 	inline bool equals(const Vector<T>& v) const {
 		if(cnt != v.cnt) return false;
-		for(int i = 0; i < cnt; i++) if(E::isEqual(tab[cnt], v.tab[cnt])) return false;
+		for(int i = 0; i < cnt; i++) if(!E::isEqual(tab[i], v.tab[i])) return false;
 		return true;
 	}
 	inline bool operator==(const Vector<T>& v) const { return equals(v); }

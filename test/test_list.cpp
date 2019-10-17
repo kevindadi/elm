@@ -107,6 +107,32 @@ TEST_BEGIN(list)
 		CHECK(good);
 	}
 
+	// list clone test
+	{
+		List<int> list1;
+		list1.add(1);
+		list1.add(2);
+		list1.add(3);
+		List<int> list2(list1);
+		CHECK(!list2.isEmpty());
+		CHECK(list2 & 1);
+		CHECK(list2.contains(2));
+		CHECK(list2.contains(3));
+		CHECK(!list1.isEmpty());
+		CHECK(list1.contains(1));
+		CHECK(list1.contains(2));
+		CHECK(list1.contains(3));
+		list2.remove(2);
+		CHECK(!list2.contains(2));
+		CHECK(list1.contains(2));
+		list2.remove(3);
+		CHECK(!list2.contains(3));
+		CHECK(list1.contains(3));
+		list2.remove(1);
+		CHECK(!list2.contains(1));
+		CHECK(list1.contains(1));
+	}
+
 
 	// List copy test
 	{
@@ -217,10 +243,6 @@ TEST_BEGIN(list)
 		}
 		CHECK(l1 == l1);
 		CHECK(l1 != l2);
-		CHECK(l1 >= l1);
-		CHECK(!(l1 > l1));
-		CHECK(l1 >= l2);
-		CHECK(l1 > l2);
 	}
 
 	// special equivalence

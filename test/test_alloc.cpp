@@ -55,10 +55,13 @@ public:
 
 TEST_BEGIN(alloc)
 	{
+		Vector<void *> v;
 		StackAllocator stack;
 		for(int i = 0; i < 1000; i++) {
 			elm::t::size size = sys::System::random(4096);
-			cout << "allocate(" << size << ") = " << stack.allocate(size) << io::endl;
+			void *p = stack.allocate(size);
+			v.add(p);
+			//cout << "allocate(" << size << ") = " << p << io::endl;
 		}
 	}
 
