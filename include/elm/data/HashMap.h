@@ -124,9 +124,9 @@ public:
 	inline void remove(const K& k) { _tab.remove(key(k)); }
 	inline void remove(const Iter& i) { _tab.remove(i.i); }
 
-	inline const T& operator[](const K& key) const { const typename tab_t::data_t *r = _tab.get(key); ASSERT(r); return (*r).snd; }
+	inline const T& operator[](const K& k) const { auto *r = _tab.get(key(k)); ASSERT(r); return (*r).snd; }
 	inline StrictMapDelegate<self_t> operator[](const K& key) { return StrictMapDelegate<self_t>(*this, key); }
-	inline const T& operator[](const Iter& i) const { const typename tab_t::data_t *r = _tab.get(i.key()); ASSERT(r); return (*r).snd; }
+	inline const T& operator[](const Iter& i) const { auto *r = _tab.get(key(i.key())); ASSERT(r); return (*r).snd; }
 	inline StrictMapDelegate<self_t> operator[](const Iter& i) { return StrictMapDelegate<self_t>(*this, i.key()); }
 
 	template <class C> void putAll(const C& c)
