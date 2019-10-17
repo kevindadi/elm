@@ -36,6 +36,13 @@ namespace t { typedef t::intptr hash; }
 t::hash hash_string(const char *chars, int length);
 t::hash hash_cstring(const char *chars);
 t::hash hash_jenkins(const void *block, int size);
+inline t::hash hash_ptr(const void *p) {
+#	ifdef ELM_32
+		return t::hash(p) >> 2;
+#	else
+		return t::hash(p) >> 3;
+#	endif
+}
 bool hash_equals(const void *p1, const void *p2, int size);
 
 // HashKey class
@@ -47,18 +54,6 @@ public:
 	inline bool isEqual(const T& key1, const T& key2) const { return equals(key1, key2); }
 };
 
-/*template <class T> class HashKey<const T&> {
-public:
-	static t::hash hash(const T& key) { return hash_jenkins(&key, sizeof(T)); };
-	static inline bool equals(const T& key1, const T& key2) { return &key1 == &key2 || Equiv<T>::equals(key1, key2); }
-};
-
-template <class T> class HashKey<T&> {
-public:
-	static t::hash hash(const T& key) { return hash_jenkins(&key, sizeof(T)); };
-	static inline bool equals(const T& key1, const T& key2) { return &key1 == &key2 || Equiv<T>::equals(key1, key2); }
-};*/
-
 // Predefined hash keys
 template <> class HashKey<int> {
 public:
@@ -68,21 +63,23 @@ public:
 	inline bool isEqual(int key1, int key2) const { return equals(key1, key2); }
 };
 
-template <> class HashKey<void *> {
+template <class T>
+class HashKey<T *> {
 public:
-	static inline t::hash hash(void *key) { return t::hash(key); }
-	static inline bool equals(void *key1, void *key2) { return key1 == key2; }
-	inline t::hash computeHash(void *key) const { return hash(key); }
-	inline bool isEqual(void *key1, void *key2) const { return equals(key1, key2); }
+	static inline t::hash hash(T *key) { return hash_ptr(key); }
+	static inline bool equals(T *key1, T *key2) { return key1 == key2; }
+	inline t::hash computeHash(T *key) const { return hash(key); }
+	inline bool isEqual(T *key1, T *key2) const { return equals(key1, key2); }
 };
 
-template <> class HashKey<const void *> {
+template <class T>
+class HashKey<const T *> {
 public:
-	static inline t::hash hash(const void *key) { return t::hash(key); }
-	static inline bool equals(const void *key1, const void *key2)
+	static inline t::hash hash(const T *key) { return hash_ptr(key); }
+	static inline bool equals(const T *key1, const void *key2)
 		{ return key1 == key2; }
-	inline t::hash computeHash(const void *key) const { return hash(key); }
-	inline bool isEqual(const void *key1, const void *key2) const { return equals(key1, key2); }
+	inline t::hash computeHash(const T *key) const { return hash(key); }
+	inline bool isEqual(const T *key1, const T *key2) const { return equals(key1, key2); }
 };
 
 template <> class HashKey<CString> {
@@ -145,6 +142,8 @@ public:
 	inline elm::t::hash computeHash(const t& k) const { return H::computeHash(k.fst); }
 	inline bool isEqual(const t& k1, const t& k2) const { return H::isEqual(k1.fst, k2.fst); }
 };
+
+template <class T> inline t::hash hash(const T& x) { return HashKey<T>::hash(x); }
 
 };	// elm
 

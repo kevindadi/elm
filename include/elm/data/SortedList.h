@@ -39,7 +39,7 @@ public:
 	typedef SortedList<T, C, A> self_t;
 
 	inline SortedList(void) { }
-	SortedList(const SortedList<T> &l): list(l.list) { }
+	inline SortedList(const SortedList<T, C, A> &l): list(l.list) { }
 	inline C& comparator() { return list.equivalence(); }
 	inline const C& comparator() const { return list.equivalence(); }
 	inline A& allocator() { return list.allocator(); }

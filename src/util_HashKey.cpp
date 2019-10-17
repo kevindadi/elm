@@ -104,6 +104,15 @@ t::hash hash_jenkins(const void *block, int size) {
 
 
 /**
+ * @fn t::hash hash_ptr(const void *p);
+ * Perform hashing of the given pointer. Currently, it removes bits of
+ * current OS alignments constrains.
+ * @param p		Pointer to hash.
+ * @return		Hashed pointer.
+ */
+
+
+/**
  * Use a classical compiler string hashing algorithm (see "The Compilers"
  * by Aho, Sethi, Ullman).
  * @ingroup utility
@@ -150,5 +159,18 @@ t::hash hash_cstring(const char *chars) {
 bool hash_equals(const void *p1, const void *p2, int size) {
 	return !memcmp(p1, p2, size);
 }
+
+
+/**
+ * @fn t::hash hash(const T& x);
+ * Hash the given value according an existing HashKey implementation for
+ * type T. If no hash key is available for the given type, revert to Jenkins
+ * hashing that may be inexact in case of padding bytes inside an object!
+ *
+ * @param x		Value to hash.
+ * @return		Hashed x.
+ *
+ * @ingroup utility
+ */
 
 };	// elm

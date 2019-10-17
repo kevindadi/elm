@@ -38,11 +38,13 @@ typedef uint64_t uint64;
 
 // other types
 #if !defined(__LP64__) && !defined(_WIN64)
+#	define ELM_32
 	typedef uint32 size;
 	typedef uint32 offset;
 	typedef uint32 uint;
 	typedef uint32 intptr;
 #else
+#	define ELM_64
 	typedef uint64 size;
 	typedef uint64 offset;
 	typedef uint64 uint;

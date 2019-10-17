@@ -49,7 +49,7 @@ class List: public E, public A {
 public:
 
 	inline List() { }
-	inline List(const List<T>& list) { copy(list); }
+	inline List(const List<T, E, A>& list) { copy(list); }
 	inline ~List(void) { clear(); }
 	inline E& equivalence() { return *this; }
 	inline const E& equivalence() const { return *this; }

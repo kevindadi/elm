@@ -35,37 +35,40 @@ extern const OptionalNone none;
 // Optional value
 template <class T> class Option {
 public:
-	inline Option(void): one(false) { }
+	inline Option(): one(false) { }
 	inline Option(const OptionalNone& none): one(false) { }
-	inline Option(T value): one(true) { type_info<T>::put(val, value); }
+	inline Option(const T& value): one(true), val(value){ }
 	inline Option(const Option<T> &opt): one(opt.one), val(opt.val) { }
-	inline bool isOne(void) const { return one; }
-	inline bool isNone(void) const { return !one; }
-	inline T value(void) const
-		{ ASSERTP(one, "no value in option"); return type_info<T>::get(val); }
-	
-	inline operator bool(void) const { return isOne(); }
-	inline T operator*(void) const { return value(); }
-	inline operator T(void) const { return value(); }
+	inline bool some() const { return one; }
+	inline bool none() const { return !one; }
+	inline const T& value() const
+		{ ASSERTP(one, "no value in option"); return val; }
+	inline operator bool(void) const { return some(); }
+	inline const T& operator*() const { return value(); }
+	inline operator const T&() const { return value(); }
 	inline Option<T>& operator=(const Option<T>& opt)
 		{ one = opt.one; if(one) val = opt.val; return *this; }
-	inline Option<T>& operator=(T value)
-		{ one = true; type_info<T>::put(val, value); return *this; }
-	inline bool equals(const OptionalNone& none) const { return isNone(); }
+	inline Option<T>& operator=(const T& value)
+		{ one = true; val = value; return *this; }
+	inline bool equals(const OptionalNone& _) const { return none(); }
 	inline bool equals(const Option<T> &opt) const
-		{ return (this->isNone() && opt.isNone()) || (this->isOne() && opt.isOne() && val == opt.val); }
+		{ return (this->none() && opt.none()) || (this->some() && opt.some() && val == opt.val); }
 
 	template <class F> const Option<T>& if_one(const F& f) { if(one) f(val); return *this; }
 	template <class F> const Option<T>& if_else(const F& f) { if(!one) f(val); return *this; }
 
-	inline bool operator==(const OptionalNone& _) const { return isNone(); }
-	inline bool operator!=(const OptionalNone& _) const { return !isNone(); }
-	inline bool operator==(const Option<T>& o) const { return !isNone() && !o.isNone() && val == o.val; }
-	inline bool operator!=(const Option<T>& o) const { return !operator==(o); }
+	inline bool operator==(const OptionalNone& _) const { return none(); }
+	inline bool operator!=(const OptionalNone& _) const { return !none(); }
+	inline bool operator==(const Option<T>& o) const { return equals(o); }
+	inline bool operator!=(const Option<T>& o) const { return !equals(o); }
+
+	// deprecated
+	inline bool isOne() const { return one; }
+	inline bool isNone() const { return !one; }
 
 private:
 	bool one;
-	typename type_info<T>::embed_t val;
+	T val;
 };
 
 
