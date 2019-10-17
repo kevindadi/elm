@@ -54,6 +54,12 @@ public:
 		{ auto r = _tab.get(key(k)); if(r) return r->snd; else return def; }
 	inline bool hasKey(const K& k) const { return _tab.hasKey(key(k)); }
 
+	inline Option<T> get_const(const K& k) const
+		{ auto *r = _tab.get_const(key(k)); if(r) return some(r->snd); else return none; }
+	inline const T& get_const(const K& k, const T& def) const
+		{ auto r = _tab.get_const(key(k)); if(r) return r->snd; else return def; }
+	inline bool hasKey_const(const K& k) const { return _tab.hasKey_const(key(k)); }
+
 	class KeyIter: public InplacePreIterator<KeyIter, K> {
 	public:
 		inline KeyIter(const self_t& htab): i(htab._tab) { };
