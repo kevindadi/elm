@@ -24,6 +24,7 @@
 
 #include <elm/assert.h>
 #include <elm/util/Option.h>
+#include <elm/util/Exception.h>
 
 namespace elm {
 
