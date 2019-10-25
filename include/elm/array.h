@@ -74,9 +74,9 @@ template <class T> inline void move(T *target, const T *source, int size)
 template <class T> inline void set(T *target, int size, const T& v)
 	{ for(int i = 0; i < size; i++) target[i] = v; }
 template <class T> inline void clear(T *target, int size)
-	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::_::clear(target, size); }
+	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::clear(target, size); }
 template <class T> inline int cmp(const T* t1, const T* t2, int size)
-	{ return _if<type_info<T>::is_virtual, slow<T>, fast<T> >::_::cmp(t1, t2, size); }
+	{ return _if<type_info<T>::is_virtual, slow<T>, fast<T> >::cmp(t1, t2, size); }
 template <class T> inline void construct(T *t, int size)
 	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::construct(t, size); }
 template <class T> inline void destruct(T *t, int size)
