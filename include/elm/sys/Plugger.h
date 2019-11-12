@@ -24,6 +24,7 @@
 #include <elm/macros.h>
 #include <elm/PreIterator.h>
 #include <elm/sys/Plugin.h>
+#include <elm/data/Range.h>
 #include <elm/data/Vector.h>
 #include <elm/sys/Directory.h>
 #include <elm/sys/Path.h>
@@ -58,6 +59,7 @@ public:
 	string getLastError(void);
 	inline bool quiet(void) const { return _quiet; }
 	inline void setQuiet(bool quiet) { _quiet = quiet; }
+	bool isPlugged(string name) const;
 
 	// deprecated
 	virtual void onError(String message);
@@ -68,7 +70,7 @@ public:
 	// Iterator class
 	class Iter: public PreIterator<Iter, String> {
 	public:
-		Iter(Plugger& _plugger);
+		Iter(Plugger& _plugger, bool end = false);
 		~Iter(void);
 		bool ended(void) const;
 		String item(void) const;
@@ -84,9 +86,15 @@ public:
 		void go(void);
 	};
 
+	// iterator access
+	inline const Vector<string>& paths() const { return _paths; }
+	inline Range<Iter> available() { return range(Iter(*this), Iter(*this, true)); }
+	inline const Vector<Plugin *>& plugged() const { return plugins; }
+
+	// deprecated
 	class PathIterator: public Vector<string>::Iter {
 	public:
-		inline PathIterator(const Plugger& plugger): Vector<string>::Iter(plugger.paths) { }
+		inline PathIterator(const Plugger& plugger): Vector<string>::Iter(plugger._paths) { }
 		inline PathIterator(const PathIterator& iter): Vector<string>::Iter(iter) { }
 	};
 
@@ -96,7 +104,7 @@ private:
 	CString _hook;
 	Version per_vers;
 	Vector<Plugin *> plugins;
-	Vector<String> paths;
+	Vector<String> _paths;
 	error_t err;
 	bool _quiet;
 	static void leave(Plugin *plugin);

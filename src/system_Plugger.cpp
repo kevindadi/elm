@@ -105,7 +105,7 @@ Vector<Plugger *> Plugger::pluggers;
  * 							the plugin. Pass "*" for initializing with the
  * 							default system paths.
  */
-Plugger::Plugger(CString hook, const Version& plugger_version, String _paths)
+Plugger::Plugger(CString hook, const Version& plugger_version, String paths)
 : _hook(hook), per_vers(plugger_version), err(OK), _quiet(false) {
 
 	// Initialize DL library
@@ -118,23 +118,23 @@ Plugger::Plugger(CString hook, const Version& plugger_version, String _paths)
 	#endif
 
 	// Look in the system paths
-	if(_paths == "*")
+	if(paths == "*")
 #if defined(__APPLE__)
 		_paths = getenv("DYLD_LIBRARY_PATH");
 #else
-		_paths = getenv("LD_LIBRARY_PATH");
+		paths = getenv("LD_LIBRARY_PATH");
 #endif
 
 	// Scan the paths
-	int index = _paths.indexOf(elm::sys::Path::PATH_SEPARATOR);
+	int index = paths.indexOf(elm::sys::Path::PATH_SEPARATOR);
 	while(index >= 0) {
 		if(index)
-			paths.add(_paths.substring(0, index));
-		_paths = _paths.substring(index + 1);
-		index = _paths.indexOf(elm::sys::Path::PATH_SEPARATOR);
+			_paths.add(paths.substring(0, index));
+		paths = paths.substring(index + 1);
+		index = paths.indexOf(elm::sys::Path::PATH_SEPARATOR);
 	}
-	if(_paths)
-		paths.add(_paths);
+	if(paths)
+		_paths.add(paths);
 
 	// Add to active pluggers
 	pluggers.add(this);
@@ -165,7 +165,7 @@ void Plugger::leave(Plugin *plugin) {
  * @param path	Added path.
  */
 void Plugger::addPath(String path) {
-	paths.add(path);
+	_paths.add(path);
 }
 
 
@@ -174,7 +174,7 @@ void Plugger::addPath(String path) {
  * @param path	Removed path.
  */
 void Plugger::removePath(String path) {
-	paths.remove(path);
+	_paths.remove(path);
 }
 
 
@@ -182,7 +182,7 @@ void Plugger::removePath(String path) {
  * Remove all paths.
  */
 void Plugger::resetPaths(void) {
-	paths.clear();
+	_paths.clear();
 }
 
 
@@ -212,9 +212,9 @@ Plugin *Plugger::plug(const string& name) {
 		return plug(plugin, nullptr);
 
 	// Load the plugin
-	for(int i = 0; i < paths.count(); i++) {
+	for(int i = 0; i < _paths.count(); i++) {
 		StringBuffer buf;
-		buf << paths[i] << "/" << name << "." << PLUG_EXT;
+		buf << _paths[i] << "/" << name << "." << PLUG_EXT;
 		error_t old_err = err;
 		Plugin *plugin = plugFile(buf.toString());
 		if(plugin)
@@ -225,6 +225,24 @@ Plugin *Plugger::plug(const string& name) {
 
 	// No plugin available
 	return nullptr;
+}
+
+
+
+/**
+ * Test if the named plug-in is plugged.
+ * @param name	Name of the plug-in.
+ * @return		True if the plug-in is plugged, false else.
+ */
+bool Plugger::isPlugged(string name) const {
+	for(auto p: plugged()) {
+		if(p->name() == name)
+			return true;
+		for(auto n: p->aliases())
+			if(n == name)
+				return p;
+	}
+	return false;
 }
 
 
@@ -654,9 +672,9 @@ void Plugger::Iter::go(void) {
 				file = 0;
 			}
 			_path++;
-			if(_path >= plugger.paths.count())
+			if(_path >= plugger._paths.count())
 				break;
-			LockPtr<FileItem> item = FileItem::get(Path(plugger.paths[_path]));
+			LockPtr<FileItem> item = FileItem::get(Path(plugger._paths[_path]));
 			if(!item || !item->toDirectory())
 				continue;
 			else {
@@ -682,8 +700,9 @@ void Plugger::Iter::go(void) {
 /**
  * Build a new iterator.
  * @param plugger	Used plugger.
+ * @param bool		If true, builds an end iterator (default to false).
  */
-Plugger::Iter::Iter(Plugger& _plugger)
+Plugger::Iter::Iter(Plugger& _plugger, bool end)
 :	plugger(_plugger),
 	statics(_plugger.statics()),
 	i(-1),
@@ -691,7 +710,10 @@ Plugger::Iter::Iter(Plugger& _plugger)
 	_path(-1),
 	file(0)
 {
-	go();
+	if(!end)
+		go();
+	else
+		_path = plugger._paths.count();
 }
 
 
@@ -708,7 +730,7 @@ Plugger::Iter::~Iter(void) {
  * @return	True if it is ended.
  */
 bool Plugger::Iter::ended(void) const {
-	return _path >= plugger.paths.count();
+	return _path >= plugger._paths.count();
 }
 
 
@@ -789,5 +811,26 @@ void Plugger::unlink(void *handle) {
 		dlclose(handle);
 #	endif
 }
+
+
+/**
+ * @fn const Vector<string>& Plugger::paths() const;
+ * Get the list of direcory paths used to retrieve plug-ins.
+ * @return	List of plug-ins paths.
+ */
+
+
+/**
+ * @fn Range<Iter> Plugger::available();
+ * Get the list of the names of available plug-ins (may be not already plugged).
+ * @return	List of names of the available plug-ins.
+ */
+
+
+/**
+ * @fn const Vector<Plugin *>& plugged() const;
+ * Get the list of plugged plug-ins.
+ * @return	Plugged plug-ins.
+ */
 
 } }	// elm::sys
