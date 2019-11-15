@@ -20,6 +20,7 @@
  */
 #ifndef ELM_DATA_HASHMAP_H_
 #define ELM_DATA_HASHMAP_H_
+#define ELM_STAT
 
 #include "HashTable.h"
 #include "util.h"
