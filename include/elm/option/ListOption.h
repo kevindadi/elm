@@ -46,6 +46,8 @@ public:
 	inline operator bool(void) const { return !vals.isEmpty(); }
 	inline const T& operator[](int index) const { return vals[index]; }
 	inline T& operator[](int index) { return vals[index]; }
+	inline typename Vector<T>::Iter begin() const { return vals.begin(); }
+	inline typename Vector<T>::Iter end() const { return vals.end(); }
 
 	// Option overload
 	virtual void process(String arg) { vals.add(read<T>(arg)); }

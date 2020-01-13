@@ -104,6 +104,44 @@ inline T fold(const C& c, const F& f, T t)
 	{ for(const auto& i: c) t = f(i, t); return t; }
 
 
+// equality test
+template <class C1, class C2>
+inline bool equals(const C1& c1, const C2& c2) {
+	auto i2 = c2.begin();
+	for(auto i1: c1) {
+		if(i2 == c2.end() || i1 != *i2)
+			return false;
+		++i1;
+		++i2;
+	}
+	return i2 == c2.end();
+}
+
+
+// mismatch operation
+template <class C1, class C2>
+Pair<typename C1::Iter, typename C2::Iter> mismatch(const C1& c1, const C2& c2) {
+	auto i1 = c1.begin();
+	auto i2 = c2.begin();
+	while(i1 != c1.end() && i2 != c2.end() && *i1 == *i2) {
+		++i1;
+		++i2;
+	}
+	return pair(i1, i2);
+}
+
+template <class C1, class C2, class P>
+Pair<typename C1::Iter, typename C2::Iter> mismatch(const C1& c1, const C2& c2, P p) {
+	auto i1 = c1.begin();
+	auto i2 = c2.begin();
+	while(i1 != c1.end() && i2 != c2.end() && p(*i1, *i2)) {
+		++i1;
+		++i2;
+	}
+	return pair(i1, i2);
+}
+
+
 // useful function
 template <class C>
 inline typename C::t sum(const C& c)

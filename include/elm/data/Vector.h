@@ -66,14 +66,14 @@ public:
 	class Iter: public InplacePreIterator<Iter, T> {
 	public:
 		friend class Vector;
-		inline Iter(const Vector& vec, int idx = 0): _vec(vec), i(idx) { }
-		inline bool ended(void) const { return i >= _vec.length(); }
-		inline const T& item(void) const { return _vec[i]; }
+		inline Iter(const Vector& vec, int idx = 0): _vec(&vec), i(idx) { }
+		inline bool ended(void) const { return i >= _vec->length(); }
+		inline const T& item(void) const { return (*_vec)[i]; }
 		inline void next(void) { i++; }
 		inline int index(void) const { return i; }
-		inline bool equals(const Iter& it) const { return &_vec == &it._vec && i == it.i; }
+		inline bool equals(const Iter& it) const { return _vec == it._vec && i == it.i; }
 	private:
-		const Vector<T>& _vec;
+		const Vector<T> *_vec;
 		int i;
 	};
 

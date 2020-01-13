@@ -318,6 +318,29 @@ inline io::Output& operator<<(io::Output& out, const Printable<T, M>& p)
 template <class T, class M>
 inline Printable<T, M> p(const T& data, const M& man) { return Printable<T, M>(data, man); }
 
+
+// output of list (with separators)
+template <class T>
+struct ListPrinter {
+	inline ListPrinter(const T& list, cstring sep = " "): l(list), s(sep) { }
+	const T& l;
+	cstring s;
+};
+
+template <class T>
+inline ListPrinter<T> list(const T& l, cstring s = "") { return ListPrinter<T>(l, s); }
+
+template <class T>
+inline io::Output& operator<<(io::Output& out, const ListPrinter<T>& l) {
+	bool f = true;
+	for(auto x: l.l) {
+		if(f) f = false; else out << l.s;
+		out << x;
+	}
+	return out;
+}
+
 } } // elm::io
 
 #endif	// ELM_IO_OUTPUT_H
+
