@@ -467,11 +467,13 @@ AbstractTree::Node *AbstractTree::leftMost(Stack& s, Node *n) {
  * 
  * @param T		Type of contained items.
  * @param C		Comparator for T items (default to @ref elm::Comparator<T>).
- * @see			@ref elm::avl::Set, @ref elm::avl::Map
  * 
  * @par Implemented concepts
  * @li @ref elm::concept::Collection<T>
  * @li @ref elm::concept::MutableCollection<T>
+ *
+ * @see			@ref elm::avl::Set, @ref elm::avl::Map
+ * @ingroup		data
  */
 
 /**
@@ -564,6 +566,7 @@ AbstractTree::Node *AbstractTree::leftMost(Stack& s, Node *n) {
  * @param C		Comparator used to sort the items (must implements the @ref elm::concept::Comparator<T> concept,
  * 				as a default @ref elm::Comparator<T>).
  * @see			@ref elm::avl::GenTree
+ * @ingroup		data
  */
 
 
@@ -579,25 +582,24 @@ AbstractTree::Node *AbstractTree::leftMost(Stack& s, Node *n) {
  * @param C		Comparator used to sort the items (must implements the @ref elm::concept::Comparator<K> concept,
  * 				as a default @ref elm::Comparator<K>).
  * @see			@ref elm::avl::GenTree
+ * @ingroup		data
  */
 
-}	// avl
-
-namespace genstruct {
 
 /**
- * @class AbstractAVLTree
- * @deprecated	Only for compilation compatibility. Use @ref elm::avl::AbstractTree.
+ * @class Queue
+ * Implements a sorted queue based on AVL trees: putting or getting the head
+ * element is obtained in O(log n) complexity.
+ *
+ * @par Implemented concepts
+ *	* elm::concept::Collection<T>
+ *	* elm::concept::Queue<T>
+ *
+ * @param T		Type of elements of the queue.
+ * @param C		Comparator to sort the queue (default to elm::Comparator).
+ * @param A		Alloctaor (default (to elm::DefaultAlloc).
+ * @see			@ref elm::avl::GenTree
+ * @ingroup		data
  */
 
-/**
- * @class GenAVLTree
- * @deprecated	Only for compilation compatibility. Use @ref elm::avl::GenTree.
- */
-
-/**
- * @class AVLTree
- * @deprecated	Only for compilation compatibility. Use @ref elm::avl::Set.
- */
-
-} }	// elm::genstruct
+} }	// elm::avl
