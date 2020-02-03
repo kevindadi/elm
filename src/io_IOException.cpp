@@ -217,17 +217,78 @@ namespace elm { namespace io {
  *	* @ref StringOutput -- formatted output to a string,
  *	* @ref FileOutput -- formatted output to a file.
  *
+ * @subsection io_help_tag Tag Class
+ *
  * The class io::Tag can be used to display an object in a different as usual
  * (that is not using the default overload of operator <<). This class takes
  * a class P as generic parameter that must implement a static print function.
  * It will be called with, as parameters, the output to use and the object
  * to display.
  *
+ * The example below display integers in a special way, surrounded by "!".
+ * The display is handled by the class SpecInt. A tag for SpecInt is defined
+ * using a typedef and the integer is display in this special way using the
+ * tag type SPEC_INT.
+ *
+ * @code
+ *	class SpecInt {
+ *		public:
+ *		typedef int t;
+ *		static void print(io::Output& out, int i)
+ *			{ out << "!" << i << "!"; }
+ *	};
+ *
+ *	typedef io::Tag<SpecInt> SPEC_INT;
+ *	cout << SPEC_INT(666);
+ * @endcode
+ *
+ *
+ * @subsection io_helper_printable Printable Class
+ *
  * The class io::Printable and the function io::p() allows to perform a
  * display requiring a third-party object (often called a manager). This
  * means that the third-party object must define a function named print()
  * and taking as parameter the object to display and the output.
  *
+ * In the example below, there is a special manager named IntManager that
+ * provides some integers as text. The print() function of this class
+ * is invoked using the function @ref io::p().
+ *
+ * @code
+ *	class IntManager {
+ *	public:
+ *		static cstring t[4];
+ *		void print(int i, io::Output& out) const {
+ *			if(i >= 4)
+ *				out << "more";
+ *			else
+ *				out << t[i];
+ *		}
+ *	};
+ *	cstring IntManager::t[4] = { "zero", "one", "two", "three" };
+ *	IntManager man;
+ *	buf << io::p(2, man);
+ * @endcode
+ *
+ * @subsection io_helper_list_printer List Printer
+ *
+ * The list printer can be used to display easily and conveniently a list of
+ * values inside an output << operator sequence. The class ListPrinter records
+ * the list and the separator. The display of the resulting object can be
+ * displayed directly using operator <<. A faster way to do this is to use
+ * the function io::list() as in the example below:
+ * @code
+ *	Vector<cstring> names;
+ *	names.add("Albert");
+ *	names.add("Ben");
+ *	names.add("Cindy");
+ *	cout << "Names: " << io::list(names, ", ") << io::endl;
+ * @endcode
+ *
+ * The output will be:
+ * @code
+ * names: Albert, Ben, Cindy
+ * @endcode
  */
 
 

@@ -1201,6 +1201,30 @@ FileOutput::~FileOutput(void) {
 	delete _out;
 }
 
+
+/**
+ * @class ListPrinter
+ * This class is dedicated to the printing of collection of values with
+ * a separator. It is designed to be embeded in  a flow of output <<
+ * operators. A faster to use is the call to the function @ref io::list().
+ *
+ * @ingroup io
+ */
+
+
+/**
+ * @fn ListPrinter<T> list(const T& l, cstring s);
+ * Generate a list printer displaying the given list which element are
+ * separated using the given separator. The built list printer can be
+ * displaying using io::Output << operators.
+ *
+ * @param T		Type of list of values to display.
+ * @param l		List to display.
+ * @param s		Separator between values.
+ * @return		List printer ready to be displayed.
+ * @ingroup		io
+ */
+
 } // io
 
 /**

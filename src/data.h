@@ -607,6 +607,50 @@ struct FunctionWithArg {
  * @param delegate	Delegate to clone.
  */
 
+
+/**
+ * @fn bool equals(const C1& c1, const C2& c2);
+ * Test if two collections are equals.
+ * @param c1	First collection.
+ * @param c2	Second collection.
+ * @return		True if both collection are equal, false else.
+ * @param C1	Type of first collection.
+ * @param C2	Type of second collection.
+ * @ingroup data
+ */
+
+
+/**
+ * @fn Pair<typename C1::Iter, typename C2::Iter> mismatch(const C1& c1, const C2& c2);
+ * Find the point of difference of two collection. Starting from the first
+ * element of the two collections, progress until either finding the end of
+ * a collection, or until the first different element of the collections.
+ * @param c1	First collection.
+ * @param c2	Second collection.
+ * @return		Pair of iterators to the difference point (if any).
+ * @param C1	Type of first collection.
+ * @param C2	Type of second collection.
+ * @ingroup data
+ */
+
+
+ /**
+  * @fn Pair<typename C1::Iter, typename C2::Iter> mismatch(const C1& c1, const C2& c2, P p);
+  * Find the point of difference of two collection. Starting from the first
+  * element of the two collections, progress until either finding the end of
+  * a collection, or until the first different element of the collections.
+  * To test if two elements matches or not, the function p is used.
+  * @param c1	First collection.
+  * @param c2	Second collection.
+  * @param p	Match predicate to decide if two elements are different. Must
+  * 			support the call p(element1, element2).
+  * @return		Pair of iterators to the difference point (if any).
+  * @param C1	Type of first collection.
+  * @param C2	Type of second collection.
+  * @param P	Type of predicate.
+  * @ingroup data
+  */
+
 }	// elm
 
 #endif /* ELM_DATA_H_ */

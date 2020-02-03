@@ -132,4 +132,34 @@ TEST_BEGIN(data)
 		CHECK_EQUAL(sum(select(range(v.begin(), v.end()), [](int i) { return i % 2 == 0; })), 20);
 	}
 
+	// equals, mismatch test
+	{
+		Vector<int> v1, v2, v3;
+		for(int i = 0; i < 10; i++)
+			v1.add(i);
+		for(int i = 0; i < 10; i++)
+			v2.add(9 - i);
+		for(int i = 0; i < 5; i++)
+			v3.add(i);
+
+		CHECK(equals(v1, v1));
+		CHECK(!equals(v1, v2));
+		CHECK(!equals(v1, v3));
+
+		auto p = mismatch(v1, v1);
+		CHECK(p.fst == v1.end() && p.snd == v1.end());
+		p = mismatch(v1, v2);
+		CHECK(p.fst == v1.begin() && p.snd == v2.begin());
+		p = mismatch(v1, v3);
+		CHECK(*p.fst == 5 && p.snd == v3.end());
+
+		auto e = [](int x, int y) { return x == y; };
+		p = mismatch(v1, v1, e);
+		CHECK(p.fst == v1.end() && p.snd == v1.end());
+		p = mismatch(v1, v2, e);
+		CHECK(p.fst == v1.begin() && p.snd == v2.begin());
+		p = mismatch(v1, v3, e);
+		CHECK(*p.fst == 5 && p.snd == v3.end());
+	}
+
 TEST_END
