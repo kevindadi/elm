@@ -117,7 +117,7 @@ public:
 
 	// List concept
 	inline const T& first(void) const { return _(_list.first())->val; }
-	inline const T& last(void) const { return _(_list.first())->val; }
+	inline const T& last(void) const { return _(_list.last())->val; }
 	Iter find(const T& item) const
 		{ Iter i; for(i = begin(); i(); i++) if(E::isEqual(item, *i)) break; return i; }
 	Iter find(const T& item, const Iter& pos) const
