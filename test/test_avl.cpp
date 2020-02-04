@@ -18,11 +18,12 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#include <elm/test.h>
-#include <elm/avl/Set.h>
 #include <elm/avl/Map.h>
-#include <elm/sys/System.h>
+#include <elm/avl/Queue.h>
+#include <elm/avl/Set.h>
 #include <elm/io.h>
+#include <elm/sys/System.h>
+#include <elm/test.h>
 #include "check-concept.h"
  
 using namespace elm;
@@ -248,6 +249,44 @@ TEST_BEGIN(avl)
 			 <<     ", ins_cnt = " << ins_cnt
 			 <<     ", chk_cnt = " << chk_cnt << io::endl;
 		CHECK(intensive);
+	}
+
+	// Queue concepts
+	{
+		Queue<int> q;
+		checkCollection(q, q, 3);
+		checkQueue(q, 3);
+	}
+
+	// simple queue test
+	{
+		avl::Queue<int> q;
+		q.add(3);
+		q.add(0);
+		q.add(2);
+		q.add(1);
+		CHECK_EQUAL(q.get(), 0);
+		CHECK_EQUAL(q.get(), 1);
+		CHECK_EQUAL(q.get(), 2);
+		CHECK_EQUAL(q.get(), 3);
+		CHECK(q.isEmpty());
+	}
+
+	// queue with duplication
+	{
+		avl::Queue<int> q;
+		q.add(3);
+		q.add(0);
+		q.add(3);
+		q.add(2);
+		q.add(1);
+		q.add(2);
+		q.add(3);
+		CHECK_EQUAL(q.get(), 0);
+		CHECK_EQUAL(q.get(), 1);
+		CHECK_EQUAL(q.get(), 2);
+		CHECK_EQUAL(q.get(), 3);
+		CHECK(q.isEmpty());
 	}
 
 	// Map::PairIterator test

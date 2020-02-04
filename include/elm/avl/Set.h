@@ -32,20 +32,13 @@ public:
 	typedef Set<T, C> self_t;
 	typedef GenTree<T, IdAdapter<T>, C> base_t;
 
-	// Collection concept
-	static const Set<T, C> null;
-
 	// MutableCollection concept
-	inline void add(const T& x)
-		{ if(!base_t::contains(x)) base_t::add(x); }
-	template <class CC> inline void addAll(const CC& c)
-		{ for(const auto x: c) add(x); }
-	inline self_t& operator+=(const T& x) { add(x); return *this; }
+	inline self_t& operator+=(const T& x) { insert(x); return *this; }
 	inline self_t& operator-=(const T& x) { base_t::remove(x); return *this; }
-	inline self_t& operator=(const Set<T, C>& s) { base_t::copy(s); return *this; }
+	inline self_t& operator=(const self_t& s) { base_t::copy(s); return *this; }
 
 	// Set concept
-	inline void insert(const T& x) { add(x); }
+	inline void insert(const T& x) { base_t::add(x); }
 
 	bool subsetOf(const Set<T, C>& s) const {
 		auto i = base_t::begin(); auto j = s.begin();
@@ -58,7 +51,7 @@ public:
 		return !i();
 	}
 
-	inline void join(const Set<T, C>& s) { for(const auto x: s) add(x); }
+	inline void join(const Set<T, C>& s) { for(const auto x: s) base_t::add(x); }
 	inline void diff(const Set<T, C>& s) { for(const auto x: s) base_t::remove(x); }
 	void meet(const Set<T, C>& s) {
 		self_t is;
@@ -78,7 +71,6 @@ public:
 	inline self_t operator&(const Set<T, C>& s) const { self_t r(*this); r.meet(s); return s; }
 
 };
-template <class T, class C> const Set<T, C> Set<T, C>::null;
 
 } }	// elm::avl
 

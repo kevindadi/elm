@@ -146,27 +146,11 @@ public:
 		{ add(item); }
 
 	void removeByKey(const typename K::key_t& item) {
-
-		// find the node
 		Stack s;
 		Node *n = lookup(s, item);
 		if(n == nullptr)
 			return;
-
-		// simple leaf cases
-		if(n->left() == nullptr)
-			AbstractTree::remove(s, n->right());
-		else if(n->right() == nullptr)
-			AbstractTree::remove(s, n->left());
-
-		// in middle case
-		else {
-			s.push(n, RIGHT);
-			Node *p = static_cast<Node *>(leftMost(s, n->right()));
-			exchange(p, n);
-			AbstractTree::remove(s, p->right());
-			p->free(*this);
-		}
+		remove(s, n);
 	}
 
 	// Collection concept
@@ -257,7 +241,7 @@ public:
 
 	void copy(const GenTree<T, K, C>& tree) {
 		clear();
-		if(!tree._root)
+		if(tree._root == nullptr)
 			return;
 		_root = new(this) Node(tree.root());
 		_cnt = tree._cnt;
@@ -291,7 +275,26 @@ public:
 		}
 #	endif
 
-private:
+protected:
+
+	inline void remove(Stack& s, Node *n) {
+
+		// simple leaf cases
+		if(n->left() == nullptr)
+			AbstractTree::remove(s, n->right());
+		else if(n->right() == nullptr)
+			AbstractTree::remove(s, n->left());
+
+		// in middle case
+		else {
+			s.push(n, RIGHT);
+			Node *p = static_cast<Node *>(leftMost(s, n->right()));
+			exchange(p, n);
+			AbstractTree::remove(s, p->right());
+			p->free(*this);
+		}
+
+	}
 
 	inline int compare(const typename K::key_t& k1, const typename K::key_t& k2) const
 		{ return C::compare(k1, k2); }
