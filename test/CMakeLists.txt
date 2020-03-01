@@ -36,6 +36,7 @@ set(TEST_SOURCES
 	"test_array_list.cpp"
 	"test_avl.cpp"
 	"test_autostr.cpp"
+	"test_bag.cpp"
 	"test_bidilist.cpp"
 	"test_bitvector.cpp"
 	"test_char.cpp"

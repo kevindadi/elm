@@ -21,6 +21,8 @@
 #ifndef ELM_TEST_CHECK_CONCEPT_H_
 #define ELM_TEST_CHECK_CONCEPT_H_
 
+#include <elm/util/Option.h>
+
 namespace elm {
 
 template <class C, class T>
@@ -160,6 +162,23 @@ void checkSet(S& s, const T& x) {
 		ss = s * s;
 		ss = s & s;
 		ss = s - s;
+	}
+}
+
+template <class A, class T>
+void checkArray(const A& a, const T& x) {
+	if(false) {
+		static int l = 0, i = 1;
+		static const T *p = nullptr, *q = nullptr;
+		l = a.length();
+		p = &a.get(l);
+		p = &a[i];
+		p = q;
+		i = a.indexOf(x);
+		i = a.indexOf(x, 2);
+		i = a.lastIndexOf(x);
+		i = a.lastIndexOf(x, 2);
+		q = p;
 	}
 }
 

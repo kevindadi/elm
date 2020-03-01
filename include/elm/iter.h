@@ -48,7 +48,7 @@ public:
 
 // InplacePreIterator class
 template <class I, class T>
-class InplacePreIterator: public PreIterator<I, T> {
+class InplacePreIterator/*: public PreIterator<I, T>*/ {
 public:
 
 	typedef T t;

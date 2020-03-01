@@ -651,6 +651,30 @@ struct FunctionWithArg {
   * @ingroup data
   */
 
+/**
+ * @class Bag
+ * A bag is a cheap collection to store an immutable array of data.
+ * The allocated data encompasses only the integer for the count and the array
+ * items. Yet, this requires a special procedure to create a bag using
+ * the function `make` as below:
+ * @code
+ * float array[N] = { ... };
+ * Bag<float> *bag = Bag<float>(N, array);
+ * @endcode
+ *
+ * Yet, the release of the data is standard:
+ * @code
+ * delete bag;
+ * @endcode
+ *
+ * Bag implements the following concepts:
+ *	* concept::Collection
+ *	* concept::Array
+ *
+ * @param T	Type of data stored in the bag.
+ * @ingroup data
+ */
+
 }	// elm
 
 #endif /* ELM_DATA_H_ */
