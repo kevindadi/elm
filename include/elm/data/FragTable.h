@@ -40,6 +40,10 @@ public:
 		{ addAll(tab); }
 	inline ~FragTable(void) { clear(); }
 
+	inline int pageSize() const { return size; }
+	inline int pagePower() const { return shf; }
+	inline bool pageFull() const { return used >= size; }
+
 	class Iter: public InplacePreIterator<Iter, const T&> {
 	public:
 		inline Iter(void): arr(0), i(0), len(0) { }
