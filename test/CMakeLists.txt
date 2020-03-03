@@ -73,6 +73,7 @@ set(TEST_SOURCES
 	"test_range.cpp"
 	"test_serial.cpp"
 	"test_simplegc.cpp"
+	"test_slice.cpp"
 	"test_sorted_list.cpp"
 	"test_stack_alloc.cpp"
 	"test_stopwatch.cpp"
