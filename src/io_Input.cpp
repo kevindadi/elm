@@ -33,17 +33,26 @@ namespace elm { namespace io {
 /**
  * @class Input
  * This class provides formatted scanning to input streams.
+ *
+ * It is supported to support scan of several items separated by spaces.
+ * The possible errors are accumulated inside the state of the class and can
+ * accessed at the end of a scan session.
+ *
+ * Each scan of a value can result in a success, in a failure (bad format) or
+ * in error (reflecting an error in the underlying stream). In addition its
+ * states records also the end of the stream.
+ *
  * @ingroup ios
  */
 
 /**
  */
-Input::Input(void): strm(&in), buf(-1) {
+Input::Input(): strm(&in), buf(-1), state(0) {
 }
 
 /**
  */
-Input::Input(InStream& stream): strm(&stream), buf(-1) {
+Input::Input(InStream& stream): strm(&stream), buf(-1), state(0) {
 }
 
 
@@ -59,22 +68,40 @@ void Input::unsupported(void) {
  * @return	Next character or -1 if there is no more character available.
  */
 int Input::get(void) {
-	char res;
+	int res;
 	if(buf >= 0) {
 		res = buf;
 		buf = -1;
 	}
-	else
-		switch(strm->read(&res, 1)) {
-		case 0:
-			return -1;
-		case 1:
-			return (unsigned char)res;
-		default:
-			throw IOException(strm->lastErrorMessage());
+	else {
+		res = strm->read();
+		if(res < 0) {
+			switch(res) {
+			case InStream::FAILED:
+				state |= IO_ERROR | FAILED;
+				throw IOException(strm->lastErrorMessage());
+			case InStream::ENDED:
+				state |= ENDED;
+				break;
+			default:
+				ASSERT(false);
+			}
 		}
+	}
 	return res;
 }
+
+/**
+ * Skip space characters until finding the end of file ornon-space character.
+ * @return	Found character or InStream error code.
+ */
+int Input::skip() {
+	int c = get();
+	while(isspace(c))
+		c = get();
+	return c;
+}
+
 
 
 /**
@@ -110,6 +137,38 @@ void Input::back(int chr) {
 /**
  * @fn void Input::setStream(InStream& stream);
  * change the used input stream.
+ */
+
+
+/**
+ * @fn bool Input::ended() const;
+ * Test if the stream is ended. Once ended, any new scan will fail.
+ * @return	True if the stream is ended, false else.
+ */
+
+/**
+ * bool Input::failed() const;
+ * Test if the last operation failed. Failed means that there were a format
+ * in the last read value.
+ * @return	True if the last operation failed.
+ */
+
+/**
+ * bool Input::error() const;
+ * Test if there has been an input error from the underlying stream.
+ * @return	True if there has been an input error.
+ */
+
+/**
+ * bool Input::ok() const;
+ * Test if the stream is ok (end not reached, no failed operation, no input
+ * error).
+ * @return	True if the input is ready to proceed.
+ */
+
+/**
+ * @fn void Input::resetState();
+ * Remove any failure or input error from the state.
  */
 
 
@@ -151,7 +210,8 @@ bool Input::scanBool(void) {
 			return res;
 		chr = get();
 	}
-	throw IOException("bad format for boolean");
+	state = InStream::FAILED;
+	return false;
 }
 
 
@@ -195,52 +255,52 @@ static inline int test_base(char chr, int base) {
 /**
  * Scan a based unsigned long, decimal as a default.
  * Supported base prefixes are '0', '0[xX]' or '0[bB]'.
- * @return	Integer value.
+ * @param base			Base of the number to read (default to 0 to scan prefixes).
+ * @return				Integer value.
+ * @throw IOException	In case of IO error.
  */
-t::uint32 Input::scanULong(void) {
+t::uint32 Input::scanULong(int base) {
 	t::uint32 val = 0;
-	int base = 10;
-	swallowBlank();
 
 	// Read the base
-	int chr = get();
-	if(chr == '0')
-		switch(chr = get()) {
-		case 'x': case 'X':
-			base = 16;
-			chr = get();
-			break;
-		case 'b': case 'B':
-			base = 2;
-			chr = get();
-			break;
-		default:
-			if(chr < '0' || chr > '7') {
-				back(chr);
-				return 0;
+	int chr = skip();
+	if(base == 0) {
+		if(chr == '0')
+			switch(chr = get()) {
+			case 'x': case 'X':
+				base = 16;
+				chr = get();
+				break;
+			case 'b': case 'B':
+				base = 2;
+				chr = get();
+				break;
+			default:
+				base = 8;
+				break;
 			}
-			base = 8;
-			break;
-		}
+		else
+			base = 10;
+	}
 
 	// read the digits
 	bool one = false;
 	int digit = test_base(chr, base);
 	while(digit >= 0) {
-		if(digit < 0)
-			throw IOException("bad formatted integer");
 		t::uint32 old = val;
 		val = val * base + digit;
 		one = true;
-		if(val < old)
-			throw IOException("32-bits value too big");
+		if(val < old) {
+			state |= FAILED;
+			return 0;
+		}
 		chr = get();
 		digit = test_base(chr, base);
 	}
 	if(chr >= 0)
 		back(chr);
 	if(!one)
-		throw IOException("not a number");
+		state |= FAILED;
 	return val;
 }
 
@@ -248,23 +308,32 @@ t::uint32 Input::scanULong(void) {
 /**
  * Scan a based long, decimal as a default.
  * Supported base prefixes are '0', '0[xX]' or '0[bB]'.
- * @return	Integer value.
+ * @param base			Base of the number to read (default to 0 to scan prefixes).
+ * @return				Integer value.
+ * @throw IOException	In case of IO or format error.
  */
-t::int32 Input::scanLong(void) {
+t::int32 Input::scanLong(int base) {
 	t::uint32 val = 0;
 	bool neg = false;
 
 	// Read sign
-	int chr = get();
+	int chr = skip();
 	if(chr == '-')
 		neg = true;
-	else if(chr != '+')
+	else if(chr != '+') {
+		if(chr < 0) {
+			state |= FAILED;
+			return 0;
+		}
 		back(chr);
+	}
 
 	// get the value
-	val = scanULong();
-	if(val >= (1UL << 31))
-		throw IOException("32-bits value too big");
+	val = scanULong(base);
+	if(val >= (1UL << 31)) {
+		state |= FAILED;
+		return 0;
+	}
 	return neg ? -t::int32(val) : val;
 }
 
@@ -272,44 +341,54 @@ t::int32 Input::scanLong(void) {
 /**
  * Scan a based unsigned long long, decimal as a default.
  * Supported base prefixes are '0', '0[xX]' or '0[bB]'.
- * @return	Integer value.
+ * @param base			Base of the number to read (default to 0 to scan prefixes).
+ * @return				Integer value.
+ * @throw IOException	In case of IO or format error.
  */
-t::uint64 Input::scanULLong(void) {
+t::uint64 Input::scanULLong(int base) {
 	t::uint64 val = 0;
-	int base = 10;
+	bool one = false;
 
 	// Read the base
-	int chr = get();
-	if(chr == '0')
-		switch(chr = get()) {
-		case 'x': case 'X':
-			base = 16;
-			chr = get();
-			break;
-		case 'b': case 'B':
-			base = 2;
-			chr = get();
-			break;
-		default:
-			if(chr < '0' || chr > '7') {
-				back(chr);
-				return 0;
+	int chr = skip();
+	if(base == 0) {
+		if(chr == '0')
+			switch(chr = get()) {
+			case 'x': case 'X':
+				base = 16;
+				chr = get();
+				break;
+			case 'b': case 'B':
+				base = 2;
+				chr = get();
+				break;
+			default:
+				base = 8;
+				break;
 			}
-			base = 8;
-			break;
-		}
+		else
+			base = 10;
+	}
 
 	// read the digits
 	int digit = test_base(chr, base);
-	if(digit < 0)
-		throw IOException("bad formatted integer");
 	while(digit >= 0) {
+		t::uint32 old = val;
 		val = val * base + digit;
+		one = true;
+		if(val < old) {
+			state |= FAILED;
+			return 0;
+		}
 		chr = get();
 		digit = test_base(chr, base);
 	}
 	if(chr >= 0)
 		back(chr);
+	if(!one) {
+		state |= FAILED;
+		return 0;
+	}
 	return val;
 }
 
@@ -317,23 +396,32 @@ t::uint64 Input::scanULLong(void) {
 /**
  * Scan a based long long, decimal as a default.
  * Supported base prefixes are '0', '0[xX]' or '0[bB]'.
- * @return	Integer value.
+ * @param base			Base of the number to read (default to 0 to scan prefixes).
+ * @return				Integer value.
+ * @throw IOException	In case of IO or format error.
  */
-t::int64 Input::scanLLong(void) {
+t::int64 Input::scanLLong(int base) {
 	t::uint64 val = 0;
 	bool neg = false;
 
 	// Read sign
-	int chr = get();
+	int chr = skip();
 	if(chr == '-')
 		neg = true;
-	else if(chr != '+')
+	else if(chr != '+') {
+		if(chr < 0) {
+			state |= FAILED;
+			return 0;
+		}
 		back(chr);
+	}
 
 	// get the value
-	val = scanULLong();
-	if(val >= (1ULL << 63))
-		throw IOException("bad formatted signed 64-bits value");
+	val = scanULLong(base);
+	if(val >= (1ULL << 63)) {
+		state |= FAILED;
+		return 0;
+	}
 	return neg ? -t::int64(val) : val;
 }
 
@@ -345,9 +433,10 @@ t::int64 Input::scanLLong(void) {
 double Input::scanDouble(void) {
 	double value = 0;
 	bool neg = false;
+	bool one = false;
 
 	// Read sign
-	int chr = get();
+	int chr = skip();
 	if(chr == '-') {
 		neg = true;
 		chr = get();
@@ -356,10 +445,9 @@ double Input::scanDouble(void) {
 		chr = get();
 
 	// Read integer part
-	if(chr != '.' && (chr < '0' || chr > '9'))
-		throw IOException("bad formatted float value");
 	while(chr >= '0' && chr <= '9') {
 		value = value * 10 + (chr - '0');
+		one = true;
 		chr = get();
 	}
 
@@ -370,11 +458,16 @@ double Input::scanDouble(void) {
 		while(chr >= '0' && chr <='9') {
 			value += (chr - '0') * dec;
 			dec = dec / 10;
+			one = true;
 			chr = get();
 		}
 	}
 
 	// Read exponent part
+	if(!one) {
+		state |= FAILED;
+		return 0;
+	}
 	if(chr == 'e' || chr == 'E') {
 		int exp = 0;
 		chr = get();
@@ -382,17 +475,22 @@ double Input::scanDouble(void) {
 			chr = get();
 		else if(chr == '+')
 			chr = get();
-		if(chr < '0' || chr > '9')
-			throw IOException("bad formatted float value");
+		one = false;
 		while(chr >= '0' && chr <= '9') {
 			exp = exp * 10 + (chr - '0');
+			one = true;
 			chr = get();
+		}
+		if(!one) {
+			state |= FAILED;
+			return 0;
 		}
 		value = value * pow(10, exp);
 	}
 
 	// Return result
-	back(chr);
+	if(chr >= 0)
+		back(chr);
 	return neg ? -value : value;
 }
 
@@ -404,12 +502,17 @@ double Input::scanDouble(void) {
  */
 String Input::scanWord(void) {
 	StringBuffer buf;
-	int chr = get();
+	bool one = false;
+	int chr = skip();
 	while(chr >= 0 && !isspace(chr)) {
 		buf << (char)chr;
+		one = true;
 		chr = get();
 	}
-	back(chr);
+	if(chr >= 0)
+		back(chr);
+	if(!one)
+		state |= FAILED;
 	return buf.toString();
 }
 

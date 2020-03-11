@@ -104,4 +104,6 @@ private:
 
 } } //elm::option
 
+#define ELM_RUN(C) int main(int argc, char **argv) { return C().manage(argc, argv); }
+
 #endif // ELM_OPTION_MANAGER_H

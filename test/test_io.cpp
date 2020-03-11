@@ -20,6 +20,7 @@
  */
 
 #include <elm/test.h>
+#include <elm/io/StringInput.h>
 #include <elm/io/VarExpander.h>
 #include <elm/string/StringBuffer.h>
 #include <elm/sys/System.h>
@@ -92,6 +93,48 @@ TEST_BEGIN(io)
 		StringBuffer buf;
 		buf << io::p(2, man);
 		CHECK_EQUAL(buf.toString(), string("two"));
+	}
+
+	// input
+	{
+		CHECK_EQUAL(io::scan("123").scanULong(), 123U);
+		CHECK_EQUAL(io::scan("033").scanULong(), 27U);
+		CHECK_EQUAL(io::scan("0xff").scanULong(), 255U);
+		CHECK_EQUAL(io::scan("0b101").scanULong(), 5U);
+		CHECK_EQUAL(io::scan("FF").scanULong(16), 255U);
+
+		CHECK_EQUAL(io::scan("123").scanULLong(), 123UL);
+		CHECK_EQUAL(io::scan("033").scanULLong(), 27UL);
+		CHECK_EQUAL(io::scan("0xff").scanULLong(), 255UL);
+		CHECK_EQUAL(io::scan("0b101").scanULLong(), 5UL);
+		CHECK_EQUAL(io::scan("FF").scanULLong(16), 255UL);
+
+		auto x = io::scan("1 2 3");
+		CHECK_EQUAL(x.scanLong(), 1);
+		CHECK(!x.ended());
+		CHECK(!x.failed());
+		CHECK_EQUAL(x.scanLong(), 2);
+		CHECK(!x.ended());
+		CHECK(!x.failed());
+		CHECK_EQUAL(x.scanLong(), 3);
+		CHECK(x.ended());
+		CHECK(!x.failed());
+		x.scanLong();
+		CHECK(x.failed());
+
+		CHECK_EQUAL(io::scan("ok ko").scanWord(), string("ok"));
+		CHECK_EQUAL(io::scan("ok").scanWord(), string("ok"));
+		CHECK_EQUAL(io::scan("ok\nko").scanLine(), string("ok\n"));
+
+		CHECK_EQUAL(io::scan("1.5").scanDouble(), 1.5);
+		CHECK_EQUAL(io::scan("1e3").scanDouble(), 1e3);
+		CHECK_EQUAL(io::scan("1.5e3").scanDouble(), 1.5e3);
+
+		CHECK_EQUAL(io::scan("true").scanBool(), true);
+		CHECK_EQUAL(io::scan("false").scanBool(), false);
+		CHECK_EQUAL(io::scan("1").scanBool(), true);
+		CHECK_EQUAL(io::scan("0").scanBool(), false);
+
 	}
 
 TEST_END

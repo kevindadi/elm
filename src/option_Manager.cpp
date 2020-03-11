@@ -41,8 +41,6 @@ namespace elm { namespace option {
  * options. There are currently two ways to use these classes, the old approach
  * that will become quickly deprecated (please no more use it) and the new one.
  *
- * @par The New Generation Approach (third generation)
- *
  * To perform the parsing of command line arguments, ELM provides two basic classes.
  * @ref elm::option::Manager represents the command as a base of documentation and as a list
  * of options items. The manager is initialized as in the following example:
@@ -78,8 +76,8 @@ namespace elm { namespace option {
  * 		.description("This is my command !")
  * 		.license("GPL V")
  * 		.author("me <me@here.there>")),
- * 	opt(Make(*this).cmd("-o").cmd("--com").help("option 1")),
- * 	val(Make(*this).cmd("-v").cmd("--val").help("my value")) { }
+ * 	opt(option::SwitchOption::Make(*this).cmd("-o").cmd("--com").help("option 1")),
+ * 	val(option::ValueOption::Make(*this).cmd("-v").cmd("--val").help("my value")) { }
  * 	...
  * private:
  * 	option::SwitchOption opt;
@@ -126,157 +124,26 @@ namespace elm { namespace option {
  * }
  * @endcode
  *
- * This new approach allows to combine several benefits:
- * @li no more used of the risky processing of variable length arguments (second generation),
- * @li type checking ability,
- * @li readibility (see below),
- * @li extensibility (new configurations may be added without breaking the old configurations).
- *
- * The classes allowed in this version of options are:
- * @li @ref ActionOption
- * @li @ref ListOption
- * @li @ref SwitchOption
- * @li @ref ValueOption
- *
- * @par The Old Generation Approach
- *
- * <b>Notice that the old generation approach for option definition is now considered
- * DEPRECATED. It will be removed in the next versions of ELM.</b>
- *
- * The goal of the new approach is to remove as much developer disturbance as possible.
- * The full option configuration is based on variable arguments formed as list of tags
- * possibly followed by an argument. This let configure the option and the option manager
- * in a more natural way.
- *
- * Let's go with a little example:
+ * This may be replaced by the short-cut:
  * @code
- * #include <elm/options.h>
- * using namespace elm::option;
- *
- * class MyManager: public Manager {
- * public:
- *	MyManager(void): Manager(
- * 		option::program, "my_program",
- * 		option::version, new Version(1, 2),
- * 		option::copyright, "GPL (c) 2007 IRIT - UPS",
- * 		option::end)
- * 	{ };
- *
- *	virtual void process(string arg) {
- * 		cout << "add argument " << arg << io::endl;
- * 	}
- * } manager;
- *
- * BoolOption ok(manager,
- * 		option::cmd, "-c",
- * 		option::cmd, "--ok",
- * 		option::help, "is ok ?",
- * 		option::end);
- * StringOption arg(manager,
- * 		option::cmd, "-s",
- * 		option::cmd, "--string",
- * 		option::help, "set string",
- * 		option::arg_desc, "a simple string",
- * 		option::def, "",
- * 		option::end);
+ * ELM_RUN(MyCommand)
  * @endcode
  *
- *  This approach add a lot of flexibility because (1) all arguments do not need to be passed
- *  to the constructor (only the used ones) and (2) as many commands ('-' short name or '--' long name)
- *  as needed may be added to an option. As an example, look at the @ref BoolOption below:
- *  @code
- *  BoolOption verbose(manager,
- *  	option::short_cmd, 'c',
- *  	option::long_cmd, "verbose",
- *  	option::short_cmd, 'V',
- *  	option::end);
- *  @endcode
+ * The classes allowed are:
+ *	* option::EnumOption
+ *	* option::ListOption
+ *	* option::SwitchOption
+ *	* option::ValueOption
+ */
+
+/**
+ * @def ELM_RUN
+ * This macro is a short to a main function running an application class.
+ * The parameter must be the name of a class extending option::Manager.
+ * It replaces the mandatory main() function of a C++ application.
+ * @param C		Name of the application class.
  *
- *  The only requirement is that the configuration list passed to the manager or to an option
- *  is terminated by and @ref option::end. This system of tags and arguments may also be used
- *  with the @ref Manager class that centralizes the list of options of an application.
- *
- *  The supported tags includes:
- *  @li @ref elm::option::end (all; no argument) -- mark end of tags
- *	@li @ref elm::option::program (manager; const char *) -- name of the program
- *	@li @ref elm::option::version (manager; @ref elm::Version *) -- version of the program
- *	@li @ref elm::option::author (manager; const char *) -- name of the authors
- *	@li @ref elm::option::copyright (manager, const char *) -- copyright of the program
- *	@li @ref elm::option::description (manager, option; const char *) -- description
- *	@li @ref elm::option::help -- same as @ref elm::option::description
- *	@li @ref elm::option::free_arg (manager; const char *) -- description of free arguments
- *	@li @ref elm::option::cmd (option; const char *) -- command (possibly including the minus prefix)
- *	@li @ref elm::option::short_cmd (option; char) -- one-letter short command (prefixed by "-")
- *	@li @ref elm::option::long_cmd (option; const char *) -- multiple lette command (prefixed by "--")
- *	@li @ref elm::option::def (option; option dependent) -- default value for valued options
- *	@li @ref elm::option::require (option; none) -- argument value is required
- *	@li @ref elm::option::optional (option; none) -- argument value is optional
- *	@li @ref elm::option::arg_desc (option; const char *) -- description of the argument value
- *
- *	In parenthesis, the first part design the application of the tag: to the manager or to the
- *	options. The second value give the type of the argument value of the option (if any).
- *
- *  In this new approach, you will need a small set of options classes:
- *  @li @ref elm::option::SwitchOption -- for boolean activable option
- *  @li @ref elm::option::ValueOption<T> -- for options with an argument value
- *  @li @ref elm::option::ListOption<T> -- for options with multiple arguments values
- *  @li @ref elm::option::ActionOption  -- for options causing an action
- *
- *  @ref elm::option::ValueOption<T> and @ref elm::option::ListOption<T> are provided for
- *  usual types (as support from the @ref elm::io::Input class) but may be customized for other
- *  types by overring some templates functions as below:
- *  @code
- *	template <> inline T ValueOption<T>::get(VarArg& args) { return args.next<T>(); }
- *	template <> inline T read<string>(string arg) { process arg to set the value }
- *	@endcode
- *
- *
- * @par The manager
- * 
- * The manager is the main entry to handle options. It provides the list of
- * options but also information about the program. To provides this kind of data,
- * one has to create a class inheriting fropm @ref Manager and to initialize
- * some fields in the constructor.
- * @li program -- name of the program,
- * @li version -- version of the program (as a string),
- * @li author -- author(s) of the program,
- * @li copyright -- licence of the program,
- * @li description -- a short description of the program,
- * @li free_argument_description -- description of non-option string in the
- * arguments.
- * 
- * Then, non-options string may be handled by overloading the Manager::process()
- * method. Each time one of this argument is found, this method will be called
- * with the string as parameter. For example, in the command below, the
- * Manager::process() method will be called twice: once with "file.txt" as
- * argument and once with "mydir/" as argument.
- * @code
- * $ cp file.txt mydir/
- * @endcode
- * 
- * @par Option Usage
- * 
- * All options inherits from the @ref Option class. Each one provides a
- * constructor taking the actual manager as parameter. The following parameters
- * may include (take a look at each class documentation for more details):
- * @li a one letter option identifier (just prefixed with '-'),
- * @li a full string option identifier (prefixed by a double '-'),
- * @li the description of the option,
- * @li the description of the option argument (if there is one),
- * @li the default value of the option argument (if there is one).
- * 
- * There are many class that allows parsing and retrieving options values as
- * @ref BoolOption, @ref IntOption, @ref StringOption or @ref EnumOption.
- * The option value may be accessed as a usual variable as in the example below:
- * @code
- * if(ok)
- * 	cout << "string argument is " << arg << io::endl;
- * @endcode
- * 
- * The @ref ActionOption class is a bit more complex because it allows
- * associating an action with an option. To achieve this, the user has to
- * derive a class from @ref ActionOption and to overload the
- * ActionOption::perform() method to implement the specific behaviour.
+ * @ingroup options
  */
 
 // UnknownException

@@ -314,4 +314,26 @@ namespace elm { namespace io {
  * @param args		Arguments used in the message.
  */
 
+
+/**
+ * @fn StringInput scan(const char *s);
+ * Short to build a string input.
+ * @param s		String to use as input.
+ * @ingroup ios
+ */
+
+/**
+ * @fn StringInput scan(cstring& s);
+ * Short to build a string input.
+ * @param s		String to use as input.
+ * @ingroup ios
+ */
+
+/**
+ * @fn StringInput scan(string& s);
+ * Short to build a string input.
+ * @param s		String to use as input.
+ * @ingroup ios
+ */
+
 } } // elm::io
