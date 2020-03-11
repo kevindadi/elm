@@ -99,10 +99,10 @@ int BufferedInStream::read(void) {
 	if(pos >= top) {
 		int nsize = refill();
 		if(nsize <= 0)
-			return nsize;
+			return ENDED;
 	}
 	pos++;
-	return buf[pos - 1];
+	return static_cast<t::uint8>(buf[pos - 1]);
 }
 
 

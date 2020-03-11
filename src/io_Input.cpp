@@ -526,10 +526,14 @@ String Input::scanLine(void) {
 	StringBuffer buf;
 	int chr = get();
 	while(chr >= 0) {
-		buf << (char)chr;
+		buf << static_cast<char>(chr);
 		if(chr == '\n')
 			break;
 		chr = get();
+	}
+	if(chr == InStream::FAILED) {
+		state |= IO_ERROR;
+		return "";
 	}
 	return buf.toString();
 }

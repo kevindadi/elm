@@ -136,10 +136,12 @@ int BlockInStream::read(void *buffer, int size) {
 /**
  */
 int BlockInStream::read(void) {
+	int res;
 	if(off >= _size)
-		return ENDED;
+		res = ENDED;
 	else
-		return (unsigned char)_block[off++];
+		res = static_cast<t::uint8>(_block[off++]);
+	return res;
 }
 
 } } // elm::io

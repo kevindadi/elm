@@ -134,7 +134,14 @@ TEST_BEGIN(io)
 		CHECK_EQUAL(io::scan("false").scanBool(), false);
 		CHECK_EQUAL(io::scan("1").scanBool(), true);
 		CHECK_EQUAL(io::scan("0").scanBool(), false);
+	}
 
+	{
+		auto x = io::scan("1\n2\n3");
+		CHECK_EQUAL(x.scanLine(), string("1\n"));
+		CHECK_EQUAL(x.scanLine(), string("2\n"));
+		CHECK_EQUAL(x.scanLine(), string("3"));
+		CHECK_EQUAL(x.scanLine(), string(""));
 	}
 
 TEST_END

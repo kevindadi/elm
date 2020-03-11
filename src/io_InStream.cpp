@@ -20,6 +20,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <elm/types.h>
 #include <elm/io/InStream.h>
 #if defined(__LINUX)
 #include <elm/io/UnixInStream.h>
@@ -62,7 +63,7 @@ int InStream::read(void) {
 	char buf;
 	int size = read(&buf, 1);
 	if(size == 1)
-		return (unsigned char)buf;
+		return static_cast<t::uint8>(buf);
 	else if(size == 0)
 		return ENDED;
 	else
