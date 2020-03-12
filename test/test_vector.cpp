@@ -260,6 +260,23 @@ TEST_BEGIN(vector)
 		CHECK(ok);
 	}
 
+#	if 0
+	{
+		Vector<int> v;
+		v.add(1);
+		v.add(2);
+		v.add(3);
+		const Vector<int>& vv = v;
+		Vector<int *> pv;
+		for(auto i: vv)
+			pv.add(&i);
+		int s;
+		for(int i = 0; i < pv.length(); i++)
+			s += *pv[i];
+		CHECK(s == 6);	// not sure it fails
+	}
+#	endif
+
 TEST_END
 
 

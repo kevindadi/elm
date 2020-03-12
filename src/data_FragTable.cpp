@@ -71,6 +71,27 @@ namespace elm {
 
 
 /**
+ * @fn int FragTable::pageSize() const;
+ * Get the page size (in elements).
+ * @return Page size (in elements).
+ */
+
+
+/**
+ * @fn int FragTable::pagePower() const;
+ * Get the page size as a power of 2.
+ * @return	Power of 2 page size.
+ */
+
+
+/**
+ * @fn bool FragTable::pageFull() const;
+ * Test if the current page is full.
+ * @return	True if the page is full, false else.
+ */
+
+
+/**
  * @fn int FragTable::count (void) const;
  * Same as @length().
  */

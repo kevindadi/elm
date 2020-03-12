@@ -41,6 +41,8 @@
 
 #include <elm/assert.h>
 #include <elm/deprecated.h>
+#include <elm/io/BufferedInStream.h>
+#include <elm/io/BufferedOutStream.h>
 #include <elm/io/RandomAccessStream.h>
 #include <elm/sys/System.h>
 #include <elm/sys/SystemException.h>
@@ -278,7 +280,7 @@ io::OutStream *System::createFile(const Path& path) {
 	int fd = ::open(&path.toString(), O_CREAT | O_TRUNC | O_WRONLY, 0777);
 	if(fd == -1)
 		throw SystemException(errno, "file creation");
-	return new SystemOutStream(fd);
+	return new io::BufferedOutStream(new SystemOutStream(fd), true);
 
 #elif defined(__WIN32) || defined(__WIN64)
 	HANDLE fd;
@@ -311,7 +313,7 @@ io::InStream *System::readFile(const Path& path) {
 		int fd = ::open(&path.toString(), O_RDONLY);
 		if(fd == -1)
 			throw SystemException(errno, "file reading");
-		return new SystemInStream(fd);
+		return new io::BufferedInStream(new SystemInStream(fd), true);
 
 #	elif defined(__WIN32) || defined(__WIN64)
 		HANDLE fd;
@@ -345,7 +347,7 @@ io::OutStream *System::appendFile(const Path& path) {
 	int fd = ::open(&path.toString(), O_APPEND | O_CREAT | O_WRONLY, 0777);
 	if(fd == -1)
 		throw SystemException(errno, "file appending");
-	return new SystemOutStream(fd);
+	return new io::BufferedOutStream(new SystemOutStream(fd), true);
 #elif defined(__WIN32) || defined(__WIN64)
 	HANDLE fd;
 	fd=CreateFile(&path.toString(),

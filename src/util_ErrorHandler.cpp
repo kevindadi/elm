@@ -63,9 +63,42 @@ void ErrorHandler::onError(error_level_t level, const string& message) {
 
 
 /**
- * Default error handler.
+ * Default error handler that displays to standard error output the messages it gets.
  */
 ErrorHandler ErrorHandler::DEFAULT;
+
+///
+class NoInfoHandler: public ErrorHandler {
+public:
+	void onError(error_level_t level, const string& message) override {
+		if(level != level_info)
+			ErrorHandler::onError(level, message);
+	}
+};
+
+///
+static NoInfoHandler NO_INFO;
+
+/**
+ * Error handler that displays all except the information messages.
+ */
+ErrorHandler& ErrorHandler::NO_INFO = NO_INFO;
+
+
+///
+class QuietHandler: public ErrorHandler {
+public:
+	void onError(error_level_t level, const string& message) override {
+	}
+};
+
+///
+static QuietHandler QUIET;
+
+/**
+ * Error handler that does not display anything.
+ */
+ErrorHandler& ErrorHandler::QUIET = QUIET;
 
 
 /**

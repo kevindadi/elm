@@ -39,10 +39,23 @@ namespace elm { namespace io {
 /**
  * Build a buffered input stream.
  * @param input	Input stream to get data from.
- * @param size	Default size of the used buffer.
+ * @param size	Default size of the used buffer (optional).
  */
 BufferedInStream::BufferedInStream(InStream& input, int size)
-:	in(&input), buf(new char[size]), pos(0), top(0), buf_size(size) {
+:	in(&input), buf(new char[size]), pos(0), top(0), buf_size(size), _close(false) {
+	ASSERTP(size > 0, "strictly positive buffer size required");
+}
+
+
+/**
+ * Build a buffered input stream.
+ * @param input	Input stream to get data from.
+ * @param size	Default size of the used buffer (optional).
+ * @param close	If set to true, delete the underlying stream at deletion time
+ * 				(default to false).
+ */
+BufferedInStream::BufferedInStream(InStream *input, bool close, int size)
+:	in(input), buf(new char[size]), pos(0), top(0), buf_size(size), _close(close) {
 	ASSERTP(size > 0, "strictly positive buffer size required");
 }
 
@@ -51,7 +64,16 @@ BufferedInStream::BufferedInStream(InStream& input, int size)
  */
 BufferedInStream::~BufferedInStream(void) {
 	delete [] buf;
+	if(_close)
+		delete in;
 }
+
+
+/**
+ * @fn InStream& BufferedInStreal::stream() const;
+ * Get the buffered stream.
+ * @return	Buffered stream.
+ */
 
 
 /**
@@ -98,11 +120,15 @@ int BufferedInStream::read(void *buffer, int size) {
 int BufferedInStream::read(void) {
 	if(pos >= top) {
 		int nsize = refill();
-		if(nsize <= 0)
-			return nsize;
+		if(nsize <= 0) {
+			if(nsize == 0)
+				return ENDED;
+			else
+				return FAILED;
+		}
 	}
 	pos++;
-	return buf[pos - 1];
+	return static_cast<t::uint8>(buf[pos - 1]);
 }
 
 

@@ -53,6 +53,13 @@ TEST_BEGIN(string_buffer)
 		CHECK(str == "0123");
 	}
 	
+	// join test
+	{
+		string tab[] = { "a", "b", "c" };
+		string r = string(",").join(tab);
+		CHECK_EQUAL(r, string("a,b,c"));
+	}
+
 TEST_END
 
 

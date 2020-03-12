@@ -126,9 +126,13 @@ TEST_BEGIN(io_format)
 		io::FileOutput out(p);
 		out << 666;
 		out.flush();
+	}
+	{
+		sys::Path p = "temp-io.txt";
 		io::FileInput in(p);
 		int x;
 		in >> x;
+		CHECK(!in.failed());
 		CHECK_EQUAL(x, 666);
 		p.remove();
 	}
@@ -169,6 +173,15 @@ TEST_BEGIN(io_format)
 			delete stream;
 		}
 
+	}
+
+	// float format
+	{
+		CHECK_EQUAL(string(_ << io::fmt(0.1)), string("0.1"));
+		CHECK_EQUAL(string(_ << io::fmt(1e+10)), string("1.000000e+10"));
+		CHECK_EQUAL(string(_ << io::fmt(1e-10)), string("1.000000e-10"));
+		CHECK_EQUAL(string(_ << io::fmt(1.234)), string("1.234"));
+		CHECK_EQUAL(string(_ << io::fmt(12.34)), string("12.34"));
 	}
 
 	// BufferedInStream test
@@ -222,11 +235,11 @@ TEST_BEGIN(io_format)
 	#		define BUF_SIZE 64
 			char buf[BUF_SIZE];
 			InStream *in = sys::System::readFile("file.xml");
-			OutStream *str = sys::System::createFile("out.xml");
-			BufferedOutStream out(*str, 32);
+			OutStream *out = sys::System::createFile("out.xml");
 			int len;
 			while((len = in->read(buf, sys::System::random(BUF_SIZE))) > 0)
-				out.write(buf, len);
+				out->write(buf, len);
+			delete out;
 		}
 
 		// compare the file
@@ -248,7 +261,7 @@ TEST_BEGIN(io_format)
 					break;
 				}
 			}
-			CHECK(res1 == res2);
+			CHECK_EQUAL(res1, res2);
 			CHECK(ok);
 		}
 
@@ -314,18 +327,6 @@ TEST_BEGIN(io_format)
 			t::int32 v;
 			in >> v;
 			CHECK_EQUAL(v, 0x80);
-		}
-
-		{
-			string in = "aa";
-			t::int32 v;
-			CHECK_EXCEPTION(elm::io::IOException, in >> v);
-		}
-
-		{
-			string in = "0xffffffffff";
-			t::int32 v;
-			CHECK_EXCEPTION(elm::io::IOException, in >> v);
 		}
 
 	}

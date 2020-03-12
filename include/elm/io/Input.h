@@ -37,13 +37,18 @@ public:
 	Input(InStream& stream);
 	inline InStream& stream(void) const { return *strm; };
 	inline void setStream(InStream& stream) { strm = &stream; buf = -1; };
+	inline bool ended() const { return state & ENDED; }
+	inline bool failed() const { return state & FAILED; }
+	inline bool error() const { return state & IO_ERROR; }
+	inline bool ok() const { return state == 0; }
+	inline void resetState() { state &= ~(FAILED | IO_ERROR); }
 
 	bool scanBool(void);
 	char scanChar(void);
-	t::int32 scanLong(void);
-	t::uint32 scanULong(void);
-	t::int64 scanLLong(void);
-	t::uint64 scanULLong(void);
+	t::uint32 scanULong(int base = 0);
+	t::int32 scanLong(int base = 0);
+	t::uint64 scanULLong(int base = 0);
+	t::int64 scanLLong(int base = 0);
 	double scanDouble(void);
 	String scanWord(void);
 	String scanLine(void);
@@ -81,12 +86,42 @@ public:
 	template <class T> Input& operator>>(T& v)
 		{ _if<type_info<T>::is_defined_enum, enum_scanner<T>, def_scanner<T> >::scan(*this, v); return *this; }
 
+	class LineIter: public PreIterator<LineIter, string> {
+	public:
+		inline LineIter(Input& input, bool end = false): in(input), e(end) { if(!e) next(); }
+		inline bool ended() const { return e; }
+		inline string item() const { return l; }
+		inline void next() { if(in.ended()) e = true; else l = in.scanLine(); }
+		inline bool equals(const LineIter& i) const { return &in == &i.in && e == i.e; }
+	private:
+		Input& in;
+		bool e;
+		string l;
+	};
+
+	class LineRange {
+	public:
+		inline LineRange(Input& in): i(in) { }
+		inline LineIter begin() { return LineIter(i); }
+		inline LineIter end() { return LineIter(i, true); }
+	private:
+		Input& i;
+	};
+	inline LineRange lines() { return LineRange(*this); }
+
+
 private:
 	 [[noreturn]] static void unsupported(void);
 	InStream *strm;
-	int buf;
-	int get(void);
+	t::int16 buf;
+	t::uint16 state;
+	int get();
+	int skip();
 	void back(int chr);
+	static const t::uint16
+		ENDED = 0x01,
+		FAILED = 0x02,
+		IO_ERROR = 0x04;
 };
 
 } } // elm::io

@@ -41,7 +41,7 @@ class ErrorHandler {
 public:
 	virtual void onError(error_level_t level, const string& message);
 	static cstring getLevelString(error_level_t level);
-	static ErrorHandler DEFAULT, STD;
+	static ErrorHandler DEFAULT, &NO_INFO, &QUIET;
 	virtual ~ErrorHandler() {};
 };
 

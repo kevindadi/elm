@@ -139,6 +139,8 @@ public:
 	};
 	inline Iter begin() const { return Iter(*this); }
 	inline Iter end() const { return Iter(*this, length()); }
+
+	template <class C> inline String join(const C& coll);
 };
 
 // Type shortcut

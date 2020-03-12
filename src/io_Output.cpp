@@ -394,210 +394,134 @@ void Output::print(const IntFormat& fmt) {
  * @param fmt	Float format to print.
  */
 void Output::print(const FloatFormat& fmt) {
-	static const int maxint = 350, maxflt = 350, maxexp = 3;
-	static const int initpt = maxint + 1;
-	char buf[maxint + maxflt + maxexp + 1 /* . */ + 1 /* - */ + 2 /* e- */ ];
-	char
-		*ip = &buf[initpt],		// ip points to first integral digit
-		*fp = &buf[initpt],		// fp points to last fractional digit
-		*cp = 0,				// compacted pointer, e10 > 0 -> [ip, cp], e10 < 0 -> [cp, fp]
-		*pp = &buf[initpt];		// position of point
-	int e10 = 0;
-	bool neg = false;
-	int decw = fmt._decw;
-	*pp = '.';
+	// %e	[-]d.ddde+/-dd (precision 6)
+	// %f	[-]ddd.ddd (precision 6, if precision 0, no decimal, at least one integer)
+	// %g	f or e (e if e < -4 or e >= precision)
+	char buf[1/*-*/ + 1/*d*/ + 1/*.*/ + fmt._decw + 2/*e[+-]*/ + 3];
+	const char *b;
+	int s;
+	int prec = fmt._decw;
+	if(prec == 0)
+		prec = 6;
 
 	// simple special case
 	double x = fmt._val;
 	switch(fpclassify(x)) {
-		
+
 	case FP_NAN:
-		ip -= 3;
-		memcpy(ip, "NaN", 3);
-		decw = 0;
+		b = "NaN";
+		s = 3;
 		break;
-		
+
 	case FP_INFINITE:
-		if(x > 0) {
-			ip -= 4;
-			memcpy(ip, "+inf", 4);
-			decw = 0;
-		}
-		else {
-			ip -= 4;
-			memcpy(ip, "-inf", 4);
-			decw = 0;
-		}
+		b = x > 0 ? "+inf" : "-inf";
+		s = 4;
 		break;
-		
-	case FP_ZERO:
-		*ip = '.';
-		*--ip = '0';
-		break;
-	
-	default: {
-			// take absolute value
-			double x =fmt._val;
+
+	default:
+		{
+			char *p = &buf[sizeof(buf)];
+
+			// prepare the number
+			int p10 = log10(x);
+			bool neg = false;
+			x = fmt._val;
 			if(x < 0) {
 				x = -x;
 				neg = true;
 			}
 
-			// separate integral / fractional part
-			double frac, intp;
-			frac = modf(x, &intp);
-
-			// generate the integral part
-			while(intp != 0) {
-				double digit = modf(intp / 10, &intp);
-				*--ip = int((digit + .03) * 10) + '0';
+			// select the format
+			bool sci = false;
+			switch(fmt._style) {
+			case FloatFormat::SCIENTIFIC:
+				sci = true;
+				break;
+			case FloatFormat::DECIMAL:
+				sci = false;
+				break;
+			default:
+				sci = p10 < -4 || p10 > prec;
+				break;
 			}
 
-			// generate the fractional part
-			while(frac > 0) {
-				if(fp > pp + maxflt)
-					break;
-				frac *= 10;
-				frac = modf(frac, &intp);
-				*++fp = int(intp) + '0';
+			// decimal notation
+			if(!sci) {
+				t::uint64 n = x * pow(10., prec);
+				bool f = false;
+				while(n > 0) {
+					int d = n % 10;
+					n /= 10;
+					if(d != 0 || prec < 0 || f) {
+						f = true;
+						*--p = d + '0';
+					}
+					prec--;
+					if(prec == 0) {
+						f = true;
+						*--p = '.';
+					}
+				}
+				if(!f) {
+					*--p = '.';
+					*--p = '0';
+				}
+				else if(*p == '.')
+					*--p = '0';
 			}
 
-			// compact if possible
-			if(fmt._style == FloatFormat::SHORTEST
-			|| fmt._style == FloatFormat::SCIENTIFIC) {
-				if(ip == pp)
-					for(cp = ip + 1; *cp == '0'; cp++) e10++;
-				else if(fp == pp)
-					for(cp = ip - 1; *cp =='0'; cp--) e10--;
+			// scientific notation
+			else {
+
+				// generate the exponent
+				int mp = fabs(p10);
+				if(mp < 10) {
+					*--p = '0' + mp;
+					*--p = '0';
+				}
+				else {
+					while(mp > 0) {
+						*--p = '0' + mp % 10;
+						mp /= 10;
+					}
+				}
+				*--p = p10 < 0 ? '-' : '+';
+				*--p = 'e';
+
+				// generate the decimal
+				t::uint64 n = x * pow(10., prec - p10);
+				for(int i = 0; i < prec; i++) {
+					*--p = '0' + n % 10;
+					n /= 10;
+				}
+				*--p = '.';
+				*--p = '0' + n;
 			}
+
+			// finalization
+			if(neg)
+				*--p = '-';
+			b = p;
+			s = &buf[sizeof(buf)] - p;
 		}
 		break;
 	}
 
-	// select a style for SHORTEST
-	int style = fmt._style;
-	if(style == FloatFormat::SHORTEST) {
-		if(!cp)
-			style = FloatFormat::DECIMAL;
-
-		// no fractional width
-		else if(!decw) {
-			int size = log10(abs(e10)) + 1 + (e10 < 0 ? 1 : 0);
-			if(e10 > 0)
-				size = cp - ip + 1;
-			else
-				size = fp - cp;
-			if(fp - ip <= size)
-				style = FloatFormat::DECIMAL;
-			else
-				style = FloatFormat::SCIENTIFIC;
-		}
-
-		// with fractional width
-		else {
-			int dsize = &buf[initpt] - ip + decw;
-			int ssize = log10(abs(e10)) + 1 + (e10 < 0 ? 1 : 0) + 1 + decw;
-			if(dsize < ssize)
-				style = FloatFormat::DECIMAL;
-			else
-				style = FloatFormat::SCIENTIFIC;
-		}
-	}
-
-	// fix for scientific
-	if(style == FloatFormat::SCIENTIFIC) {
-		if(cp) {
-			if(e10 > 0) {
-				ip[-1] = *ip;
-				pp = ip;
-				*ip-- = '.';
-				fp = cp;
-			}
-			else {
-				ip = cp - 1;
-				*ip = *cp;
-				*cp = '.';
-				pp = cp;
-			}
-		}
-		else {
-			e10 += pp - ip - 1;
-			memmove(ip + 2, ip + 1, pp - ip - 1);
-			pp = ip + 1;
-			*pp = '.';
-		}
-	}
-
-	// round according to the fractional width
-	if(fp > pp + fmt._decw) {
-		char *p = pp + fmt._decw + 1;
-		*p += 5;
-		bool cont = false;
-		while(*p > '9') {
-			*p-- = '0';
-			if(p == pp) {
-				cont = true;
-				break;
-			}
-			(*p)++;
-		}
-		if(fmt._style == FloatFormat::SHORTEST)
-			fp = p;
-		if(cont) {
-			p = pp - 1;
-			(*p)++;
-			while(*p > '9') {
-				*p-- = '0';
-				if(p < ip) {
-					*--ip = '1';
-					break;
-				}
-				(*p)++;
-			}
-		}
-		if(fmt._style != FloatFormat::SHORTEST)
-			fp = pp + fmt._decw;
-	}
-
-	// put the minus
-	if(neg)
-		*--ip = '-';
-
-	// generate lacking zeroes
-	if(fmt._style != FloatFormat::SHORTEST)
-		while(fp < pp + decw )
-			*++fp = '0';
-
-	// generate the exponent if required
-	if(e10) {
-		*++fp = 'e';
-		if(e10 < 0)
-			*++fp = '-';
-		char *ep = fp + 1;
-		while(e10) {
-			*++fp = '0' + e10 % 10;
-			e10 /= 10;
-		}
-		for(char *p = fp; p > ep; p--, ep++) {
-			char t = *p;
-			*p = *ep;
-			*ep = t;
-		}
-	}
-
 	// perform the display
-	int nblank = fmt._width - (fp - ip);
-	char padding[max(0, nblank) + 1];
-	if(fmt._width > fp - ip) {
-		int size = fmt._align == CENTER ? nblank / 2 : nblank;
-		for(int i = 0; i <= size; i++)
-			padding[i] = fmt._pad;
-		if(fmt._align != RIGHT)
-			stream().write(padding, fmt._align == CENTER ? nblank / 2 : nblank);
+	int pref = 0, suff = 0, spaces = max(0, fmt._width - s);
+	switch(fmt._align) {
+	case NONE:		strm->write(b, s); return;
+	case LEFT:		suff = spaces; break;
+	case RIGHT:		pref = spaces; break;
+	case CENTER:	pref = spaces/2; suff = spaces - pref; break;
 	}
-	stream().write(ip, fp - ip + 1);
-	if(fmt._width > fp - ip && fmt._align != LEFT)
-		stream().write(padding, fmt._align == CENTER ? nblank - nblank / 2 : nblank);
+	char buf2[max(pref, suff)];
+	array::set(buf2, sizeof(buf2), char(fmt._pad));
+	if(pref)
+		strm->write(buf2, pref);
+	strm->write(b, s);
+	if(suff)
+		strm->write(buf2, suff);
 }
 
 
@@ -1062,6 +986,25 @@ IntFormat byte(t::uint8 b) {
  * Build a formatted unsigned 64-bit integer.
  * @ingroup ios
  */
+
+
+/**
+ * @class FloatFormat
+ * Format description for float or double data to display in the
+ * @ref Output class.
+ * @ingroup ios
+ */
+
+///
+void FloatFormat::init(void) {
+	_width = 0;
+	_decw = 6;
+	_style = SHORTEST;
+	_align = NONE;
+	_upper = true;
+	_pad = ' ';
+}
+
 
 /**
  * @fn FloatFormat fmt(float f);

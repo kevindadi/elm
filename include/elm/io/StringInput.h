@@ -36,6 +36,10 @@ private:
 	BlockInStream bin;
 };
 
+inline StringInput scan(const char *s) { return StringInput(s); }
+inline StringInput scan(const cstring& s) { return StringInput(s); }
+inline StringInput scan(const string& s) { return StringInput(s); }
+
 } }		// elm::io
 
 #endif /* ELM_IO_STRINGINPUT_H_ */

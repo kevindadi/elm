@@ -33,10 +33,12 @@ public:
 	static const int default_size = 4096;
 
 	BufferedOutStream(OutStream& output = cout.stream(), size_t size = default_size);
-	virtual ~BufferedOutStream(void);
+	BufferedOutStream(OutStream *output, bool close = false, size_t size = default_size);
+	~BufferedOutStream() override;
 
 	void reset();
 	void setStream(OutStream& str);
+	inline OutStream& stream() const { return *out; }
 
 	int write(const char *buffer, int size) override;
 	int write(char byte) override;
@@ -48,6 +50,7 @@ private:
 	OutStream *out;
 	char *buf;
 	size_t top, buf_size;
+	bool _close;
 };
 
 } } // elm::io

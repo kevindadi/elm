@@ -270,6 +270,12 @@ namespace elm {
  *
  * @li @ref elm::StrictMapDelegate is like MapDelegate but thow a KeyError
  * 			exception if a non-existing key is used.
+ *
+ * @par Helper Classes
+ *
+ * The following classes may help to work or to extend the concrete data structures:
+ * 	* elm::Bag -- a lightweight collection containing a fix number of elements,
+ *  * elm::Slice -- provide an array view on a slice of a bigger array data structure.
  */
 
 /**
@@ -650,6 +656,73 @@ struct FunctionWithArg {
   * @param P	Type of predicate.
   * @ingroup data
   */
+
+/**
+ * @class Bag
+ * A bag is a cheap collection to store an immutable array of data.
+ * The allocated data encompasses only the integer for the count and the array
+ * items. Yet, this requires a special procedure to create a bag using
+ * the function `make` as below:
+ * @code
+ * float array[N] = { ... };
+ * Bag<float> *bag = Bag<float>(N, array);
+ * @endcode
+ *
+ * Yet, the release of the data is standard:
+ * @code
+ * delete bag;
+ * @endcode
+ *
+ * Bag implements the following concepts:
+ *	* concept::Collection
+ *	* concept::Array
+ *
+ * @param T	Type of data stored in the bag.
+ * @ingroup data
+ */
+
+
+/**
+ * @class Slice
+ * This class implement a light-weight array collection representing a slice
+ * of another array collection.
+ *
+ * Slice implements the following concepts:
+ * 	* concept::Collection
+ * 	* concept::Array
+ *
+ * @param T		Type of elements in the slice.
+ * @param D		Type of the array data structure.
+ * @ingroup		data
+ */
+
+/**
+ * @fn  Slice::Slice(D& array, int first, int count);
+ * Build a slice for the given *array* ranging from the *first* index over
+ * *count* elements.
+ *
+ * @param array		Parent array.
+ * @param first		First index.
+ * @param count		Cont of elements in the slice.
+ */
+
+/**
+ * @fn D& Slice::array() const;
+ * Get the parent array.
+ * @return Parent array.
+ */
+
+/**
+ * @fn int Slice::firstIndex() const;
+ * Get the index, in the parent array, of the first element of the slice.
+ * @return	Index of first element in the parent array.
+ */
+
+/**
+ * @fn int Slice::lastIndex() const;
+ * Get the index, in the parent array, of the last element of the slice.
+ * @return	Index of last element in the parent array.
+ */
 
 }	// elm
 
