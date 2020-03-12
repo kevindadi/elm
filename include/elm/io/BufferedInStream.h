@@ -32,8 +32,10 @@ public:
 	static const int default_size = 4096;
 	
 	BufferedInStream(InStream& input = cin.stream(), int size = default_size);
-	~BufferedInStream(void);
+	BufferedInStream(InStream *input, bool close = false, int size = default_size);
+	~BufferedInStream() override;
 
+	inline InStream& stream() const { return *in; }
 	void setStream(InStream& str);
 	void reset();
 
@@ -45,6 +47,7 @@ private:
 	InStream *in;
 	char *buf;
 	int pos, top, buf_size;
+	bool _close;
 };
 
 } } // elm::io

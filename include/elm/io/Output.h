@@ -145,14 +145,7 @@ public:
 	unsigned char _pad;
 
 private:
-	void init(void) {
-		_width = 0;
-		_decw = 5;
-		_style = SHORTEST;
-		_align = LEFT;
-		_upper = true;
-		_pad = ' ';
-	}
+	void init(void);
 };
 
 

@@ -31,10 +31,24 @@ namespace elm { namespace io {
 /**
  * Build a buffer out stream.
  * @param output	Output stream to buffer in.
- * @param size		Size of the buffeR.
+ * @param size		Size of the buffer.
  */
 BufferedOutStream::BufferedOutStream(OutStream& output, size_t size)
-: out(&output), top(0), buf_size(size) {
+: out(&output), top(0), buf_size(size), _close(false) {
+	ASSERTP(size != 0, "invalid null buffer size");
+	buf = new char[buf_size];
+}
+
+
+/**
+ * Build a buffer out stream.
+ * @param output	Output stream to buffer in.
+ * @param close		If set to true, the underlying stream is closed at destruction time
+ * 					(default to false).
+ * @param size		Size of the buffer.
+ */
+BufferedOutStream::BufferedOutStream(OutStream *output, bool close, size_t size)
+: out(output), top(0), buf_size(size), _close(close) {
 	ASSERTP(size != 0, "invalid null buffer size");
 	buf = new char[buf_size];
 }
@@ -45,6 +59,8 @@ BufferedOutStream::BufferedOutStream(OutStream& output, size_t size)
 BufferedOutStream::~BufferedOutStream(void) {
 	flush();
 	delete [] buf;
+	if(_close)
+		delete out;
 }
 
 
@@ -110,6 +126,13 @@ void BufferedOutStream::setStream(OutStream& str) {
 	flush();
 	out = &str;
 }
+
+
+/**
+ * @fn OutStream& BufferedOutStream::stream() const;
+ * Get the underlying output stream.
+ * @return	Buffered stream.
+ */
 
 
 /**

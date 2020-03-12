@@ -101,6 +101,20 @@ inline String operator+(const char *s1, const CString s2) { return CString(s1).c
 inline String operator+(const char *s1, const String& s2) { return CString(s1).concat(s2); };
 inline String operator+(char c, const cstring s) { char t[2] = { c, '\0' }; return cstring(t).concat(s); };
 inline String operator+(char c, const String& s) { char t[2] = { c, '\0' }; return cstring(t).concat(s); };
+
+template <class C> String inline String::join(const C& coll) {
+	StringBuffer buf;
+	bool f = true;
+	for(const auto& x: coll) {
+		if(f)
+			f = false;
+		else
+			buf << *this;
+		buf << x;
+	}
+	return buf.toString();
+}
+
 };
 
 #endif // ELM_STRING_H

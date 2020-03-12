@@ -144,5 +144,17 @@ TEST_BEGIN(io)
 		CHECK_EQUAL(x.scanLine(), string(""));
 	}
 
+	{
+		cstring ss[] = { "1\n", "2\n", "3" };
+		int i = 0;
+		auto in = io::scan("1\n2\n3");
+		for(auto s: in.lines()) {
+			if(ss[i] != s)
+				break;
+			i++;
+		}
+		CHECK_EQUAL(i, 3);
+	}
+
 TEST_END
 

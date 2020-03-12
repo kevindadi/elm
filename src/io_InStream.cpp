@@ -22,6 +22,7 @@
 
 #include <elm/types.h>
 #include <elm/io/InStream.h>
+#include <elm/io.h>
 #if defined(__LINUX)
 #include <elm/io/UnixInStream.h>
 #elif defined(__WIN32) || defined(__WIN64)

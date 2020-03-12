@@ -86,6 +86,30 @@ public:
 	template <class T> Input& operator>>(T& v)
 		{ _if<type_info<T>::is_defined_enum, enum_scanner<T>, def_scanner<T> >::scan(*this, v); return *this; }
 
+	class LineIter: public PreIterator<LineIter, string> {
+	public:
+		inline LineIter(Input& input, bool end = false): in(input), e(end) { if(!e) next(); }
+		inline bool ended() const { return e; }
+		inline string item() const { return l; }
+		inline void next() { if(in.ended()) e = true; else l = in.scanLine(); }
+		inline bool equals(const LineIter& i) const { return &in == &i.in && e == i.e; }
+	private:
+		Input& in;
+		bool e;
+		string l;
+	};
+
+	class LineRange {
+	public:
+		inline LineRange(Input& in): i(in) { }
+		inline LineIter begin() { return LineIter(i); }
+		inline LineIter end() { return LineIter(i, true); }
+	private:
+		Input& i;
+	};
+	inline LineRange lines() { return LineRange(*this); }
+
+
 private:
 	 [[noreturn]] static void unsupported(void);
 	InStream *strm;

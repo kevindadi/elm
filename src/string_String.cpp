@@ -581,6 +581,17 @@ string String::replace(string pat, string sub) {
 
 
 /**
+ * @fn String String::join(const C& coll);
+ * Join the items of the given collection into a string where each item is
+ * separated by the current string. The items must be string or writable to
+ * an Output channel.
+ * @param coll	Collection of items to join (must be iterable).
+ * @param C		Type of the collection.
+ * @return		Result of the join.
+ */
+
+
+/**
  * @class CString
  * Wrapper around C usual string.
  * @ingroup string
