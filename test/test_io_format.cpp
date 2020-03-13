@@ -329,6 +329,23 @@ TEST_BEGIN(io_format)
 			CHECK_EQUAL(v, 0x80);
 		}
 
+		{
+			auto in = io::scan("0");
+			t::uint32 v;
+			in >> v;
+			CHECK_EQUAL(int(v), 0);
+			CHECK(!in.failed());
+			CHECK(in.ended());
+		}
+
+		{
+			auto in = io::scan("0");
+			t::uint64 v;
+			in >> v;
+			CHECK_EQUAL(v, 0UL);
+			CHECK(!in.failed());
+			CHECK(in.ended());
+		}
 	}
 
 TEST_END
