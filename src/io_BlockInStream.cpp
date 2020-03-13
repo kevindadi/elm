@@ -22,6 +22,7 @@
 
 #include <elm/assert.h>
 #include <string.h>
+#include <elm/int.h>
 #include <elm/io/BlockInStream.h>
 
 namespace elm { namespace io {
