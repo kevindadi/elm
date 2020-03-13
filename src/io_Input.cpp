@@ -261,6 +261,7 @@ static inline int test_base(char chr, int base) {
  * @throw IOException	In case of IO error.
  */
 t::uint32 Input::scanULong(int base) {
+	bool one = false;
 	t::uint32 val = 0;
 
 	// Read the base
@@ -277,6 +278,7 @@ t::uint32 Input::scanULong(int base) {
 				chr = get();
 				break;
 			default:
+				one = true;
 				base = 8;
 				break;
 			}
@@ -285,7 +287,6 @@ t::uint32 Input::scanULong(int base) {
 	}
 
 	// read the digits
-	bool one = false;
 	int digit = test_base(chr, base);
 	while(digit >= 0) {
 		t::uint32 old = val;
@@ -365,6 +366,7 @@ t::uint64 Input::scanULLong(int base) {
 				break;
 			default:
 				base = 8;
+				one = true;
 				break;
 			}
 		else
