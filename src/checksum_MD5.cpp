@@ -24,6 +24,7 @@
  * delivered under GPL licence.
  */
 
+#include <elm/assert.h>
 #include <elm/checksum/MD5.h>
 #include <elm/util/MessageException.h>
 #include <elm/io/BlockInStream.h>

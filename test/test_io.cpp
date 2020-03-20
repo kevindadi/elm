@@ -97,19 +97,19 @@ TEST_BEGIN(io)
 
 	// input
 	{
-		CHECK_EQUAL(io::scan("123").scanULong(), 123U);
-		CHECK_EQUAL(io::scan("033").scanULong(), 27U);
-		CHECK_EQUAL(io::scan("0xff").scanULong(), 255U);
-		CHECK_EQUAL(io::scan("0b101").scanULong(), 5U);
-		CHECK_EQUAL(io::scan("FF").scanULong(16), 255U);
+		CHECK_EQUAL(io::read("123").scanULong(), 123U);
+		CHECK_EQUAL(io::read("033").scanULong(), 27U);
+		CHECK_EQUAL(io::read("0xff").scanULong(), 255U);
+		CHECK_EQUAL(io::read("0b101").scanULong(), 5U);
+		CHECK_EQUAL(io::read("FF").scanULong(16), 255U);
 
-		CHECK_EQUAL(io::scan("123").scanULLong(), 123UL);
-		CHECK_EQUAL(io::scan("033").scanULLong(), 27UL);
-		CHECK_EQUAL(io::scan("0xff").scanULLong(), 255UL);
-		CHECK_EQUAL(io::scan("0b101").scanULLong(), 5UL);
-		CHECK_EQUAL(io::scan("FF").scanULLong(16), 255UL);
+		CHECK_EQUAL(io::read("123").scanULLong(), 123UL);
+		CHECK_EQUAL(io::read("033").scanULLong(), 27UL);
+		CHECK_EQUAL(io::read("0xff").scanULLong(), 255UL);
+		CHECK_EQUAL(io::read("0b101").scanULLong(), 5UL);
+		CHECK_EQUAL(io::read("FF").scanULLong(16), 255UL);
 
-		auto x = io::scan("1 2 3");
+		auto x = io::read("1 2 3");
 		CHECK_EQUAL(x.scanLong(), 1);
 		CHECK(!x.ended());
 		CHECK(!x.failed());
@@ -122,22 +122,22 @@ TEST_BEGIN(io)
 		x.scanLong();
 		CHECK(x.failed());
 
-		CHECK_EQUAL(io::scan("ok ko").scanWord(), string("ok"));
-		CHECK_EQUAL(io::scan("ok").scanWord(), string("ok"));
-		CHECK_EQUAL(io::scan("ok\nko").scanLine(), string("ok\n"));
+		CHECK_EQUAL(io::read("ok ko").scanWord(), string("ok"));
+		CHECK_EQUAL(io::read("ok").scanWord(), string("ok"));
+		CHECK_EQUAL(io::read("ok\nko").scanLine(), string("ok\n"));
 
-		CHECK_EQUAL(io::scan("1.5").scanDouble(), 1.5);
-		CHECK_EQUAL(io::scan("1e3").scanDouble(), 1e3);
-		CHECK_EQUAL(io::scan("1.5e3").scanDouble(), 1.5e3);
+		CHECK_EQUAL(io::read("1.5").scanDouble(), 1.5);
+		CHECK_EQUAL(io::read("1e3").scanDouble(), 1e3);
+		CHECK_EQUAL(io::read("1.5e3").scanDouble(), 1.5e3);
 
-		CHECK_EQUAL(io::scan("true").scanBool(), true);
-		CHECK_EQUAL(io::scan("false").scanBool(), false);
-		CHECK_EQUAL(io::scan("1").scanBool(), true);
-		CHECK_EQUAL(io::scan("0").scanBool(), false);
+		CHECK_EQUAL(io::read("true").scanBool(), true);
+		CHECK_EQUAL(io::read("false").scanBool(), false);
+		CHECK_EQUAL(io::read("1").scanBool(), true);
+		CHECK_EQUAL(io::read("0").scanBool(), false);
 	}
 
 	{
-		auto x = io::scan("1\n2\n3");
+		auto x = io::read("1\n2\n3");
 		CHECK_EQUAL(x.scanLine(), string("1\n"));
 		CHECK_EQUAL(x.scanLine(), string("2\n"));
 		CHECK_EQUAL(x.scanLine(), string("3"));
@@ -147,7 +147,7 @@ TEST_BEGIN(io)
 	{
 		cstring ss[] = { "1\n", "2\n", "3" };
 		int i = 0;
-		auto in = io::scan("1\n2\n3");
+		auto in = io::read("1\n2\n3");
 		for(auto s: in.lines()) {
 			if(ss[i] != s)
 				break;

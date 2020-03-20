@@ -21,7 +21,8 @@
 #ifndef ELM_SYS_PATH_H
 #define ELM_SYS_PATH_H
 
-#include <elm/io.h>
+#include <elm/io/InStream.h>
+#include <elm/io/Output.h>
 #include <elm/PreIterator.h>
 #include <elm/string.h>
 #include <elm/sys/SystemException.h>
@@ -64,7 +65,7 @@ public:
 	sys::Path dirPart(void) const;
 	Path basePart(void) const;
 	String extension(void) const;
-	bool isEmpty(void) const { return buf == ""; }
+	bool isEmpty(void) const { return buf.isEmpty(); }
 	bool isAbsolute(void) const;
 	bool isRelative(void) const;
 	bool isHomeRelative(void) const;

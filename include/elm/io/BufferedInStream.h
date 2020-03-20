@@ -31,7 +31,7 @@ class BufferedInStream: public InStream {
 public:
 	static const int default_size = 4096;
 	
-	BufferedInStream(InStream& input = cin.stream(), int size = default_size);
+	BufferedInStream(InStream& input, int size = default_size);
 	BufferedInStream(InStream *input, bool close = false, int size = default_size);
 	~BufferedInStream() override;
 

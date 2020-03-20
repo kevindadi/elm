@@ -29,14 +29,14 @@ namespace elm { namespace io {
 
 class FileInput: public Input {
 public:
-	FileInput(const char *path, int buf_size = BufferedInStream::default_size);
-	FileInput(cstring path, int buf_size = BufferedInStream::default_size);
-	FileInput(string path, int buf_size = BufferedInStream::default_size);
-	FileInput(sys::Path path, int buf_size = BufferedInStream::default_size);
+	FileInput(const char *path);
+	FileInput(cstring path);
+	FileInput(string path);
+	FileInput(sys::Path path);
+	FileInput(FileInput&& fi);
 	~FileInput(void);
 private:
 	InStream *_in;
-	BufferedInStream _buf;
 };
 
 } }		// elm::io

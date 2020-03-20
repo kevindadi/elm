@@ -330,7 +330,7 @@ TEST_BEGIN(io_format)
 		}
 
 		{
-			auto in = io::scan("0");
+			auto in = io::read("0");
 			t::uint32 v;
 			in >> v;
 			CHECK_EQUAL(int(v), 0);
@@ -339,7 +339,7 @@ TEST_BEGIN(io_format)
 		}
 
 		{
-			auto in = io::scan("0");
+			auto in = io::read("0");
 			t::uint64 v;
 			in >> v;
 			CHECK_EQUAL(v, 0UL);

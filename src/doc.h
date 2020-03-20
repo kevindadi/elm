@@ -51,6 +51,10 @@ namespace elm {
  * @li @ref types -- type information and other related functions,
  * @li @ref util -- miscellaneous utility classes (including debugging and testing helper classes),
  * @li @ref xom -- XML input/output classes.
+ *
+ * ELM contains a lot of useful features to make easier the developer life:
+ * instead of reading the whole documentation, take a look to @ref recs
+ * for a short list of more useful features.
  */
 
 /*
@@ -281,6 +285,86 @@ namespace meta {
  */
 
 }	// meta
+
+/**
+ * @defgroup recs Recipes
+ *
+ * @section recs_io	Efficient Input/Output
+ *
+ * ELM comes with several functions to make easier the access to files:
+ * @code
+ *	#include <elm/io.h>
+ *	sys::Path p = ...;
+ *	int x;
+ *	auto in = io::read(p);
+ *	in >> x;
+ *	auto out1 = io::write(p);
+ *	out1 << x;
+ *	auto out2 = io::append(p);
+ *	out2 << x;
+ * @endcode
+ *
+ * These three commands open a file named *p* and returns an input/output
+ * handle ready for reading or writing.
+ *
+ * Inputing from a string can be done in the same way:
+ * @code
+ *	#include <elm/io.h>
+ *	int x;
+ *	auto in = io::read("my string");
+ *	in >> x;
+ * @endcode
+ *
+ * Outputting to a string requires a StringBuffer:
+ * @code
+ *	#include <elm/string.h>
+ *	StringBuffer buf;
+ *	buf << 111;
+ *	string s = buf.toString();
+ * @endcode
+ *
+ * There is a short cut to this with a special named "_":
+ * @code
+ *	#include <elm/string.h>
+ *	string s = _ << 111 <<  " euros";
+ *
+ * @endcode
+ *
+ * To read a file line by line, the function Input::lines() provides
+ * an iterator:
+ * @code
+ *	#include <elm/io.h>
+ *	auto in = open_file();
+ *	for(auto line: in.lines())
+ *		...
+ * @endcode
+ *
+ * @section recs_map Using maps
+ *
+ * ELM comes with several map data structure:
+ *	* HashMap
+ *	* avl::Map
+ *	* ListMap
+ *
+ * These map implementation shares the same concepts concept::Map and
+ * concept::MutableMap. This means they are controlled in the same way.
+ *
+ * To add a value to the map, one can type:
+ * @code
+ *	MyMap<string, int> map;
+ *	map.put("red", 111);
+ *	map["red"] = 111;
+ * @endcode
+ *
+ * To get a value, several alternative exists using default values or
+ * options:
+ * @code
+ *	int x = map.get("red", -1);
+ *	Option<int> y = map.get("red");
+ *	int z = map["red"];
+ * @endcode
+ * In the last form, a KeyException is raised if there is no value for the key.
+ */
 
 }	// elm
 

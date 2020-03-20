@@ -32,7 +32,7 @@ class BufferedOutStream: public OutStream {
 public:
 	static const int default_size = 4096;
 
-	BufferedOutStream(OutStream& output = cout.stream(), size_t size = default_size);
+	BufferedOutStream(OutStream& output, size_t size = default_size);
 	BufferedOutStream(OutStream *output, bool close = false, size_t size = default_size);
 	~BufferedOutStream() override;
 

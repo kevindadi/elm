@@ -21,7 +21,8 @@
 #ifndef ELM_SYS_SYSTEM_EXCEPTION_H
 #define ELM_SYS_SYSTEM_EXCEPTION_H
 
-#include <elm/utility.h>
+#include <elm/string/String.h>
+#include <elm/util/Exception.h>
 
 namespace elm { namespace sys {
 
@@ -44,16 +45,11 @@ private:
 public:
 	SystemException(error_t err, String msg);
 	SystemException(int code, String header);
-	inline error_t error(void) const;
+	inline error_t error(void) const { return err; }
 
 	// Exception overload
-	virtual String message(void);
+	String message() override;
 };
-
-// Inlines
-inline SystemException::error_t SystemException::error(void) const {
-	return err;
-}
 
 } } // elm::sys
 

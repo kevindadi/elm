@@ -22,7 +22,7 @@
 #ifndef ELM_ALLOC_DEFAULTALLOCATOR_H_
 #define ELM_ALLOC_DEFAULTALLOCATOR_H_
 
-#include <new>
+//#include <new>
 #include <elm/types.h>
 #include <elm/util/Exception.h>
 

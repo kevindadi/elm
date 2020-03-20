@@ -21,7 +21,6 @@
 #ifndef ELM_IO_FILE_OUTPUT_H_
 #define ELM_IO_FILE_OUTPUT_H_
 
-#include <elm/io/BufferedOutStream.h>
 #include <elm/io/Output.h>
 #include <elm/sys/Path.h>
 
@@ -29,14 +28,14 @@ namespace elm { namespace io {
 
 class FileOutput: public Output {
 public:
-	FileOutput(const char *path, int buf_size = BufferedOutStream::default_size);
-	FileOutput(cstring path, int buf_size = BufferedOutStream::default_size);
-	FileOutput(string path, int buf_size = BufferedOutStream::default_size);
-	FileOutput(sys::Path path, int buf_size = BufferedOutStream::default_size);
+	FileOutput(const char *path, bool append = false);
+	FileOutput(cstring path, bool append = false);
+	FileOutput(string path, bool append = false);
+	FileOutput(sys::Path path, bool append = false);
+	FileOutput(FileOutput&& fo);
 	~FileOutput(void);
 private:
 	OutStream *_out;
-	BufferedOutStream _buf;
 };
 
 } }		// elm::io

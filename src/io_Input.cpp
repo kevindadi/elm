@@ -737,49 +737,54 @@ void Input::swallowBlank(void) {
 /**
  * Build an input by opening the given file path.
  * @param path					Path to the file to open.
- * @param buf_size				Buffer size (optional).
  * @throw sys::SystemException	If the file cannot be opened.
  */
-FileInput::FileInput(string path, int buf_size)
-:	FileInput(sys::Path(path), buf_size)
+FileInput::FileInput(string path): FileInput(sys::Path(path))
 { }
 
  /**
   * Build an input by opening the given file path.
   * @param path					Path to the file to open.
-  * @param buf_size				Buffer size (optional).
   * @throw sys::SystemException	If the file cannot be opened.
   */
-FileInput::FileInput(const char *path, int buf_size)
-:	FileInput(sys::Path(path), buf_size)
+FileInput::FileInput(const char *path):	FileInput(sys::Path(path))
 { }
 
 /**
  * Build an input by opening the given file path.
  * @param path					Path to the file to open.
- * @param buf_size				Buffer size (optional).
  * @throw sys::SystemException	If the file cannot be opened.
  */
-FileInput::FileInput(cstring path, int buf_size)
-:	FileInput(sys::Path(path), buf_size)
+FileInput::FileInput(cstring path):	FileInput(sys::Path(path))
 { }
 
 
  /**
   * Build an input by opening the given file path.
   * @param path					Path to the file to open.
-  * @param buf_size				Buffer size (optional).
   * @throw sys::SystemException	If the file cannot be opened.
   */
-FileInput::FileInput(sys::Path path, int buf_size)
-:	_in(path.read()),
-	_buf(*_in, buf_size)
-{ setStream(_buf); }
+FileInput::FileInput(sys::Path path) : _in(path.read()) {
+	setStream(*_in);
+}
+
+
+/**
+ * Transfer an existing file input. After this operation, the argument input
+ * stream is no more usable.
+ * @param fi	File input to transfer.
+ */
+FileInput::FileInput(FileInput&& fi): _in(fi._in) {
+	fi._in = nullptr;
+	setStream(*_in);
+}
+
 
 /**
  */
 FileInput::~FileInput(void) {
-	delete _in;
+	if(_in != nullptr)
+		delete _in;
 }
 
 } // io
