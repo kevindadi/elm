@@ -21,7 +21,6 @@
 #ifndef ELM_IO_FILEINPUT_H_
 #define ELM_IO_FILEINPUT_H_
 
-#include <elm/io/BufferedInStream.h>
 #include <elm/io/Input.h>
 #include <elm/sys/Path.h>
 

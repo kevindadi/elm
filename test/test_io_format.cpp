@@ -16,6 +16,7 @@
 #include <elm/checksum/Fletcher.h>
 #include <elm/io/InFileStream.h>
 #include <elm/sys/System.h>
+#include <elm/io/BufferedInStream.h>
 
 using namespace elm;
 using namespace elm::io;
@@ -346,6 +347,16 @@ TEST_BEGIN(io_format)
 			CHECK(!in.failed());
 			CHECK(in.ended());
 		}
+	}
+
+	// format wdth test
+	{
+		StringBuffer buf;
+		buf << io::fmt(111).width(10);
+		CHECK_EQUAL(buf.toString().length(), 10);
+		buf.reset();
+		buf << io::fmt(0.111).width(10);
+		CHECK_EQUAL(buf.toString().length(), 10);
 	}
 
 TEST_END

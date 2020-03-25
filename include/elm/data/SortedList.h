@@ -80,6 +80,7 @@ public:
 
 	// MutableCollection concept
 	inline void clear(void) { list.clear(); }
+	inline void copy(const SortedList<T>& l) { list.copy(l.list); }
 
 	void add(const T &value) {
 		for(typename list_t::PrecIter current(list); current(); current++)
@@ -111,6 +112,7 @@ public:
 	}
 	inline Iter find(const T& item) const { return find(item, begin()); }
 	inline T& at(const Iter& i) { return list.at(i); }
+	inline Iter nth(int n) const { Iter i(*this); while(n != 0 && i()) { n--; i++; }; return i; }
 
 	// operators
 	inline SortedList<T>& operator=(const SortedList<T, C>& sl) { list.copy(sl.list); return *this; }

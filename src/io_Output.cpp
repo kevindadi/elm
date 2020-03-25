@@ -508,20 +508,26 @@ void Output::print(const FloatFormat& fmt) {
 	}
 
 	// perform the display
-	int pref = 0, suff = 0, spaces = max(0, fmt._width - s);
-	switch(fmt._align) {
-	case NONE:		strm->write(b, s); return;
-	case LEFT:		suff = spaces; break;
-	case RIGHT:		pref = spaces; break;
-	case CENTER:	pref = spaces/2; suff = spaces - pref; break;
+	if(fmt._width == 0) {
+		strm->write(b, s);
+		return;
 	}
-	char buf2[max(pref, suff)];
-	array::set(buf2, sizeof(buf2), char(fmt._pad));
-	if(pref)
-		strm->write(buf2, pref);
-	strm->write(b, s);
-	if(suff)
-		strm->write(buf2, suff);
+	else {
+		int pref = 0, suff = 0, spaces = max(0, fmt._width - s);
+		switch(fmt._align) {
+		case NONE:
+		case LEFT:		suff = spaces; break;
+		case RIGHT:		pref = spaces; break;
+		case CENTER:	pref = spaces/2; suff = spaces - pref; break;
+		}
+		char buf2[max(pref, suff)];
+		array::set(buf2, sizeof(buf2), char(fmt._pad));
+		if(pref)
+			strm->write(buf2, pref);
+		strm->write(b, s);
+		if(suff)
+			strm->write(buf2, suff);
+	}
 }
 
 
