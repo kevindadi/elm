@@ -26,7 +26,7 @@ namespace elm {
 
 /**
  * @class Option
- * This class is very handly to manage parameters or return value that may be
+ * This class is very handy to manage parameters or return value that may be
  * optional. This class records there is no value or there is a value and the
  * instance of the value.
  * @par
@@ -53,7 +53,7 @@ namespace elm {
 
 
 /**
- * 	@fn Option::Option(void);
+ * 	@fn Option::Option();
  * Build an empty optional value recording there is no value.
  */
 
@@ -65,7 +65,7 @@ namespace elm {
 
 
 /**
- * @fn Option::Option(const T& value);
+ * @fn Option::Option(t::in<T> value);
  * Build an optional value containing the given one.
  * @param value	Value to store.
  */
@@ -93,7 +93,7 @@ namespace elm {
  
 
 /**
- * @fn T Option<T>::value(void) const;
+ * @fn t::ret<T> Option<T>::value(void) const;
  * Get the value.
  * @return The stored value.
  * @warning It is an error to call this method if no value is available.
@@ -107,14 +107,15 @@ namespace elm {
 
 
 /**
- * @fn T Option::operator*(void) const;
+ * @fn t::ret<T> Option::operator*(void) const;
  * @return The stored value.
  */
 
 
 /**
- * @fn Option::operator T(void) const;
+ * @fn Option::operator t::ret<T>(void) const;
  * Convert to the stored value.
+ * @deprecated
  */
 
 
@@ -125,6 +126,25 @@ namespace elm {
  * @return		Current object.
  */
 
+
+/**
+ * @fn const Option<T>& if_one(const F& f) const;
+ * If the option contains a value, the function f is called with the value
+ * as parameter.
+ * @param f	Function (or object overloading parentheses) supporting argument
+ * 			of type T.
+ * @return	Current option to chain calls.
+ * @param F	Type of the function to call.
+ */
+
+
+/**
+ * @fn const Option<T>& if_else(const F& f);
+ * If the option does not contain any value, the function f is called.
+ * @param f	Function (or object overloading parentheses) without any argument.
+ * @return	Current option to chain calls.
+ * @param F	Type of the function to call.
+ */
 
 
 /**

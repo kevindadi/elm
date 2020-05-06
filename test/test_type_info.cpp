@@ -36,6 +36,30 @@ typedef enum enm_t {
 
 class MyClass { };
 
+class Big {
+public:
+	int t[1000];
+};
+
+template <class T>
+class Embed {
+public:
+	Embed(t::in<T> i) { t::put<T>(x, i); }
+	inline void set(t::in<T> y) { t::put<T>(x, y); }
+	inline void read(t::out<T> y) { t::put<T>(y, x); }
+	inline t::ret<T> get() const { return t::get<T>(x); }
+	inline t::mut<T> ref() { return t::ref<T>(x); }
+private:
+	t::var<T> x;
+};
+
+class Simple {
+public:
+	Simple(): x(0) { }
+	Simple(int _x): x(_x) { }
+	int x;
+};
+
 TEST_BEGIN(type_info)
 	CHECK(type_info<t::int8>::null == 0);
 	CHECK(type_info<t::int8>::is_signed == true);
@@ -111,52 +135,145 @@ TEST_BEGIN(type_info)
 	CHECK(type_info<enm_t>::is_enum == true);
 	CHECK(type_info<enm_t>::is_scalar == true);
 
-	CHECK(type_info<void *>::is_ptr == true);
+	CHECK_EQUAL(int(type_info<void *>::is_ptr), 1);
 	CHECK(type_info<void *>::is_enum == false);
 	CHECK(type_info<void *>::is_scalar == true);
 
-	// embed a class
+	// bool embedding
 	{
-		typedef Vector<int> v_t;
-		HashMap<int, v_t> h;
-		v_t v1;
-		v1.add(0);
-		h.put(0, v1);
-		Option<v_t> v = h.get(0);
-		CHECK(v.isOne());
-		CHECK_EQUAL(*v, v1);
-		v = h.get(1);
-		CHECK(!v);
+		CHECK_EQUAL(sizeof(t::var<bool>), sizeof(bool));
+		Embed<bool> e(false);
+		bool x;
+		e.set(true);
+		e.read(x);
+		CHECK_EQUAL(x, true);
+		CHECK_EQUAL(e.get(), true);
+		CHECK_EQUAL(e.ref(), true);
+		e.ref() = false;
+		CHECK_EQUAL(e.get(), false);
 	}
 
-	// parameter/result passing
+	// int embedding
 	{
-		cout << "T (in, out, val, ref)\n";
-		cout << "bool: "
-			 << type_info<type_info<bool>::in_t>::name() << ", "
-			 << type_info<type_info<bool>::out_t>::name() << ", "
-			 << type_info<type_info<bool>::val_t>::name() << ", "
-			 << type_info<type_info<bool>::ref_t>::name()<< io::endl;
-		cout << "int: "
-			 << type_info<type_info<int>::in_t>::name() << ", "
-			 << type_info<type_info<int>::out_t>::name() << ", "
-			 << type_info<type_info<int>::val_t>::name() << ", "
-			 << type_info<type_info<int>::ref_t>::name()<< io::endl;
-		cout << "float: "
-			 << type_info<type_info<float>::in_t>::name() << ", "
-			 << type_info<type_info<float>::out_t>::name() << ", "
-			 << type_info<type_info<float>::val_t>::name() << ", "
-			 << type_info<type_info<float>::ref_t>::name()<< io::endl;
-		cout << "int *: "
-			 << type_info<type_info<int *>::in_t>::name() << ", "
-			 << type_info<type_info<int *>::out_t>::name() << ", "
-			 << type_info<type_info<int *>::val_t>::name() << ", "
-			 << type_info<type_info<int *>::ref_t>::name()<< io::endl;
-		cout << "C: "
-			 << type_info<type_info<MyClass>::in_t>::name() << ", "
-			 << type_info<type_info<MyClass>::out_t>::name() << ", "
-			 << type_info<type_info<MyClass>::val_t>::name() << ", "
-			 << type_info<type_info<MyClass>::ref_t>::name() << io::endl;
+		CHECK_EQUAL(sizeof(t::var<int>), sizeof(int));
+		Embed<int> e(0);
+		int x;
+		e.set(666);
+		e.read(x);
+		CHECK_EQUAL(x, 666);
+		CHECK_EQUAL(e.get(), 666);
+		CHECK_EQUAL(e.ref(), 666);
+		e.ref() = 111;
+		CHECK_EQUAL(e.get(), 111);
+	}
+
+	// ptr embedding
+	{
+		CHECK_EQUAL(sizeof(t::var<char *>), sizeof(char *));
+		char c1, c2;
+		Embed<char *> e(nullptr);
+		char *x;
+		e.set(&c1);
+		e.read(x);
+		CHECK_EQUAL(x, &c1);
+		CHECK_EQUAL(e.get(), &c1);
+		CHECK_EQUAL(e.ref(), &c1);
+		e.ref() = &c2;
+		CHECK_EQUAL(e.get(), &c2);
+	}
+
+	{
+		CHECK_EQUAL(sizeof(t::var<char *>), sizeof(char *));
+		const char *c1 = "ok", *c2 = "ko";
+		Embed<const char *> e(nullptr);
+		const char *x;
+		e.set(c1);
+		e.read(x);
+		CHECK_EQUAL(x, c1);
+		CHECK_EQUAL(e.get(), c1);
+		CHECK_EQUAL(e.ref(), c1);
+		e.ref() = c2;
+		CHECK_EQUAL(e.get(), c2);
+
+	}
+
+	// cstring embedding
+	{
+		CHECK_EQUAL(sizeof(t::var<cstring>), sizeof(cstring));
+		cstring s1 = "a", s2 = "b";
+		Embed<cstring> e("");
+		cstring x;
+		e.set(s1);
+		e.read(x);
+		CHECK_EQUAL(x, s1);
+		CHECK_EQUAL(e.get(), s1);
+		CHECK_EQUAL(e.ref(), s1);
+		e.ref() = s2;
+		CHECK_EQUAL(e.get(), s2);
+	}
+
+	// string embedding
+	{
+		CHECK_EQUAL(sizeof(t::var<string>), sizeof(string));
+		string s1 = "a", s2 = "b";
+		Embed<string> e("");
+		e.set(s1);
+		cerr << &e.get() << " == " << s1 << io::endl;
+		CHECK_EQUAL(e.get(), s1);
+
+		string x;
+		e.read(x);
+		CHECK_EQUAL(x, s1);
+		CHECK_EQUAL(e.ref(), s1);
+		e.ref() = s2;
+		CHECK_EQUAL(e.get(), s2);
+	}
+
+	// reference embedding
+	{
+		CHECK_EQUAL(sizeof(t::var<int&>), sizeof(int *));
+		int i1 = 666, i2 = 111;
+		Embed<int&> e(i2);
+		string x;
+		e.set(i1);
+		CHECK_EQUAL(e.get(), i1);
+		int& r = e.get();
+		CHECK_EQUAL(r, i1);
+		CHECK_EQUAL(&r, &i1);
+		e.set(i2);
+		CHECK_EQUAL(e.get(), i2);
+		CHECK_EQUAL(&e.get(), &i2);
+	}
+
+	// reference embedding
+	{
+		CHECK_EQUAL(sizeof(t::var<const int&>), sizeof(const int *));
+		const int i1 = 666, i2 = 111;
+		Embed<const int&> e(i2);
+		string x;
+		e.set(i1);
+		CHECK_EQUAL(e.get(), i1);
+		const int& r = e.get();
+		CHECK_EQUAL(r, i1);
+		CHECK_EQUAL(&r, &i1);
+		e.set(i2);
+		CHECK_EQUAL(e.get(), i2);
+		CHECK_EQUAL(&e.get(), &i2);
+	}
+
+	// embed simple class
+	{
+		CHECK_EQUAL(sizeof(t::var<Simple>), sizeof(Simple));
+		Embed<Simple> e(Simple(666));
+		CHECK_EQUAL(e.get().x, 666);
+		const Simple *p = &e.get();
+		Simple *q = &e.ref();
+		CHECK_EQUAL(p, const_cast<const Simple *>(q));
+		e.ref().x = 111;
+		CHECK_EQUAL(e.get().x, 111);
+		Simple s;
+		e.read(s);
+		CHECK_EQUAL(s.x, 111);
 	}
 
 TEST_END

@@ -77,8 +77,9 @@ private:
 template <class T>
 inline void TestCase::check_equal(CString file, int line, CString text,
 const T& result, const T& reference) {
-	check(file, line, text, result == reference);
-	if(result != reference)
+	bool test = result == reference;
+	check(file, line, text, test);
+	if(!test)
 		cout << '\t' << result << " != " << reference << "\n";
 }
 

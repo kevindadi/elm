@@ -50,59 +50,27 @@ typedef struct default_t {
 	enum { is_void = 0 };
 } default_t;
 
-// transient information
-template <class T>
-struct big_transient_t {
-	typedef T *transient_t;
-	static inline T *keep(T& v) { return &v; }
-	static inline T& give(T *v) { return *v; }
-};
 
-template <class T>
-struct little_transient_t {
-	typedef T transient_t;
-	static inline T keep(T v) { return v; }
-	static inline T give(transient_t v) { return v; }
-};
-
-
-// asis_t info
-template <class T>
-struct asis_t {
-	typedef T in_t;
-	typedef T& out_t;
-	typedef T val_t;
-	typedef T& ref_t;
-
-	typedef T embed_t;
-	static inline void put(embed_t& l, const T& v) { l = v; }
-	static inline const T& get(const embed_t& v) { return v;}
-};
-
-// class info
-template <class T> class class_t: public default_t, public asis_t<T>, big_transient_t<T> {
+// generic class
+template <class T> class type_info: public default_t {
 public:
 	enum { is_class = 1 };
 	enum { is_deep = 1 };
 	enum { is_virtual = 1 };
-	static cstring name(void) { return "class"; };
-
-	typedef const T& in_t;
-	typedef const T& val_t;
-};
-
-// RTTI type
-template <class T> class rtti_t: public class_t<T> {
-public:
-	static cstring name(void) { return T::__type_name(); }
-};
-
-// generic class
-template <class T> class type_info: public class_t<T> {
-public:
 	enum { is_enum = intern::is_scalar<T>::_ };
 	enum { is_scalar = intern::is_scalar<T>::_ };
 	static cstring name(void) { return ""; }
+
+	typedef T var_t;
+	typedef var_t embed_t;
+	static inline T& ref(T& v) { return v; }
+	static inline const T& get(const T& v) { return v; }
+	static inline void put(T& x, const T& v) { x = v; }
+
+	typedef const T& in_t;
+	typedef T& out_t;
+	typedef const T& ret_t;
+	typedef T& mut_t;
 };
 
 
@@ -113,31 +81,34 @@ typedef struct type_t: public default_t {
 } type_t;
 
 // scalar type
-typedef struct scalar_t: public default_t {
-	enum { is_type = 1 };
+template <class T>
+struct scalar_t: public default_t {
+	enum { is_enum = 0 };
 	enum { is_scalar = 1 };
 	enum { is_deep = 0 };
-} scalar_t;
 
-// pointer type
-typedef struct ptr_t: public scalar_t {
-	enum { is_ptr = 1 };
-	enum { is_scalar = 1 };
-} ptr_t;
+	typedef T var_t;
+	typedef var_t embed_t;
+	static inline T& ref(T& v) { return v; }
+	static inline T get(const T& v) { return v; }
+	static inline void put(T& x, T v) { x = v; }
 
-// reference type
-typedef struct ref_t: public scalar_t {
-	enum { is_ref = 1 };
-} ref_t;
+	typedef T in_t;
+	typedef T& out_t;
+	typedef T ret_t;
+	typedef T& mut_t;
+};
+
 
 // enum type
-typedef struct enum_t: public scalar_t {
+template <class T>
+struct enum_t: public scalar_t<T> {
 	enum { is_enum = 1 };
-} enum_t;
+};
 
 
 // bool specialization
-template <> struct type_info<bool>: public scalar_t, public asis_t<bool>, little_transient_t<bool> {
+template <> struct type_info<bool>: public scalar_t<bool> {
 	static const bool min = false;
 	static const bool max = true;
 	static const bool null = false;
@@ -146,36 +117,27 @@ template <> struct type_info<bool>: public scalar_t, public asis_t<bool>, little
 
 
 // void specialization
-template <> struct type_info<void> {
+template <> struct type_info<void>: public default_t {
 	enum { is_void = 1 };
 };
 
 
 // integer specialization
 template <class I>
-struct signed_info: public scalar_t, public asis_t<I>, little_transient_t<I> {
+struct signed_info: public scalar_t<I> {
 	static const int size = sizeof(I) * 8;
 	static const bool is_signed = true;
 	static const I min = I(-1) << (size - 1);
 	static const I max = ~min;
 	static const I null = 0;
 	static const int shift = 0;
-
-	typedef I in_t;
-	typedef I out_t;
-	typedef I val_t;
-	typedef I ref_t;
-
-	typedef I embed_t;
-	static inline void put(I& l, I v) { l = v; }
-	static inline I get(I v) { return v;}
 };
 template <class I> const I signed_info<I>::null;
 template <class I> const I signed_info<I>::min;
 template <class I> const I signed_info<I>::max;
 
 template <class I>
-struct unsigned_info: public scalar_t, public asis_t<I>, little_transient_t<I> {
+struct unsigned_info: public scalar_t<I> {
 	static const int size = sizeof(I) * 8;
 	static const bool is_signed = false;
 	static const I min = 0;
@@ -199,19 +161,19 @@ template <> struct type_info<t::uint64>: public unsigned_info<t::uint64> { stati
 
 	
 // float specialization
-template <> struct type_info<float>: public scalar_t, public asis_t<float>, little_transient_t<float> {
+template <> struct type_info<float>: public scalar_t<float> {
 	static const float min;
 	static const float max;
 	static const float null;
 	static cstring name(void);
 };
-template <> struct type_info<double>: public scalar_t, public asis_t<double>, little_transient_t<double> {
+template <> struct type_info<double>: public scalar_t<double> {
 	static const double min;
 	static const double max;
 	static const double null;
 	static cstring name(void);
 };
-template <> struct type_info<long double>: public scalar_t, public asis_t<long double>, little_transient_t<long double> {
+template <> struct type_info<long double>: public scalar_t<long double> {
 	static const long double min;
 	static const long double max;
 	static const long double null;
@@ -220,31 +182,55 @@ template <> struct type_info<long double>: public scalar_t, public asis_t<long d
 
 
 // String specialization
-template <> struct type_info<cstring>: public type_t, public asis_t<cstring>, little_transient_t<cstring> {
+template <> struct type_info<cstring>: public default_t {
 	static const cstring null;
 	static cstring name(void);
+
+	typedef cstring var_t;
+	typedef var_t embed_t;
+	static inline cstring& ref(cstring& v) { return v; }
+	static inline cstring get(const cstring& v) { return v; }
+	static inline void put(cstring& x, cstring v) { x = v; }
+
+	typedef cstring in_t;
+	typedef cstring& out_t;
+	typedef cstring ret_t;
+	typedef cstring& mut_t;
 };
 
-template <> struct type_info<string>: public type_t, public asis_t<string>, little_transient_t<string> {
+template <> struct type_info<string>: public default_t {
 	static const string null;
 	static cstring name(void);
 	enum { is_virtual = 1 };
+
+	typedef string var_t;
+	typedef var_t embed_t;
+	typedef const string& in_t;
+	typedef string& out_t;
+	typedef const string& ret_t;
+	typedef string& mut_t;
+
+	static inline mut_t ref(var_t& v) { return v; }
+	static inline ret_t get(const var_t& v) { return v; }
+	static inline void put(var_t& x, in_t v) { x = v; }
 };
 
 
 // pointer specialization
-template <class T> struct type_info<const T *>: public ptr_t, public asis_t<const T *>, little_transient_t<const T *> {
+template <class T> struct type_info<const T *>: public scalar_t<const T *> {
 	typedef T of;
 	enum { is_const = 1 };
+	enum { is_ptr = 1 };
 	static const T * const null;
 	static string name(void) { return "const " + type_info<T>::name() + " *"; }
 };
 template <class T> const T *const type_info<const T *>::null = nullptr;
 
 
-template <class T> struct type_info<T *>: public ptr_t, public asis_t<T *>, little_transient_t<T *> {
+template <class T> struct type_info<T *>: public scalar_t<T *> {
 	typedef T of;
 	enum { is_const = 0 };
+	enum { is_ptr = 1 };
 	static T * const null;
 	static string name(void) { return type_info<T>::name() + " *"; }
 };
@@ -252,33 +238,54 @@ template <class T> T *const type_info<T *>::null = nullptr;
 
 
 // reference specialization
-template <class T> struct type_info<const T&>: public ref_t, big_transient_t<const T> {
+template <class T>
+class ref_t: public default_t {
+public:
+	struct delegate {
+	public:
+		inline delegate(T *&ptr): p(ptr) { }
+		inline operator T&() const { return *p; }
+		inline delegate& operator=(T &r) { p = &r; return *this; }
+	private:
+		T *& p;
+	};
+
+	typedef T *var_t;
+	typedef var_t embed_t;
+	static inline delegate ref(T *&v) { return delegate(v); }
+	static inline T& get(T *v) { return *v; }
+	static inline void put(T *& x, T& v) { x = &v; }
+
+	typedef T& in_t;
+	typedef T& out_t;
+	typedef T& ret_t;
+	typedef delegate mut_t;
+};
+
+template <class T> struct type_info<const T&>: public ref_t<const T> {
 	typedef T of;
 	enum { is_const = 1 };
 	static string name(void) { return "const " + type_info<T>::name() + "& "; }
-	typedef const T *embed_t, embed;
-	typedef const T& in_t;
-	typedef const T& out_t;
-	typedef const T& val_t;
-	typedef const T& ref_t;
-	static inline void put(embed_t& l, const T& v) { l = &v; }
-	static inline const T& get(embed_t l) { return *l; }
 };
 
-template <class T> struct type_info<T&>: public ref_t, big_transient_t<const T> {
+template <class T> struct type_info<T&>: public ref_t<T> {
 	typedef T of;
 	enum { is_const = 0 };
 	static string name(void) { return type_info<T>::name() + "& "; }
-	typedef T *embed_t, embed;
-	typedef T& in_t, in;
-	typedef T& out_t, out;
-	typedef T& val_t;
-	typedef T& ref_t;
-	static inline void put(embed_t& l, T& v) { l = &v; }
-	static inline T& get(embed_t l) { return *l; }
 };
 
 template <class T> struct ti: type_info<T> { };
+
+namespace t {
+	template <class T> using var = typename type_info<T>::var_t;
+	template <class T> using in = typename type_info<T>::in_t;
+	template <class T> using out = typename type_info<T>::out_t;
+	template <class T> using ret = typename type_info<T>::ret_t;
+	template <class T> using mut = typename type_info<T>::mut_t;
+	template <class T> inline void put(var<T>& x, in<T> v) { type_info<T>::put(x, v); }
+	template <class T> inline ret<T> get(const var<T>& v) { return type_info<T>::get(v); }
+	template <class T> inline mut<T> ref(var<T>& x) { return type_info<T>::ref(x); }
+} // t
 
 } // elm
 

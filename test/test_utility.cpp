@@ -54,7 +54,7 @@ TEST_BEGIN(utility)
 		CHECK(set);
 
 		set = false;
-		none.if_else([&set](int x) { set = true; });
+		none.if_else([&set]() { set = true; });
 		CHECK(set);
 	}
 	

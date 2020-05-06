@@ -51,7 +51,7 @@
 
 #define ELM_ENUM(type) \
 	namespace elm { \
-		template <> struct type_info<type>: public enum_t { \
+		template <> struct type_info<type>: public enum_t<type> { \
 			static elm::rtti::Enum::Value __vals[]; \
 			static inline CString name(void) { return "<enum " #type ">"; } \
 			static inline elm::rtti::Enum::Value *values(void) { return __vals; } \
