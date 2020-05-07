@@ -86,6 +86,7 @@ TEST_BEGIN(hashtable)
 			m[1];
 			cm[1];
 			m[1] = 1;
+			m.fetch(1);
 		}
 	}
 
@@ -221,7 +222,7 @@ TEST_BEGIN(hashtable)
 		bool failed = false;
 		for(int i = 0; i < 100; i++) {
 			string k = _ << i << (-i);
-			Option<int> o = map2.get(k);
+			auto o = map2.get(k);
 			if(!o || *o != i) {
 				failed = true;
 				break;

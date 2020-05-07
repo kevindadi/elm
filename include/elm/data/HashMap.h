@@ -47,6 +47,9 @@ public:
 	inline void clear(void) { _tab.clear(); }
 	inline void add(const K& key, const T& val) { _tab.add(pair(key, val)); }
 
+	inline T& fetch(const K& k)
+		{ auto *n = _tab.get(key(k)); if(n != nullptr) return n->snd; return _tab.add(pair(k, T()))->snd; }
+
 	// Map concept
 	inline Option<T> get(const K& k) const
 		{ auto *r = _tab.get(key(k)); if(r) return some(r->snd); else return none; }

@@ -165,6 +165,15 @@ namespace elm {
  */
 
 /**
+ * @fn T& HashMap::fetch(const K& k);
+ * Get a reference to the data stored with the key k. If no data is already
+ * associated with key k, an entry and corresponding data are created
+ * and returns a reference to it.
+ * @param k		Key of looked data.
+ * @return		Reference to data associated with key.
+ */
+
+/**
  * @fn bool HashMap::isEmpty(void) const;
  * Test if the map is empty.
  * @return	True if the map is empty, false else.
