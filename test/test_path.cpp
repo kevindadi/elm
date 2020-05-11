@@ -91,10 +91,11 @@ TEST_BEGIN(path)
 	}
 
 	// read the directory content
+#	if 0
 	{
 		sys::Path p = ".";
 		for(auto c: p.readDir())
 			cerr << "DEBUG: " << c << io::endl;
 	}
-
+#	endif
 TEST_END

@@ -112,7 +112,10 @@ Path Path::relativeTo(Path base) const {
 		r = r / BACK_PATH;
 		base = base.parent();
 	}
-	return r / toString().substring(base.toString().length() + 1);
+	if(base == *this)
+		return r;
+	else
+		return r / toString().substring(base.toString().length() + 1);
 }
 
 
@@ -205,7 +208,7 @@ Path Path::append(Path path) const {
 		return *this;
 	else {
 		StringBuffer buffer;
-		buffer << buf << SEPARATOR << path.buf;
+		buffer	<< buf << SEPARATOR << path.buf;
 		return Path(buffer.toString());
 	}
 }

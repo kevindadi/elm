@@ -29,7 +29,7 @@ target_link_libraries(myplugin elm)
 message(STATUS ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(TEST_SOURCES
-	"test.cc"
+	"test.cpp"
 	"test_alloc.cpp"
 	"test_ansi.cpp"
 	"test_array.cpp"
