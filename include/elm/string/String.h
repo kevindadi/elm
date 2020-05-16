@@ -88,7 +88,8 @@ public:
 	inline operator bool(void) const { return !isEmpty(); };
 
 	inline CString toCString(void) const { if(buf[off + len] != '\0') toc(); return chars(); };
-	inline const char *operator&(void) const { return toCString().chars(); };
+	inline const char *asNullTerminated() const { return toCString().chars(); };
+	inline const char *asSysString() const { return asNullTerminated(); }
 
 	inline char charAt(int index) const { return buf[index + off]; };
 	inline char operator[](int index) const { return charAt(index); };

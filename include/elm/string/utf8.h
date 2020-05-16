@@ -41,9 +41,9 @@ public:
 	inline Iter(const char *str, elm::t::size size)
 		: p(str), q(p + size), c(0) { parse(); }
 	inline Iter(cstring str)
-		: p(&str), q(p + str.length()), c(0) { parse(); }
+		: p(str.chars()), q(p + str.length()), c(0) { parse(); }
 	inline Iter(string str)
-		: p(&str), q(p + str.length()), c(0) { parse(); }
+		: p(str.toCString().chars()), q(p + str.length()), c(0) { parse(); }
 
 	inline bool ended(void) const { return !c; }
 	inline const char_t& item(void) const { return c; }

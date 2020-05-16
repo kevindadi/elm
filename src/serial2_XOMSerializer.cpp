@@ -133,7 +133,7 @@ void XOMElementSerializer::beginObject(const rtti::Type& clazz, const void *obje
 		} else {	
 			string name = clazz.name();
 			cout << "LA CLASSE C EST: " << name << "\n";
-			xom::Attribute *attr  = new xom::Attribute("class", &name);
+			xom::Attribute *attr  = new xom::Attribute("class", name.toCString().chars());
 			ctx.elem->addAttribute(attr);
 		}	
 	

@@ -107,7 +107,7 @@ LockPtr<FileItem> FileItem::get(Path path) {
 	
 	 // Look at stat
 	 struct stat st;
-	 if(stat(&path.toString(), &st) < 0) {
+	 if(stat(path.asSysString(), &st) < 0) {
 	 	if(errno == ENOENT || errno == ENOTDIR)
 	 		return nullptr;
 	 	else
@@ -182,7 +182,7 @@ Path& FileItem::path(void) {
  * @return True if it is readable.
  */
 bool FileItem::isReadable() {
-	if(!access(&_path.toString(), R_OK))
+	if(!access(_path.asSysString(), R_OK))
 		return true;
 	else if(errno == EACCES)
 		return false;
@@ -196,7 +196,7 @@ bool FileItem::isReadable() {
  * @return True if it is readable.
  */
 bool FileItem::isWritable() {
-	if(!access(&_path.toString(), W_OK))
+	if(!access(_path.asSysString(), W_OK))
 		return true;
 	else if(errno == EACCES)
 		return false;
@@ -210,7 +210,7 @@ bool FileItem::isWritable() {
  * @return True if is deletable, false else.
  */
 bool FileItem::isDeletable() {
-	if(!access(&_path.parent().toString(), W_OK))
+	if(!access(_path.parent().asSysString(), W_OK))
 		return true;
 	else if(errno == EACCES)
 		return false;

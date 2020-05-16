@@ -119,13 +119,15 @@ public:
 	// OneIterator iter
 	class OneIterator: public Iter {
 	public:
-		inline OneIterator(const BitVector& bit_vector): Iter(bit_vector) { i = -1; next(); }
-		inline int item(void) const  { return i; }
-		inline void next(void) { do i++; while(i < bvec.size() && !bvec.bit(i)); }
+		inline OneIterator(const BitVector& bit_vector, int ii = 0): Iter(bit_vector) { i = ii - 1; next(); }
+		inline int item() const  { return i; }
+		inline void next() { do i++; while(i < bvec.size() && !bvec.bit(i)); }
 		inline int operator*() const { return item(); }
 		inline Iter& operator++() { next(); return *this; }
 		inline Iter operator++(int) { Iter o = *this; next(); return o; }
 	};
+	inline OneIterator begin() const { return OneIterator(*this); }
+	inline OneIterator end() const { return OneIterator(*this, size()); }
 
 	// ZeroIterator iter
 	class ZeroIterator: public Iter {

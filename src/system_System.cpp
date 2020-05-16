@@ -277,7 +277,7 @@ unsigned int System::random(unsigned int top) {
 io::OutStream *System::createFile(const Path& path) {
 
 #if defined(__unix) || defined(__APPLE__)
-	int fd = ::open(&path.toString(), O_CREAT | O_TRUNC | O_WRONLY, 0777);
+	int fd = ::open(path.asSysString(), O_CREAT | O_TRUNC | O_WRONLY, 0777);
 	if(fd == -1)
 		throw SystemException(errno, "file creation");
 	return new io::BufferedOutStream(new SystemOutStream(fd), true);
@@ -310,7 +310,7 @@ io::OutStream *System::createFile(const Path& path) {
 io::InStream *System::readFile(const Path& path) {
 
 #	if defined(__unix) || defined(__APPLE__)
-		int fd = ::open(&path.toString(), O_RDONLY);
+		int fd = ::open(path.asSysString(), O_RDONLY);
 		if(fd == -1)
 			throw SystemException(errno, "file reading");
 		return new io::BufferedInStream(new SystemInStream(fd), true);
@@ -344,7 +344,7 @@ io::InStream *System::readFile(const Path& path) {
  */
 io::OutStream *System::appendFile(const Path& path) {
 #if defined(__unix) || defined(__APPLE__)
-	int fd = ::open(&path.toString(), O_APPEND | O_CREAT | O_WRONLY, 0777);
+	int fd = ::open(path.asSysString(), O_APPEND | O_CREAT | O_WRONLY, 0777);
 	if(fd == -1)
 		throw SystemException(errno, "file appending");
 	return new io::BufferedOutStream(new SystemOutStream(fd), true);
@@ -465,7 +465,7 @@ io::RandomAccessStream *System::openRandomFile(
 		const sys::Path& path,
 		access_t access )
 {
-	int fd = ::open(&path.toString(), makeFlags(access));
+	int fd = ::open(path.asSysString(), makeFlags(access));
 	if(fd < 0)
 		throw SystemException(errno, _ << "cannot open \"" << path << "\"");
 	else
@@ -490,7 +490,7 @@ io::RandomAccessStream *System::createRandomFile(
 		access_t access)
 {
 	ASSERTP(access != READ, "file creation requires at least a write mode");
-	int fd = ::open(&path.toString(), makeFlags(access) | O_CREAT | O_TRUNC, 0666);
+	int fd = ::open(path.asSysString(), makeFlags(access) | O_CREAT | O_TRUNC, 0666);
 	if(fd < 0)
 		throw SystemException(errno, _ << "cannot create \"" << path << "\"");
 	else
@@ -596,7 +596,7 @@ string System::getPluginFileName(const string& name) {
  * @return		Value of the environment variable or an empty string.
  */
 cstring System::getEnv(cstring key) {
-	char *res = getenv(&key);
+	char *res = getenv(key.chars());
 	if(!res)
 		return "";
 	else
@@ -609,7 +609,7 @@ cstring System::getEnv(cstring key) {
  * @return		True if the environment variable is defined, false else.
  */
 bool System::hasEnv(cstring key) {
-	return getenv(&key);
+	return getenv(key.chars());
 }
 
 /**
@@ -622,7 +622,7 @@ void System::makeDir(const sys::Path& path) {
 		if(!CreateDirectory(&path.toString().toCString(), NULL))
 			throw SystemException(0, _ << "cannot create " << path << ": " << win::getLastErrorMessage()));
 #	else
-		int r = mkdir(&path.toString().toCString(), 0777);
+		int r = mkdir(path.asSysString(), 0777);
 		if(r)
 			throw SystemException(r, _ << "cannot create " << path << ": " << strerror(errno));
 #	endif
@@ -637,7 +637,7 @@ void System::removeDir(const sys::Path& path) {
 		if(!RemoveDirectory(&path.toString().toCString(), NULL))
 			throw SystemException(0, _ << "cannot remove " << path << ": " << win::getLastErrorMessage()));
 #	else
-		int r = rmdir(&path.toString().toCString());
+		int r = rmdir(path.asSysString());
 		if(r)
 			throw SystemException(r, _ << "cannot remove " << path << ": " << strerror(errno));
 #	endif
@@ -652,7 +652,7 @@ void System::removeFile(const Path& path) {
 		if(!DeleteFile(&path.toString().toCString()))
 			throw SystemException(0, _ << "cannot remove " << path << ": " << win::getLastErrorMessage()));
 #	else
-		int r = ::remove(&path.toString().toCString());
+		int r = ::remove(path.asSysString());
 		if(r)
 			throw SystemException(r, _ << "cannot remove " << path << ": " << strerror(errno));
 #	endif
@@ -731,7 +731,7 @@ sys::Path System::getTempFile(void) {
 #	else
 		string tmp = (Path::temp() / "elf,XXXXXX").toString();
 		char t[tmp.length() + 1];
-		strncpy(t, &tmp, tmp.length());
+		strncpy(t, tmp.toCString().chars(), tmp.length());
 		t[tmp.length()] = '\0';
 		int fd = mkstemp(t);
 		close(fd);
@@ -765,7 +765,7 @@ sys::Path System::getTempDir(void) {
 #	else
 		string tmp = (Path::temp() / "elf,XXXXXX").toString();
 		char t[tmp.length() + 1];
-		strncpy(t, &tmp, tmp.length());
+		strncpy(t, tmp.toCString().chars(), tmp.length());
 		t[tmp.length()] = '\0';
 		return Path(mkdtemp(t));
 	#	endif

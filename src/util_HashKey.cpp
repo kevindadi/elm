@@ -161,6 +161,18 @@ bool hash_equals(const void *p1, const void *p2, int size) {
 }
 
 
+///
+t::hash HashKey<sys::Path>::hash(const sys::Path& key) {
+	return elm::hash(key.toString());
+}
+
+
+///
+bool HashKey<sys::Path>::equals(const sys::Path& key1, const sys::Path& key2) {
+	return key1 == key2;
+}
+
+
 /**
  * @fn t::hash hash(const T& x);
  * Hash the given value according an existing HashKey implementation for

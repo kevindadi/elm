@@ -112,7 +112,7 @@ string VarExpander::expand(string s) {
 	StringBuffer b;
 	OutStream *old = _out;
 	_out = &b.stream();
-	write(&s, s.length());
+	write(s.toCString().chars(), s.length());
 	_out = old;
 	b.flush();
 	return b.toString();
@@ -176,7 +176,7 @@ int VarExpander::write(char byte) {
 					map.put(n, x);
 			}
 			state = COPY;
-			int r = _out->write(&x, x.length());
+			int r = _out->write(x.toCString().chars(), x.length());
 			if(r != x.length())
 				return -1;
 			else
@@ -225,7 +225,7 @@ string VarExpander::resolve(string name, bool& record) {
 ///
 string OSExpander::resolve(string name, bool& record) {
 	record = false;
-	return sys::System::getEnv(&name);
+	return sys::System::getEnv(name.toCString().chars());
 }
 
 /**

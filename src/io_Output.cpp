@@ -322,7 +322,7 @@ void Output::format(CString fmt, VarArg& args) {
 	char buf[256];
 
 	// Allocate remaining memory
-	int size = vsnprintf(buf, sizeof(buf), &fmt, args.args());
+	int size = vsnprintf(buf, sizeof(buf), fmt.chars(), args.args());
 
 	// It's ok
 	if(size <= (int)sizeof(buf))
@@ -331,7 +331,7 @@ void Output::format(CString fmt, VarArg& args) {
 	// Else use a bigger one
 	else {
 		char newbuf[size + 1];
-		size = vsnprintf(newbuf, sizeof(newbuf), &fmt, args.args());
+		size = vsnprintf(newbuf, sizeof(newbuf), fmt.chars(), args.args());
 		ASSERT(size <= (int)sizeof(newbuf));
 		strm->write(newbuf, size);
 	}

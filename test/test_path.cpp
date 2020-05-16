@@ -19,8 +19,9 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <elm/hash.h>
 #include <elm/sys/Path.h>
-#include "../include/elm/test.h"
+#include <elm/test.h>
 
 using namespace elm;
 
@@ -90,6 +91,13 @@ TEST_BEGIN(path)
 		}
 	}
 
+	// test hashing
+	{
+		sys::Path p1 = "/home/ici/labas/ok.xml";
+		sys::Path p2 = "/home/ici/labas/ok.xml";
+		CHECK_EQUAL(hash(p1), hash(p2));
+	}
+
 	// read the directory content
 #	if 0
 	{
@@ -98,4 +106,6 @@ TEST_BEGIN(path)
 			cerr << "DEBUG: " << c << io::endl;
 	}
 #	endif
+
+
 TEST_END

@@ -50,9 +50,12 @@ public:
 	void perform(void);
 	inline bool isSuccessful(void) const { return errors == 0; }
 	inline bool hasFailed(void) const { return errors != 0; }
+	inline bool isFullPath() const { return full_path; }
+	inline void setFullPath(bool x) { full_path = x; }
 protected:
 	virtual void execute(void);
 	TestCase& __case;
+	bool full_path;
 };
 
 class TestSet: private Initializer<TestCase> {

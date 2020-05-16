@@ -139,6 +139,60 @@ TEST_BEGIN(bitvector)
 		CHECK(bv.bit(31));
 	}
 
+	// OneIterator test
+	{
+		int is[] = { 4, 6, 7, 15, 16, 17, 30, 31 };
+		BitVector v(32);
+		for(auto i: is)
+			v.set(i);
+
+		bool ok = true;
+		auto it = BitVector::OneIterator(v);
+		for(auto i: is) {
+			if(!it()) {
+				ok = false;
+				break;
+			}
+			if(*it != i) {
+				ok = false;
+				break;
+			}
+			//cout << *it << " == " << i << io::endl;
+			it++;
+		}
+		CHECK(ok);
+		CHECK(!it());
+
+		ok = true;
+		int i = 0;
+		for(auto x: v) {
+			if(i >= int(sizeof(is) / sizeof(int))) {
+				ok = false;
+				break;
+			}
+			//cout << x << " == " << is[i] << io::endl;
+			if(x != is[i]) {
+				ok = false;
+				break;
+			}
+			i++;
+		}
+		CHECK(ok);
+		CHECK_EQUAL(i, int(sizeof(is) / sizeof(int)));
+	}
+
+	// empty vector
+	{
+		BitVector v(32);
+		bool one = false;
+		int s = 0;
+		for(auto x: v) {
+			one = true;
+			s += x;
+		}
+		CHECK(!one);
+	}
+
 #ifdef EXPERIMENTAL
 	// left shift
 	{

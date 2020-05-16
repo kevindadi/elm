@@ -77,6 +77,7 @@ public:
 	static Path current(void);
 	static Path home(void);
 	static Path temp(void);
+	inline const char *asSysString() const { return buf.toCString().chars(); }
 
 	// path testing
 	bool exists(void) const;
@@ -104,7 +105,6 @@ public:
 	inline Path operator/(const Path& path) const { return append(path); }
 	inline operator const String& (void) const { return toString(); }
 	inline operator bool (void) const  { return buf; }
-	inline const char *operator&(void) const { return &buf; };
 
 	// Path iterator
 	class PathIter: public PreIterator<PathIter, string> {

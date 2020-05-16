@@ -66,7 +66,8 @@ private:
 	node_t *make(const T& data) {
 		int i = H::computeHash(data) % _size;
 		node_t *node = new(A::allocate(sizeof(node_t))) node_t(data);
-		node->next = _tab[i]; _tab[i] = node;
+		node->next = _tab[i];
+		_tab[i] = node;
 		return node;
 	}
 

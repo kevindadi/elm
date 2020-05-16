@@ -196,10 +196,10 @@ Document *XSLTransform::transformDocument(Document *in) {
 	int i = 0;
 	for(const auto ii: params.pairs()) {
 		aparams[i] = new char[ii.fst.length() + 1];
-		strcpy((char *)aparams[i], &ii.fst);
+		strcpy((char *)aparams[i], ii.fst.asSysString());
 		i++;
 		aparams[i] = new char[ii.snd.length() + 1];
-		strcpy((char *)aparams[i], &ii.snd);
+		strcpy((char *)aparams[i], ii.snd.asSysString());
 		i++;
 	}
 	aparams[params.count() * 2] = 0;

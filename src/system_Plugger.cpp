@@ -283,7 +283,7 @@ void *Plugger::link(sys::Path lib) {
 #	elif defined(WITH_LIBTOOL)
 		return lt_dlopen(&lib);
 #	else
-		return dlopen(&lib, RTLD_LAZY);
+		return dlopen(lib.toString().toCString().chars(), RTLD_LAZY);
 #	endif
 }
 
@@ -321,7 +321,7 @@ void *Plugger::lookSymbol(void *handle, cstring name) {
 #	elif defined(WITH_LIBTOOL)
 		return lt_dlsym((lt_dlhandle)handle, &name);
 #	else
-		return dlsym(handle, &name);
+		return dlsym(handle, name.chars());
 #	endif
 }
 
@@ -479,7 +479,7 @@ Plugin *Plugger::plugFile(sys::Path path) {
 	// new version: look for builder function
 	Plugin *plugin = 0;
 	string fun_name = _ << _hook << fun_suffix;
-	void *sym = lookSymbol(handle, &fun_name);
+	void *sym = lookSymbol(handle, fun_name.toCString());
 	if(sym) {
 		typedef Plugin *(*fun_t)(void);
 		fun_t fun = (fun_t)sym;
@@ -488,7 +488,7 @@ Plugin *Plugger::plugFile(sys::Path path) {
 
 	// old version: look for the static object
 	else {
-		void *sym = lookSymbol(handle, &_hook);
+		void *sym = lookSymbol(handle, _hook.chars());
 		if(sym)
 			plugin = static_cast<Plugin *>(sym);
 	}

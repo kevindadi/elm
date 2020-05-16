@@ -144,7 +144,13 @@ namespace elm {
  * Build a new tes case.
  * @param name	Name of the test case.
  */
-TestCase::TestCase(CString name): _name(name), tests(0), errors(0), __case(*this) {
+TestCase::TestCase(CString name):
+	_name(name),
+	tests(0),
+	errors(0),
+	__case(*this),
+	full_path(false)
+{
 	TestSet::def.record(this);
 }
 
@@ -169,7 +175,11 @@ void TestCase::prepare(void) {
  */
 void TestCase::test(CString file, int line, CString text) {
 	tests++;
-	cout << file << ':' << line << ": " << text << '\t';
+	if(full_path)
+		cout << file;
+	else
+		cout << sys::Path(file).namePart();
+	cout << ':' << line << ": " << text << '\t';
 }
 
 
@@ -287,6 +297,21 @@ void TestCase::perform(void) {
  */
 TestCase::~TestCase(void) {
 }
+
+
+/**
+ * @fn bool TestCase::isFullPath() const;
+ * Test if the source paths are fully displayed. Otherwise, only the name of
+ * the source is display.
+ * @return	True if the full path option is enabled, false else.
+ */
+
+
+/**
+ * @fn void TestCase::setFullPath(bool x);
+ * Set the full source option.
+ * @param x		True to enable full path display.
+ */
 
 
 /**

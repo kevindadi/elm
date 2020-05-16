@@ -54,7 +54,7 @@ public:
 	inline Option<T> get(const K& k) const
 		{ auto *r = _tab.get(key(k)); if(r) return some(r->snd); else return none; }
 	inline const T& get(const K& k, const T& def) const
-		{ auto r = _tab.get(key(k)); if(r) return r->snd; else return def; }
+		{ auto p = key(k); auto r = _tab.get(p); if(r) return r->snd; else return def; }
 	inline bool hasKey(const K& k) const { return _tab.hasKey(key(k)); }
 
 	inline Option<T> get_const(const K& k) const

@@ -26,10 +26,11 @@
 #include <elm/string.h>
 #include <elm/util/Option.h>
 #include <elm/util/Pair.h>
-#include "equiv.h"
+#include <elm/equiv.h>
 
 namespace elm {
 
+namespace sys { class Path; }
 namespace t { typedef t::intptr hash; }
 
 // Useful hash functions
@@ -84,7 +85,7 @@ public:
 
 template <> class HashKey<CString> {
 public:
-	static t::hash hash(CString key) { return hash_cstring(&key); }
+	static t::hash hash(CString key) { return hash_cstring(key.chars()); }
 	static inline bool equals(CString key1, CString key2) { return key1 == key2; }
 	inline t::hash computeHash(cstring key) const { return hash(key); }
 	inline bool isEqual(cstring key1, cstring key2) const { return equals(key1, key2); }
@@ -141,6 +142,14 @@ public:
 
 	inline elm::t::hash computeHash(const t& k) const { return H::computeHash(k.fst); }
 	inline bool isEqual(const t& k1, const t& k2) const { return H::isEqual(k1.fst, k2.fst); }
+};
+
+template <> class HashKey<sys::Path> {
+public:
+	static t::hash hash(const sys::Path& key);
+	static bool equals(const sys::Path& key1, const sys::Path& key2);
+	inline t::hash computeHash(const sys::Path& key) const { return hash(key); }
+	inline bool isEqual(const sys::Path& key1, const sys::Path& key2) const { return equals(key1, key2); }
 };
 
 template <class T> inline t::hash hash(const T& x) { return HashKey<T>::hash(x); }

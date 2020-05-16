@@ -71,7 +71,7 @@ OutFileStream::OutFileStream(const char *path)
  */
 #if defined(__unix) || defined(__APPLE__)
 OutFileStream::OutFileStream(const Path& path)
-: SystemOutStream(open(&path.toString(), O_CREAT | O_TRUNC | O_WRONLY, 0777)) {
+: SystemOutStream(open(path.asSysString(), O_CREAT | O_TRUNC | O_WRONLY, 0777)) {
 }
 #elif defined(__WIN32) || defined(__WIN64)
 OutFileStream::OutFileStream(const Path & path)
