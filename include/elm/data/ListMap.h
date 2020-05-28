@@ -90,8 +90,8 @@ public:
 		{ PairIter i = lookup(k); if(i()) return (*i).snd; else return d; }
 	inline bool hasKey(const K &k) const { return lookup(k)(); }
 
-	inline Iterable<KeyIter> keys() const { return iter(KeyIter(*this), KeyIter()); }
-	inline Iterable<PairIter> pairs() const { return iter(PairIter(*this), PairIter()); }
+	inline Iterable<KeyIter> keys() const { return subiter(KeyIter(*this), KeyIter()); }
+	inline Iterable<PairIter> pairs() const { return subiter(PairIter(*this), PairIter()); }
 
 	// MutableMap concept
 	void put(const K& k, const T& v) {

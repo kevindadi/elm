@@ -74,7 +74,7 @@ public:
 	private:
 		typename tab_t::Iter i;
 	};
-	inline Iterable<KeyIter> keys() const { return iter(KeyIter(*this), KeyIter(*this, true)); }
+	inline Iterable<KeyIter> keys() const { return subiter(KeyIter(*this), KeyIter(*this, true)); }
 
 	class PairIter: public InplacePreIterator<PairIter, Pair<K, T> > {
 	public:
@@ -87,7 +87,7 @@ public:
 	private:
 		typename tab_t::Iter i;
 	};
-	inline Iterable<PairIter> pairs() const { return iter(PairIter(*this), PairIter(*this, true)); }
+	inline Iterable<PairIter> pairs() const { return subiter(PairIter(*this), PairIter(*this, true)); }
 
 	// Collection concept
 	inline int count() const { return _tab.count(); }

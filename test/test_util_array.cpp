@@ -55,14 +55,14 @@ TEST_BEGIN(util_array)
 		for(int i = 0; i < count; i++)
 			array::copy(t1, t2, size);
 		sw.stop();
-		time_t t_shallow = sw.stopTime() - sw.startTime();
+		auto t_shallow = sw.stopTime() - sw.startTime();
 
 		// deep copy
 		sw.start();
 		for(int i = 0; i < count; i++)
 			array::copy(u1, u2, size);
 		sw.stop();
-		time_t t_deep = sw.stopTime() - sw.startTime();
+		auto t_deep = sw.stopTime() - sw.startTime();
 
 		// compare
 		cerr << "shallow time = " << t_shallow << io::endl;

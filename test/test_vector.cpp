@@ -260,6 +260,13 @@ TEST_BEGIN(vector)
 		CHECK(ok);
 	}
 
+	{
+		Vector<string> v(4);
+		for(int i = 0; i < 5; i++)
+			v.add(string("ok"));
+
+	}
+
 #	if 0
 	{
 		Vector<int> v;

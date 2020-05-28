@@ -75,7 +75,7 @@ TEST_BEGIN(io)
 		for(int i = 0; i < 5; i++)
 			v.add(i);
 		StringBuffer buf;
-		buf << io::list(v, "|");
+		buf << io::list(v, "|", [](io::Output& out, int x) { cout << "-> " << x << io::endl; out << x; });
 		CHECK_EQUAL(buf.toString(), string("0|1|2|3|4"));
 	}
 

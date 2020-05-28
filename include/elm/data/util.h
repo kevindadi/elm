@@ -27,8 +27,6 @@
 #include <elm/type_info.h>
 #include <elm/types.h>
 
-#include "util.h"
-
 namespace elm {
 
 // simple functions
@@ -230,7 +228,7 @@ private:
 };
 
 template <class I>
-Iterable<I> iter(const I& b, const I& e) { return Iterable<I>(b, e); }
+Iterable<I> subiter(const I& b, const I& e) { return Iterable<I>(b, e); }
 
 } // elm
 

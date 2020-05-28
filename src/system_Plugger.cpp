@@ -279,11 +279,11 @@ static inline sys::Path evaluate(sys::Path plugin_path, sys::Path path) {
  */
 void *Plugger::link(sys::Path lib) {
 #	if defined(__WIN32) || defined(__WIN64)
-		return LoadLibrary(&lib);
+		return LoadLibrary(lib.asSysString());
 #	elif defined(WITH_LIBTOOL)
-		return lt_dlopen(&lib);
+		return lt_dlopen(lib.asSysString());
 #	else
-		return dlopen(lib.toString().toCString().chars(), RTLD_LAZY);
+		return dlopen(lib.asSysString(), RTLD_LAZY);
 #	endif
 }
 
@@ -317,9 +317,9 @@ void *Plugger::lookLibrary(sys::Path lib, Vector<string> rpath) {
  */
 void *Plugger::lookSymbol(void *handle, cstring name) {
 #	if defined(__WIN32) || defined(__WIN64)
-		return (void *)(GetProcAddress(reinterpret_cast<HINSTANCE&>(handle), &name));
+		return (void *)(GetProcAddress(reinterpret_cast<HINSTANCE&>(handle), name.chars()));
 #	elif defined(WITH_LIBTOOL)
-		return lt_dlsym((lt_dlhandle)handle, &name);
+		return lt_dlsym((lt_dlhandle)handle, name.chars());
 #	else
 		return dlsym(handle, name.chars());
 #	endif

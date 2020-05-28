@@ -202,6 +202,7 @@ template <> struct type_info<string>: public default_t {
 	static const string null;
 	static cstring name(void);
 	enum { is_virtual = 1 };
+	enum { is_deep = 1 };
 
 	typedef string var_t;
 	typedef var_t embed_t;

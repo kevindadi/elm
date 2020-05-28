@@ -83,7 +83,7 @@ public:
 		inline KeyIter(const Iter& i): iter(i.iter) { }
 		typename tree_t::Iter iter;
 	};
-	inline Iterable<KeyIter> keys() const { return iter(KeyIter(*this), KeyIter(end())); }
+	inline Iterable<KeyIter> keys() const { return subiter(KeyIter(*this), KeyIter(end())); }
 	
 	class PairIter: public PreIterator<PairIter, const value_t&> {
 		friend class TreeMap;
@@ -97,7 +97,7 @@ public:
 		inline PairIter(const Iter& i): iter(i.iter) { }
 		typename tree_t::Iter iter;
 	};
-	inline Iterable<PairIter> pairs() const { return iter(PairIter(*this), PairIter(end())); }
+	inline Iterable<PairIter> pairs() const { return subiter(PairIter(*this), PairIter(end())); }
 	
 	// MutableMap concept
 	inline void put(const K& key, const T& value)
