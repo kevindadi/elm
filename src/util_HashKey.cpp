@@ -22,6 +22,7 @@
 
 #include <string.h>
 #include <elm/hash.h>
+#include <elm/sys/Path.h>
 
 namespace elm {
 
