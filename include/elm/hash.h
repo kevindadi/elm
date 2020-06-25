@@ -41,7 +41,7 @@ inline t::hash hash_ptr(const void *p) {
 #	ifdef ELM_32
 		return t::hash(p) >> 2;
 #	else
-		return t::hash(p) >> 5;
+		return t::hash(p) >> 3;
 #	endif
 }
 bool hash_equals(const void *p1, const void *p2, int size);
@@ -64,13 +64,10 @@ public:
 	inline bool isEqual(int key1, int key2) const { return equals(key1, key2); }
 };
 
-
-/* The +1 is made especially for char as all dynamic allocators (e.g. malloc) will always assign an address that's divisible by 2 (or more). This is true for most (99%) other uses of using a char pointer (addresses will be >2 bytes apart). If the actual size is larger than sizeof(), the result is still valid as it doesn't introduce hash collisions. – egur */
 template <class T>
 class HashKey<T *> {
 public:
-    static const size_t _shift = (size_t)log2(1+sizeof(T));
-	static inline t::hash hash(T *key) { return (size_t)key >> _shift; }
+	static inline t::hash hash(T *key) { return hash_ptr(key); }
 	static inline bool equals(T *key1, T *key2) { return key1 == key2; }
 	inline t::hash computeHash(T *key) const { return hash(key); }
 	inline bool isEqual(T *key1, T *key2) const { return equals(key1, key2); }
@@ -79,8 +76,7 @@ public:
 template <class T>
 class HashKey<const T *> {
 public:
-    static const size_t _shift = (size_t)log2(1+sizeof(T));
-	static inline t::hash hash(const T *key) { return (size_t)key >> _shift; }
+	static inline t::hash hash(const T *key) { return hash_ptr(key); }
 	static inline bool equals(const T *key1, const void *key2)
 		{ return key1 == key2; }
 	inline t::hash computeHash(const T *key) const { return hash(key); }
