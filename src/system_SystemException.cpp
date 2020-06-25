@@ -22,6 +22,7 @@
 #include <elm/assert.h>
 #include <errno.h>
 #include <elm/sys/SystemException.h>
+#include <elm/string/StringBuffer.h>
 
 
 

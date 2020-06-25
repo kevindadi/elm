@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <elm/sys/ProcessBuilder.h>
 #include <elm/sys/SystemException.h>
+#include <elm/io.h>
 #if defined(__WIN32) || defined(WIN64)
 #	include <windows.h>
 #endif
