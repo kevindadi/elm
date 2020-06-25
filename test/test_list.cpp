@@ -402,7 +402,6 @@ TEST_BEGIN(list)
 		}
 	}
 
-#if 0
 	// test map
 	{
 		ListMap<int, string> m;
@@ -411,10 +410,21 @@ TEST_BEGIN(list)
 		CHECK_EQUAL(m.count(), 1);
 		m.put(1, "one");
 		CHECK_EQUAL(m.count(), 2);
-		//CHECK(m.contains("zero"));
-		/*CHECK_EQUAL(m.get(0, -1), 0);*/
+		CHECK(m.contains("zero"));
+		CHECK_EQUAL(m.get(0, ""), string("zero"));
+
+		int c = 0;
+		for(auto x: m)
+			c++;
+		CHECK_EQUAL(c, 2);
+
+		c = 0;
+		for(auto x: m.keys())
+			c += x;
+		CHECK_EQUAL(c, 1);
 	}
 
+#if 0
 	// compatibility test
 	/* TODO
 	{

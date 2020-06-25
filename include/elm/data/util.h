@@ -27,8 +27,6 @@
 #include <elm/type_info.h>
 #include <elm/types.h>
 
-#include "util.h"
-
 namespace elm {
 
 // simple functions
@@ -142,6 +140,10 @@ Pair<typename C1::Iter, typename C2::Iter> mismatch(const C1& c1, const C2& c2, 
 }
 
 
+template <class C>
+inline void deleteAll(const C& c) { for(auto i: c) delete i; }
+
+
 // useful function
 template <class C>
 inline typename C::t sum(const C& c)
@@ -226,7 +228,7 @@ private:
 };
 
 template <class I>
-Iterable<I> iter(const I& b, const I& e) { return Iterable<I>(b, e); }
+Iterable<I> subiter(const I& b, const I& e) { return Iterable<I>(b, e); }
 
 } // elm
 

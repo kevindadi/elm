@@ -46,6 +46,7 @@ extern const Type &bool_type, &string_type, &cstring_type, &void_type;
 // type determination
 template <class T> struct _type
 	{ static inline const Type& _(void) { return T::__type; } };
+template <> inline const Type& _type<char>::_(void) { return int8_type; }
 template <> inline const Type& _type<t::int8>::_(void) { return int8_type; }
 template <> inline const Type& _type<t::int16>::_(void) { return int16_type; }
 template <> inline const Type& _type<t::int32>::_(void) { return int32_type; }

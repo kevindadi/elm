@@ -21,8 +21,9 @@
 #ifndef ELM_DATA_ARRAYLIST_H_
 #define ELM_DATA_ARRAYLIST_H_
 
+#include <elm/assert.h>
 #include <elm/PreIterator.h>
-#include "../equiv.h"
+#include <elm/equiv.h>
 
 namespace elm {
 

@@ -18,10 +18,10 @@ protected:
 
 	virtual void execute(void) {
 		String s("456");
-		perform(0, true, 666, 111.666, "123", 111, &s);
-		perform21(0, true, 666, 111.666, "123", 111, &s);
-		perform31(0, true, 666, 111.666, "123", 111, &s);
-		perform41(0, true, 666, 111.666, "123", 111, &s);
+		perform(0, true, 666, 111.666, "123", 111, s.toCString().chars());
+		perform21(0, true, 666, 111.666, "123", 111, s.toCString().chars());
+		perform31(0, true, 666, 111.666, "123", 111, s.toCString().chars());
+		perform41(0, true, 666, 111.666, "123", 111, s.toCString().chars());
 	}
 
 private:
@@ -31,9 +31,9 @@ private:
 			CHECK(args.next<bool>() == true);
 			CHECK(args.next<int>() == 666);
 			CHECK(args.next<double>() == 111.666);
-			CHECK(!strcmp(args.next<char *>(), "123"));
+			CHECK_EQUAL(cstring(args.next<char *>()), cstring("123"));
 			CHECK(args.next<unsigned int>() == 111);
-			CHECK(!strcmp(args.next<char *>(), "456"));
+			CHECK_EQUAL(cstring(args.next<char *>()), cstring("456"));
 		VARARG_END
 	}
 

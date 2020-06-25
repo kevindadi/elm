@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	IOException class implementation
  *
  *	This file is part of OTAWA
@@ -316,23 +315,47 @@ namespace elm { namespace io {
 
 
 /**
- * @fn StringInput scan(const char *s);
- * Short to build a string input.
+ * @fn StringInput read(const char *s);
+ * Shortcut to perform an input from a string.
  * @param s		String to use as input.
  * @ingroup ios
  */
 
 /**
- * @fn StringInput scan(cstring& s);
- * Short to build a string input.
+ * @fn StringInput read(cstring& s);
+ * Shortcut to perform an input from a string.
  * @param s		String to use as input.
  * @ingroup ios
  */
 
 /**
- * @fn StringInput scan(string& s);
- * Short to build a string input.
+ * @fn StringInput read(string& s);
+ * Shortcut to perform an input from a string.
  * @param s		String to use as input.
+ * @ingroup ios
+ */
+
+/**
+ * @fn FileInput read(sys::Path p);
+ * Shortcut to perform an input from a file.
+ * @param p					Path to the file to read from.
+ * @raise io::IOException	If the file cannot be opened.
+ * @ingroup ios
+ */
+
+/**
+ * @fn FileOutput write(sys::Path p);
+ * Shortcut to perform an output to a file.
+ * @param p					Path to the file to write to.
+ * @raise io::IOException	If the file cannot be created.
+ * @ingroup ios
+ */
+
+/**
+ * @fn FileOutput append(sys::Path p);
+ * Shortcut to append an output to a file.
+ * @param p					Path to the file to append to.
+ * @raise io::IOException	If the file cannot be opened.
  * @ingroup ios
  */
 

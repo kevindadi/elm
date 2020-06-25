@@ -22,6 +22,7 @@
 
 #include <elm/alloc/DefaultAllocator.h>
 #include <elm/assert.h>
+#include <new>
 
 namespace elm {
 

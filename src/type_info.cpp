@@ -30,7 +30,7 @@ namespace elm {
  *
  * ELM provides several facilities to handle type and parametric types.
  *
- * @par Basic Types
+ * @par basic_types Basic Types
  *
  * @code
  * #include <elm/types.h>
@@ -61,8 +61,8 @@ namespace elm {
  * using namespace elm;
  * @endcode
  *
- * Class @ref elm::type_info<T> allows to get from the type passed as the parametric argument.
- * This may be useful for templates using static evaluation. The common fields includes:
+ * Class @ref elm::type_info<T> allows to get information from the type passed as the parametric argument.
+ * The following information are available:
  * @li is_type -- true if T is not a class
  * @li is_scalar -- true if T is a simple type (neither a structure, nor union, nor class)
  * @li is_enum -- true if T is an enumerated type
@@ -73,9 +73,17 @@ namespace elm {
  * system fast byte-per-byte copy mechanism)
  * @li is_virtual -- true if T contains virtual functions
  * @li name() -- get the name of a type.
- * @li embed_t -- type T to converted to an assignable form.
- * @li put(embed_t& var, T val) -- assign value of type T to a variable of assigned type.
- * @li get(embed_t& var) -- convert back a variable in assigned type to T.
+ *
+ * In addition, elm::type_info<T> provides facilities to efficiently and powerfully manage
+ * types used in templates:
+ * @li var_t -- type to use to embed the type T as a mutable member variable (useful to store references),
+ * @li in_t -- type to pass T as a const input parameter.
+ * @li out_t -- type to pass T as an input-output parameter.
+ * @li ret_t -- type to pass T as a constant return value.
+ * @li mut_t -- type to pass T as a mutable return value.
+ * @li put(var_t& var, in_t val) -- assign value of type T to a variable of assigned type.
+ * @li ret_t get(const var_t& var) -- convert back a member variable to return a value of type T.
+ * @li mut_t ref(var_t& var) -- convert back a member variable to return a mutable reference of type T.
  *
  * Notice that ELM provides type information for basic (integer, float, string) and composed types (pointer, references)
  * but need the developer help for more complex types like classes, struct or unions. Either one can add the specialized
@@ -93,6 +101,16 @@ namespace elm {
  *		...
  *	};
  * @endcode
+ *
+ * Instead of using directly type_info<T> members, some shortcuts are available (and advised):
+ *	* t::var<T> -- shortcut to type_info<T>::var_t.
+ *	* t::in<T> -- shortcut to type_info<T>::in_t.
+ *	* t::out<T> -- shortcut to type_info<T>::out_t.
+ *	* t::ret<T> -- shortcut to type_info<T>::ret_t.
+ *	* t::mut<T> -- shortcut to type_info<T>::mut_t.
+ *	* t::put<T>() -- shortcut to type_info<T>::put().
+ *	* t::get<T>() -- shortcut to type_info<T>::get().
+ *	* t::ref<T>() -- shortcut to type_info<T>::ref().
  *
  *
  * @par Enumeration Information
@@ -209,12 +227,68 @@ namespace elm {
  * Null value for the current type.
  */
 
-
 /**
  * @fn cstring type_info<T>::name(void);
  * Get the name of the type.
  * @return	Type name.
  */
+
+/**
+ * @typedef type_info<T>::var_t;
+ * Type definition that must be used to used the type T in the declaration
+ * of a mutable member variable. For most types, var_t is T itself but
+ * it becomes a pointer when T is a reference: this allows to support
+ * reference in container classes.
+ */
+
+/**
+ * @typedef type_info<T>::in_t;
+ * Type definition to pass an input parameter of type T. For scalar types,
+ * in_t is T itself. For more complex types, a constant reference is used.
+ */
+
+/**
+ * @typedef type_info<T>::out_t;
+ * Typed definition to pass an output parameter of type T: usually a mutable
+ * reference T. The use of this type is forbidden when T is a reference.
+ */
+
+/**
+ * @typedef type_info<T>::ret_t;
+ * Type definition to return a value of type T. For scalar types and
+ * references, out_t is T itself. For more complex types, a constant reference
+ * is used.
+ */
+
+/**
+ * @typedef type_info<T>::mut_t;
+ * Type definition to return a mutable reference of type T. For most types,
+ * this is a reference to the type. For reference, a delegate class
+ * supporting conversion to T and assignment is returned.
+ */
+
+/**
+ * @fn mut_t type_info<T>::ref(var_t& v);
+ * Get a mutable reference from a member variable embedded with var_t.
+ * @param v		Member variable to get reference from.
+ * @return		Mutable reference to v.
+ */
+
+/**
+ * @fn ret_t type_info<T>::get(const var_t& v);
+ * Get the value from a member variable embedded with var_t.
+ * @param v		Member variable to ge value from.
+ * @return		Value of v.
+ */
+
+/**
+ * @fn void type_info<T>::put(var_t& x, in_t v);
+ * Store the value v in a member variable declared with var_t.
+ * @param x		Member variable to set.
+ * @param v		Value to set in the member variable.
+ */
+
+
 
 // Statics
 const cstring type_info<cstring>::null = "";
@@ -274,5 +348,57 @@ cstring type_info<string>::name(void) { return "string"; }
  * @param T		Type of singleton. Must support default constructor.
  * @ingroup types
  */
+
+namespace t {
+
+/**
+ * @typedef var
+ * Shortcut to type_info<T>::var_t;
+ * @ingroup types
+ */
+
+/**
+ * @typedef in
+ * Shortcut to type_info<T>::in_t;
+ * @ingroup types
+ */
+
+/**
+ * @typedef out
+ * Shortcut to type_info<T>::out_t;
+ * @ingroup types
+ */
+
+/**
+ * @typedef ret
+ * Shortcut to type_info<T>::ret_t;
+ * @ingroup types
+ */
+
+/**
+ * @typedef mut
+ * Shortcut to type_info<T>::mut_t;
+ * @ingroup types
+ */
+
+/**
+ * @fn void put(var<T>& x, in<T> v);
+ * Shortcut to type_info::put().
+ * @ingroup types
+ */
+
+/**
+ * @fn ret<T> get(const var<T>& v);
+ * Shortcut to type_info::get().
+ * @ingroup types
+ */
+
+/**
+ * @fn mut<T> ref(var<T>& x);
+ * Shortcut to type_info::ref().
+ * @ingroup types
+ */
+
+}
 
 }  // elm

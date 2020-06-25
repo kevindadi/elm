@@ -592,6 +592,25 @@ string String::replace(string pat, string sub) {
 
 
 /**
+ * @fn const char *String::asNullTerminated() const;
+ * Convert the current string to a null-terminated character array (C standard).
+ * The ownership of the character array is retained by the string.
+ * Modifying this array modifies also the original string.
+ * @return	String converted to null-terminated character array.
+ */
+
+
+/**
+ * @fn const char *String::asSysString() const;
+ * Convert the current string to a null-terminated character array usable with
+ * the current OS calls.
+ * The ownership of the character array is retained by the string.
+ * Modifying this array modifies also the original string.
+ * @return	String compatible with the current OS calls.
+ */
+
+
+/**
  * @class CString
  * Wrapper around C usual string.
  * @ingroup string

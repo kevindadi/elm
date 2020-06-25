@@ -27,7 +27,7 @@
 namespace elm {
 
 template <class T>
-struct enum_info: public enum_t {
+struct enum_info: public enum_t<T> {
 	typedef struct value_t {
 		inline value_t(cstring n, const T& v) { name = n; value = v; }
 		cstring name;

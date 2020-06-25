@@ -26,7 +26,6 @@ public:
 	inline int length(void) const { return strlen(buf); };
 	inline const char *chars(void) const { return buf; };
 	inline int compare(const CString& str) const { return strcmp(buf, str.buf); };
-	inline const char *operator&(void) const { return buf; };
 	
 	inline bool isEmpty(void) const { return !*buf; };
 	inline operator bool(void) const { return !isEmpty(); };

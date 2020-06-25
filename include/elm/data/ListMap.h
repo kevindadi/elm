@@ -39,6 +39,7 @@ public:
 	class Iter: public PreIterator<Iter, T> {
 		friend class ListMap;
 	public:
+		inline Iter() { }
 		inline Iter(const ListMap<K, T>& l): i(l) { }
 		inline bool ended(void) const { return i.ended(); }
 		inline const T& item(void) const { return (*i).snd; }
@@ -48,23 +49,24 @@ public:
 		PairIter i;
 	};
 
-	class KeyIter: public PreIterator<KeyIter, T> {
+	class KeyIter: public PreIterator<KeyIter, K> {
 	public:
 		inline KeyIter(void) { }
 		inline KeyIter(const ListMap<K, T>& l): i(l) { }
 		inline bool ended(void) const { return i.ended(); }
 		inline const K& item(void) const { return (*i).fst; }
 		inline void next(void) { i.next(); }
+		inline bool equals(const KeyIter& ii) { return i.equals(ii.i); }
 	private:
 		PairIter i;
 	};
 
 	// Collection concept
 	inline Iter begin(void) const { return Iter(*this); }
-	inline Iter end(void) const { return Iter(*this); }
+	inline Iter end(void) const { return Iter(); }
 	inline int count(void) const { return base_t::count(); }
 	inline bool contains(const T& v) const
-		{ for(const auto i: *this) if(E::isEqual(i, v)) return true; return false; }
+		{ for(const auto& i: *this) if(E::isEqual(i, v)) return true; return false; }
 	template <class CC> inline bool containsAll(const CC& c) const
 		{ for(const auto i: c) if(!contains(i)) return false; return true; }
 	inline bool isEmpty(void) const { return base_t::isEmpty(); }
@@ -88,8 +90,8 @@ public:
 		{ PairIter i = lookup(k); if(i()) return (*i).snd; else return d; }
 	inline bool hasKey(const K &k) const { return lookup(k)(); }
 
-	inline Iterable<KeyIter> keys() const { return iter(KeyIter(*this), KeyIter()); }
-	inline Iterable<PairIter> pairs() const { return iter(PairIter(*this), PairIter()); }
+	inline Iterable<KeyIter> keys() const { return subiter(KeyIter(*this), KeyIter()); }
+	inline Iterable<PairIter> pairs() const { return subiter(PairIter(*this), PairIter()); }
 
 	// MutableMap concept
 	void put(const K& k, const T& v) {

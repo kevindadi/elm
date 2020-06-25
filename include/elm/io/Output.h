@@ -22,6 +22,8 @@
 #ifndef ELM_IO_OUTPUT_H
 #define ELM_IO_OUTPUT_H
 
+#include <functional>
+
 #include <elm/enum_info.h>
 #include <elm/meta.h>
 #include <elm/string/CString.h>
@@ -315,20 +317,26 @@ inline Printable<T, M> p(const T& data, const M& man) { return Printable<T, M>(d
 // output of list (with separators)
 template <class T>
 struct ListPrinter {
-	inline ListPrinter(const T& list, cstring sep = " "): l(list), s(sep) { }
+	typedef const typename T::t& t;
+	typedef std::function<void(io::Output& out, t x)> fun_t;
+	inline ListPrinter(const T& list, cstring sep = " ", fun_t fun = asis)
+		: l(list), s(sep), f(fun) { }
 	const T& l;
 	cstring s;
+	fun_t f;
+	static inline void asis(io::Output& out, t x) { out << x; }
 };
 
 template <class T>
-inline ListPrinter<T> list(const T& l, cstring s = "") { return ListPrinter<T>(l, s); }
+inline ListPrinter<T> list(const T& l, cstring s = "", typename ListPrinter<T>::fun_t f = ListPrinter<T>::asis)
+	{ return ListPrinter<T>(l, s, f); }
 
-template <class T>
+template <class T, class F>
 inline io::Output& operator<<(io::Output& out, const ListPrinter<T>& l) {
 	bool f = true;
 	for(auto x: l.l) {
 		if(f) f = false; else out << l.s;
-		out << x;
+		//l.f(out, x);
 	}
 	return out;
 }

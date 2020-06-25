@@ -26,6 +26,7 @@
 #include <dirent.h>
 
 #include <elm/data/Vector.h>
+#include <elm/hash.h>
 #include <elm/sys/Path.h>
 #include <elm/sys/System.h>
 #include <elm/sys/SystemException.h>
@@ -37,7 +38,9 @@
 #	define TRACE
 #endif
 
-namespace elm { namespace sys {
+namespace elm {
+
+namespace sys {
 
 /**
  * @class Path
@@ -112,7 +115,10 @@ Path Path::relativeTo(Path base) const {
 		r = r / BACK_PATH;
 		base = base.parent();
 	}
-	return r / toString().substring(base.toString().length() + 1);
+	if(base == *this)
+		return r;
+	else
+		return r / toString().substring(base.toString().length() + 1);
 }
 
 
@@ -188,7 +194,7 @@ Path Path::absolute(void) const {
  * @param path	New current path.
  */
 void Path::setCurrent(Path& path) {
-	if(chdir(&path.buf) < 0)
+	if(chdir(path.asSysString()) < 0)
 		throw SystemException(errno, "elm::system::Path");
 }
 
@@ -205,7 +211,7 @@ Path Path::append(Path path) const {
 		return *this;
 	else {
 		StringBuffer buffer;
-		buffer << buf << SEPARATOR << path.buf;
+		buffer	<< buf << SEPARATOR << path.buf;
 		return Path(buffer.toString());
 	}
 }
@@ -356,6 +362,13 @@ Path Path::current(void) {
 Path Path::home(void) {
 	return Path(getenv("HOME"));
 }
+
+
+/**
+ * @fn const char *asSysString() const;
+ * Return the path as a system string that may be used in the current OS calls.
+ * @return	Path as a system string.
+ */
 
 
 /**
@@ -530,7 +543,7 @@ Path Path::withoutExt(void) const {
  * @return	True if it exists (or is not accessible), false else.
  */
 bool Path::exists(void) const {
-	int res = ::access(&toString(), F_OK);
+	int res = ::access(asSysString(), F_OK);
 	return res == 0 || errno != ENOENT;
 }
 
@@ -541,7 +554,7 @@ bool Path::exists(void) const {
  */
 bool Path::isFile(void) const {
 	struct stat buf;
-	int res = stat(&toString(), &buf);
+	int res = stat(asSysString(), &buf);
 	if(res != 0)
 		return false;
 	return S_ISREG(buf.st_mode);
@@ -554,7 +567,7 @@ bool Path::isFile(void) const {
  */
 bool Path::isDir(void) const {
 	struct stat buf;
-	int res = stat(&toString(), &buf);
+	int res = stat(asSysString(), &buf);
 	if(res != 0)
 		return false;
 	return S_ISDIR(buf.st_mode);
@@ -566,7 +579,7 @@ bool Path::isDir(void) const {
  * @return	True if it readable (and accessible), false else.
  */
 bool Path::isReadable(void) const {
-	int res = ::access(&toString(), R_OK);
+	int res = ::access(asSysString(), R_OK);
 	return res == 0;
 }
 
@@ -576,7 +589,7 @@ bool Path::isReadable(void) const {
  * @return	True if it writable (and accessible), false else.
  */
 bool Path::isWritable(void) const {
-	int res = ::access(&toString(), W_OK);
+	int res = ::access(asSysString(), W_OK);
 	return res == 0;
 }
 
@@ -585,7 +598,7 @@ bool Path::isWritable(void) const {
  * @return	True if it executable (and accessible), false else.
  */
 bool Path::isExecutable(void) const {
-	int res = ::access(&toString(), X_OK);
+	int res = ::access(asSysString(), X_OK);
 	return res == 0;
 }
 
@@ -687,7 +700,7 @@ void Path::makeDirs(void) const {
 /**
  */
 Path::DirIter::DirIter(Path path) {
-	_dir = opendir(&path.toString().toCString());
+	_dir = opendir(path.asSysString());
 	if(_dir == NULL)
 		throw SystemException(errno, _ << "cannot read directory " << path);
 	next();

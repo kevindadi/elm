@@ -172,7 +172,7 @@ void Serializer::breakLine(void) {
 void Serializer::writeRaw(String text, int length) {
 	if(length < 0)
 		length = text.length();
-	_out.stream().write(&text, length);
+	_out.stream().write(text.chars(), length);
 }
 
 
@@ -191,7 +191,7 @@ void Serializer::writeAttributeValue(String value) {
 		while(i < len && !isAttrEscape(value[i]))
 			i++;
 		if(i > j)
-			writeRaw(&value + j, j - i);
+			writeRaw(value.chars() + j, j - i);
 		if(i < len)
 			writeRaw(escapeSimple(value[i++]));
 	}
@@ -476,7 +476,7 @@ void Serializer::writeEscaped(String text) {
 		while(i < len && !isTextEscape(text[i]))
 			i++;
 		if(i > j)
-			writeRaw(&text + j, i - j);
+			writeRaw(text.chars() + j, i - j);
 		if(i < len)
 			writeRaw(escapeSimple(text[i]));
 	}

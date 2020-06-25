@@ -16,6 +16,7 @@
 #include <elm/checksum/Fletcher.h>
 #include <elm/io/InFileStream.h>
 #include <elm/sys/System.h>
+#include <elm/io/BufferedInStream.h>
 
 using namespace elm;
 using namespace elm::io;
@@ -330,7 +331,7 @@ TEST_BEGIN(io_format)
 		}
 
 		{
-			auto in = io::scan("0");
+			auto in = io::read("0");
 			t::uint32 v;
 			in >> v;
 			CHECK_EQUAL(int(v), 0);
@@ -339,13 +340,23 @@ TEST_BEGIN(io_format)
 		}
 
 		{
-			auto in = io::scan("0");
+			auto in = io::read("0");
 			t::uint64 v;
 			in >> v;
 			CHECK_EQUAL(v, 0UL);
 			CHECK(!in.failed());
 			CHECK(in.ended());
 		}
+	}
+
+	// format wdth test
+	{
+		StringBuffer buf;
+		buf << io::fmt(111).width(10);
+		CHECK_EQUAL(buf.toString().length(), 10);
+		buf.reset();
+		buf << io::fmt(0.111).width(10);
+		CHECK_EQUAL(buf.toString().length(), 10);
 	}
 
 TEST_END

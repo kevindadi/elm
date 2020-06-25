@@ -156,7 +156,7 @@ TEST_BEGIN(option)
 		// string option
 		{
 			cstring value = "hello, world !";
-			const char *argv[] = { "command", "--string", &value, 0 };
+			const char *argv[] = { "command", "--string", value.chars(), 0 };
 			FAIL_ON_EXCEPTION(OptionException, man.parse(3, argv));
 			CHECK_EQUAL(*s, string(value));
 			s.set("");
@@ -170,7 +170,7 @@ TEST_BEGIN(option)
 		}
 		{
 			cstring value = "hello, world !";
-			const char *argv[] = { "command", "-s", &value, 0 };
+			const char *argv[] = { "command", "-s", value.chars(), 0 };
 			FAIL_ON_EXCEPTION(OptionException, man.parse(3, argv));
 			CHECK_EQUAL(*s, string(value));
 			s.set("");

@@ -52,7 +52,7 @@ void *Element::makeNS(String name, String uri) {
 	else {
 		node = xmlNewNode(NULL, local_name);
 		char_t prefix[len + 1];
-		memcpy(prefix, &name, len);
+		memcpy(prefix, name.chars(), len);
 		prefix[len] = '\0';
 		NODE(node)->ns = xmlNewNs(node, uri, prefix);
 	}

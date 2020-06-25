@@ -21,7 +21,8 @@
 #include <elm/data/SortedList.h>
 #include <elm/data/ListMap.h>
 #include <elm/data/ListSet.h>
-#include "../include/elm/test.h"
+#include <elm/test.h>
+#include "check-concept.h"
 
 using namespace elm;
 
@@ -29,6 +30,13 @@ TEST_BEGIN(sorted_list)
 
 	SortedList<int> list;
 	
+	// concept test
+	{
+		checkCollection(list, list, 111);
+		checkMutableCollection(list, 111);
+		checkList(list, 111);
+	}
+
 	{
 		// Addition
 		list.add(5);

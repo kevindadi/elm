@@ -322,7 +322,7 @@ void Output::format(CString fmt, VarArg& args) {
 	char buf[256];
 
 	// Allocate remaining memory
-	int size = vsnprintf(buf, sizeof(buf), &fmt, args.args());
+	int size = vsnprintf(buf, sizeof(buf), fmt.chars(), args.args());
 
 	// It's ok
 	if(size <= (int)sizeof(buf))
@@ -331,7 +331,7 @@ void Output::format(CString fmt, VarArg& args) {
 	// Else use a bigger one
 	else {
 		char newbuf[size + 1];
-		size = vsnprintf(newbuf, sizeof(newbuf), &fmt, args.args());
+		size = vsnprintf(newbuf, sizeof(newbuf), fmt.chars(), args.args());
 		ASSERT(size <= (int)sizeof(newbuf));
 		strm->write(newbuf, size);
 	}
@@ -508,20 +508,26 @@ void Output::print(const FloatFormat& fmt) {
 	}
 
 	// perform the display
-	int pref = 0, suff = 0, spaces = max(0, fmt._width - s);
-	switch(fmt._align) {
-	case NONE:		strm->write(b, s); return;
-	case LEFT:		suff = spaces; break;
-	case RIGHT:		pref = spaces; break;
-	case CENTER:	pref = spaces/2; suff = spaces - pref; break;
+	if(fmt._width == 0) {
+		strm->write(b, s);
+		return;
 	}
-	char buf2[max(pref, suff)];
-	array::set(buf2, sizeof(buf2), char(fmt._pad));
-	if(pref)
-		strm->write(buf2, pref);
-	strm->write(b, s);
-	if(suff)
-		strm->write(buf2, suff);
+	else {
+		int pref = 0, suff = 0, spaces = max(0, fmt._width - s);
+		switch(fmt._align) {
+		case NONE:
+		case LEFT:		suff = spaces; break;
+		case RIGHT:		pref = spaces; break;
+		case CENTER:	pref = spaces/2; suff = spaces - pref; break;
+		}
+		char buf2[max(pref, suff)];
+		array::set(buf2, sizeof(buf2), char(fmt._pad));
+		if(pref)
+			strm->write(buf2, pref);
+		strm->write(b, s);
+		if(suff)
+			strm->write(buf2, suff);
+	}
 }
 
 
@@ -1093,55 +1099,66 @@ void FloatFormat::init(void) {
  * Build a formatted output which stream is the opened corresponding to the given path.
  * If the file already exists, it is overwritten.
  * @param path					Path of the file to write to.
- * @param buf_size				Buffer size (optional).
+ * @param append				Instead of overwriting, append to the written file (optional).
  * @throw sys::SystemException	If the file can not be opened.
  */
-FileOutput::FileOutput(const char *path, int buf_size)
-	: FileOutput(sys::Path(path), buf_size)
+FileOutput::FileOutput(const char *path, bool append)
+	: FileOutput(sys::Path(path), append)
 	{ }
 
 /**
  * Build a formatted output which stream is the opened corresponding to the given path.
  * If the file already exists, it is overwritten.
  * @param path					Path of the file to write to.
- * @param buf_size				Buffer size (optional).
+ * @param append				Instead of overwriting, append to the written file (optional).
  * @throw sys::SystemException	If the file can not be opened.
  */
-FileOutput::FileOutput(cstring path, int buf_size)
-	: FileOutput(sys::Path(path), buf_size)
+FileOutput::FileOutput(cstring path, bool append)
+	: FileOutput(sys::Path(path), append)
 	{ }
 
 /**
  * Build a formatted output which stream is the opened corresponding to the given path.
  * If the file already exists, it is overwritten.
  * @param path					Path of the file to write to.
- * @param buf_size				Buffer size (optional).
+ * @param append				Instead of overwriting, append to the written file (optional).
  * @throw sys::SystemException	If the file can not be opened.
  */
-FileOutput::FileOutput(string path, int buf_size)
-	: FileOutput(sys::Path(path), buf_size)
+FileOutput::FileOutput(string path, bool append)
+	: FileOutput(sys::Path(path), append)
 	{ }
 
 /**
  * Build a formatted output which stream is the opened corresponding to the given path.
  * If the file already exists, it is overwritten.
  * @param path					Path of the file to write to.
- * @param buf_size				Buffer size (optional).
+ * @param append				Instead of overwriting, append to the written file (optional).
  * @throw sys::SystemException	If the file can not be opened.
  */
-FileOutput::FileOutput(sys::Path path, int buf_size)
-:	_out(path.write()),
-	_buf(*_out, buf_size)
-{
-	setStream(_buf);
+FileOutput::FileOutput(sys::Path path, bool append) {
+	if(append)
+		_out = path.append();
+	else
+		_out = path.write();
+	setStream(*_out);
+}
+
+
+/**
+ * Transfer stream of the argument output to the current output.
+ * @param fo	File output to transfer stream from.
+ */
+FileOutput::FileOutput(FileOutput&& fo): _out(fo._out) {
+	fo._out = nullptr;
+	setStream(*_out);
 }
 
 
 /**
  */
 FileOutput::~FileOutput(void) {
-	_buf.flush();
-	delete _out;
+	if(_out != nullptr)
+		delete _out;
 }
 
 

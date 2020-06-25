@@ -27,8 +27,7 @@
 namespace elm {
 
 // OptionalNone value
-class OptionalNone {
-};
+class OptionalNone { };
 extern const OptionalNone none;
 
 
@@ -37,44 +36,49 @@ template <class T> class Option {
 public:
 	inline Option(): one(false) { }
 	inline Option(const OptionalNone& none): one(false) { }
-	inline Option(const T& value): one(true), val(value){ }
-	inline Option(const Option<T> &opt): one(opt.one), val(opt.val) { }
+	inline Option(t::in<T> value): one(true) { t::put<T>(val, value); }
+	inline Option(const Option<T> &opt): one(opt.one) { t::put<T>(val, t::get<T>(opt.val)); }
+
 	inline bool some() const { return one; }
 	inline bool none() const { return !one; }
-	inline const T& value() const
-		{ ASSERTP(one, "no value in option"); return val; }
-	inline operator bool(void) const { return some(); }
-	inline const T& operator*() const { return value(); }
-	inline operator const T&() const { return value(); }
+
+	inline t::ret<T> value() const
+		{ ASSERTP(one, "no value in option"); return t::get<T>(val); }
+	inline t::ret<T> operator*() const { return value(); }
+
+	template <class F> const Option<T>& if_one(const F& f) const
+		{ if(one) f(t::get<T>(val)); return *this; }
+	template <class F> const Option<T>& if_else(const F& f) const
+		{ if(!one) f(); return *this; }
+
 	inline Option<T>& operator=(const Option<T>& opt)
-		{ one = opt.one; if(one) val = opt.val; return *this; }
-	inline Option<T>& operator=(const T& value)
-		{ one = true; val = value; return *this; }
+		{ one = opt.one; if(opt.one) t::put<T>(val, opt.val); return *this; }
+	inline Option<T>& operator=(t::in<T> value)
+		{ one = true; type_info<T>::put(val, value); return *this; }
+
 	inline bool equals(const OptionalNone& _) const { return none(); }
 	inline bool equals(const Option<T> &opt) const
 		{ return (this->none() && opt.none()) || (this->some() && opt.some() && val == opt.val); }
-
-	template <class F> const Option<T>& if_one(const F& f) { if(one) f(val); return *this; }
-	template <class F> const Option<T>& if_else(const F& f) { if(!one) f(val); return *this; }
-
 	inline bool operator==(const OptionalNone& _) const { return none(); }
 	inline bool operator!=(const OptionalNone& _) const { return !none(); }
 	inline bool operator==(const Option<T>& o) const { return equals(o); }
 	inline bool operator!=(const Option<T>& o) const { return !equals(o); }
 
 	// deprecated
+	inline operator bool(void) const { return some(); }
+	inline operator t::ret<T>() const { return value(); }
 	inline bool isOne() const { return one; }
 	inline bool isNone() const { return !one; }
 
 private:
 	bool one;
-	T val;
+	typename t::var<T> val;
 };
 
 
 // Fast Option building
 template <class T>
-inline Option<T> some(T val) { return Option<T>(val); };
+inline Option<T> some(const T& val) { return Option<T>(val); };
 
 } // elm
 

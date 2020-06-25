@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	BlockInStream class interface
  *
  *	This file is part of OTAWA
@@ -22,7 +21,6 @@
 #ifndef ELM_IO_BLOCK_IN_STREAM_H
 #define ELM_IO_BLOCK_IN_STREAM_H
 
-#include <elm/assert.h>
 #include <elm/string/String.h>
 #include <elm/string/CString.h>
 #include <elm/io/InStream.h>
@@ -39,50 +37,18 @@ public:
 	BlockInStream(const char *str);
 	BlockInStream(const CString& str);
 	BlockInStream(const String& str); 
-	inline const void *block(void) const;
-	inline int size(void) const;
-	inline int mark(void) const;
-	inline void move(int mark);
-	inline void moveForward(int size);
-	inline void moveBackward(int size);
-	inline void reset(void);
-	
+	inline const void *block() const { return _block; }
+	inline int size() const { return _size; }
+	inline int mark() const { return off; }
+	inline void move(int mark) { off = mark; }
+	inline void moveForward(int size) { off += size; }
+	inline void moveBackward(int size) { off -= size; }
+	inline void reset(void) { off = 0; }
+
 	// InStream overload
-	virtual int read(void *buffer, int size);
-	virtual int read(void);
+	int read(void *buffer, int size) override;
+	int read() override;
 };
-
-// Inlines
-inline const void *BlockInStream::block(void) const {
-	return _block;
-}
-
-inline int BlockInStream::size(void) const {
-	return _size;
-}
-
-inline int BlockInStream::mark(void) const {
-	return off;
-}
-
-inline void BlockInStream::move(int mark) {
-	ASSERT(mark < _size);
-	off = mark;
-}
-
-inline void BlockInStream::moveForward(int size) {
-	ASSERTP(off + size <= _size, "move out of block");
-	off += _size;
-}
-
-inline void BlockInStream::moveBackward(int size) {
-	ASSERTP(off - size >= 0, "move out of block");
-	off -= size;
-}
-
-inline void BlockInStream::reset(void) {
-	off = 0;
-}
 
 } } // elm::io
 

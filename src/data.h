@@ -640,6 +640,16 @@ struct FunctionWithArg {
  */
 
 
+/**
+ * @fn void deleteAll(const C& c);
+ * Consider that c is a collection of pointers and call the deletion on each
+ * of these pointers.
+ * @param c	Collection of pointers to delete.
+ * @param C	Type of collection.
+ * @ingroup data
+ */
+
+
  /**
   * @fn Pair<typename C1::Iter, typename C2::Iter> mismatch(const C1& c1, const C2& c2, P p);
   * Find the point of difference of two collection. Starting from the first

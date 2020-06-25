@@ -51,7 +51,7 @@ LockPtr<Directory> Directory::make(Path path) {
 	if(mkdir(&path.toString()) < 0)
 		throw SystemException(errno, "file");
 #else
-	if(mkdir(&path.toString(), 0777) < 0)
+	if(mkdir(path.asSysString(), 0777) < 0)
 		throw SystemException(errno, "file");
 #endif
 
@@ -112,7 +112,7 @@ void Directory::Iter::go(void) {
 Directory::Iter::Iter(LockPtr<Directory> directory)
 : path(directory->path()), dir(0), file(0)  {
 	errno = 0;
-	dir = opendir(&directory->path().toString());
+	dir = opendir(directory->path().asSysString());
 	ASSERT(dir);
 	go();
 }

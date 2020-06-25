@@ -50,7 +50,7 @@ File::File(Path path, ino_t inode): FileItem(path, inode) {
  */
 int File::size(void) {
 	struct stat st;
-	if(stat(&path().toString(), &st) < 0)
+	if(stat(path().asSysString(), &st) < 0)
 		throw SystemException(errno, "filesystem");
 	return st.st_size;
 }

@@ -70,10 +70,10 @@ namespace variant {
 	template <> struct access_t<float>	   	{ typedef float     rt; static float     get(const data_t& d) { return d.f;   } static void set(data_t& d, float     x) { d.f   = x; } };
 	template <> struct access_t<double>	   	{ typedef double    rt; static double    get(const data_t& d) { return d.d;   } static void set(data_t& d, double    x) { d.d   = x; } };
 
-	template <> struct access_t<cstring> 		{ typedef cstring rt; static cstring get(const data_t& d) { return static_cast<const char *>(d.cp); } static void set(data_t& d, cstring x) { d.cp = &x; } };
-	template <> struct access_t<string> 		{ typedef string  rt; static string get(const data_t& d)  { return static_cast<const char *>(d.cp); } static void set(data_t& d, string x)	 { d.cp = &x; } };
-	template <> struct access_t<const cstring&> { typedef cstring rt; static cstring get(const data_t& d) { return static_cast<const char *>(d.cp); } static void set(data_t& d, cstring x) { d.cp = &x; } };
-	template <> struct access_t<const string&>	{ typedef string  rt; static string get(const data_t& d)  { return static_cast<const char *>(d.cp); } static void set(data_t& d, string x)	 { d.cp = &x; } };
+	template <> struct access_t<cstring> 		{ typedef cstring rt; static cstring get(const data_t& d) { return static_cast<const char *>(d.cp); } static void set(data_t& d, cstring x) { d.cp = x.chars(); } };
+	template <> struct access_t<string> 		{ typedef string  rt; static string get(const data_t& d)  { return static_cast<const char *>(d.cp); } static void set(data_t& d, string x)	 { d.cp = x.toCString().chars(); } };
+	template <> struct access_t<const cstring&> { typedef cstring rt; static cstring get(const data_t& d) { return static_cast<const char *>(d.cp); } static void set(data_t& d, cstring x) { d.cp = x.chars(); } };
+	template <> struct access_t<const string&>	{ typedef string  rt; static string get(const data_t& d)  { return static_cast<const char *>(d.cp); } static void set(data_t& d, string x)	 { d.cp = x.toCString().chars(); } };
 
 	template <class T> struct access_t<T *> {
 		typedef T *rt;

@@ -182,7 +182,7 @@ Process *ProcessBuilder::run(void) {
 			// build arguments
 			char *tab[args.count() + 1];
 			for(int i = 0; i < args.count(); i++)
-				tab[i] = (char *)&args[i].toCString();
+				tab[i] = (char *)args[i].toCString().chars();
 			tab[args.count()] = 0;
 
 			// Launch the command

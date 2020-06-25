@@ -92,14 +92,14 @@ public:
 	private:
 		typename tree_t::Iter it;
 	};
-	inline Iterable<KeyIter> keys() const { return iter(KeyIter(*this), KeyIter()); }
+	inline Iterable<KeyIter> keys() const { return subiter(KeyIter(*this), KeyIter()); }
 
 	class PairIter: public tree_t::Iter {
 	public:
 		inline PairIter() { }
 		inline PairIter(const self_t& map): tree_t::Iter(map.tree) { }
 	};
-	inline Iterable<PairIter> pairs() const { return iter(PairIter(*this), PairIter()); }
+	inline Iterable<PairIter> pairs() const { return subiter(PairIter(*this), PairIter()); }
 
 	// MutableMap concept
 	inline void put(const K &key, const T &value) { tree.set(pair_t(key, value)); }

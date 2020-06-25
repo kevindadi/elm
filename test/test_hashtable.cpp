@@ -8,10 +8,39 @@
 #include <elm/data/HashMap.h>
 #include <elm/data/HashSet.h>
 #include <elm/data/Vector.h>
+#include <elm/sys/Path.h>
 #include <elm/util/BitVector.h>
-#include "../include/elm/test.h"
+#include <elm/test.h>
 
 using namespace elm;
+
+#if 0
+class Embed {
+public:
+	Embed(string s): ss(s) { }
+	Embed(const Embed& e): ss(e.ss) { }
+	inline Embed& operator=(const Embed& e) { ss = e.ss; return *this; }
+	bool operator==(const Embed& e) const { return ss == e.ss; }
+	string ss;
+};
+#endif
+class Embed {
+public:
+	Embed(cstring s) {
+		t[0] = s.length();
+		t[1] = s.length() + 1;
+		t[2] = s.length() + 2;
+		t[3] = s.length() + 3;
+	}
+	bool operator==(const Embed& e) const {
+		return
+			t[0] == e.t[0] &&
+			t[1] == e.t[1] &&
+			t[2] == e.t[2] &&
+			t[3] == e.t[3];
+	}
+	int t[4];
+};
 
 // test_hashtable()
 TEST_BEGIN(hashtable)
@@ -86,6 +115,7 @@ TEST_BEGIN(hashtable)
 			m[1];
 			cm[1];
 			m[1] = 1;
+			m.fetch(1);
 		}
 	}
 
@@ -221,7 +251,7 @@ TEST_BEGIN(hashtable)
 		bool failed = false;
 		for(int i = 0; i < 100; i++) {
 			string k = _ << i << (-i);
-			Option<int> o = map2.get(k);
+			auto o = map2.get(k);
 			if(!o || *o != i) {
 				failed = true;
 				break;

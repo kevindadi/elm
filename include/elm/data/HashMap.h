@@ -48,11 +48,14 @@ public:
 	inline void clear(void) { _tab.clear(); }
 	inline void add(const K& key, const T& val) { _tab.add(pair(key, val)); }
 
+	inline T& fetch(const K& k)
+		{ auto *n = _tab.get(key(k)); if(n != nullptr) return n->snd; return _tab.add(pair(k, T()))->snd; }
+
 	// Map concept
 	inline Option<T> get(const K& k) const
 		{ auto *r = _tab.get(key(k)); if(r) return some(r->snd); else return none; }
 	inline const T& get(const K& k, const T& def) const
-		{ auto r = _tab.get(key(k)); if(r) return r->snd; else return def; }
+		{ auto p = key(k); auto r = _tab.get(p); if(r) return r->snd; else return def; }
 	inline bool hasKey(const K& k) const { return _tab.hasKey(key(k)); }
 
 	inline Option<T> get_const(const K& k) const
@@ -72,7 +75,7 @@ public:
 	private:
 		typename tab_t::Iter i;
 	};
-	inline Iterable<KeyIter> keys() const { return iter(KeyIter(*this), KeyIter(*this, true)); }
+	inline Iterable<KeyIter> keys() const { return subiter(KeyIter(*this), KeyIter(*this, true)); }
 
 	class PairIter: public InplacePreIterator<PairIter, Pair<K, T> > {
 	public:
@@ -85,7 +88,7 @@ public:
 	private:
 		typename tab_t::Iter i;
 	};
-	inline Iterable<PairIter> pairs() const { return iter(PairIter(*this), PairIter(*this, true)); }
+	inline Iterable<PairIter> pairs() const { return subiter(PairIter(*this), PairIter(*this, true)); }
 
 	// Collection concept
 	inline int count() const { return _tab.count(); }

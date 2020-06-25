@@ -245,7 +245,7 @@ void XOMUnserializer::embed(const rtti::Type& clazz, void **ptr) {
 	Option<xom::String> name = ctx.elem->getAttributeValue(class_tag);
 	if(name) {
 		clazz_name = name;
-		uclass = rtti::Type::get(&clazz_name);
+		uclass = rtti::Type::get(clazz_name);
 		if(!uclass)
 			throw io::IOException(_ << "no class " << clazz_name);
 		if(!uclass->isClass())

@@ -41,6 +41,7 @@ private:
 		T data;
 	};
 
+protected:
 	node_t *find(const T& key) const {
 		int i = H::computeHash(key) % _size;
 		for(node_t *node = _tab[i], *prev = 0; node; prev = node, node = node->next)
@@ -60,10 +61,13 @@ private:
 		return 0;
 	}
 
+private:
+
 	node_t *make(const T& data) {
 		int i = H::computeHash(data) % _size;
 		node_t *node = new(A::allocate(sizeof(node_t))) node_t(data);
-		node->next = _tab[i]; _tab[i] = node;
+		node->next = _tab[i];
+		_tab[i] = node;
 		return node;
 	}
 
@@ -152,7 +156,7 @@ public:
 		}
 	}
 
-	void add(const T& data) { make(data); }
+	T *add(const T& data) { return &make(data)->data; }
 
 	inline self_t& operator+=(const T& x) { add(x); return *this; }
 
@@ -207,6 +211,9 @@ public:
 		}
 	}
 	inline self_t& operator=(const HashTable<T, H>& c) { copy(c); return *this; }
+
+	inline T *get(const T& key)
+		{ node_t *node = find(key); return node ? &node->data : 0; }
 
 #	ifdef ELM_STAT
 		int minEntry(void) const { int m = count(0); for(int i = 1; i < _size; i++) m = min(m, count(i)); return m; }

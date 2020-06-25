@@ -68,21 +68,6 @@ extern AutoStringStartup autostr;
 extern AutoStringStartup &_;
 
 
-// StringInput class
-/*class StringInput {
-public:
-	StringInput(const char *str);
-	StringInput(const string& str);
-	StringInput(cstring str);
-	~StringInput(void);
-	inline StringInput(StringInput& _in) { in.setStream(_in.in.stream()); _in.in.setStream(io::in); }
-	inline StringInput& operator=(StringInput& _in) { in.setStream(_in.in.stream()); _in.in.setStream(io::in); return *this; }
-	template <class T> StringInput& operator>>(T& val) { in.operator>>(val); return *this; }
-private:
-	io::Input in;
-};*/
-
-
 // Even faster autostring
 #ifndef ELM_AUTOSTR_FAST_NO
 

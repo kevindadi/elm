@@ -12,7 +12,6 @@
 #include <elm/string/CString.h>
 #include <elm/string/String.h>
 #include <elm/string/StringBuffer.h>
-#include <elm/string/AutoString.h>
 #include <elm/string/Split.h>
 
 namespace elm {
@@ -116,5 +115,7 @@ template <class C> String inline String::join(const C& coll) {
 }
 
 };
+
+#include <elm/string/AutoString.h>
 
 #endif // ELM_STRING_H
