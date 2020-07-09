@@ -120,7 +120,7 @@ Plugger::Plugger(CString hook, const Version& plugger_version, String paths)
 	// Look in the system paths
 	if(paths == "*")
 #if defined(__APPLE__)
-		_paths = getenv("DYLD_LIBRARY_PATH");
+		paths = getenv("DYLD_LIBRARY_PATH");
 #else
 		paths = getenv("LD_LIBRARY_PATH");
 #endif
