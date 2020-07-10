@@ -31,6 +31,10 @@
 #include <elm/sys/System.h>
 #include <elm/sys/SystemException.h>
 
+#if defined(__WIN32) || defined(__WIN64)
+#include <windows.h>
+#endif
+
 //#define DEBUG
 #if defined(DEBUG) && !defined(NDEBUG)
 #	define TRACE		cerr << __FILE__ << ":" << __LINE__ << io::endl;
@@ -384,9 +388,9 @@ Path Path::temp(void) {
 	if(!init) {
 #		if defined(__WIN32) || defined(__WIN64)
 			char buf[MAX_PATH + 1];
-			DWORD r = GetTempPath(MAXPATH + 1, buf);
+			DWORD r = GetTempPath(MAX_PATH + 1, buf);
 			if(!r)
-				throw SystemException("cannot get temporary file");
+				throw SystemException(0, "cannot get temporary file");
 			else {
 				init = true;
 				path = Path(buf);

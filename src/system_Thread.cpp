@@ -345,7 +345,7 @@ Mutex::~Mutex(void) { }
 
 		static DWORD WINAPI boot(LPVOID param) {
 			WinThread *thread = static_cast<WinThread *>(param);
-			thread->_runnable.run();
+			thread->_runnable->run();
 			return 0;
 		}
 

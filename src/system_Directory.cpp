@@ -48,7 +48,7 @@ LockPtr<Directory> Directory::make(Path path) {
 	errno = 0;
 	// Build the directory
 #if defined(__MINGW__) || defined(__MINGW32__)
-	if(mkdir(&path.toString()) < 0)
+	if(mkdir(path.asSysString()) < 0)
 		throw SystemException(errno, "file");
 #else
 	if(mkdir(path.asSysString(), 0777) < 0)

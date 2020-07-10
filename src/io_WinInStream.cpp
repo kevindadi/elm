@@ -25,7 +25,7 @@
 #include <errno.h>
 #include <elm/io/WinInStream.h>
 #include <windows.h>
-#include <elm/system/SystemIO.h>
+#include <elm/sys/SystemIO.h>
 #include <elm/io.h>
 #include <elm/string.h>
 

@@ -99,11 +99,11 @@ endif()
 # look for GDB
 find_program(GDB_PATH gdb)
 message(STATUS "GDB_PATH = " ${GDB_PATH})
-if(GDB_PATH)
+if(GDB_PATH AND UNIX AND NOT WIN32 AND NOT WIN64)
 	set(CRASH_HANDLER "GDBCrashHandler::DEFAULT")
 else()
 	set(CRASH_HANDLER "CrashHandler::DEFAULT")
-endif(GDB_PATH)
+endif()
 message(STATUS "crash handler is " ${CRASH_HANDLER})
 
 

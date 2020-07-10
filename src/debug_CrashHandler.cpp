@@ -15,6 +15,8 @@
 
 namespace elm {
 
+#if !defined(__WIN32) || defined(__WIN64)
+
 // handle SIGSEGV errors
 static void handle_SIGSEGV(int sig, siginfo_t *info, void *context) {
 	printf("FATAL: segmentation fault at %p.\n", info->si_addr);
@@ -46,6 +48,8 @@ static void handle_SIGINT(int sig, siginfo_t *info, void *context) {
 	printf("FATAL: int signal received at %p.\n", info->si_addr);
 	CrashHandler::crash();
 }
+
+#endif
 
 
 /**
@@ -104,7 +108,9 @@ CrashHandler CrashHandler::DEFAULT;
  * This function is called when the handler is installed.
  */
 void CrashHandler::setup(void) {
-	
+
+#if !defined(__WIN32) || defined(__WIN64)
+
 	// Handler initialization
 	struct sigaction sa;
 	sa.sa_handler = 0;
@@ -133,6 +139,7 @@ void CrashHandler::setup(void) {
 		sa.sa_sigaction = handle_SIGINT;
 		sigaction(SIGINT, &sa, 0);
 	}
+#	endif
 }
 
 
@@ -148,7 +155,9 @@ void CrashHandler::handle(void) {
  * This function is called when the handler is removed.
  */
 void CrashHandler::cleanup(void) {
-	
+
+#if !defined(__WIN32) || defined(__WIN64)
+
 	// Prepare datastructure
 	struct sigaction sa;
 	sa.sa_handler = SIG_DFL;
@@ -175,6 +184,7 @@ void CrashHandler::cleanup(void) {
 		sa.sa_handler = SIG_DFL;
 		sigaction(SIGINT, &sa, 0);
 	}
+#endif
 }
 
 

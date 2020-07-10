@@ -27,6 +27,10 @@
 #	include <windows.h>
 #	undef min
 #	undef max
+	namespace elm { namespace win {
+		void setError(int code);
+		string getErrorMessage(void);
+	} }	// elm::win
 #elif defined(WITH_LIBTOOL)
 #	include <ltdl.h>
 #else
@@ -434,6 +438,7 @@ Plugin *Plugger::plugFile(sys::Path path) {
 		err = NO_PLUGIN;
 		return nullptr;
 	}
+	
 	/* TOFIX -- disabled for now as it seems to be too strict
 	 * Should be re-enabled in future.
 	else if(!path.isExecutable()) {
@@ -441,29 +446,23 @@ Plugin *Plugger::plugFile(sys::Path path) {
 		err = NO_PLUGIN;
 		return nullptr;
 	}*/
-#	if defined(__WIN32) || defined(__WIN64)
-		if(!file) {
-			Path rpath = path;
-			rpath = rpath.setExtension("link");
-			file = sys::FileItem::get(rpath);
-			if(file) {
-				file->release();
-				file = 0;
-				io::InStream *in = 0;
-				try {
-					in = System::readFile(rpath);
-					io::Input input(*in);
-					String npath;
-					input >> npath;
-					path = rpath.parent() / npath;
-					file = sys::FileItem::get(path);
-				}
-				catch(io::IOException& e) {
-					onError(level_error, e.message());
-					if(in)
-						delete in;
-				}
 
+#	if defined(__WIN32) || defined(__WIN64)
+		Path rpath = path;
+		rpath = rpath.setExtension("link");
+		if(rpath.exists() && rpath.isFile() && rpath.isReadable()) {
+			io::InStream *in = 0;
+			try {
+				in = System::readFile(rpath);
+				io::Input input(*in);
+				String npath;
+				input >> npath;
+				path = rpath.parent() / npath;
+			}
+			catch(io::IOException& e) {
+				onError(level_error, e.message());
+				if(in)
+					delete in;
 			}
 		}
 #	endif
@@ -787,13 +786,14 @@ Plugin *Plugger::Iter::plug(void) const {
  * @return	Last error message.
  */
 string Plugger::error(void) {
-#			if defined(__WIN32) || defined(__WIN64)
-				return GetLastError();
-#			elif defined(WITH_LIBTOOL)
-				return lt_dlerror();
-#			else
-				return dlerror();
-#			endif
+#	if defined(__WIN32) || defined(__WIN64)
+		win::setError(GetLastError());
+		return win::getErrorMessage();
+#	elif defined(WITH_LIBTOOL)
+		return lt_dlerror();
+#	else
+		return dlerror();
+#	endif
 }
 
 
@@ -805,7 +805,7 @@ void Plugger::unlink(void *handle) {
 #	ifdef WITH_LIBTOOL
 		lt_dlclose((lt_dlhandle)_handle);
 #	elif defined(__WIN32) || defined(__WIN64)
-		if(FreeLibrary(reinterpret_cast<HINSTANCE&>(_handle)) == 0 )
+		if(FreeLibrary(reinterpret_cast<HINSTANCE&>(handle)) == 0 )
 			throw SystemException(errno,"error freeing library");
 #	else
 		dlclose(handle);
