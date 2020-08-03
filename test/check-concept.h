@@ -25,6 +25,8 @@
 
 namespace elm {
 
+inline void get_bool(bool b) { }
+
 template <class C, class T>
 void checkCollection(C& c, const C& cc, const T& x) {
 	if(false) {
@@ -32,12 +34,12 @@ void checkCollection(C& c, const C& cc, const T& x) {
 		c.contains(1);
 		c.containsAll(cc);
 		c.isEmpty();
-		static_cast<bool>(c);
+		get_bool(static_cast<bool>(c));
 		c.begin();
 		c.end();
 		c.equals(cc);
-		c == cc;
-		c != cc;
+		get_bool(c == cc);
+		get_bool(c != cc);
 	}
 }
 

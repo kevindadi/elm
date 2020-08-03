@@ -369,10 +369,10 @@ class Class: public AbstractClass {
 public:
 	inline Class(CString name, const AbstractClass& base = type_of<B>().asClass()): AbstractClass(name, base) { };
 	inline Class(const make& m): AbstractClass(m, type_of<B>().asClass()) { }
-	virtual void *instantiate(void) const { return I<T>::_(); };
-	virtual void free(void *obj) const override { I<T>::_free(obj); }
-	virtual void *upCast(void *ptr) const { return static_cast<B *>(static_cast<T *>(ptr)); }
-	virtual void *downCast(void *ptr) const { return static_cast<T *>(static_cast<B *>(ptr)); }
+	void *instantiate(void) const override { return I<T>::_(); };
+	void free(void *obj) const override { I<T>::_free(obj); }
+	void *upCast(void *ptr) const override { return static_cast<B *>(static_cast<T *>(ptr)); }
+	void *downCast(void *ptr) const override { return static_cast<T *>(static_cast<B *>(ptr)); }
 
 	inline void *upCast(void *ptr, const AbstractClass& cls) const { return AbstractClass::upCast(const_cast<void *>(ptr), cls); }
 	inline void *downCast(void *ptr, const AbstractClass& cls) const { return AbstractClass::downCast(const_cast<void *>(ptr), cls); }

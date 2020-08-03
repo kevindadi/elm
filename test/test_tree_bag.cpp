@@ -12,6 +12,8 @@
 
 using namespace elm;
 
+inline void get(bool b) { }
+
 #define COUNT	10000
 #define MAX		10000
 
@@ -28,7 +30,7 @@ TEST_BEGIN(tree_bag)
 			t.count();
 			t.contains(1);
 			t.isEmpty();
-			static_cast<bool>(t);
+			get(static_cast<bool>(t));
 			t.begin();
 			t.end();
 			volatile int s;
@@ -118,7 +120,7 @@ TEST_BEGIN(tree_bag)
 			t.count();
 			t.contains(1);
 			t.isEmpty();
-			static_cast<bool>(t);
+			get(static_cast<bool>(t));
 			t.begin();
 			t.end();
 			t.get(1, 2);

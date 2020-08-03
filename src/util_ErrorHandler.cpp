@@ -77,12 +77,12 @@ public:
 };
 
 ///
-static NoInfoHandler NO_INFO;
+static NoInfoHandler NO_INFO_HANDLER;
 
 /**
  * Error handler that displays all except the information messages.
  */
-ErrorHandler& ErrorHandler::NO_INFO = NO_INFO;
+ErrorHandler& ErrorHandler::NO_INFO = NO_INFO_HANDLER;
 
 
 ///
@@ -93,12 +93,12 @@ public:
 };
 
 ///
-static QuietHandler QUIET;
+static QuietHandler QUIET_HANDLER;
 
 /**
  * Error handler that does not display anything.
  */
-ErrorHandler& ErrorHandler::QUIET = QUIET;
+ErrorHandler& ErrorHandler::QUIET = QUIET_HANDLER;
 
 
 /**
