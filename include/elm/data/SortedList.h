@@ -71,7 +71,7 @@ public:
 	bool equals(const SortedList<T>& l) const {
 		Iter i = begin(), j = l.begin();
 		for(; i() && j(); i++, j++)
-			if(!comparator().doCompare(*i, *j) == 0)
+			if(comparator().doCompare(*i, *j) != 0)
 				return false;
 		return !i && !j;
 	}

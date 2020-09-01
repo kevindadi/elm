@@ -325,21 +325,17 @@ struct ListPrinter {
 	cstring s;
 	fun_t f;
 	static inline void asis(io::Output& out, t x) { out << x; }
+	void print(io::Output& out) const
+		 { bool c = true; for(auto x: l) { if(c) c = false; else out << s; f(out, x); } }
 };
 
 template <class T>
 inline ListPrinter<T> list(const T& l, cstring s = "", typename ListPrinter<T>::fun_t f = ListPrinter<T>::asis)
 	{ return ListPrinter<T>(l, s, f); }
 
-template <class T, class F>
-inline io::Output& operator<<(io::Output& out, const ListPrinter<T>& l) {
-	bool f = true;
-	for(auto x: l.l) {
-		if(f) f = false; else out << l.s;
-		//l.f(out, x);
-	}
-	return out;
-}
+template <class T>
+inline io::Output& operator<<(io::Output& out, const ListPrinter<T>& l)
+	{ l.print(out); return out; }
 
 } } // elm::io
 

@@ -62,7 +62,7 @@ InFileStream::InFileStream(CString path)
 }
 #elif defined(__WIN32) || defined(__WIN64) 
 InFileStream::InFileStream(CString path)
-: SystemInStream(CreateFile(&path,
+: SystemInStream(CreateFile(path.chars(),
 		GENERIC_READ,
 		FILE_SHARE_READ,
 		NULL,

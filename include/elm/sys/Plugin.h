@@ -34,9 +34,9 @@ namespace elm { namespace sys {
 
 #define ELM_PLUGIN_ID_PREFIX		"@@ELM-PLUGIN-ID@@:"
 #define ELM_PLUGIN_CONCAT(x, y)		ELM_CONCAT_AUX(x, y)
-#define ELM_PLUGIN_ID(hook, info)	const char ELM_PLUGIN_CONCAT(__plugin_id_, __LINE__)[] = ELM_PLUGIN_ID_PREFIX hook ":" info;
+#define ELM_PLUGIN_ID(hook, info)	const char *ELM_PLUGIN_CONCAT(__plugin_id_, __LINE__)() { return ELM_PLUGIN_ID_PREFIX hook ":" info; }
 #define ELM_PLUGIN(plugin, hook) 	extern "C" { \
-	static ELM_PLUGIN_ID(#hook, #plugin); \
+	ELM_PLUGIN_ID(#hook, #plugin); \
 	elm::sys::Plugin *ELM_PLUGIN_CONCAT(hook, _fun)(void) { return static_cast<elm::sys::Plugin *>(&plugin); } }
 
 // Plugin class

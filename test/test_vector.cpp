@@ -21,6 +21,8 @@
 #include <elm/data/Vector.h>
 #include "../include/elm/test.h"
 
+inline void get(bool b) { }
+
 using namespace elm;
 
 // test_vector()
@@ -44,12 +46,12 @@ TEST_BEGIN(vector)
 			v.count();
 			v.contains(1);
 			v.isEmpty();
-			static_cast<bool>(v);
+			get(static_cast<bool>(v));
 			v.begin();
 			v.end();
 			v.equals(v);
-			v == v;
-			v != v;
+			get(v == v);
+			get(v != v);
 
 			v.clear();
 			v.addAll(v);

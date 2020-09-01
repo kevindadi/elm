@@ -68,7 +68,7 @@ set(TEST_SOURCES
 	"test_process.cpp"
 	"test_ptr.cpp"
 	"test_quicksort.cpp"
-	"test_re.cpp"
+	#"test_re.cpp"
 	"test_rtti.cpp"
 	"test_ref.cpp"
 	"test_range.cpp"

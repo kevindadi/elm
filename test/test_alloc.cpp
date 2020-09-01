@@ -44,7 +44,7 @@ public:
 		collected = true;
 	}
 
-	void destroy(int *p) {
+	void destroy(int *p) override {
 		bad_destroy = bad_destroy || alives.contains(p);
 	}
 

@@ -71,7 +71,7 @@ public:
 
 	// MutableCollection concept
 	void clear(void)
-		{ for(chunk_t *c = _fst, *n = 0; c; n = c) { n = c->next; delete n; }
+		{ for(chunk_t *c = _fst, *n = 0; c != nullptr; c = n) { n = c->next; delete n; }
 		  _size = _avail = 0; _fst = _lst = 0; }
 	inline void add(const T& v)
 		{ if(_size == _avail) extend(); _lst->items[offset(_size)] = v; _size++; }

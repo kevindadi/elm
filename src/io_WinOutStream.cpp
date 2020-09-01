@@ -25,7 +25,7 @@
 #include <elm/io/WinOutStream.h>
 #include <elm/io.h>
 #include <windows.h>
-#include <elm/system/SystemIO.h>
+#include <elm/sys/SystemIO.h>
 #include <stdio.h>
 
 
@@ -86,13 +86,13 @@ int WinOutStream::flush(void) {
 /**
  * Stream pointing to the standard output.
  */
-static system::SystemOutStream Win_stdout(GetStdHandle(STD_OUTPUT_HANDLE)/*(HANDLE)_get_osfhandle(0)*/);
+static sys::SystemOutStream Win_stdout(GetStdHandle(STD_OUTPUT_HANDLE)/*(HANDLE)_get_osfhandle(0)*/);
 //system::SystemOutStream& out = Win_stdout;
 
 /**
  * Stream pointing to the standard error output.
  */
-static system::SystemOutStream Win_stderr(GetStdHandle(STD_ERROR_HANDLE));
+static sys::SystemOutStream Win_stderr(GetStdHandle(STD_ERROR_HANDLE));
 //system::SystemOutStream& err = Win_stderr;
 
 } } // elm::io

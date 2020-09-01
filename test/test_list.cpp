@@ -28,6 +28,8 @@
 
 using namespace elm;
 
+inline void get_bool(bool b) { }
+
 class Eq {
 public:
 	bool isEqual(int x, int y) const { return x == y; }
@@ -50,8 +52,8 @@ TEST_BEGIN(list)
 			l.contains(0);
 			l.isEmpty();
 			l.equals(l);
-			l == l;
-			l != l;
+			get_bool(l == l);
+			get_bool(l != l);
 			l.at(l.begin());
 			l.clear();
 			l.add(0);
@@ -216,7 +218,7 @@ TEST_BEGIN(list)
 		for(int i = 9; i >= 0; i--)
 			l += i;
 		List<int>::Iter b, e;
-		for(List<int>::Iter i = l; i(); i++) {
+		for(List<int>::Iter i(l); i(); i++) {
 			if(*i == 3)
 				b = i;
 			else if(*i == 8)

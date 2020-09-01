@@ -36,7 +36,7 @@ namespace elm {
  */
 AbstractBlockAllocatorWithGC::AbstractBlockAllocatorWithGC(t::size block_size, t::size chunk_size)
 : free_list(nullptr), free_cnt(0), bsize(block_size), csize(chunk_size), coll(nullptr) {
-	bsize = max(block_size, sizeof(free_t));
+	bsize = max(block_size, t::size(sizeof(free_t)));
 	ASSERTP(block_size < chunk_size, "block size must be lower than chunk size");
 	chunks.add(new t::uint8[csize]);
 	top = chunks.top();

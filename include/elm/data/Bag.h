@@ -83,7 +83,7 @@ public:
 	inline int indexOf(const T& x, int i = -1) const
 		{ for(i++; i < cnt; i++) if(get(i) == x) return i; return -1; }
 	inline int lastIndexOf(const T& x, int i = -1) const
-		{ if(i < 0) i = cnt; for(i--; i >= 0 && x != get(i); i--) return i; }
+		{ if(i < 0) i = cnt; i--; while(i >= 0 && x != get(i)) i--; return i; }
 
 private:
 	static inline void *operator new(std::size_t size, int cnt)

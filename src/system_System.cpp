@@ -64,10 +64,6 @@ namespace elm {
 		void setError(int code) {
 			last_error = code;
 		}
-		string getLastErrorMessage(void) {
-			setError();
-			return getErrorMessage();
-		}
 		
 		string getErrorMessage(void) {
 			char buf[256];
@@ -80,6 +76,11 @@ namespace elm {
 				sizeof(buf),
 				NULL);
 			return _ << buf << " (" << last_error << ")";
+		}
+
+		string getLastErrorMessage(void) {
+			setError();
+			return getErrorMessage();
 		}
 	}
 #endif	
@@ -284,7 +285,7 @@ io::OutStream *System::createFile(const Path& path) {
 
 #elif defined(__WIN32) || defined(__WIN64)
 	HANDLE fd;
-	fd=CreateFile(&path.toString(),
+	fd=CreateFile(path.asSysString(),
 			GENERIC_READ,
 			FILE_SHARE_DELETE|FILE_SHARE_READ|FILE_SHARE_WRITE,
 			NULL,
@@ -318,7 +319,7 @@ io::InStream *System::readFile(const Path& path) {
 #	elif defined(__WIN32) || defined(__WIN64)
 		HANDLE fd;
 		fd = CreateFile(
-			&path.toString(),
+			path.asSysString(),
 			GENERIC_READ,
 			FILE_SHARE_READ,
 			NULL,
@@ -350,7 +351,7 @@ io::OutStream *System::appendFile(const Path& path) {
 	return new io::BufferedOutStream(new SystemOutStream(fd), true);
 #elif defined(__WIN32) || defined(__WIN64)
 	HANDLE fd;
-	fd=CreateFile(&path.toString(),
+	fd=CreateFile(path.asSysString(),
 			GENERIC_READ,
 			FILE_APPEND_DATA,
 			NULL,
@@ -619,8 +620,8 @@ bool System::hasEnv(cstring key) {
  */
 void System::makeDir(const sys::Path& path) {
 #	if defined(__WIN32) || defined(__WIN64)
-		if(!CreateDirectory(&path.toString().toCString(), NULL))
-			throw SystemException(0, _ << "cannot create " << path << ": " << win::getLastErrorMessage()));
+		if(!CreateDirectory(path.asSysString(), NULL))
+			throw SystemException(0, _ << "cannot create " << path << ": " << win::getLastErrorMessage());
 #	else
 		int r = mkdir(path.asSysString(), 0777);
 		if(r)
@@ -634,8 +635,8 @@ void System::makeDir(const sys::Path& path) {
  */
 void System::removeDir(const sys::Path& path) {
 #	if defined(__WIN32) || defined(__WIN64)
-		if(!RemoveDirectory(&path.toString().toCString(), NULL))
-			throw SystemException(0, _ << "cannot remove " << path << ": " << win::getLastErrorMessage()));
+		if(!RemoveDirectory(path.asSysString()))
+			throw SystemException(0, _ << "cannot remove " << path << ": " << win::getLastErrorMessage());
 #	else
 		int r = rmdir(path.asSysString());
 		if(r)
@@ -649,8 +650,8 @@ void System::removeDir(const sys::Path& path) {
  */
 void System::removeFile(const Path& path) {
 #	if defined(__WIN32) || defined(__WIN64)
-		if(!DeleteFile(&path.toString().toCString()))
-			throw SystemException(0, _ << "cannot remove " << path << ": " << win::getLastErrorMessage()));
+		if(!DeleteFile(path.asSysString()))
+			throw SystemException(0, _ << "cannot remove " << path << ": " << win::getLastErrorMessage());
 #	else
 		int r = ::remove(path.asSysString());
 		if(r)
@@ -723,9 +724,9 @@ sys::Path System::getTempFile(void) {
 #	if defined(__WIN32) || defined(__WIN64)
 		// From https://msdn.microsoft.com/en-us/library/windows/desktop/aa363875%28v=vs.85%29.aspx
 		char buf[MAX_PATH + 1];
-		UINT r = GetTempFileName(&temp().toString(), "elf,", 0, buf);
+		UINT r = GetTempFileName(Path::temp().asSysString(), "elf,", 0, buf);
 		if(r == 0)
-			throw SystemException(_ << "cannot create a temporary file: " << win::getLastErrorMessage());
+			throw SystemException(0, _ << "cannot create a temporary file: " << win::getLastErrorMessage());
 		else
 			return Path(buf);
 #	else
@@ -751,7 +752,7 @@ sys::Path System::getTempDir(void) {
 	// Windows: https://msdn.microsoft.com/en-us/library/windows/desktop/aa363875%28v=vs.85%29.aspx
 	int cnt = 0;
 	while(cnt < 1000) {
-		Path path = temp() / (_ << "elf," << cnt);
+		Path path = Path::temp() / string(_ << "elf," << cnt);
 		try {
 			makeDir(path);
 			return path;
@@ -760,7 +761,7 @@ sys::Path System::getTempDir(void) {
 			cnt++;
 		}
 	}
-	throw SystemException(_ << "cannot create a temporary directory: " << win::getLastErrorMessage());
+	throw SystemException(0, _ << "cannot create a temporary directory: " << win::getLastErrorMessage());
 
 #	else
 		string tmp = (Path::temp() / "elf,XXXXXX").toString();
@@ -800,7 +801,7 @@ int System::coreCount(void) {
 				nb = 1;
 			}
 #		elif defined(__WIN32) || defined(__WIN64)
-			LPSYSTEM_INFO info;
+			SYSTEM_INFO info;
 			GetSystemInfo(&info);
 			nb = info.dwNumberOfProcessors;
 #		else

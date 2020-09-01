@@ -14,16 +14,8 @@
 
 using namespace elm;
 
-#if 0
-class Embed {
-public:
-	Embed(string s): ss(s) { }
-	Embed(const Embed& e): ss(e.ss) { }
-	inline Embed& operator=(const Embed& e) { ss = e.ss; return *this; }
-	bool operator==(const Embed& e) const { return ss == e.ss; }
-	string ss;
-};
-#endif
+inline void get_bool(bool b) { }
+
 class Embed {
 public:
 	Embed(cstring s) {
@@ -68,8 +60,8 @@ TEST_BEGIN(hashtable)
 			t.end();
 			t = ct;
 			t.equals(t);
-			t == t;
-			t != t;
+			get_bool(t == t);
+			get_bool(t != t);
 			t += 1;
 			t -= 1;
 		}
@@ -95,19 +87,19 @@ TEST_BEGIN(hashtable)
 			m.pairs();
 			m.count();
 			m.isEmpty();
-			static_cast<bool>(m);
+			get_bool(static_cast<bool>(m));
 			m.begin();
 			m.end();
 			m.contains(1);
 			m.containsAll(m);
 			m.equals(m);
-			m == m;
-			m != m;
+			get_bool(m == m);
+			get_bool(m != m);
 			m.includes(m);
-			m <= m;
-			m >= m;
-			m < m;
-			m > m;
+			get_bool(m <= m);
+			get_bool(m >= m);
+			get_bool(m < m);
+			get_bool(m > m);
 			m.put(1, 1);
 			m.remove(1);
 			m.remove(m.begin());
@@ -131,17 +123,17 @@ TEST_BEGIN(hashtable)
 			s.count();
 			s.contains(1);
 			s.isEmpty();
-			static_cast<bool>(s);
+			get_bool(static_cast<bool>(s));
 			s.begin();
 			s.end();
 			s.equals(s);
-			s == s;
-			s != s;
+			get_bool(s == s);
+			get_bool(s != s);
 			s.subsetOf(s);
-			s <= s;
-			s >= s;
-			s < s;
-			s > s;
+			get_bool(s <= s);
+			get_bool(s >= s);
+			get_bool(s < s);
+			get_bool(s > s);
 			s.clear();
 			s.add(1);
 			s.addAll(s);

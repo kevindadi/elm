@@ -58,15 +58,15 @@ public:
 	inline Class(CString name, const rtti::AbstractClass& base = type_of<B>().asClass())
 		: AbstractClass(name, base) { };
 
-	virtual void *instantiate(void) const { return new T(); }
-	virtual void free(void *obj) const override { delete static_cast<T *>(obj); }
+	void *instantiate() const override { return new T(); }
+	void free(void *obj) const override { delete static_cast<T *>(obj); }
 
 	// Serializable interface
-	virtual void serialize(elm::serial2::Serializer& ser, const void *data) const {
+	void serialize(elm::serial2::Serializer& ser, const void *data) const override {
 		__serialize(ser, *static_cast<const T *>(data));
 	}
 
-	virtual void unserialize(Unserializer& uns, void *data) const {
+	void unserialize(Unserializer& uns, void *data) const override {
 		__unserialize(uns, *static_cast<T *>(data));
 	}
 };
