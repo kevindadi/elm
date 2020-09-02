@@ -514,7 +514,7 @@ void BitVector::resize(int new_size) {
 	if(wcount() != new_wcount) {
 		word_t *new_bits = new word_t[new_wcount];
 		if(bits != nullptr) {
-			array::copy(new_bits, bits, wcount());
+			array::copy(new_bits, bits,min(wcount(),new_wcount) );
 			delete [] bits;
 		}
 		bits = new_bits;
