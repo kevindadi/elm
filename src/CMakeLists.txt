@@ -119,6 +119,7 @@ set(LIBELM_LA_SOURCES
 	"util_Ref.cpp"
 	"util_strong_type.cpp"
 	"util_test.cpp"
+	"util_Time.cpp"
 	"util_VarArg.cpp"
 	"util_Version.cpp"
 	"util_WAHVector.cpp"

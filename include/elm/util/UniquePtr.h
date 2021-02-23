@@ -23,7 +23,6 @@
 
 namespace elm {
 
-// AutoDestructor class
 template <class T>
 class UniquePtr {
 public:
@@ -48,6 +47,8 @@ public:
 private:
 	T *p;
 };
+
+template <class T> UniquePtr<T> unique(T *p) { return UniquePtr<T>(p); }
 
 };
 

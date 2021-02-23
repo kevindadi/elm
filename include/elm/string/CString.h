@@ -49,6 +49,7 @@ public:
 	inline bool startsWith(const char *str) const;
 	inline bool startsWith(const CString str) const;
 	inline bool startsWith(const String& str) const;
+	inline bool endsWith(const char *str) const;
 	inline bool endsWith(const CString str) const;
 	inline bool endsWith(const String& str) const;
 	

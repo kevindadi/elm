@@ -22,6 +22,7 @@
 #define ELM_SYS_STOP_WATCH_H
 
 #include <elm/types.h>
+#include <elm/util/Time.h>
 
 namespace elm { namespace sys {
 
@@ -30,30 +31,15 @@ typedef t::uint64 time_t;
 
 // StopWatch class
 class StopWatch {
-	time_t start_time, stop_time;
-#if defined(__WIN32) || defined(__WIN64)
-	time_t delay_time;
-#endif
 public:
 	void start(void);
 	void stop(void);
-	inline time_t delay(void) const;
-	inline time_t startTime(void) const;
-	inline time_t stopTime(void) const;
+	inline Time delay(void) const { return stop_time - start_time; }
+	inline Time startTime(void) const { return start_time; }
+	inline Time stopTime(void) const { return stop_time; }
+private:
+	Time start_time, stop_time;
 };
-
-// Inlines
-inline time_t StopWatch::delay(void) const {
-	return stop_time - start_time;
-}
-
-inline time_t StopWatch::startTime(void) const {
-	return start_time;
-}
-
-inline time_t StopWatch::stopTime(void) const {
-	return stop_time;
-}
 
 } } // elm::sys
 
