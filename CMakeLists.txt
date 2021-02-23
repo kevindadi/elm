@@ -33,25 +33,73 @@ if(UNIX)
 endif()
 
 
+# support for int compatibility
+include(CheckTypeSize)
+
+CHECK_TYPE_SIZE(int INT_SIZE)
+if("${INT_SIZE}" EQUAL 4)
+	set(TYPE_INT16 "short")
+	set(TYPE_INT32 "int")
+elseif("${INT_SIZE}" EQUAL 2)
+	set(TYPE_INT16 "int")
+	set(TYPE_INT32 "long")
+else()
+	message(FATAL_ERROR "unsuported int size: ${INT_SIZE}")
+endif()
+
+CHECK_TYPE_SIZE(long LONG_SIZE)
+if("${LONG_SIZE}" EQUAL 4)
+	set(TYPE_INT64 "long long")
+elseif("${LONG_SIZE}" EQUAL 8)
+	set(TYPE_INT64 "long")
+else()
+	message(FATAL_ERROR "unsuported long size: ${LONG_SIZE}")
+endif()
+
+CHECK_TYPE_SIZE("void *" ADDR_SIZE)
+if("${ADDR_SIZE}" EQUAL 2)
+	set(ADDR_TYPE "uint16")
+elseif("${ADDR_SIZE}" EQUAL 4)
+	set(ADDR_TYPE "uint32")
+elseif("${ADDR_SIZE}" EQUAL 8)
+	set(ADDR_TYPE "uint64")
+else()
+	message(FATAL_ERROR "unsuported address size: ${ADDR_SIZE}")
+endif()
+
+
+# endianness
+include(TestBigEndian)
+if(IS_BIG_ENDIAN)
+	set(ELM_LITTLE_ENDIAN OFF)
+else()
+	set(ELM_LITTLE_ENDIAN ON)
+endif()
+
+
 # installation level
 set(INSTALL_TYPE "bin,lib,inc,doc" CACHE STRING "Type of installation (a ',' separated combination of bin, lib, inc, doc).")
-if(NOT INSTALL_TYPE OR INSTALL_TYPE MATCHES "all")
-	set(INSTALL_BIN yes)
-	set(INSTALL_LIB yes)
-	set(INSTALL_INC yes)
-	set(INSTALL_DOC yes)
-endif()
-if(INSTALL_TYPE MATCHES ".*bin.*")
-	set(INSTALL_BIN yes)
-endif()
-if(INSTALL_TYPE MATCHES ".*lib.*")
-	set(INSTALL_LIB yes)
-endif()
-if(INSTALL_TYPE MATCHES ".*inc.*")
-	set(INSTALL_INC yes)
-endif()
-if(INSTALL_TYPE MATCHES ".*doc.*")
-	set(INSTALL_BIN yes)
+set(INSTALL_BIN ON)
+set(INSTALL_LIB ON)
+set(INSTALL_INC ON)
+set(INSTALL_DOC OFF)
+if(INSTALL_TYPE)
+	if(INSTALL_TYPE MATCHES "all")
+		set(INSTALL_DOC ON)	
+	else()
+		if(NOT INSTALL_TYPE MATCHES ".*bin.*")
+			set(INSTALL_BIN OFF)
+		endif()
+		if(NOT INSTALL_TYPE MATCHES ".*lib.*")
+			set(INSTALL_LIB OFF)
+		endif()
+		if(NOT INSTALL_TYPE MATCHES ".*inc.*")
+			set(INSTALL_INC OFF)
+		endif()
+		if(INSTALL_TYPE MATCHES ".*doc.*")
+			set(INSTALL_DOC ON)
+		endif()
+	endif()
 endif()
 
 
@@ -123,6 +171,10 @@ configure_file (
   "${PROJECT_SOURCE_DIR}/config.in"
   "${PROJECT_SOURCE_DIR}/config.h"
 )
+configure_file (
+  "${PROJECT_SOURCE_DIR}/include/elm/arch.in"
+  "${PROJECT_SOURCE_DIR}/include/elm/arch.h"
+)
 
 
 # header installation
@@ -148,15 +200,16 @@ endif()
 
 
 # handle autodoc
-if(INSTALL_DOC)
-	find_program(DOXYGEN doxygen)
-	if(DOXYGEN)
-		add_custom_target("make-autodoc" ALL DEPENDS "autodoc")
-		add_custom_command(
-			OUTPUT "autodoc"
-			DEPENDS "Doxyfile"
-			COMMAND "${DOXYGEN}"
-		)
+find_program(DOXYGEN doxygen)
+if(DOXYGEN)
+	add_custom_target("autodoc"
+		COMMAND "${DOXYGEN}"
+		COMMENT "Building automatic documentation"
+		SOURCES "Doxyfile" "${SOURCES}" "src/doc.h"
+	)
+	if(INSTALL_DOC)
+		message(STATUS "install doc: ${INSTALL_DOC}")
+		add_custom_target("install-autodoc" ALL DEPENDS "autodoc")
 		install(DIRECTORY autodoc DESTINATION "${CMAKE_INSTALL_PREFIX}/share/Elm/")
 	endif()
 endif()

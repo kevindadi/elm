@@ -20,6 +20,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <elm/io.h>
 #include <elm/int.h>
 
 namespace elm {
@@ -165,6 +166,7 @@ int msb(t::uint64 i) {
  * @return		Number of ones in the byte.
  * @ingroup types
  */
+#ifndef __GNUC__
 int ones(t::uint8 i) {
 	static int t[] = {
 		0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4,
@@ -186,7 +188,7 @@ int ones(t::uint8 i) {
 	};
 	return t[i];
 }
-
+#endif
 
 /**
  * @fn int ones(t::uint16 i);

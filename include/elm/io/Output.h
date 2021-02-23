@@ -24,6 +24,7 @@
 
 #include <functional>
 
+#include <elm/arch.h>
 #include <elm/enum_info.h>
 #include <elm/meta.h>
 #include <elm/string/CString.h>
@@ -33,6 +34,8 @@
 #include <elm/util/VarArg.h>
 
 namespace elm { namespace io {
+
+class EOL { };
 
 // alignment_t enum
 typedef enum alignment_t {
@@ -55,22 +58,16 @@ class IntFormat {
 		_size = size;
 	}
 public:
-	inline IntFormat(void				)		: _val(0) 					{ init(true, 8); }
-	inline IntFormat(signed char		value)	: _val(value) 				{ init(true,  1); }
-	inline IntFormat(unsigned char		value)	: _val(t::uint64(value)) 	{ init(false, 1); }
-	inline IntFormat(signed short		value)	: _val(value) 				{ init(true,  2); }
-	inline IntFormat(unsigned short		value)	: _val(t::uint64(value)) 	{ init(false, 2); }
-	inline IntFormat(signed int			value)	: _val(value) 				{ init(true,  4); }
-	inline IntFormat(unsigned int		value)	: _val(t::uint64(value)) 	{ init(false, 4); }
-#ifndef __LP64__
-	inline IntFormat(signed long		value)	: _val(value) 				{ init(true, 4); }
-	inline IntFormat(unsigned long		value)	: _val(t::uint64(value)) 	{ init(false, 4); }
-#else
-	inline IntFormat(signed long		value)	: _val(value) 				{ init(true, 8); }
-	inline IntFormat(unsigned long		value)	: _val(t::uint64(value)) 	{ init(false, 8); }
-#endif
-	inline IntFormat(signed long long	value)	: _val(value)				{ init(true,  8); }
-	inline IntFormat(unsigned long long	value)	: _val(value)				{ init(false, 8); }
+	inline IntFormat(): _val(0) { init(true, 8); }
+
+	inline IntFormat(t::int8	value)	: _val(value) 				{ init(true,  1); }
+	inline IntFormat(t::uint8	value)	: _val(t::uint64(value)) 	{ init(false, 1); }
+	inline IntFormat(t::int16	value)	: _val(value) 				{ init(true,  2); }
+	inline IntFormat(t::uint16	value)	: _val(t::uint64(value)) 	{ init(false, 2); }
+	inline IntFormat(t::int32	value)	: _val(t::int32(value)) 	{ init(true,  4); }
+	inline IntFormat(t::uint32	value)	: _val(t::uint32(value)) 	{ init(false, 4); }
+	inline IntFormat(t::int64	value)	: _val(value)				{ init(true,  8); }
+	inline IntFormat(t::uint64	value)	: _val(value)				{ init(false, 8); }
 
 	inline IntFormat operator()(t::int8	value) { IntFormat f = *this; f._val = value; return f; }
 	inline IntFormat operator()(t::uint8	value) { IntFormat f = *this; f._val = value; return f; }
@@ -220,19 +217,17 @@ template <class T> inline Output& operator<<(Output& out, const T& v)
 	{ _if<type_info<T>::is_defined_enum, enum_printer<T>, def_printer<T> >::print(out, v); return out; }
 template <class T> inline Output& operator<<(Output& out, T *v)
 	{ out.print((void *)v); return out; }
-inline Output& operator<<(Output& out, bool value) { out.print(value); return out; };
-inline Output& operator<<(Output& out, char value) { out.print(value); return out; };
-inline Output& operator<<(Output& out, unsigned char value) 	{ out.print(IntFormat(value)); return out; };
-inline Output& operator<<(Output& out, signed char value) 		{ out.print(IntFormat(value)); return out; };
-inline Output& operator<<(Output& out, short value) 			{ out.print(IntFormat(value)); return out; };
-inline Output& operator<<(Output& out, unsigned short value)	{ out.print(IntFormat(value)); return out; };
-inline Output& operator<<(Output& out, int value) 				{ out.print(IntFormat(value)); return out; };
-inline Output& operator<<(Output& out, unsigned int value) 		{ out.print(IntFormat(value)); return out; };
-inline Output& operator<<(Output& out, long value) 				{ out.print(IntFormat(value)); return out; };
-inline Output& operator<<(Output& out, unsigned long value) 	{ out.print(IntFormat(value)); return out; };
-inline Output& operator<<(Output& out, long long value) 		{ out.print(IntFormat(value)); return out; };
-inline Output& operator<<(Output& out, unsigned long long value) { out.print(IntFormat(value)); return out; };
-inline Output& operator<<(Output& out, float value) { out.print(value); return out; };
+inline Output& operator<<(Output& out, bool value) 		{ out.print(value); return out; };
+inline Output& operator<<(Output& out, char value) 		{ out.print(value); return out; };
+inline Output& operator<<(Output& out, t::int8 value) 	{ out.print(IntFormat(value)); return out; };
+inline Output& operator<<(Output& out, t::uint8 value) 	{ out.print(IntFormat(value)); return out; };
+inline Output& operator<<(Output& out, t::int16 value) 	{ out.print(IntFormat(value)); return out; };
+inline Output& operator<<(Output& out, t::uint16 value)	{ out.print(IntFormat(value)); return out; };
+inline Output& operator<<(Output& out, t::int32 value) 	{ out.print(IntFormat(value)); return out; };
+inline Output& operator<<(Output& out, t::uint32 value) { out.print(IntFormat(value)); return out; };
+inline Output& operator<<(Output& out, t::int64 value) 	{ out.print(IntFormat(value)); return out; };
+inline Output& operator<<(Output& out, t::uint64 value) { out.print(IntFormat(value)); return out; };
+inline Output& operator<<(Output& out, float value) 	{ out.print(value); return out; };
 inline Output& operator<<(Output& out, double value) { out.print(value); return out; };
 inline Output& operator<<(Output& out, const char *value) { out.print(value); return out; };
 inline Output& operator<<(Output& out, char *value) { out.print(value); return out; };
@@ -241,14 +236,7 @@ inline Output& operator<<(Output& out, const string& value) { out.print(value); 
 inline Output& operator<<(Output& out, const IntFormat& value) { out.print(value); return out; };
 inline Output& operator<<(Output& out, const FloatFormat& value) { out.print(value); return out; }
 inline Output& operator<<(Output& out, const StringFormat& value) { out.print(value); return out; }
-
-
-// End-of-line
-const char endl = '\n';
-
-// predefined styles
-IntFormat pointer(const void *p);
-IntFormat byte(t::uint8 b);
+inline Output& operator<<(Output& out, EOL eol) { out << '\n'; out.stream().flush(); return out; }
 
 // Tag tool
 template <class P>
@@ -280,19 +268,19 @@ inline IntFormat uppercase(IntFormat fmt) { return fmt.upper(); }
 inline IntFormat lowercase(IntFormat fmt) { return fmt.lower(); }
 
 // fmt macro
-inline IntFormat 	fmt(t::int8   	i)	{ return IntFormat(i); }
-inline IntFormat 	fmt(t::uint8  	i) 	{ return IntFormat(i); }
-inline IntFormat 	fmt(t::int16  	i)	{ return IntFormat(i); }
-inline IntFormat 	fmt(t::uint16 	i) 	{ return IntFormat(i); }
-inline IntFormat 	fmt(t::int32  	i)	{ return IntFormat(i); }
-inline IntFormat	fmt(t::uint32 	i) 	{ return IntFormat(i); }
-inline IntFormat 	fmt(t::int64  	i)	{ return IntFormat(i); }
-inline IntFormat 	fmt(t::uint64 	i) 	{ return IntFormat(i); }
-inline FloatFormat	fmt(float 		f)	{ return FloatFormat(f); }
-inline FloatFormat 	fmt(double 		f)	{ return FloatFormat(f); }
-inline StringFormat fmt(string 		s)	{ return StringFormat(s); }
-inline StringFormat fmt(cstring 	s)	{ return StringFormat(s); }
-inline StringFormat fmt(const char *s)	{ return StringFormat(s); }
+inline IntFormat 	fmt(t::int8   		i)	{ return IntFormat(i); }
+inline IntFormat 	fmt(t::uint8  		i) 	{ return IntFormat(i); }
+inline IntFormat 	fmt(t::int16  		i)	{ return IntFormat(i); }
+inline IntFormat 	fmt(t::uint16 		i) 	{ return IntFormat(i); }
+inline IntFormat 	fmt(t::int32  		i)	{ return IntFormat(i); }
+inline IntFormat	fmt(t::uint32 		i) 	{ return IntFormat(i); }
+inline IntFormat 	fmt(t::int64  		i)	{ return IntFormat(i); }
+inline IntFormat 	fmt(t::uint64 		i) 	{ return IntFormat(i); }
+inline FloatFormat	fmt(float 			f)	{ return FloatFormat(f); }
+inline FloatFormat 	fmt(double 			f)	{ return FloatFormat(f); }
+inline StringFormat fmt(string 			s)	{ return StringFormat(s); }
+inline StringFormat fmt(cstring 		s)	{ return StringFormat(s); }
+inline StringFormat fmt(const char 		*s)	{ return StringFormat(s); }
 
 // output with manager
 template <class T, class M>
@@ -334,8 +322,22 @@ inline ListPrinter<T> list(const T& l, cstring s = "", typename ListPrinter<T>::
 	{ return ListPrinter<T>(l, s, f); }
 
 template <class T>
-inline io::Output& operator<<(io::Output& out, const ListPrinter<T>& l)
-	{ l.print(out); return out; }
+inline io::Output& operator<<(io::Output& out, const ListPrinter<T>& l) {
+	bool f = true;
+	for(auto x: l.l) {
+		if(f) f = false; else out << l.s;
+		l.f(out, x);
+	}
+	return out;
+}
+
+// End-of-line
+extern const EOL endl;
+
+// predefined styles
+IntFormat pointer(const void *p);
+IntFormat byte(t::uint8 b);
+extern FloatFormat percent;
 
 } } // elm::io
 

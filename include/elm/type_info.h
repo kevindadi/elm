@@ -21,6 +21,7 @@
 #ifndef ELM_TYPE_INFO_H_
 #define ELM_TYPE_INFO_H_
 
+#include <elm/arch.h>
 #include <elm/string/String.h>
 #include <elm/int.h>
 #include <elm/meta.h>

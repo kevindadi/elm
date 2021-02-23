@@ -38,6 +38,7 @@ set(TEST_SOURCES
 	"test_autostr.cpp"
 	"test_bag.cpp"
 	"test_bidilist.cpp"
+	"test_binomial_queue.cpp"
 	"test_bitvector.cpp"
 	"test_char.cpp"
 	"test_compare.cpp"

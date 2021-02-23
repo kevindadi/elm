@@ -874,6 +874,13 @@ IntFormat pointer(const void *p) {
 
 
 /**
+ * Displaying this object causes a newline display and a flush.
+ * @ingroup ios
+ */
+const EOL endl;
+
+
+/**
  * Format an integer to display it as an hexadecimal byte.
  * @param b		Byte to format.
  * @return		Formatted byte.
@@ -882,6 +889,13 @@ IntFormat pointer(const void *p) {
 IntFormat byte(t::uint8 b) {
 	return fmt(b).hex().width(2).pad('0').right();
 }
+
+/**
+ * Float format to display a percentage.
+ * @ingroup ios
+ */
+FloatFormat percent = FloatFormat().width(5, 2).decimal().right();
+
 
 /**
  * @class StringFormat

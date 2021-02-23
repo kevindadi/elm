@@ -1,8 +1,22 @@
 /*
- * data.h
+ *	Data module documentation
  *
- *  Created on: 16 janv. 2016
- *      Author: casse
+ *	This file is part of OTAWA
+ *	Copyright (c) 2016, IRIT UPS.
+ *
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #ifndef ELM_DATA_H_
@@ -57,21 +71,21 @@ namespace elm {
  *	* key access -- ListMap, HashMap, avl::Map, TreeMap
  *
  * Modification type:
- *  * append -- Vector, FragTable, BiDiList
- * 	* prepend -- List
- * 	* push / pop (stack) -- StaticStack, Vector, List, BiDiList, FragTable
- * 	* append / remove first (queue) -- BiDiList, VectorQueue, ListQueue
- *  * random -- List, BiDiList
- *  * uniqueness of elements (set) -- ListSet, avl::Set, HashSet
- *  * key access (map) -- ListMap, HashMap, avl::Map, TreeMap
- *  * inter-set operation (efficient) -- BitVector
+ *	* append -- Vector, FragTable, BiDiList
+ *	* prepend -- List
+ *	* push / pop (stack) -- StaticStack, Vector, List, BiDiList, FragTable
+ *	* append / remove first (queue) -- BiDiList, VectorQueue, ListQueue
+ *	* random -- List, BiDiList
+ *	* uniqueness of elements (set) -- ListSet, avl::Set, HashSet
+ *	* key access (map) -- ListMap, HashMap, avl::Map, TreeMap
+ *	* inter-set operation (efficient) -- BitVector
  *
  * Memory footprint:
  *	* light -- Array, Vector, VectorQueue, BitVector, StaticStack, List, ListQueue, SortedList, ListMap
  *	* medium -- BiDiList, TreeBag, TreeMap, avl::Tree, avl::Map, avl::Set, FragTable
  *	* heavy at startup -- HashTable, HashMap, HashSet
  *
- * The array below sum complexity of operations for the data structures
+ * The array below sum up the complexity of operations for the data structures
  * described above. When 2 complexity are give o1/o2, o1 is the average case
  * and o2 the worst case.
  *
@@ -95,7 +109,7 @@ namespace elm {
  * * insertion -- insertion relative at an iterator position
  * * removal -- removal relative of an element pointed by an iterator
  *
- * Classic collection operations:
+ * Map operations:
  * Data Structure | lookup         | insertion      | removal
  * -------------- | -------------- | -------------- | --------------
  * HashMap        | O(b)           | O(b)           | O(b)
@@ -135,6 +149,7 @@ namespace elm {
  * FragTable      | O(n) | O(1)
  * VectorQueue    | O(1) | O(1)
  * ListQueue      | O(1) | O(1)
+ * BinomialQueue  | O(1) | O(log(n))
  *
  * Set operations:
  * Data Structure | join   | meet   | difference
@@ -142,6 +157,12 @@ namespace elm {
  * HashSet        | O(bn)  | O(bn)  | O(bn)
  * avl::Set       | O(n)   | O(n)   | O(n)
  * BitVector      | O(n)   | O(n)   | O(n)
+ *
+ * Priority queues:
+ * Data Structure | put  | get
+ * -------------- | ---- | ----
+ * BinomialQueue  | O(1) | O(log(n))
+ * SortedList     | O(n) | O(1)
  *
  *
  * @par Iterator Helper Classes
@@ -157,7 +178,7 @@ namespace elm {
  *	* item() returns the currently pointer item,
  *	* next() passes to the next item if iterated collection.
  *
- * To write an iterator, it may be used as below (with T the type of iterated items):
+ * Therefore, an iterator must be written as below (with T the type of iterated items):
  *	@code
  *		class MyIter: public PreIterator<MyIter, T> {
  *		public:
@@ -223,30 +244,45 @@ namespace elm {
  * Notice that `i` is of type T, the type of iterated elements. As this is very convenient,
  * all ELM data classes provide `begin()` and `end()` functions.
  *
+ * The following classes may help to work or to extend the concrete data structures:
+ *	* elm::Bag -- a lightweight collection containing a fix number of elements,
+ *	* elm::Slice -- provide an array view on a slice of a bigger array data structure.
+ *
  *
  * @par Helper functions
  *
  * `<elm/data/quicksort.h>` provides a *quicksort* implementation for data collections:
- *	* @ref void quicksort(A<T>& array, const C& c)
- *	* @ref void quicksort(A<T>& array) --  quicksort implementation for data classes
+ *	* @ref void elm::quicksort(A<T>& array, const C& c)
  *
- * Other functions very generic processing over the collection. They generically takes
+ * Other functions provides very generic processing over the collection. They generically takes
  * as parameter a collection, a class providing some specific computation and comes in
- * two flavors, with or without an additional argument.
+ * two flavors, with or without an additional argument. To use them, one has to include
+ * `<elm/data/util.h>`:
  *
  * * @ref count(const C& c, const P& p) -- count the number of items satisfying a predicate p,
  * * @ref forall(const C& c, const P& p) -- returns true if all items satisfy the predicate p,
  * * @ref exists(const C& c, const P& p) -- return true if at least one item satifies the predicate p,
  * * @ref find(I i, const P& p) -- starting from an iterator, move it to the end or the first item satisfying the predicate p,
  * * @ref map(const C& c, const F& f, D& d) -- copy collection c to d after transformation by f,
- * * @ref iter(const C& c, const F& f) -- iterate over collection c and call f for each item,
- * * @ref fold(const C& c, const F& f, typename F::y_t t) -- iterate over collection c and use f to accumulate the value of items,
- * * @ref sum(const C& c) -- perform the sum of items of c,
- * * @ref product(const C& c) -- perform the product of items of c,
- * * @ref fill(C& c, int n, const typename C::t v) -- add n items of value v to collection c.
- * * @ref range(const I& b, const I& e) -- creates a pseudo-collection containing objects between given iterators.
- * * @ref nrange(const T& b, const T& e) -- creates a pseudo- numeric collection ranging from b to e.
- * * @ref select(const C& c, const P& p) -- creates a pseudo-collection containing values of p satisfying predicate p.
+ * * @ref fold(const C& c, const F& f, T t) -- iterate over collection c and use f to accumulate the value of items,
+ * * @ref equals(const C1& c1, const C2& c2) -- test if two collections are equal,
+ * * @ref mismatch(const C1& c1, const C2& c2) -- find the first mismatch between two collections,
+ * * @ref mismatch(const C1& c1, const C2& c2, P p) -- find the first mismatch between two collections according to predicate p,
+ * * @ref deleteAll(const C& c) -- delete all items of pointer collection c,
+ * * @ref fill(C& c, int n, const typename C::t v) -- fill the collection c with n items of value v,
+ *
+ * Other functions provides specialized iterators:
+ * * @ref nrange(T i, T j, T s) -- creates a pseudo- numeric collection ranging from b to e,
+ * * @ref select_iter(const I& i, const P& p) -- creates a pseudo-collection containing values of p satisfying predicate p,
+ * * @ref subiter(const I& b, const I& e) -- create a sub-iterator between the given begin iterator and ending iterator e (exclusive).
+ *
+ * Other functions and classes are provided for easier combination:
+ * * @ref sum(const C& c) -- compute sum of element of c,
+ * * @ref product(const C& c) -- compute product of elements of c,
+ * * @ref Add -- class providing addition in operator ()(x, y),
+ * * @ref Mul -- class providing multiplication in operator ()(x, y),
+ * * @ref true_pred -- predicate always evaluating to true.
+ *
  *
  * @par Delegate Classes
  *
@@ -271,11 +307,129 @@ namespace elm {
  * @li @ref elm::StrictMapDelegate is like MapDelegate but thow a KeyError
  * 			exception if a non-existing key is used.
  *
- * @par Helper Classes
  *
- * The following classes may help to work or to extend the concrete data structures:
- * 	* elm::Bag -- a lightweight collection containing a fix number of elements,
- *  * elm::Slice -- provide an array view on a slice of a bigger array data structure.
+ * @par Customizing the work
+ *
+ * Common customization of container classes includes the memory allocation,
+ * the element comparison or hashing.
+ *
+ * Basically, the customization can be declared static and passed to the
+ * container using class templates:
+ * ```
+ * 	class MyComparator { ... };
+ *
+ * 	AContainer<int, MyComparator> container;
+ * ```
+ * In this case, the memory cost for such a customization is zero.
+ *
+ * If the customization requires an instance, the instance has to be passed
+ * also to the constructor of the container. In this case, the container
+ * inherits from the customization class and this one must support a copy
+ * constructor where is passed the instance:
+ * ```
+ * 	class MyComparator {
+ * 	public:
+ * 		MyComparator(const MyComparator& i) { ... }
+ * 	};
+ * 	MyComparator my_comparator_instance;
+ *
+ * 	AContainer<int, MyComparator> container(my_comprator);
+ * ```
+ *
+ * In this case, the container size grows according to the size of the
+ * instance customization class.
+ *
+ * To support this behavior, delegate classes may help:. For instance,
+ * DefaultAllocator class provides access to OS allocation but it is passed
+ * by default to container as DefaultAllocatorDelegate that just propagate
+ * allocation to the default allocator.
+ *
+ * The following delegate classes exist:
+ * * @ref DefaultAllocatorDelegate
+ * * @ref AllocatorDelegate
+ * * @ref HashKeyDelegate
+ * * @ref ComparatorDelegate
+ * * @ref EquivDelegate
+ */
+
+
+/*
+ * @par custom_data Customizing the data structures
+ *
+ * The proposed data structure requires memory allocator, comparator or hash
+ * key computation to work. As a default, they use the default implementation
+ * of this features: @ref DefaultAllocator @ref Comparator or @ref HashKey.
+ * Yet, ELM provides a way to customize the data structures using the
+ * concept of data manager.
+ *
+ * A data manager groups together all facilities required to implement a data
+ * structure and let the data structure user to customize its implementation.
+ * There are basically three manager:
+ *	* @ref EquivManager for data structures equality operations on their items,
+ *	* @ref CompareManager for data structures requiring an absolute order on
+ *	  their items,
+ *	* @ref HashManager for data structure requiring equality operations and
+ *	  hash value computation on their items.
+ *
+ *	In addition, all managers provide allocation facilities. Basically, the
+ *	data structures takes a manager as template parameter. To customize a
+ *	data structure, one has to pass a different manager in this template
+ *	parameter. In the example below, the @ref EquivManager of the
+ *	@ref Vector class is changed to use a special memory allocator:
+ *	```
+ *	class MyAllocator {
+ *		...
+ *	};
+ *
+ *	typedef EquivManager<int, Equiv<int>, MyAllocator> MyManager;
+ *	Vector<int, MyManager> my_vector;
+ *	```
+ *
+ *	Sometimes, static nature of a manager is not enough and you need to
+ *	instantiate a customized manager with a specific object:
+ *	```
+ *	class MyAllocator {
+ *		...
+ *	};
+ *	typedef EquivManager<int, Equiv<int>, MyAllocator> MyManager;
+ *
+ *  MyAllocator my_allocator;
+ *  MyManager my_manager(single<Equiv<int>>(), my_allocator);
+ *
+ *	Vector<int, MyManager> my_vector(my_manager);
+ *	```
+ *
+ *	@ref elm::single<T>() is used here to get a singleton instance of the given
+ *	type: this prevents to clutter the memory with to many instance of a class
+ *	that is actually a singleton.
+ *
+ *	To ensure memory minimal footprint, a manager that does not contain any data
+ *	(no instance) does not take place in the data structure. To achieve this,
+ *	the data structure inherits from the manager. As a consequence, when the
+ *	manager contains an instance, its constructor is called each time the data
+ *	structure is built passing an instance reference as constructor parameter.
+ *
+ *	In the example above, if we do not want to duplicate the allocators, it
+ *	is required to have an implementation like below:
+ *	```
+ *	class MyAllocator {
+ *		...
+ *	};
+ *	class MyManagerAllocator {
+ *	public:
+ *		MyManagerAllocator(MyAllocator& alloc): _alloc(alloc) { }
+ *		MyManagerAllocator(MyManagerAllocator& a): _alloc(a._alloc) { }
+ *		...
+ *	private:
+ *		MyAllocator _alloc;
+ *	};
+ *	typedef EquivManager<int, Equiv<int>, MyManagerAllocator> MyManager;
+ *
+ *  MyAllocator my_allocator;
+ *  MyManager my_manager(single<Equiv<int>>(), MyManagerallocator(my_allocator));
+ *
+ *	Vector<int, MyManager> my_vector(my_manager);
+ *	```
  */
 
 /**
@@ -351,14 +505,14 @@ template <class X, class Y, class A>
 struct FunctionWithArg {
 	typedef X x_t;
 	typedef Y y_t;
-	Y operator()(const X& x, const a& a);
+	Y operator()(const X& x, const A& a);
 };
 
 }	// concept
 
 
-/**
- * @fn template <class T, template <class> class A, class C> void quicksort(A<T>& array, const C& c);
+/**s
+ * @fn void quicksort(A& array, const C& c);
  * Sort the given array using quicksort algorithm (average complexity O(N log(N)) ).
  *
  * @param array		Array containing the values to sort.

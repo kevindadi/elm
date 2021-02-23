@@ -1,0 +1,40 @@
+/*
+ *	information about the architecture
+ *
+ *	This file is part of OTAWA
+ *	Copyright (c) 2007-16, IRIT UPS.
+ *
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+#cmakedefine ELM_LITTLE_ENDIAN
+
+namespace elm { namespace t {
+
+	typedef signed char int8;
+	typedef unsigned char uint8;
+	typedef @TYPE_INT16@ int16;
+	typedef unsigned @TYPE_INT16@ uint16;
+	typedef @TYPE_INT32@ int32;
+	typedef unsigned @TYPE_INT32@ uint32;
+	typedef @TYPE_INT64@ int64;
+	typedef unsigned @TYPE_INT64@ uint64;
+
+	typedef @ADDR_TYPE@ size;
+	typedef @ADDR_TYPE@ offset;
+	typedef @ADDR_TYPE@ uint;
+	typedef @ADDR_TYPE@ intptr;
+
+} }	// elm::t
