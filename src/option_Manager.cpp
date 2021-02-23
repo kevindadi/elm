@@ -210,43 +210,6 @@ Manager::~Manager(void) {
 
 
 /**
- * Called for each configuration tag.
- * May be overload to customize Manager configuration.
- * @param tag	Current tag.
- * @param args	Argument list.
- */
-void Manager::configure(int tag, VarArg& args) {
-	switch(tag) {
-	case option::program:
-		info._program = args.next<const char *>();
-		break;
-	case option::version: {
-			Version *v = args.next<Version *>();
-			ASSERT(v);
-			info._version = *v;
-			delete v;
-		}
-		break;
-	case option::author:
-		info._author = args.next<const char *>();
-		break;
-	case option::copyright:
-		info._copyright = args.next<const char *>();
-		break;
-	case option::description:
-		info._description = args.next<const char *>();
-		break;
-	case option::free_arg:
-	case option::arg_desc:
-		info._free_argument_description = args.next<const char *>();
-		break;
-	default:
-		ASSERTP(false, "unknown configuration tag: " << tag);
-	}
-}
-
-
-/**
  * Process an option with or without argument need.
  * @param option	Option to process.
  * @param i			Current index.
@@ -444,8 +407,10 @@ void Manager::parse(int argc, Manager::argv_t argv) {
 			processOption(option, i, argc, argv, earg);
 
 		// Free argument
-		else if(arg.length() > 0 && arg[0] != '-')
+		else if(arg.length() > 0 && arg[0] != '-') {
+			_frees.add(arg);
 			process(arg);
+		}
 		
 		// aggregated short name command
 		else if(arg.length() > 1 && arg[1] != '-') {
@@ -479,12 +444,12 @@ void Manager::displayHelp(void) {
 
 	// Display header
 	cerr << info._program;
-	if(version)
+	if(info._version != Version::ZERO)
 		 cerr << " V" << info._version;
-	if(author)
+	if(info._author)
 		cerr << " by " << info._author;
 	cerr << '\n';
-	if(copyright)
+	if(info._copyright)
 		cerr << info._copyright << '\n';
 	
 	// Display syntax
@@ -542,6 +507,12 @@ void Manager::displayHelp(void) {
 	}
 
 }
+
+
+/**
+ * @fn const Vector<string>& Manager::freeArguments() const;
+ * @return	List of free arguments.
+ */
 
 
 /**

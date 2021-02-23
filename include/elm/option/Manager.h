@@ -29,7 +29,6 @@
 #include <elm/option/SwitchOption.h>
 #include <elm/option/ValueOption.h>
 #include <elm/util/Version.h>
-#include <elm/util/VarArg.h>
 #include <elm/util/MessageException.h>
 
 namespace elm { namespace option {
@@ -78,6 +77,14 @@ public:
 	virtual void displayVersion(void);
 
 	// accessors
+	inline cstring program(void) const { return info._program; }
+	inline const Version& version(void) const { return info._version; }
+	inline cstring author(void) const { return info._author; }
+	inline cstring copyright(void) const { return info._copyright; }
+	inline cstring description(void) const { return info._description; }
+	inline cstring freeArgumentDescription(void) const { return info._free_argument_description; }
+
+	// deprecated
 	inline cstring getProgram(void) const { return info._program; }
 	inline const Version& getVersion(void) const { return info._version; }
 	inline cstring getAuthor(void) const { return info._author; }
@@ -88,8 +95,8 @@ public:
 protected:
 	Make info;
 	virtual void process(String arg);
-	virtual void configure(int tag, VarArg& args);
 	virtual void run(void);
+	inline const Vector<string>& freeArguments() const { return _frees; }
 
 private:
 	Vector<Option *> options;
@@ -100,6 +107,7 @@ private:
 	ListMap<char, Option *> shorts;
 	ListMap<string, Option *> cmds;
 	UniquePtr<SwitchOption> _help_opt, _version_opt;
+	Vector<string> _frees;
 };
 
 } } //elm::option

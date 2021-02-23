@@ -30,24 +30,6 @@ namespace elm { namespace option {
 
 class Manager;
 
-// configuration tags
-const int end			= 0,
-		  program		= 1,	// const char *
-		  version		= 2,	// Version *
-		  author		= 3,	// const char *
-		  copyright		= 4,	// const char *
-		  description	= 5,	// const char *
-		  help			= 5,	// alias for description
-		  free_arg		= 6,	// const char *
-		  cmd			= 7,	// const char *
-		  short_cmd		= 8,	// char
-		  long_cmd		= 9,	// const char *
-		  def			= 10,	// option dependent
-		  require		= 12,	// none
-		  optional		= 13,	// none
-		  arg_desc		= 14;	// const char *
-
-
 // OptionException exception
 class OptionException: public MessageException {
 public:
@@ -81,21 +63,17 @@ public:
 		cstring _desc;
 	};
 
-	inline Option(void) { }
+	inline Option() { }
 	Option(const Make& make);
-	virtual ~Option(void) { }
-	//void output(io::Output& out);
-	virtual cstring description(void);
-	virtual usage_t usage(void) = 0;
-	virtual cstring argDescription(void) = 0;
+	virtual ~Option() { }
+	virtual cstring description();
+	virtual usage_t usage() = 0;
+	virtual cstring argDescription() = 0;
 	virtual void process(String arg) = 0;
 
 protected:
 	cstring desc;
 };
-
-// Inlines
-//inline io::Output& operator<<(io::Output& out, Option& opt) { opt.output(out); return out; };
 
 } } // elm::option
 
