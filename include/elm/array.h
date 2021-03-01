@@ -41,8 +41,8 @@ public:
 		{ ::memmove(target, source, size * sizeof(T)); }
 	static inline void clear(T *target, int size)
 		{ ::memset(target, 0, size * sizeof(T)); }
-	static inline int cmp(const T* t1, const T* t2, int size)
-		{ return ::memcmp(t1, t2, size); }
+	static inline bool equals(const T* t1, const T* t2, int size)
+		{ return ::memcmp(t1, t2, size) == 0; }
 	static inline void construct(T *t, int size) { }
 	static inline void destruct(T *t, int size) { }
 };
@@ -58,8 +58,8 @@ public:
 		{ if(target < source) copy(target, source, size); else copy_back(target, source, size); }
 	static inline void clear(T *target, int size)
 		{ for(int i = 0; i < size; i++) target[i] = T(); }
-	static inline int cmp(const T* t1, const T* t2, int size)
-		{ for(int i = 0; i < size; i++) if(!(t1[i] == t2[i])) { return t1[i] > t2[i] ? +1 : -1; } return 0; }
+	static inline bool equals(const T* t1, const T* t2, int size)
+		{ for(int i = 0; i < size; i++) if(!(t1[i] == t2[i])) return false; return true; }
 	static inline void construct(T *t, int size)
 		{ for(int i = 0; i < size; i++) ::new((void *)(t + i)) T(); }
 	static inline void destruct(T *t, int size)
@@ -69,18 +69,27 @@ public:
 // copy definitions
 template <class T> inline void copy(T *target, const T *source, int size)
 	{ _if<type_info<T>::is_deep, slow<T>, fast<T> >::copy(target, source, size); }
+template <class T> inline void copy_back(T *target, const T *source, int size)
+	{ for(int i = size - 1; i >= 0; i--) target[i] = source[i]; }
 template <class T> inline void move(T *target, const T *source, int size)
 	{ _if<type_info<T>::is_deep, slow<T>, fast<T> >::move(target, source, size); }
 template <class T> inline void set(T *target, int size, const T& v)
 	{ for(int i = 0; i < size; i++) target[i] = v; }
 template <class T> inline void clear(T *target, int size)
 	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::clear(target, size); }
-template <class T> inline int cmp(const T* t1, const T* t2, int size)
-	{ return _if<type_info<T>::is_virtual, slow<T>, fast<T> >::cmp(t1, t2, size); }
+template <class T> inline bool equals(const T* t1, const T* t2, int size)
+	{ return _if<type_info<T>::is_virtual, slow<T>, fast<T> >::equals(t1, t2, size); }
 template <class T> inline void construct(T *t, int size)
 	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::construct(t, size); }
 template <class T> inline void destruct(T *t, int size)
 	{ _if<type_info<T>::is_virtual, slow<T>, fast<T> >::destruct(t, size); }
+inline void copy(cstring *d, cstring *a, int s)
+	{ copy(reinterpret_cast<char *>(d), reinterpret_cast<char *>(a), sizeof(cstring) * s); }
+inline void move(cstring *d, cstring *a, int s)
+	{ move(reinterpret_cast<char *>(d), reinterpret_cast<char *>(a), sizeof(cstring) * s); }
+inline void clear(cstring *d, int s)
+	{ clear(reinterpret_cast<char *>(d), sizeof(cstring) * s); }
+
 
 // other useful operations
 template <class T> void reverse(T *a, int n)

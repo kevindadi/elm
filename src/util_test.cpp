@@ -160,9 +160,9 @@ TestCase::TestCase(CString name):
  */
 void TestCase::prepare(void) {
 #if defined(__unix) || defined(__APPLE__)
-	cout << "\x1b[1;4mTEST CASE: " << name() << "\x1b[0m\n";
+	cout << "\x1b[1;4mTEST CASE: " << name() << "\x1b[0m" << io::endl;
 #elif defined(__WIN32) || defined(__WIN64)
-	cout << "TEST CASE: " << name() << "\n";
+	cout << "TEST CASE: " << name() << io::endl;
 #endif
 }
 
@@ -188,9 +188,9 @@ void TestCase::test(CString file, int line, CString text) {
  */
 void TestCase::failed(void) {
 #if defined(__unix) || defined(__APPLE__)
-	cout << "\x1b[31m[FAILED]\x1b[0m\n";
+	cout << "\x1b[31m[FAILED]\x1b[0m" << io::endl;
 #elif defined(__WIN32) || defined(__WIN64)
-	cout << "FAILED\n";
+	cout << "FAILED" << io::endl;
 #endif
 	errors++;
 }
@@ -201,9 +201,9 @@ void TestCase::failed(void) {
  */
 void TestCase::succeeded(void) {
 #if defined(__unix) || defined(__APPLE__)
-	cout << "\x1b[32m[OK]\x1b[0m\n";
+	cout << "\x1b[32m[OK]\x1b[0m" << io::endl;
 #elif defined(__WIN32) || defined(__WIN64)
-	cout << "[OK] \n";
+	cout << "[OK] " << io::endl;
 #endif
 }
 
@@ -249,7 +249,7 @@ void TestCase::complete(void) {
 #elif defined(__WIN32) || defined(__WIN64)
 		cout << "SUCCESS: ";
 #endif
-	cout << tests << " tests, " << errors  << " errors\n";
+	cout << tests << " tests, " << errors  << " errors" << io::endl;
 }
 
 
@@ -268,7 +268,7 @@ bool TestCase::require(CString file, int line, CString text, bool result) {
 #if defined(__unix) || defined(__APPLE__)
 		cout << "\x1b[1;31mMain failure: test must be interrupted." << io::PLAIN << io::endl;
 #elif defined(__WIN32) || defined(__WIN64)
-		cout << "Main failure: test must be interrupted\n";
+		cout << "Main failure: test must be interrupted" << io::endl;
 #endif
 	return result;
 }

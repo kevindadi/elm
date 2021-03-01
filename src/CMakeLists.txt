@@ -157,6 +157,7 @@ if(LIBXML2_FOUND)
 		"xom_Builder.cpp"
 		"xom_Comment.cpp"
 		"xom_Document.cpp"
+		"xom_dtd.cpp"
 		"xom_Element.cpp"
 		"xom_Elements.cpp"
 		"xom_Exception.cpp"

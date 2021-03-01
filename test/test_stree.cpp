@@ -56,7 +56,7 @@ TEST_BEGIN(stree)
 	Tree<addr_t, area_t> tree;
 
 	// store the values
-	Pair<t::uint32, area_t> marks[] = {
+	Pair<unsigned, area_t> marks[] = {
 		pair(0U, ARM),
 		pair(0x000080d8U, ARM),
 		pair(0x0000849cU, ARM),

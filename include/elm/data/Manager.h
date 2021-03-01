@@ -25,6 +25,7 @@
 #include <elm/compare.h>
 #include <elm/hash.h>
 #include <elm/equiv.h>
+#include <elm/types.h>
 
 namespace elm {
 
@@ -41,6 +42,8 @@ public:
 	inline void *allocate(t::size size) const { return alloc.allocate(size); }
 	inline void free(t::ptr p) const { alloc.free(p); }
 
+	inline static EquivManager<T, E, A>& def() { return single<EquivManager<T, E, A> >(); }
+
 	E& eq;
 	A& alloc;
 };
@@ -50,6 +53,9 @@ template <class T, class C = Comparator<T>, class E = Equiv<T>, class A = Defaul
 class CompareManager {
 public:
 	typedef T t;
+	typedef E equiv_t;
+	typedef A alloc_t;
+
 	inline CompareManager(const C& c = single<C>(), const E& e = single<E>(), A& a = DefaultAllocator::DEFAULT)
 		: cmp(c), eq(e), alloc(a) { }
 
@@ -57,6 +63,8 @@ public:
 	inline bool equals(const T& v1, const T& v2) const { return eq.isEqual(v1, v2); }
 	inline void *allocate(elm::t::size size) const { return alloc.allocate(size); }
 	inline void free(elm::t::ptr p) const { alloc.free(p); }
+
+	inline static CompareManager<T, C, E, A>& def() { return single<CompareManager<T, C, E, A> >(); }
 
 	const C& cmp;
 	const E& eq;
@@ -78,6 +86,8 @@ public:
 	inline t::hash computeHash(const K& k) const { return hash.computeHash(k); }
 	template <class T> inline void *allocate() { return alloc.allocate(sizeof(T)); }
 	inline void free(void *p) { alloc.free(p); }
+
+	inline static HashManager<K, H, A>& def() { return single<HashManager<K, H, A> >(); }
 
 	H hash;
 	A& alloc;

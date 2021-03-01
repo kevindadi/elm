@@ -156,5 +156,23 @@ TEST_BEGIN(io)
 		CHECK_EQUAL(i, 3);
 	}
 
+	// overloading test
+	if(false) {
+		cout << 1;
+		cout << 1L;
+		cout << 1LL;
+		cout << 1U;
+		cout << 1UL;
+		cout << 1ULL;
+		cout << t::int8(1);
+		cout << t::int16(1);
+		cout << t::int32(1);
+		cout << t::int64(1);
+		cout << t::uint8(1);
+		cout << t::uint16(1);
+		cout << t::uint32(1);
+		cout << t::uint64(1);
+	}
+
 TEST_END
 

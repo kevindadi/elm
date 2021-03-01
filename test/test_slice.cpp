@@ -19,6 +19,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #include <elm/data/Slice.h>
+#include <elm/data/util.h>
 #include <elm/data/Vector.h>
 #include <elm/test.h>
 #include "check-concept.h"
@@ -29,7 +30,7 @@ TEST_BEGIN(slice)
 	Vector<int> v;
 	for(int i = 0; i < 10; i++)
 		v.add(i);
-	Slice<int, Vector<int> > s(v, 3, 4);
+	Slice<Vector<int>> s(v, 3, 4);
 
 	{
 		checkCollection(s, s, 666);
@@ -50,5 +51,14 @@ TEST_BEGIN(slice)
 		CHECK_EQUAL(sum, 18);
 	}
 
-TEST_END
+	{
+		Vector<int> v;
+		for(int i = 0; i < 10; i++)
+			v.add(i);
+		auto s = slice(v, 5, 5);
+		for(auto& x: s)
+			x = 0;
+		CHECK_EQUAL(elm::sum(v), 10);
+	}
 
+TEST_END

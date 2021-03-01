@@ -18,7 +18,6 @@
  *	along with OTAWA; if not, write to the Free Software
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
 #ifndef ELM_DATA_H_
 #define ELM_DATA_H_
 

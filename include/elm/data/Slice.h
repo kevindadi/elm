@@ -25,63 +25,83 @@
 
 namespace elm {
 
-template <class T, class D>
+template <class C>
 class Slice {
 public:
-	inline Slice(): a(nullptr), f(0), c(0) { }
-	inline Slice(D& array, int first, int count): a(&array), f(first), c(count) { }
+	typedef Slice<C> self_t;
+	typedef typename C::t t;
 
-	D& array() const { return *a; }
+	inline Slice(): a(nullptr), f(0), c(0) { }
+	inline Slice(C& array, int first, int count): a(&array), f(first), c(count) { }
+
+	C& array() const { return *a; }
 	inline int firstIndex() const { return f; }
 	inline int lastIndex() const { return f + c - 1; }
 	inline int count() const { return c; }
 
-	inline const T& get(int i) const { return (*a)[f + i]; }
-	inline const T& operator[](int i) const { return get(i); }
-	inline T& get(int i) { return (*a)[f + i]; }
-	inline T& operator[](int i) { return get(i); }
+	inline const t& get(int i) const { return (*a)[f + i]; }
+	inline const t& operator[](int i) const { return get(i); }
+	inline t& get(int i) { return (*a)[f + i]; }
+	inline t& operator[](int i) { return get(i); }
 
-	class Iter: public PreIterator<Iter, T> {
+	class BaseIter: public PreIter<BaseIter, t> {
 	public:
-		inline Iter(const Slice& slice, int idx = 0): s(slice), i(idx) { }
+		inline BaseIter(const self_t& slice, int idx = 0): s(slice), i(idx) { }
 		inline bool ended() const { return i >= s.c; }
-		inline const T& item() const { return s[i]; }
+		inline const t& item() const { return s[i]; }
 		inline void next() { i++; }
-		inline bool equals(const Iter& ii) const { return &s == &ii.s && i == ii.i; }
-	private:
-		const Slice& s;
+		inline bool equals(const BaseIter& ii) const { return &s == &ii.s && i == ii.i; }
+	protected:
+		const self_t& s;
 		int i;
 	};
 
+	// Array concept additions
+	inline int length() const { return count(); }
+	inline int indexOf(const t& x, int i = 0) const
+		{ for(; i < c; i++) if(x == get(i)) return i; return -1; }
+	inline int lastIndexOf(const t& x, int i = -1) const
+		{ if(i == -1) i = c - 1; for(; i >= 0; i--) if(x == get(i)) break; return i; }
+
+	// Collection concept
+	class Iter: public BaseIter, public ConstPreIter<Iter, t> {
+	public:
+		using BaseIter::BaseIter;
+		inline const t& item() const { return BaseIter::s[BaseIter::i]; }
+	};
 	inline Iter begin() const { return Iter(*this); }
 	inline Iter end() const { return Iter(*this, c); }
 
-	// Array concept additions
-	inline int length() const { return count(); }
-	inline int indexOf(const T& x, int i = 0) const
-		{ for(; i < c; i++) if(x == get(i)) return i; return -1; }
-	inline int lastIndexOf(const T& x, int i = -1) const
-		{ if(i == -1) i = c - 1; for(; i >= 0; i--) if(x == get(i)) break; return i; }
-
-	// Collection concept additions
-	inline bool contains(const T& x) const
+	inline bool contains(const t& x) const
 		{ return indexOf(x) != -1; }
-	inline bool containsAll(const Slice<T, D>& s) const
+	inline bool containsAll(const self_t& s) const
 		{ for(auto x: s) if(!contains(x)) return false; return true; }
 	inline bool isEmpty() const { return c == 0; }
 	inline operator bool() const { return !isEmpty(); }
-	inline bool equals(const Slice<T, D>& s) const {
+	inline bool equals(const self_t& s) const {
 		if(c != s.c) return false;
 		for(int i = 0; i < c; i++) if(get(i) != s.get(i)) return false;
 		return true;
 	}
-	inline bool operator==(const Slice<T, D>& s) const { return equals(s); }
-	inline bool operator!=(const Slice<T, D>& s) const { return !equals(s); }
+	inline bool operator==(const self_t& s) const { return equals(s); }
+	inline bool operator!=(const self_t& s) const { return !equals(s); }
+
+	// MutableCollecton concept
+	class MutIter: public BaseIter, public MutPreIter<MutIter, t> {
+	public:
+		inline MutIter(self_t& slice, int idx = 0): BaseIter(slice, idx) { }
+		inline t& item() { return const_cast<self_t&>(BaseIter::s)[BaseIter::i]; }
+	};
+	inline MutIter begin() { return MutIter(*this); }
+	inline MutIter end() { return MutIter(*this, c); }
 
 private:
-	D *a;
+	C *a;
 	int f, c;
 };
+
+template <class C>
+Slice<C> slice(C& a, int fst, int cnt) { return Slice<C>(a, fst, cnt); }
 
 }	// elm
 

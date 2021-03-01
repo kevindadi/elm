@@ -12,6 +12,7 @@
 using namespace elm;
 
 TEST_BEGIN(int)
+
 	for(int i = 0; i < 32; i++)
 		CHECK_EQUAL(msb(t::uint32(1) << i), i);
 	for(int i = 1; i < 32; i++)
@@ -42,6 +43,21 @@ TEST_BEGIN(int)
 		CHECK_EQUAL(elm::max(x, y), 20);
 		CHECK_EQUAL(max(x, 5), 10);
 	}
+
+	// test ones
+	{
+		CHECK_EQUAL(countOnes(3U), 2);
+		CHECK_EQUAL(countOnes(0U), 0);
+		CHECK_EQUAL(countOnes(0x12481248U), 8);
+		CHECK_EQUAL(countOnes(0xff00ff00U), 16);
+		CHECK_EQUAL(ones(t::uint64(3ULL)), 2);
+		//CHECK_EQUAL(ones(0ULL), 0);
+		//CHECK_EQUAL(ones(0x12481248U), 8);
+		//CHECK_EQUAL(ones(0xff00ff00U), 16);
+	}
+
+	CHECK_EQUAL(sizeof(t::uint64), sizeof(3ULL));
+
 
 TEST_END
 

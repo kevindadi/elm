@@ -135,6 +135,78 @@ public:
 
 
 /**
+ * This concept is matched by all mutable iterators and is used by container implementing
+ * the @ref MutableCollection
+ * concept. It provides a way to traverse a collection of items. Notice that @ref PreIterator
+ * provides a fast way to implement the operator overloads of this concept: iterator inheriting
+ * from @ref PreIterator have just to implement ended(), item() and next().
+ *
+ * @param T	Type of items of the collection.
+ *
+ * @par Implemented by:
+ * @li @ref Range
+ *
+ * @ingroup concepts
+ */
+template <class T>
+class MutableIter {
+public:
+
+	/**
+	 * Test if the end of the traversal is reached.
+	 * @return	True if end is reached, false else.
+	 */
+	bool ended(void);
+
+	/**
+	 * Go to the next item.
+	 */
+	void next(void);
+
+	/**
+	 * Get the current item.
+	 * @return Current item.
+	 * @warning	Do not call this method when @ref ended() == true !
+	 */
+	T& item(void);
+
+	/**
+	 * Same as ! @ref ended().
+	 */
+	operator bool(void);
+
+	/**
+	 * Same as @ref next().
+	 */
+	MutableIter& operator++(int);
+
+	/**
+	 * Assign an operator position to the current one.
+	 * @param iterator	Iterator to set the position of.
+	 * @return			Current iterator.
+	 */
+	MutableIter& operator=(const MutableIter& iterator);
+
+	/**
+	 * Test if two iterators are equal.
+	 * @param iterator	Iterator to test with.
+	 * @return			True if they are equal, false else.
+	 */
+	bool equals(const MutableIter& iterator) const;
+
+	/**
+	 * Test for equality.
+	 */
+	bool operator==(const MutableIter& iterator) const;
+
+	/**
+	 * Test for inequality.
+	 */
+	bool operator!=(const MutableIter& iterator) const;
+};
+
+
+/**
  * This concepts provides methods to handle collection. A collection is an
  * unordered list of items.
  * 
@@ -275,6 +347,18 @@ public:
 template <class T>
 class MutableCollection: public  Collection<T> {
 public:
+
+	/**
+	 * Get a mutable iterator on the first element of the collection.
+	 * @return	First element mutable iterator.
+	 */
+	MutableIter<T> begin();
+
+	/**
+	 * Get a mutable iterator at the end of the collection.
+	 * @return	Mutable iterator at the end of the collection.
+	 */
+	MutableIter<T> end();
 
 	/**
 	 * Remove all items from the collection.
@@ -573,6 +657,30 @@ public:
 	 */
 	T& operator[](int index);
 	
+};
+
+
+/**
+ * This concept provides mutable arrays.
+ * @param T	Type of the items in the array.
+ *
+ * @par Implemented by:
+ * @li @ref Array
+ * @li @ref AllocArray
+ * @li @ref Vector
+ *
+ * @ingroup concepts
+ */
+template <class T>
+class ExpandableArray: public  MutableArray<T>, public  MutableCollection<T> {
+public:
+
+	/**
+	 * Shrink the size of the array.
+	 * @param length	New length of the array (less than the current length).
+	 */
+	void shrink(int length);
+
 	/**
 	 * Insert an item in the array. The following items are shifted to the
 	 * upper indexes.
@@ -580,7 +688,7 @@ public:
 	 * @param item	Item to insert.
 	 */
 	void insert(int index, const T& item);
-	
+
 	/**
 	 * Insert an item in the array. The following items are shifted to the
 	 * upper indexes.
@@ -588,14 +696,14 @@ public:
 	 * @param item	Item to insert.
 	 */
 	void insert(const Iterator& iter, const T& item);
-	
+
 	/**
 	 * Remove the item at the given index. Following items are shift to the
 	 * lower indexes.
 	 * @param index	Index of the item to remove.
 	 */
 	void removeAt(int index);
-	
+
 	/**
 	 * Remove the item at the given index. Following items are shift to the
 	 * lower indexes.
@@ -665,6 +773,7 @@ public:
  * @param T	Type of item in the queue.
  *
  * @par Implemented by:
+ * @li @ref BinomialQueue
  * @li @ref BiDiList
  * @li @ref ListQueue
  * @li @ref VectorQueue

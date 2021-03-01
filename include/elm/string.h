@@ -24,6 +24,8 @@ inline String CString::concat(const String& str) const { return String::concat(c
 inline bool CString::startsWith(const char *str) const { return startsWith(CString(str)); };
 inline bool CString::startsWith(const CString str) const { return !strncmp(buf, str.chars(), str.length()); };
 inline bool CString::startsWith(const String& str) const { return !strncmp(buf, str.chars(), str.length()); };
+inline bool CString::endsWith(const char *str) const
+	{ return endsWith(CString(str)); };
 inline bool CString::endsWith(const CString str) const
 	{ int l1 = length(), l2 = str.length(); return l1 >= l2 && !memcmp(buf + l1 - l2, str.chars(), l2); };
 inline bool CString::endsWith(const String& str) const

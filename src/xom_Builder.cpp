@@ -25,6 +25,7 @@
 #include <elm/xom/Builder.h>
 #include <elm/xom/NodeFactory.h>
 #include <elm/xom/Document.h>
+#include <elm/io/InStream.h>
 
 namespace elm { namespace xom {
 
@@ -67,6 +68,72 @@ Document *Builder::build(CString system_id) {
 	if(!xml_doc)
 		return 0;
 		
+	// Build the document
+	return fact->makeDocument(xml_doc);
+}
+
+///
+static int read_callback(void *context,  char * buffer,  int len) {
+	return reinterpret_cast<io::InStream *>(context)->read(buffer, len);
+}
+
+///
+static int close_callback(void *context) {
+	return 0;
+}
+
+/**
+ * Build a document from the given input stream.
+ * @param system	Input stream to read frm.
+ * @return			Read document or null if there is an error.
+ */
+Document *Builder::build(elm::io::InStream *stream) {
+
+	// Configuration
+	xmlLineNumbersDefault(1);
+
+	// Read the file
+	xmlDoc *xml_doc = xmlReadIO(
+		read_callback,
+		close_callback,
+		stream,
+		NULL,
+		NULL,
+		(validate ? XML_PARSE_DTDVALID : 0)
+		| XML_PARSE_NOENT
+		| XML_PARSE_NOBLANKS
+		| XML_PARSE_NOCDATA);
+	if(!xml_doc)
+		return nullptr;
+
+	// Build the document
+	return fact->makeDocument(xml_doc);
+}
+
+/**
+ * Build a document from the given input stream.
+ * @param system	Input stream to read frm.
+ * @return			Read document or null if there is an error.
+ */
+Document *Builder::build(elm::io::InStream *stream, CString base_uri) {
+
+	// Configuration
+	xmlLineNumbersDefault(1);
+
+	// Read the file
+	xmlDoc *xml_doc = xmlReadIO(
+		read_callback,
+		close_callback,
+		stream,
+		base_uri.chars(),
+		NULL,
+		(validate ? XML_PARSE_DTDVALID : 0)
+		| XML_PARSE_NOENT
+		| XML_PARSE_NOBLANKS
+		| XML_PARSE_NOCDATA);
+	if(!xml_doc)
+		return nullptr;
+
 	// Build the document
 	return fact->makeDocument(xml_doc);
 }

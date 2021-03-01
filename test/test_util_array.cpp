@@ -90,20 +90,18 @@ TEST_BEGIN(util_array)
 		int t1i[100], t2i[100];
 		for(int i = 0; i < 100; i++)
 			t1i[i] = t2i[i] = 0;
-		CHECK_EQUAL(array::cmp(t1i, t2i, 100), 0);
+		CHECK(array::equals(t1i, t2i, 100));
 		t1i[0] = 1;
 		t2i[1] = 1;
-		CHECK(array::cmp(t1i, t2i, 100) > 0);
-		CHECK(array::cmp(t2i, t1i, 100) < 0);
+		CHECK(!array::equals(t1i, t2i, 100));
 	}
 
 	{
 		Integer t1[100], t2[100];
-		CHECK(array::cmp(t1, t2, 100) == 0);
+		CHECK(array::equals(t1, t2, 100));
 		t1[0] = 1;
 		t2[1] = 1;
-		CHECK(array::cmp(t1, t2, 100) > 0);
-		CHECK(array::cmp(t2, t1, 100) < 0);
+		CHECK(!array::equals(t1, t2, 100));
 	}
 
 	{

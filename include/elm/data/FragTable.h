@@ -30,6 +30,7 @@ namespace elm {
 template <class T, class E = Equiv<T>, class A = DefaultAlloc>
 class FragTable: public E, public A {
 public:
+	typedef T t;
 	typedef FragTable<T, E, A> self_t;
 
 	inline FragTable(int size_pow = 8)
@@ -44,40 +45,55 @@ public:
 	inline int pagePower() const { return shf; }
 	inline bool pageFull() const { return used >= size; }
 
-	class Iter: public InplacePreIterator<Iter, const T&> {
+	class BaseIter: public PreIter<BaseIter, T> {
 	public:
-		inline Iter(void): arr(0), i(0), len(0) { }
-		inline Iter(const FragTable<T, E, A>& array, int pos = 0): arr(&array), i(pos), len(array.count()) { }
+		inline BaseIter(): arr(0), i(0), len(0) { }
+		inline BaseIter(const self_t& array, int pos = 0): arr(&array), i(pos), len(array.count()) { }
 		inline void next(void) { ASSERT(i < len); i++; }
-		inline const T& item(void) const { return arr->get(i); }
+		inline const T& item() const { return arr->get(i); }
 		inline bool ended(void) const { return i >= len; }
-		inline bool equals(const Iter& it) const { return arr == it.arr && i == it.i; }
+		inline bool equals(const BaseIter& it) const { return arr == it.arr && i == it.i; }
 	protected:
 		friend class FragTable;
-		const FragTable<T, E, A> *arr;
+		const self_t *arr;
 		int i, len;
 	};
  	
 	// Collection concept
+	class Iter: public BaseIter, public ConstPreIter<Iter, T> {
+	public:
+		using BaseIter::BaseIter;
+		inline const T& item() const { return BaseIter::arr->get(BaseIter::i); }
+	};
+ 	inline Iter begin() const { return items(); }
+ 	inline Iter end() const { return Iter(*this, count()); }
+
 	inline int count (void) const { return length(); }
 	inline bool contains(const T &v) const
 		{ for(int i = 0; i < length(); i++) if(get(i) == v) return true; return false; }
 	template <class C> bool containsAll(const C& c) const
 		{ for(typename C::Iter i = c.items(); i; i++) if(!contains(*i)) return false; return false; }
-	inline bool isEmpty(void) const { return tab.count() == 0; }
+	inline bool isEmpty() const { return tab.count() == 0; }
  	inline operator bool (void) const { return !isEmpty(); }
  	inline Iter items(void) const { return Iter(*this); }
  	inline Iter operator*(void) const { return items(); }
  	inline operator Iter(void) const { return items(); }
- 	inline Iter begin(void) const { return items(); }
- 	inline Iter end(void) const { return Iter(*this, count()); }
  	inline bool equals(const self_t& t) const
  		{ Iter i = begin(), j = t.begin(); for(; i && j; i++, j++) if(*i != *j) return false; return !i && !j; }
  	inline bool operator==(const self_t& t) const { return equals(t); }
  	inline bool operator!=(const self_t& t) const { return !equals(t); }
 
 	// MutableCollection concept
-	inline void clear(void)
+	class MutIter: public BaseIter, public MutPreIter<MutIter, T> {
+	public:
+		inline MutIter() { }
+		inline MutIter(self_t& c, int p = 0): BaseIter(c, p) { }
+		inline T& item() { return const_cast<self_t *>(BaseIter::arr)->get(BaseIter::i); }
+	};
+ 	inline MutIter begin() { return MutIter(*this); }
+ 	inline MutIter end() { return MutIter(*this, count()); }
+
+ 	inline void clear(void)
 		{ for(int i = 0; i < tab.count(); i++) delete [] tab[i]; tab.clear(); used = size; }
 	inline void add(const T &value)
 		{	if(used >= size) { tab.add(new T[size]); used = 0; }

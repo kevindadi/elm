@@ -366,6 +366,195 @@ namespace meta {
  * In the last form, a KeyException is raised if there is no value for the key.
  */
 
+
+/**
+ * @class PreIterator
+ * This class is an helper in the writing of iterators. It avoids to redefine
+ * all iterator operators each time an operator is defined. The user of this
+ * class has just to define four methods:
+ *	* bool ended() const -- that returns true when the iteration ends,
+ *	* bool equals(const Iterator& i) const -- to test if two iterators are equal,
+ *	* void next() -- to move to the next item,
+ *	* T item() const -- to get the current item (if any).
+ *
+ * Using these 4 functions, PreIterator is able to support the operators (),
+ * !, ++ (prefix), ++ (suffix), *, ->, == and !=.
+ *
+ * For example, the iterator on an array can be written as:
+ * @code
+ *		template <class T>
+ *		class ArrayIter: public PreIterator<ArrayIter, T> {
+ *		public:
+ *			inline ArrayIter(int number, T *array)
+ *				: n(number), i(0), a(array) { }
+ *			inline bool ended() const { return i >= n; }
+ *			inline bool equals(const ArrayIter& it)
+ *				{ return a == it.a && n == it.n && i == it.i; }
+ *			inline void next() { i++; }
+ *			inline T item() const { return a[i]; }
+ *		private:
+ *			int n, i;
+ *			T *a;
+ *		};
+ * @endcode
+ *
+ * @param I			Type of the defined iterator.
+ * @param T			Type of the items.
+ * @ingroup data
+ *
+ * @typedef PreIterator<T>::t;
+ * Type of the element held by the iterator.
+ *
+ * @fn bool PreIterator<T>::operator()() const;
+ * Test if the iteration is ended.
+ * @return	True if the iteration is ended, false else.
+ *
+ * @fn bool PreIterator<T>::operator!() const;
+ * Test if the iteration is not ended.
+ * @return	True if the iteration is not ended, false else.
+ *
+ * @fn  T PreIterator<T>::operator*() const;
+ * Get the current item of the iterator. It is forbidden to call this function
+ * if the iteration is ended.
+ * @return	Current iterator item.
+ *
+ * @fn  T PreIterator<T>::operator->() const { return ((I *)this)->item(); }
+ * Get the current item of the iterator as a deferenced pointer. It is
+ * forbidden to call ths function if the iteration is ended.
+ * @return	Current iterator item.
+ *
+ * @fn I& PreIterator<T>::operator++();
+ * Move the iterator to the next item. It is forbidden to call this function
+ * if the iteration is ended.
+ * @return This iterator.
+ *
+ * @fn void PreIterator<T>::operator++(int) { ((I *)this)->next(); }
+ * Move the iterator to the next item. It is forbidden to call this function
+ * if the iteration is ended.
+ *
+ * @fn bool PreIterator<T>::operator==(const I& i) const;
+ * Test if the current iterator and the argument iterator are equal.
+ * @return	True if both operators are equal, false else.
+ *
+ * @fn bool PreIterator<>::operator!=(const I& i) const;
+ * Test if the current iterator and the argument iterator are different.
+ * @return	True if both operators are different, false else.
+ *
+ */
+
+/**
+ * @class InplacePreIterator
+ * As PreIterator, this class is an helper in the writing of iterators but
+ * instead of returning the iterated items, it returns a constant reference
+ * to the iterated items.
+ *
+ * Its aims to avoid redefining
+ * all iterator operators each time an operator is defined. The user of this
+ * class has just to define four methods:
+ *	* bool ended() const -- that returns true when the iteration ends,
+ *	* bool equals(const Iterator& i) const -- to test if two iterators are equal,
+ *	* void next() -- to move to the next item,
+ *	* const T& item() const -- to get the current item (if any).
+ *
+ * Using these 4 functions, PreIterator is able to support the operators (),
+ * !, ++ (prefix), ++ (suffix), *, ->, == and !=.
+ *
+ * @param I			Type of the defined iterator.
+ * @param T			Type of the items.
+ * @ingroup data
+ * @deprecated		Used PreIterator with reference/non-reference item type.
+ */
+
+
+/**
+ * @class PreIter
+ * This help class provides the definition of iterator operators (), !, ++
+ * (prefix), ++ (postfix), == and !=. These operations are derived from
+ * 3 functions that must be declared in class I:
+ *	* bool ended() -- test if the end of iteration is reached,
+ *	* void next() -- move to the next item,
+ *	* bool equals(const Iter& i) -- test equlity of iterators.
+ *
+ *	By itself, this class is not enough to declare the full set of operators
+ *	of an iterator. It has to be used in conjunction with ConstPreIter and
+ *	MutPreIter (or both) that will provide operator * and ->.
+ *
+ *	Example below shows an example of complete constant and mutable iterators:
+ *	@code
+ *	template <class T>
+ *	class MyArray {
+ *	public:
+ *
+ *		class BaseIter: public PreIter<Iter, T> {
+ *		public:
+ *			inline BaseIter(const MyArray& array, int idx = 0): a(array), i(idx) { }
+ *			inline bool ended() const { return i >= 10; }
+ *			inline void next() const { i++; }
+ *			inline bool equals(const BaseIter& it) const { return i == it.i; }
+ *		private:
+ *			const MyArray<T>& a;
+ *			int i;
+ *		};
+ *
+ *		class Iter: public BaseIter, public ConstPreIter<Iter, T> {
+ *		public:
+ *			using BaseIter::BaseIter;
+ *			inline const T& item() const { return BaseIter::a.t[BaseIter::i];
+ *		};
+ *		inline Iter begin() const { return Iter(*this); }
+ *		inline Iter end() const { return Iter(*this, 10); }
+ *
+ *		class MutIter: public BaseIter, public MutPreIter<Iter, T> {
+ *		public:
+ *			inline MutIter(MyArray& a, int i = 0): BaseIter(a, i) { }
+ *			inline T& item() { return const_cast<MyArray&>(BaseIter::a).t[BaseIter::i]; }
+ *		};
+ *		inline MutIter begin() { return MutIter(*this); }
+ *		inline MutIter end() { return MutIter(*this, 10); }
+ *
+ *	private:
+ *		T t[10];
+ *	};
+ *	@endcode
+ *
+ *	This code defines first a base iterator, BaseIter, that gather all functions
+ *	that are common to the constant and to the mutable iterator. Then the
+ *	constant iterator, Iter, can be declared: it uses the same construction as
+ *	BaseIter but the access to protected fields requires to prefix them with
+ *	the BaseIter class name: it is a bit ugly but required by the multiple
+ *	inheritance caused by the use of ConstPreIter.
+ *
+ *	MutIter is a bit more complex: it inherits from BaseIter re-using the
+ *	functions defined in BaseIter but also ensuring that Iter and MutIter
+ *	can be compared.The constructor can not be inherited to ensure that
+ *	the MyArray parameter is mutable/non-constant.This is important to ensure
+ *	that the const_cast<>() of the item() is valid. This cast is required
+ *	in order to expose references to the MyArray items but it is only
+ *	performed if the constructor has obtained a mutable MyArray.
+ *
+ * @param I	Defined iterator.
+ * @param T	Type of iterated items.
+ * @ingroup	data
+ *
+ *
+ * @class ConstPreIter
+ * This class is an helper to define constant iterator. See PreIter for more
+ * details.
+ *
+ * @param I	Defined iterator.
+ * @param T	Type of iterated items.
+ * @ingroup	data
+ *
+ * @class MutPreIter
+ * This class is an helper to define mutable iterator. See PreIter for more
+ * details.
+ *
+ * @param I	Defined iterator.
+ * @param T	Type of iterated items.
+ * @ingroup	data
+ *
+ */
+
 }	// elm
 
 #endif /* ELM_DOC_H_*/

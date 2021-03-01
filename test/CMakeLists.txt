@@ -30,6 +30,7 @@ message(STATUS ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(TEST_SOURCES
 	"test.cpp"
+	"test_preiter.cpp"
 	"test_alloc.cpp"
 	"test_ansi.cpp"
 	"test_array.cpp"
@@ -58,6 +59,7 @@ set(TEST_SOURCES
 	"test_json.cpp"
 	"test_ilist.cpp"
 	"test_list.cpp"
+	"test_listgc.cpp"
 	"test_listqueue.cpp"
 	"test_lock.cpp"
 	"test_md5.cpp"
@@ -96,6 +98,10 @@ set(TEST_SOURCES
     "test_wah"
     "test_cleaner.cpp"
 )
+
+if(LIBXML2_FOUND)
+	list(APPEND TEST_SOURCES "test_dtd.cpp")
+endif()
 
 if(HAS_SOCKET)
 	add_subdirectory(socket)

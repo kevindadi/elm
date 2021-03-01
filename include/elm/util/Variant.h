@@ -78,12 +78,12 @@ namespace variant {
 	template <class T> struct access_t<T *> {
 		typedef T *rt;
 		static T *get(const data_t& d) { return static_cast<T *>(d.p); }
-		static void set(data_t& d, T *x)	{ cerr << "DEBUG:set T*\n"; d.p = x; }
+		static void set(data_t& d, T *x)	{ d.p = x; }
 	};
 	template <class T> struct access_t<const T *> {
 		typedef const T *rt;
 		static const T *get(const data_t& d) { return static_cast<const T *>(d.cp); }
-		static void set(data_t& d, const T *x)	{ cerr << "DEBUG:set const T*\n"; d.cp = x; }
+		static void set(data_t& d, const T *x)	{ d.cp = x; }
 	};
 
 }	// variant
@@ -91,12 +91,10 @@ namespace variant {
 
 class Variant {
 public:
-	inline Variant(void) { }
+	inline Variant() { }
 	template <class T> Variant(const T& x) { variant::access_t<T>::set(_data, x); }
 	inline void *asPointer(void) const { return _data.p; }
-
 	template <class T> typename variant::access_t<T>::rt as() const { return variant::access_t<T>::get(_data); }
-
 private:
 	variant::data_t _data;
 };

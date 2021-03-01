@@ -30,11 +30,9 @@ public:
 	typedef T t;
 	typedef T return_t;
 
-	//inline operator bool() const { return !((I *)this)->ended(); }
 	inline bool operator()() const { return !((I *)this)->ended(); }
 	inline bool operator!() const { return ((I *)this)->ended(); }
 
-	//inline operator T() const { return ((I *)this)->item(); }
 	inline T operator*() const { return ((I *)this)->item(); }
 	inline T operator->() const { return ((I *)this)->item(); }
 
@@ -48,17 +46,14 @@ public:
 
 // InplacePreIterator class
 template <class I, class T>
-class InplacePreIterator/*: public PreIterator<I, T>*/ {
+class InplacePreIterator {
 public:
-
 	typedef T t;
 	typedef const T& return_t;
 
-	//inline operator bool() const { return !((I *)this)->ended(); }
 	inline bool operator()() const { return !((I *)this)->ended(); }
 	inline bool operator!() const { return ((I *)this)->ended(); }
 
-	//inline operator const T&() const { return ((I *)this)->item(); }
 	inline const T& operator*() const { return ((I *)this)->item(); }
 	inline const T& operator->() const { return ((I *)this)->item(); }
 
@@ -68,6 +63,34 @@ public:
 	inline bool operator==(const I& i) const { return ((I *)this)->equals(i); }
 	inline bool operator!=(const I& i) const { return !((I *)this)->equals(i); }
 
+};
+
+template <class I, class T>
+class PreIter {
+public:
+	inline bool operator()() const { return !((I *)this)->ended(); }
+	inline bool operator!() const { return ((I *)this)->ended(); }
+
+	inline I& operator++() { ((I *)this)->next(); return *(I *)this; }
+	inline void operator++(int) { ((I *)this)->next(); }
+
+	inline bool operator==(const I& i) const { return ((I *)this)->equals(i); }
+	inline bool operator!=(const I& i) const { return !((I *)this)->equals(i); }
+
+};
+
+template <class I, class T>
+class ConstPreIter {
+public:
+	inline const T& operator*() const { return ((I *)this)->item(); }
+	inline T operator->() const { return ((I *)this)->item(); }
+};
+
+template <class I, class T>
+class MutPreIter {
+public:
+	inline T& operator*() { return ((I *)this)->item(); }
+	inline T operator->() { return ((I *)this)->item(); }
 };
 
 }	// elm

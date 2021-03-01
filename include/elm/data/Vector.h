@@ -23,7 +23,7 @@
 
 #include "custom.h"
 #include "Array.h"
-#include <elm/equiv.h>
+#include "Manager.h"
 
 #include <elm/array.h>
 #include <elm/compat.h>
@@ -39,6 +39,7 @@ class Vector: public E, public A {
 
 public:
 	typedef T t;
+	typedef Vector<T, E, A> self_t;
 
 	inline Vector(int _cap = 8): tab(newVec(_cap)), cap(_cap), cnt(0) { }
 	inline Vector(const Vector<T>& vec): tab(0), cap(0), cnt(0) { copy(vec); }
@@ -66,32 +67,30 @@ public:
 	class Iter: public InplacePreIterator<Iter, T> {
 	public:
 		friend class Vector;
-		inline Iter(const Vector& vec, int idx = 0): _vec(&vec), i(idx) { }
+		inline Iter(const self_t& vec, int idx = 0): _vec(&vec), i(idx) { }
 		inline bool ended(void) const { return i >= _vec->length(); }
 		inline const T& item(void) const { return (*_vec)[i]; }
 		inline void next(void) { i++; }
 		inline int index(void) const { return i; }
 		inline bool equals(const Iter& it) const { return _vec == it._vec && i == it.i; }
 	private:
-		const Vector<T> *_vec;
+		const self_t *_vec;
 		int i;
 	};
 
 	inline int count(void) const { return cnt; }
 	bool contains(const T& v) const
 		{ for(Iter i(*this); i(); i++) if(v == *i) return true; return false; }
-	template <template <class _> class C> inline bool containsAll(const C<T>& items)
-		{ for(typename C<T>::Iter item(items); item; item++) if(!contains(item)) return false; return true; }
+	template <class C> inline bool containsAll(const C& items)
+		{ for(const auto& x: items) if(!contains(x)) return false; return true; }
 	inline bool isEmpty(void) const { return cnt == 0; }
 	inline operator bool(void) const { return cnt != 0; }
 	inline Iter begin(void) const { return Iter(*this); }
 	inline Iter end(void) const { return Iter(*this, count()); }
 
-	inline bool equals(const Vector<T>& v) const {
-		if(cnt != v.cnt) return false;
-		for(int i = 0; i < cnt; i++) if(!E::isEqual(tab[i], v.tab[i])) return false;
-		return true;
-	}
+	template <class C> inline bool equals(const C& c) const {
+		int i = 0; for(const auto& x: c)
+			{ if(i >= count() || !E::equals(tab[i], x)) return false; i++; } return i == count(); }
 	inline bool operator==(const Vector<T>& v) const { return equals(v); }
 	inline bool operator!=(const Vector<T>& v) const { return !equals(v); }
 
@@ -149,18 +148,23 @@ public:
 	// List concept
 	inline const T& first(void) const { ASSERT(cnt > 0); return tab[0]; }
 	inline const T& last(void) const { ASSERT(cnt > 0); return tab[cnt - 1]; }
-	inline Iter find(const T &v)
-		{ Iter i(*this); while(i() && !E::isEqual(*i, v)) i++; return i; }
-	inline Iter find (const T &v, const Iter &p)
-		{ Iter i(p); while(i() && !E::isEqual(*i, v)) i++; return i; }
+	inline Iter find(const T &v) const
+		{ Iter i(*this); while(i() && !E::equals(*i, v)) i++; return i; }
+	inline Iter find (const T &v, const Iter &p) const
+		{ Iter i(p); while(i() && !E::equals(*i, v)) i++; return i; }
+	inline const T& nth(int i) const { return get(i); }
 
 	// MutableList concept
+	inline T& first() { ASSERT(cnt > 0); return tab[0]; }
+	inline T& last() { ASSERT(cnt > 0); return tab[cnt - 1]; }
 	inline void addFirst(const T &v) { insert(0, v); }
 	inline void addLast(const T &v) { add(v); }
 	inline void removeFirst(void) { removeAt(0); }
 	inline void removeLast(void) { removeAt(cnt - 1); }
 	inline void addAfter(const Iter &i, const T &v) { insert(i.i + 1, v); }
 	inline void addBefore(const Iter &i, const T &v) { insert(i.i, v); }
+	inline void removeBefore(const Iter& i) { removeAt(i.i - 1); }
+	inline void removeAfter(const Iter& i) { removeAt(i.i + 1); }
 
 	// Stack concept
 	inline const T &top(void) const { return last(); }

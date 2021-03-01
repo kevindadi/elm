@@ -43,8 +43,15 @@ public:
 	void succeeded(void);
 	void check(CString file, int line, CString text, bool result);
 	bool require(CString file, int line, CString text, bool result);
-	template <class T> inline void check_equal(CString file, int line, 
-		CString text, const T& result, const T& reference);
+
+	template <class T, class U> inline void check_equal(CString file, int line,
+	CString text, const T& result, const U& reference) {
+		bool test = result == reference;
+		check(file, line, text, test);
+		if(!test)
+			cout << '\t' << result << " != " << reference << "\n";
+	}
+
 	void prepare(void);
 	void complete(void);
 	void perform(void);
@@ -74,17 +81,6 @@ private:
 	void add(TestCase *tcase);
 	List<TestCase *> cases;
 };
-
-
-// Inlines
-template <class T>
-inline void TestCase::check_equal(CString file, int line, CString text,
-const T& result, const T& reference) {
-	bool test = result == reference;
-	check(file, line, text, test);
-	if(!test)
-		cout << '\t' << result << " != " << reference << "\n";
-}
 
 
 // Macros

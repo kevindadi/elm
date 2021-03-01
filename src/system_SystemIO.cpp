@@ -20,6 +20,8 @@
  */
 
 #include <stdio.h>
+#include <elm/io/BufferedOutStream.h>
+#include <elm/io/Output.h>
 #include <elm/sys/SystemIO.h>
 #if defined(__WIN32)
 #	include <windows.h>
@@ -85,6 +87,25 @@ namespace elm { namespace sys {
 #endif
 
 } // sys
+
+///
+static io::BufferedOutStream buf_out(io::out);
+
+/**
+ * Standard output.
+ * @ingroup ios
+ */
+io::Output cout(buf_out);
+
+///
+static io::BufferedOutStream buf_err(io::err);
+
+/**
+ * Standard error output.
+ * @ingroup ios
+ */
+io::Output cerr(buf_err);
+
 
 namespace io {
 

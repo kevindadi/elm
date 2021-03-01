@@ -19,7 +19,8 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #include <elm/data/Vector.h>
-#include "../include/elm/test.h"
+#include <elm/test.h>
+#include "check-concept.h"
 
 inline void get(bool b) { }
 
@@ -28,6 +29,19 @@ using namespace elm;
 // test_vector()
 TEST_BEGIN(vector)
 	
+	{
+		Vector<int> v;
+		const Vector<int> cv;
+		checkCollection(v, cv, 111);
+		checkMutableCollection(v, 111);
+		checkArray(v, 111);
+		checkMutableArray(v, 111);
+		checkExpandableArray(v, 111);
+		checkList(v, 111);
+		checkMutableList(v, 111);
+		checkStack(v, cv, 111);
+	}
+
 	{
 		if(false) {
 			Vector<int> v;
@@ -267,6 +281,20 @@ TEST_BEGIN(vector)
 		for(int i = 0; i < 5; i++)
 			v.add(string("ok"));
 
+	}
+
+	{
+		Vector<int> v1, v2;
+		for(int i = 0; i < 10; i++) {
+			v1.add(i);
+			v2.add(i);
+		}
+		CHECK(v1.equals(v1));
+		CHECK(v1.equals(v2));
+		v1.add(111);
+		CHECK(!v1.equals(v2));
+		v2.add(666);
+		CHECK(!v1.equals(v2));
 	}
 
 #	if 0

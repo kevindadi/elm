@@ -184,6 +184,27 @@ void checkArray(const A& a, const T& x) {
 	}
 }
 
+template <class A, class T>
+void checkMutableArray(A& a, const T& x) {
+	if(false) {
+		a.set(3, x);
+		a.set(a.begin(), x);
+		a.get(0) =  x;
+		a[0] = x;
+	}
+}
+
+template <class A, class T>
+void checkExpandableArray(A& a, const T& x) {
+	if(false) {
+		a.shrink(3);
+		a.insert(3, x);
+		a.insert(a.begin(), x);
+		a.removeAt(3);
+		a.removeAt(a.begin());
+	}
+}
+
 }	// elm
 
 #endif /* ELM_TEST_CHECK_CONCEPT_H_ */

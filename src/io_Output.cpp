@@ -1199,18 +1199,5 @@ FileOutput::~FileOutput(void) {
  * @ingroup		io
  */
 
-} // io
+} } // elm::io
 
-/**
- * Standard output.
- * @ingroup ios
- */
-io::Output cout(io::out);
-
-/**
- * Standard error output.
- * @ingroup ios
- */
-io::Output cerr(io::err);
-
-} // elm

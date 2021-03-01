@@ -38,7 +38,7 @@ namespace elm { namespace io {
 /**
  * Default configuration monitor constructor.
  */
-Monitor::Monitor(void): out(elm::io::out), err(elm::io::err), log(elm::io::err) {
+Monitor::Monitor(void): out(cout.stream()), err(cerr.stream()), log(cerr.stream()) {
 }
 
 

@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	xom::String class interface
  *
  *	This file is part of OTAWA

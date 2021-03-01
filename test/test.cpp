@@ -65,6 +65,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// display summary
+	cout.flush();
 	if(!failed) {
 		cerr << "SUCCESS: all tests successfully passed!\n";
 		return 0;

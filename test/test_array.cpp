@@ -5,8 +5,9 @@
  * test/test_table.cpp -- unit tests for Table class.
  */
 
+#include <elm/array.h>
 #include <elm/data/Array.h>
-#include "../include/elm/test.h"
+#include <elm/test.h>
 
 using namespace elm;
 
@@ -91,6 +92,27 @@ TEST_BEGIN(array)
 			i++;
 		}
 		CHECK(ok);
+	}
+
+	// array operations
+	if(false) {
+		int t[100], u[100];
+		array::copy(t, u, 100);
+		array::move(t, u, 100);
+		array::set(t, 100, 0);
+		array::clear(t, 100);
+		array::equals(t, u, 100);
+		array::construct(t, 100);
+	}
+
+	if(false) {
+		cstring t[100], u[100];
+		array::copy(t, u, 100);
+		array::move(t, u, 100);
+		array::set(t, 100, cstring(""));
+		array::clear(t, 100);
+		array::equals(t, u, 100);
+		array::construct(t, 100);
 	}
 
 TEST_END
