@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8.12)
 
 project("elm")
 
+#add_compile_options(-Wall -Werror)
+
 if(ELM_STAT)
 	message(STATUS "ELM_STAT enabled")
 else()

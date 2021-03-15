@@ -115,7 +115,7 @@ public:
 	inline Iter nth(int n) const { Iter i(*this); while(n != 0 && i()) { n--; i++; }; return i; }
 
 	// operators
-	inline SortedList<T>& operator=(const SortedList<T, C>& sl) { list.copy(sl.list); return *this; }
+	inline SortedList<T, C>& operator=(const SortedList<T, C>& sl) { list.copy(sl.list); return *this; }
 	inline bool operator&(const T& e) const { return list.contains(e); }
 	inline T& operator[](int k) { return list[k]; }
 	inline const T& operator[](int k) const { return list[k]; }
