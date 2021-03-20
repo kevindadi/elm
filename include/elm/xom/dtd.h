@@ -174,6 +174,7 @@ class Element: public Content {
 public:
 	Element(xom::String name);
 	Element(xom::String name, Content& content);
+	~Element();
 
 	inline xom::String name() const { return _name; }
 	inline Content& content() const { return _content; }

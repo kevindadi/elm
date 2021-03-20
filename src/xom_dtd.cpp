@@ -759,7 +759,8 @@ Content& ignored = _ignored;
  * @param name	Element name.
  */
 Element::Element(xom::String name)
-	: _name(name), _content(EMPTY) { }
+	: _name(name), _content(EMPTY)
+	{ }
 
 /**
  * Build an element with the given content.
@@ -767,7 +768,13 @@ Element::Element(xom::String name)
  * @param content	Element content.
  */
 Element::Element(xom::String name, Content& content)
-	: _name(name), _content(content) { }
+	: _name(name), _content(content)
+	{ }
+
+///
+Element::~Element() {
+}
+
 
 /**
  * @fn xom::String Element::name() const;
