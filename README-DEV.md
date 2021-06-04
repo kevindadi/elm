@@ -1,6 +1,6 @@
-====== Elm Developper Information ======
+# Elm Developper Information
 
-===== Organization =====
+## Organization
 
 Directories:
   * include/		ELM headers.
@@ -9,23 +9,17 @@ Directories:
   * perf/			Performances test programs and data.
   * tools/			Tool to work with ELM.
 
-===== Working with sources =====
+## Working with sources
 
 Bootstrap:
-<code sh>
 	cmake .
-</code>
 
 Under Windows (MINGW required):
-<code sh>
 	cmake . -G "MSYS Makefiles"
-</code>
 
 Auto-documentation:
-<code>
 	doxygen
 	xdg-open autodoc/index.html
-</code>
 
 Activating the test compilation:
 	cmake . -DWITH_TEST=yes
@@ -39,16 +33,16 @@ Under Windows:
 	move src/libelm.dll to test/
 
 
-===== Documentation =====
+## Documentation
 
 All classes, function, macros, variable or type provided
-to uses must be documented using the [[http://www.stack.nl/~dimitri/doxygen/|Doxygen]]
+to uses must be documented using the [Doxygen](http://www.stack.nl/~dimitri/doxygen/|Doxygen)
 tool. Doxygen automatic documentation is very close to JavaDoc but provides 
 more flexibility and support for C++. The syntax detail can be found
-[[http://www.stack.nl/~dimitri/doxygen/manual/commands.html|here]].
+[here](http://www.stack.nl/~dimitri/doxygen/manual/commands.html).
 
 Additionally, Doxygen supports Markdown wiki syntax that may be found
-[[http://daringfireball.net/projects/markdown/syntax|here]]. Below is a non-exhaustive
+[here](http://daringfireball.net/projects/markdown/syntax). Below is a non-exhaustive
 list of markdown syntax:
   * \n to create a new paragraph,
   * title \n ==== or # title # to create a section
@@ -70,33 +64,49 @@ list of markdown syntax:
 An important rule must be applied: no documentation must be put in the header
 file. Classes has to be described in the source file. For a class, a special comment
 like below must be set:
-<code c++>
-/**
- * @class MY_CLASS
- * documentation
- */
-</code>
+	/**
+	 * @class MY_CLASS
+	 * documentation
+	 */
 
 For an inlined function, the documentation must be put in the source file as:
-<code c++>
-/**
- * @fn RETURN_TYPE MY_CLASS::FUNCTION_NAME(PARAMETERS);
- * documentation
- */
-</code>
+	/**
+	 * @fn RETURN_TYPE MY_CLASS::FUNCTION_NAME(PARAMETERS);
+	 * documentation
+	 */
 
 All resources provided by ELM must be located in a module using the Doxygen
 directive @ingroup (at the end of the description):
-<code c++>
-/**
- * documentation
- * @ingroup MODULE
- */
-</code>
+	/**
+	 * documentation
+	 * @ingroup MODULE
+	 */
 
 The list of available modules may be obtained from the automatic documentation.
 
 
-===== Development Directives =====
+## Covering Types
+
+In order, to get functions or template specializations supporting all types,
+the following overload must be performed.
+
+For base types:
+  * void
+  * bool
+  * char (special case for character support)
+  * signed/unsigned char/short/int/long/long long
+  * float, double, long double
+
+For string types:
+  * const char *
+  * cstring
+  * const string&
+
+Other type support encompasses:
+  * T * - pointer type
+  * const T& - other kind of object
+
+
+## Development Directives
 
 

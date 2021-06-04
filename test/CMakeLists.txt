@@ -121,3 +121,6 @@ target_link_libraries(test_bgc elm)
 
 add_executable(test_thread "thread.cpp")
 target_link_libraries(test_thread elm)
+
+add_executable(test-types "test-types.cpp")
+target_link_libraries(test-types elm)

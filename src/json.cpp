@@ -76,6 +76,32 @@ Saver::~Saver(void) {
 		delete str;
 }
 
+///
+void Saver::nextByValue() {
+	switch(state) {
+	case BEGIN:
+		state = END;
+		break;
+	case OBJECT:
+	case IN_OBJECT:
+		ASSERTP(false, "json: value cannot be put in map without key");
+		break;
+	case FIELD:
+		stack.pop();
+		state = IN_OBJECT;
+		break;
+	case ARRAY:
+		state = IN_ARRAY;
+		break;
+	case IN_ARRAY:
+		break;
+	case END:
+		ASSERTP(false, "json: ended output!");
+		break;
+	}
+}
+
+
 /**
  * Close the JSON output.
  */
@@ -159,7 +185,7 @@ bool Saver::isArray(state_t s) {
  * Begin an object. Only allowed at the beginning of the output,
  * after adding an object or inside an array.
  */
-void Saver::beginObject(void) {
+void Saver::beginMap(void) {
 	ASSERTP(state != END, "json: ended output!");
 	ASSERTP(!isObject(state), "json: object creation only allowed in a field or an array");
 	doIndent();
@@ -172,7 +198,7 @@ void Saver::beginObject(void) {
 /**
  * End an object. Only allowed inside an object.
  */
-void Saver::endObject(void) {
+void Saver::endMap(void) {
 	ASSERTP(isObject(state), "json: not inside an object!");
 	if(!stack)
 		state = END;
@@ -185,7 +211,7 @@ void Saver::endObject(void) {
 /**
  * Begin an array. Only allowed inside an array or in a field.
  */
-void Saver::beginArray(void) {
+void Saver::beginList(void) {
 	ASSERTP(state != END, "json: ended output!");
 	ASSERTP(state == FIELD || isArray(state), "json: array only allowed in a field or in an array");
 	doIndent();
@@ -198,7 +224,7 @@ void Saver::beginArray(void) {
 /**
  * End an array. Only allowed inside an array.
  */
-void Saver::endArray(void) {
+void Saver::endList(void) {
 	ASSERTP(isArray(state), "json: not inside an array!");
 	state_t new_state = next(stack.pop());
 	state = ARRAY;
@@ -210,7 +236,30 @@ void Saver::endArray(void) {
 /**
  * Add a field. Only allowed inside an object.
  */
-void Saver::addField(string id) {
+void Saver::key(const string& id) {
+	ASSERTP(isObject(state), "json: field only allowed inside an object!");
+	doIndent();
+	_out << '"';
+	try {
+		for(utf8::Iter i(id); i(); i++)
+			escape(*i);
+	}
+	catch(utf8::Exception& e) {
+		ASSERTP(false, _ << "json: bad utf8 string: \"" << id << "\"");
+	}
+	_out << '"';
+	if(isReadable())
+		_out << ": ";
+	else
+		_out << ":";
+	stack.push(state);
+	state = FIELD;
+}
+
+/**
+ * Add a field. Only allowed inside an object.
+ */
+void Saver::key(cstring id) {
 	ASSERTP(isObject(state), "json: field only allowed inside an object!");
 	doIndent();
 	_out << '"';
@@ -266,10 +315,50 @@ void Saver::put(void) {
 }
 
 /**
+ * Put a boolean value.
+ * @param val	Value to put.
+ */
+void Saver::write(bool val) {
+	ASSERTP(state == FIELD || isArray(state), "json: cannot put a value out of a field or an array!");
+	doIndent();
+	if(val)
+		_out << "true";
+	else
+		_out << "false";
+	if(state == FIELD)
+		state = stack.pop();
+	state = next(state);
+}
+
+
+/**
+ * Put a character value.
+ * @param chr	Character to put.
+ */
+void Saver::write(char c) {
+	ASSERTP(state == FIELD || isArray(state), "json: cannot put a value out of a field or an array!");
+	doIndent();
+	_out << '"';
+	escape(c);
+	_out << '"';
+	if(state == FIELD)
+		state = stack.pop();
+	state = next(state);
+}
+
+/**
  * Put a string value.
  * @param str	String to put.
  */
-void Saver::put(cstring str) {
+void Saver::write(const char *str) {
+	write(cstring(str));
+}
+
+/**
+ * Put a string value.
+ * @param str	String to put.
+ */
+void Saver::write(cstring str) {
 	ASSERTP(state == FIELD || isArray(state), "json: cannot put a value out of a field or an array!");
 	doIndent();
 	_out << '"';
@@ -285,7 +374,7 @@ void Saver::put(cstring str) {
  * Put a string value.
  * @param val	String to put.
  */
-void Saver::put(string val) {
+void Saver::write(const string& val) {
 	ASSERTP(state == FIELD || isArray(state), "json: cannot put a value out of a field or an array!");
 	doIndent();
 	_out << '"';
@@ -297,59 +386,43 @@ void Saver::put(string val) {
 	state = next(state);
 }
 
-/**
- * Put an integer value.
- * @param val	Value to put.
- */
-void Saver::put(t::uint64 val) {
-	ASSERTP(state == FIELD || isArray(state), "json: cannot put a value out of a field or an array!");
-	doIndent();
-	_out << val;
-	if(state == FIELD)
-		state = stack.pop();
-	state = next(state);
-}
+///
+void Saver::write(signed char x) { doIndent(); nextByValue(); _out << x; }
 
-/**
- * Put an integer value.
- * @param val	Value to put.
- */
-void Saver::put(t::int64 val) {
-	ASSERTP(state == FIELD || isArray(state), "json: cannot put a value out of a field or an array!");
-	doIndent();
-	_out << val;
-	if(state == FIELD)
-		state = stack.pop();
-	state = next(state);
-}
+///
+void Saver::write(unsigned char x) { doIndent(); nextByValue(); _out << x; }
 
-/**
- * Put a double value.
- * @param val	Value to put.
- */
-void Saver::put(double val) {
-	ASSERTP(state == FIELD || isArray(state), "json: cannot put a value out of a field or an array!");
-	doIndent();
-	_out << val;
-	if(state == FIELD)
-		state = stack.pop();
-	state = next(state);
-}
+///
+void Saver::write(signed short x) { doIndent(); nextByValue(); _out << x; }
 
-/**
- * Put a boolean value.
- * @param val	Value to put.
- */
-void Saver::put(bool val) {
-	ASSERTP(state == FIELD || isArray(state), "json: cannot put a value out of a field or an array!");
-	doIndent();
-	if(val)
-		_out << "true";
-	else
-		_out << "false";
-	if(state == FIELD)
-		state = stack.pop();
-	state = next(state);
-}
+///
+void Saver::write(unsigned short x) { doIndent(); nextByValue(); _out << x; }
+
+///
+void Saver::write(signed int x) { doIndent(); nextByValue(); _out << x; }
+
+///
+void Saver::write(unsigned int x) { doIndent(); nextByValue(); _out << x; }
+
+///
+void Saver::write(signed long x) { doIndent(); nextByValue(); _out << x; }
+
+///
+void Saver::write(unsigned long x) { doIndent(); nextByValue(); _out << x; }
+
+///
+void Saver::write(signed long long x) { doIndent(); nextByValue(); _out << x; }
+
+///
+void Saver::write(unsigned long long x) { doIndent(); nextByValue(); _out << x; }
+
+///
+void Saver::write(float x) { doIndent(); nextByValue(); _out << x; }
+
+///
+void Saver::write(double x) { doIndent(); nextByValue(); _out << x; }
+
+///
+void Saver::write(long double x) { doIndent(); nextByValue(); _out << x; }
 
 } }		// json

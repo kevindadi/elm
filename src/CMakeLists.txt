@@ -67,6 +67,7 @@ set(LIBELM_LA_SOURCES
 	"io_OutStream.cpp"
 	"io_RandomAccessStream.cpp"
 	"io_StreamPipe.cpp"
+	"io_StructuredOutput.cpp"
 	"io_TeeOutStream.cpp"
 	"io_UnixInStream.cpp"
 	"io_UnixOutStream.cpp"

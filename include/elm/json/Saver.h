@@ -24,13 +24,14 @@
 #include <elm/data/Vector.h>
 #include <elm/io.h>
 #include <elm/io/BufferedOutStream.h>
+#include <elm/io/StructuredOutput.h>
 #include <elm/string/utf8.h>
 #include <elm/sys/Path.h>
 #include "common.h"
 
 namespace elm { namespace json {
 
-class Saver {
+class Saver: public io::StructuredOutput {
 public:
 	Saver(io::OutStream& out = io::out);
 	Saver(StringBuffer& buf);
@@ -43,21 +44,49 @@ public:
 	inline string getIndent(void) const { return indent; }
 	inline void setIndent(string i) { indent = i; }
 
-	void beginObject(void);
-	void endObject(void);
-	void beginArray(void);
-	void endArray(void);
-	void addField(string id);
+	// deprecated
+	inline void beginObject(void) { beginMap(); }
+	inline void endObject(void) { endMap(); }
+	inline void beginArray(void) { beginList(); }
+	inline void endArray(void) { endList(); }
+	inline void addField(string id) { key(id); }
 
+	// deprecated
 	void put(void);
 	inline void put(const char *val) { put(cstring(val)); }
-	void put(cstring val);
-	void put(string val);
-	void put(t::uint64 val);
-	void put(t::int64 val);
+	inline void put(cstring val) { write(val); }
+	inline void put(string val) { write(val); }
+	inline void put(t::uint64 val) { write(val); }
+	inline void put(t::int64 val) { write(val); }
 	inline void put(int val) { put(t::int64(val)); }
-	void put(double val);
-	void put(bool val);
+	inline void put(double val) { write(val); }
+	inline void put(bool val) { write(val); }
+
+	// StructuredOutput interface
+	virtual void write(bool x) override;
+	virtual void write(char c) override;
+	virtual void write(signed char x) override;
+	virtual void write(unsigned char x) override;
+	virtual void write(short x) override;
+	virtual void write(unsigned short x) override;
+	virtual void write(int x) override;
+	virtual void write(unsigned int x) override;
+	virtual void write(long x) override;
+	virtual void write(unsigned long x) override;
+	virtual void write(long long int x) override;
+	virtual void write(long long unsigned int x) override;
+	virtual void write(float x) override;
+	virtual void write(double x) override;
+	virtual void write(long double x) override;
+	virtual void write(const char *s) override;
+	virtual void write(cstring x) override;
+	virtual void write(const string& x) override;
+	virtual void key(cstring x) override;
+	virtual void key(const string& x) override;
+	virtual void beginMap() override;
+	virtual void endMap() override;
+	virtual void beginList() override;
+	virtual void endList() override;
 
 private:
 	typedef enum {
@@ -75,7 +104,8 @@ private:
 	static bool isObject(state_t s);
 	static bool isArray(state_t s);
 	void escape(utf8::char_t c);
-
+	inline void nextByValue(void);
+	
 	state_t state;
 	Vector<state_t> stack;
 	io::Output _out;
