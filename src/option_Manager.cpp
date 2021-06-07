@@ -1,5 +1,4 @@
 /*
- *	$Id$
  *	Manager class implementation
  *
  *	This file is part of OTAWA
@@ -197,7 +196,6 @@ Manager::Manager(const Make& maker): info(maker) {
 			.description("display this help message"));
 	if(info._version_opt)
 		_version_opt = new SwitchOption(SwitchOption::Make(*this)
-			.cmd("-v")
 			.cmd("--version")
 			.description("display this application version"));
 }
@@ -224,7 +222,7 @@ void Manager::processOption(
 	Manager::argv_t argv,
 	const char *earg
 ) {
-
+	
 	// No option
 	if(!option)
 		throw UnknownException();
