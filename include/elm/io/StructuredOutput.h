@@ -46,6 +46,7 @@ public:
 	virtual void write(const char *s) = 0;
 	virtual void write(cstring x) = 0;
 	virtual void write(const string& x) = 0;
+	inline void key(const char *x) { key(cstring(x)); }
 	virtual void key(cstring x) = 0;
 	virtual void key(const string& x) = 0;
 	virtual void beginMap() = 0;

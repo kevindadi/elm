@@ -30,6 +30,14 @@ namespace elm { namespace utf8 {
  * @ingroup string
  */
 
+///
+inline void bad_encoding(char c) {
+	throw Exception(_ <<
+		"utf8: bad encoding: " << c
+		<< " (" << t::uint8(c) << ")");
+}
+
+
 /**
  */
 void Iter::parse(void) {
@@ -42,7 +50,8 @@ void Iter::parse(void) {
 	c = 0;
 
 	// read first character
-	char cc = *p++;
+	auto ic = *p++;
+	char cc = ic;
 	if(!(cc & 0b10000000)) {
 		c = cc;
 		return;
@@ -50,12 +59,12 @@ void Iter::parse(void) {
 
 	// determine length
 	if(!(cc & 0b01000000))
-		throw Exception("utf8: bad encoding");
+		bad_encoding(ic);
 	int l = 1;
 	while(l <= 3 && (cc & (1 << (6 - l))))
 		l++;
 	if(l == 4)
-		throw Exception("utf8: bad encoding");
+		bad_encoding(ic);
 	c = cc & (((1 << (6 - l)) - 1));
 
 	// read other characers
@@ -64,7 +73,7 @@ void Iter::parse(void) {
 			throw Exception("utf8: character sequence too short");
 		cc = *p++;
 		if((cc & 0b11000000) != 0b10000000)
-			throw Exception("utf8: bad encoding");
+			bad_encoding(ic);
 		c = (c << 6) | (cc & 0b00111111);
 	}
 }

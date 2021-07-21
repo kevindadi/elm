@@ -106,7 +106,6 @@ void Saver::nextByValue() {
  * Close the JSON output.
  */
 void Saver::close(void) {
-	ASSERTP(state == END, "json: unended output!");
 	_out.flush();
 }
 

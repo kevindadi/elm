@@ -22,11 +22,13 @@ public:
 		: io::Output(_stream), _stream(capacity, increment)
 		{ init(); }
 
-	inline String toString(void)
+	inline String toString()
 		{ int len = length(); _stream.write('\0');
 		return String((String::buffer_t *)_stream.detach(), sizeof(short), len); }
-
-	inline String copyString(void)
+	inline CString toCString()
+		{ _stream.write('\0'); return _stream.block() + sizeof(short); }
+		
+	inline String copyString()
 		{ return String( _stream.block() + sizeof(short), _stream.size() - sizeof(short)); }
 	inline int length(void) const { return _stream.size() - sizeof(short); }
 	inline void reset(void) { _stream.clear(); init(); }
