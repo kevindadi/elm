@@ -25,6 +25,7 @@
 #include <elm/PreIterator.h>
 #include <elm/array.h>
 #include <elm/compare.h>
+#include <elm/data/util.h>
 
 namespace elm {
 
@@ -48,26 +49,65 @@ public:
 	inline T *operator()(void) { return buffer(); }
 	inline Array<T>& operator=(const Array<T>& t) { set(t); return *this; }
 
-	class Iter: public PreIterator<Iter, T> {
+	class PreIter: public elm::PreIter<PreIter, T> {
+		friend class Array;
 	public:
-		inline Iter(void): p(0), t(0) { }
-		inline Iter(const Array<T>& table): p(table.buffer()), t(table.buffer() + table.count()) { }
-		inline Iter(const Array<T>& table, bool end): p(table.buffer() + (end ? table.count() : 0)), t(table.buffer() + table.count()) { }
+		inline PreIter(): p(0), t(0) { }
+		inline PreIter(const Array<T>& table): p(table.buffer()), t(table.buffer() + table.count()) { }
+		inline PreIter(const Array<T>& table, bool end): p(table.buffer() + (end ? table.count() : 0)), t(table.buffer() + table.count()) { }
 		inline bool ended(void) const { return p >= t; }
-		inline const T& item(void) const { ASSERT(p < t); return *p; }
 		inline void next(void) { p++; }
-		inline bool equals(const Iter& i) const { return p == i.p && t == i.t; }
-	private:
+		inline bool equals(const PreIter& i) const { return p == i.p && t == i.t; }
+	protected:
 		const T *p, *t;
 	};
 
+	class Iter: public PreIter, public ConstPreIter<Iter, T> {
+	public:
+		using PreIter::PreIter;
+		inline const T& item() const { ASSERT(PreIter::p < PreIter::t); return *PreIter::p; }
+	};
+
+	class MutIter: public PreIter, public MutPreIter<MutIter, T> {
+	public:
+		inline MutIter(self_t& a): PreIter(a) { }
+		inline MutIter(self_t& a, bool e): PreIter(a, e) { }
+		inline T& item() const { ASSERT(PreIter::p < PreIter::t); return *const_cast<T *>(PreIter::p); }
+	};
+	
+	class BackPreIter: public elm::PreIter<BackPreIter, T> {
+	public:
+		inline BackPreIter(): p(nullptr), t(nullptr) { }
+		inline BackPreIter(const Array<T>& table): p(table.buffer() + table.count() - 1), b(table.buffer()) { }
+		inline BackPreIter(const Array<T>& table, bool end): p(table.buffer() + (end ? 0 : table.count()) - 1), b(table.buffer()) { }
+		inline bool ended(void) const { return p < b; }
+		inline void next(void) { p--; }
+		inline bool equals(const BackPreIter& i) const { return p == i.p && b == i.b; }
+	protected:
+		const T *p, *b;
+	};
+
+	class BackIter: public BackPreIter, public ConstPreIter<BackIter, T> {
+	public:
+		using BackPreIter::BackPreIter;
+		inline const T& item() const { ASSERT(BackPreIter::p < BackPreIter::t); return *BackPreIter::p; }
+	};
+
+	class BackMutIter: public BackPreIter, public MutPreIter<BackMutIter, T> {
+	public:
+		inline BackMutIter(self_t& a): BackPreIter(a) { }
+		inline BackMutIter(self_t& a, bool e): BackPreIter(a, e) { }
+		inline T& item() const { ASSERT(BackPreIter::p >= BackPreIter::b); return *const_cast<T *>(BackPreIter::p); }
+	};
+	
 	// Collection concept
 	static const Array<T> null;
 	inline Iter items(void) const { return Iter(*this); }
 	inline Iter operator*(void) const { return items(); }
 	inline Iter begin(void) const { return items(); }
 	inline Iter end(void) const { return Iter(*this, true); }
-
+	inline Iterable<BackIter> back() const { return subiter(BackIter(*this), BackIter(*this, true)); }
+	
 	inline int count(void) const { return cnt; }
 	inline bool contains(const T& item)
 		{ for(auto x: *this) if(x == item) return true; return false; }
@@ -75,9 +115,9 @@ public:
 		{ for(auto x: c) if(!contains(x)) return false; return true; }
 	inline bool isEmpty(void) const { return cnt == 0; }
 	inline operator bool(void) const { return !isEmpty(); }
-	inline bool equals(const Array<T>& a) {
+	inline bool equals(const Array<T>& a) const {
 		if(cnt != a.cnt) return false;
-		for(auto i = begin(), j = a.begin(); i; ++i, ++j)
+		for(auto i = begin(), j = a.begin(); i(); ++i, ++j)
 			if(*i != *j) return false;
 		return true;
 	}
@@ -99,9 +139,12 @@ public:
 
 	// MutableArray concept
 	inline void set(int idx, const T& val) { ASSERT(0 <= idx && idx < cnt); buf[idx] = val; }
-	inline void set(const Iter& i, const T& val) { ASSERT(buf <= i.p && i.p < buf + cnt); *i.p = val; }
+	inline void set(const MutIter& i, const T& val) { ASSERT(!i.ended()); *i = val; }
 	inline T& get(int idx) { ASSERT(0 <= idx && idx < cnt); return buf[idx]; }
 	inline T& operator[](int idx) { return get(idx); }
+	inline MutIter begin(void) { return MutIter(*this); }
+	inline MutIter end(void) { return MutIter(*this, true); }
+	inline Iterable<BackMutIter> back() { return subiter(BackMutIter(*this), BackMutIter(*this, true)); }
 
 
 protected:

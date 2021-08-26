@@ -137,7 +137,7 @@ TEST_BEGIN(sorted_list)
 		CHECK(ll.isEmpty());
 	}
 
-	// sorted map
+	// list map
 	{
 		ListMap<int, const char *> l;
 		CHECK(!l.hasKey(0));
@@ -156,6 +156,34 @@ TEST_BEGIN(sorted_list)
 		CHECK(l.hasKey(1));
 		l.remove(1);
 		CHECK(!l.hasKey(1));
+	}
+	
+	// list map mutability
+	{
+		ListMap<int, int> l;
+		l.put(1, 1);
+		l.put(2, 2);
+		l.put(3, 3);
+		for(auto& x: l)
+			if(x == 2)
+				x = 666;
+		CHECK_EQUAL(l.get(2, 0), 666);
+	}
+	
+	// dedicated comparator
+	{
+		class C {
+		public:
+			int doCompare(int x, int y) const { return y - x; }
+		};
+		ListMap<int, int, C> l;
+		l.put(1, 1);
+		l.put(2, 2);
+		l.put(3, 3);
+		int s = 0;
+		for(auto x: l)
+			s += x;
+		CHECK_EQUAL(s, 6);
 	}
 
 TEST_END

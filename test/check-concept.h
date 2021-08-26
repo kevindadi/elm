@@ -167,6 +167,8 @@ void checkSet(S& s, const T& x) {
 	}
 }
 
+template <class T> void _f(const T& x) { }
+
 template <class A, class T>
 void checkArray(const A& a, const T& x) {
 	if(false) {
@@ -181,6 +183,8 @@ void checkArray(const A& a, const T& x) {
 		i = a.lastIndexOf(x);
 		i = a.lastIndexOf(x, 2);
 		q = p;
+		for(auto x: a)
+			_f(x);
 	}
 }
 
@@ -191,6 +195,8 @@ void checkMutableArray(A& a, const T& x) {
 		a.set(a.begin(), x);
 		a.get(0) =  x;
 		a[0] = x;
+		for(auto x: a)
+			_f(x);
 	}
 }
 

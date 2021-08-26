@@ -69,7 +69,7 @@ public:
 	static inline int compare(const pair_t& v1, const pair_t& v2)
 		{ return C::compare(v1.fst, v2. fst); }
 	inline int doCompare(const pair_t& v1, const pair_t& v2) const
-		{ return _c.compare(v1.fst, v2. fst); }
+		{ return _c.doCompare(v1.fst, v2. fst); }
 	inline int compareKey(const K& k1, const K& k2) const { return _c.doCompare(k1, k2); }
 private:
 	const C& _c;

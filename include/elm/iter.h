@@ -68,6 +68,7 @@ public:
 template <class I, class T>
 class PreIter {
 public:
+	typedef T t;
 	inline bool operator()() const { return !((I *)this)->ended(); }
 	inline bool operator!() const { return ((I *)this)->ended(); }
 
@@ -82,6 +83,7 @@ public:
 template <class I, class T>
 class ConstPreIter {
 public:
+	typedef const T& return_t;
 	inline const T& operator*() const { return ((I *)this)->item(); }
 	inline T operator->() const { return ((I *)this)->item(); }
 };
@@ -89,8 +91,9 @@ public:
 template <class I, class T>
 class MutPreIter {
 public:
-	inline T& operator*() { return ((I *)this)->item(); }
-	inline T operator->() { return ((I *)this)->item(); }
+	typedef T& return_t;
+	inline T& operator*() const { return ((I *)this)->item(); }
+	inline T operator->() const { return ((I *)this)->item(); }
 };
 
 }	// elm

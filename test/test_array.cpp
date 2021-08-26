@@ -8,6 +8,7 @@
 #include <elm/array.h>
 #include <elm/data/Array.h>
 #include <elm/test.h>
+#include "check-concept.h"
 
 using namespace elm;
 
@@ -27,6 +28,16 @@ public:
 
 
 TEST_BEGIN(array)
+
+	// concepts
+	{
+		Array<int> a;
+		const Array<int> ca;
+		checkCollection(a, ca, 111);
+		checkArray(ca, 111);
+		checkMutableArray(a, 111);
+		checkCollection(a, ca, 111);
+	}
 
 	// Simple tests
 	{
@@ -113,6 +124,18 @@ TEST_BEGIN(array)
 		array::clear(t, 100);
 		array::equals(t, u, 100);
 		array::construct(t, 100);
+	}
+	
+	// back traversal
+	{
+		Array<int> a(4, new int[4]);
+		int i = 0;
+		for(i = 0; i < 4; i++)
+			a[i] = i;
+		for(auto x: a.back())
+			if(x == i - 1)
+				i--;
+		CHECK_EQUAL(i, 0);
 	}
 
 TEST_END

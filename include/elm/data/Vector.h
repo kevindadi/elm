@@ -63,20 +63,27 @@ public:
 			if (new_cap > cap) grow(new_cap); cnt = new_length; }
 	inline T& addNew(void) { if(cnt >= cap) grow(cap * 2); return tab[cnt++]; }
 
-	// Collection concept
-	class Iter: public InplacePreIterator<Iter, T> {
-	public:
+	class PreIter {
 		friend class Vector;
-		inline Iter(const self_t& vec, int idx = 0): _vec(&vec), i(idx) { }
+	public:
+		inline PreIter(const self_t& vec, int idx = 0): _vec(&vec), i(idx) { }
 		inline bool ended(void) const { return i >= _vec->length(); }
-		inline const T& item(void) const { return (*_vec)[i]; }
 		inline void next(void) { i++; }
 		inline int index(void) const { return i; }
-		inline bool equals(const Iter& it) const { return _vec == it._vec && i == it.i; }
-	private:
+		inline bool equals(const PreIter& it) const { return _vec == it._vec && i == it.i; }
+	protected:
 		const self_t *_vec;
 		int i;
 	};
+
+	// Collection concept
+	class Iter: public PreIter, public elm::ConstPreIter<Iter, T>, public elm::PreIter<Iter, T> {
+	public:
+		using PreIter::PreIter;
+		inline const T& item() const { return (*PreIter::_vec)[PreIter::i]; }
+	};
+	inline Iter begin() const { return Iter(*this); }
+	inline Iter end() const { return Iter(*this, count()); }
 
 	inline int count(void) const { return cnt; }
 	bool contains(const T& v) const
@@ -85,8 +92,6 @@ public:
 		{ for(const auto& x: items) if(!contains(x)) return false; return true; }
 	inline bool isEmpty(void) const { return cnt == 0; }
 	inline operator bool(void) const { return cnt != 0; }
-	inline Iter begin(void) const { return Iter(*this); }
-	inline Iter end(void) const { return Iter(*this, count()); }
 
 	template <class C> inline bool equals(const C& c) const {
 		int i = 0; for(const auto& x: c)
@@ -97,6 +102,15 @@ public:
 	static const Vector<T, E, A> null;
 
 	// MutableCollection concept
+	class MutIter: public PreIter, public MutPreIter<MutIter, T>, public elm::PreIter<MutIter, T> {
+	public:
+		using PreIter::PreIter;
+		inline T& item() const { return (*const_cast<self_t *>(PreIter::_vec))[PreIter::i]; }
+		inline operator Iter() const { return Iter(*PreIter::_vec, PreIter::i); }
+	};
+	inline MutIter begin() { return MutIter(*this); }
+	inline MutIter end() { return MutIter(*this, count()); }
+
 	inline void clear(void) { cnt = 0; }
 	void add(const T& v) { if(cnt >= cap) grow(cap * 2); tab[cnt++] = v; }
 	template <class C> inline void addAll(const C& c)

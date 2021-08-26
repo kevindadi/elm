@@ -36,19 +36,30 @@ public:
 	inline ListMap(const ListMap<K, T>& l): base_t::type_t(l) { }
 	inline E& equivalence() { return *this; }
 
-	class Iter: public PreIterator<Iter, T> {
+	class PreIter: public elm::PreIter<PreIter, T> {
 		friend class ListMap;
 	public:
-		inline Iter() { }
-		inline Iter(const ListMap<K, T>& l): i(l) { }
+		inline PreIter() { }
+		inline PreIter(const self_t& l): i(l) { }
 		inline bool ended(void) const { return i.ended(); }
-		inline const T& item(void) const { return (*i).snd; }
 		inline void next(void) { i.next(); }
-		inline bool equals(const Iter& ii) const { return i.equals(ii.i); }
-	private:
+		inline bool equals(const PreIter& ii) const { return i.equals(ii.i); }
+	protected:
 		PairIter i;
 	};
 
+	class Iter: public PreIter, public ConstPreIter<Iter, T> {
+	public:
+		using PreIter::PreIter;
+		inline const T& item() const { return (*PreIter::i).snd; }
+	};
+
+	class MutIter: public PreIter, public MutPreIter<MutIter, T> {
+	public:
+		using PreIter::PreIter;
+		inline T& item() const { return const_cast<Pair<K, T>&>(*PreIter::i).snd; }
+	};
+	
 	class KeyIter: public PreIterator<KeyIter, K> {
 	public:
 		inline KeyIter(void) { }
@@ -62,8 +73,8 @@ public:
 	};
 
 	// Collection concept
-	inline Iter begin(void) const { return Iter(*this); }
-	inline Iter end(void) const { return Iter(); }
+	inline Iter begin() const { return Iter(*this); }
+	inline Iter end() const { return Iter(); }
 	inline int count(void) const { return base_t::count(); }
 	inline bool contains(const T& v) const
 		{ for(const auto& i: *this) if(E::isEqual(i, v)) return true; return false; }
@@ -94,6 +105,8 @@ public:
 	inline Iterable<PairIter> pairs() const { return subiter(PairIter(*this), PairIter()); }
 
 	// MutableMap concept
+	inline MutIter begin() { return MutIter(*this); }
+	inline MutIter end() { return MutIter(); }
 	void put(const K& k, const T& v) {
 		PairIter i = lookup(k);
 		if(i())
@@ -101,7 +114,7 @@ public:
 		else
 			base_t::add(pair(k, v));
 	}
-	inline void remove(const Iter& i) { base_t::remove(i.i); }
+	inline void remove(const MutIter& i) { base_t::remove(i.i); }
 	inline void remove(const K& k)
 		{ PairIter i = lookup(k); if(i()) base_t::remove(*i); }
 
