@@ -38,8 +38,8 @@ void quicksort(A& array, const C& c = Comparator<typename A::t>()) {
 		if(L < R) {
 			piv = array[L];
 			while(L < R) {
-				while(C::compare(array[R], piv) >= 0 && L < R) R--; if(L < R) array[L++] = array[R];
-				while(C::compare(array[L], piv) <= 0 && L<R) L++; if (L < R) array[R--] = array[L];
+				while(c.doCompare(array[R], piv) >= 0 && L < R) R--; if(L < R) array[L++] = array[R];
+				while(c.doCompare(array[L], piv) <= 0 && L<R) L++; if (L < R) array[R--] = array[L];
 			}
 			array[L] = piv; beg[i+1] = L+1; end[i+1] = end[i]; end[i++] = L;
 			if(end[i] - beg[i] > end[i-1] - beg[i-1]) {
