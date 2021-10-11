@@ -114,7 +114,7 @@ public:
 	void put(const T& data)
 		{ node_t *node = find(data); if(node) node->data = data; else add(data); }
 	template <class CC> void putAll(const CC& c)
-		{ for(const auto x: c) put(x); }
+		{ for(const auto& x: c) put(x); }
 
 
 	// Collection concept
