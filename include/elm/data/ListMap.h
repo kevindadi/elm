@@ -33,7 +33,7 @@ public:
 	typedef typename base_t::Iter PairIter;
 
 	inline ListMap() { }
-	inline ListMap(const ListMap<K, T>& l): base_t::type_t(l) { }
+	inline ListMap(const self_t& l): base_t(l) { }
 	inline E& equivalence() { return *this; }
 
 	class PreIter: public elm::PreIter<PreIter, T> {
