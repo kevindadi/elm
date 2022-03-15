@@ -64,11 +64,11 @@ public:
 	inline self_t& operator&=(const Set<T, C>& s) { meet(s); return *this; }
 	inline self_t& operator*=(const Set<T, C>& s) { meet(s); return *this; }
 
-	inline self_t operator+(const Set<T, C>& s) const { self_t r(*this); r.join(s); return s; }
-	inline self_t operator|(const Set<T, C>& s) const { self_t r(*this); r.join(s); return s; }
-	inline self_t operator-(const Set<T, C>& s) const { self_t r(*this); r.diff(s); return s; }
-	inline self_t operator*(const Set<T, C>& s) const { self_t r(*this); r.meet(s); return s; }
-	inline self_t operator&(const Set<T, C>& s) const { self_t r(*this); r.meet(s); return s; }
+	inline self_t operator+(const Set<T, C>& s) const { self_t r(*this); r.join(s); return r; }
+	inline self_t operator|(const Set<T, C>& s) const { self_t r(*this); r.join(s); return r; }
+	inline self_t operator-(const Set<T, C>& s) const { self_t r(*this); r.diff(s); return r; }
+	inline self_t operator*(const Set<T, C>& s) const { self_t r(*this); r.meet(s); return r; }
+	inline self_t operator&(const Set<T, C>& s) const { self_t r(*this); r.meet(s); return r; }
 
 };
 
