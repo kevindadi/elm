@@ -56,7 +56,7 @@ public:
 	void meet(const Set<T, C>& s) {
 		self_t is;
 		for(const auto x: *this) if(s.contains(x)) is.add(x);
-		diff(is);
+        base_t::copy(is);
 	}
 	inline self_t& operator+=(const Set<T, C>& s) { join(s); return *this; }
 	inline self_t& operator|=(const Set<T, C>& s) { join(s); return *this; }
