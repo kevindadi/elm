@@ -194,7 +194,7 @@ Document *XSLTransform::transformDocument(Document *in) {
 	const char **aparams = new const char *[params.count() * 2 + 1];
 	ASSERT(aparams);
 	int i = 0;
-	for(const auto ii: params.pairs()) {
+	for(const auto& ii: params.pairs()) {
 		aparams[i] = new char[ii.fst.length() + 1];
 		strcpy((char *)aparams[i], ii.fst.asSysString());
 		i++;

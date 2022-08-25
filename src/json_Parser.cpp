@@ -321,7 +321,7 @@ Parser::token_t Parser::next(io::InStream& in) {
 		case ' ':	break;
 		case '+':
 		case '-':	return parseNumber(in, c);
-		case 'n':	parseLitt(in, "null"); return _NULL;
+		case 'n':	parseLitt(in, "null"); return NULL_TOKEN;
 		case 't':	parseLitt(in, "true"); return TRUE;
 		case 'f':	parseLitt(in, "false"); return FALSE;
 		case '/':	parseComment(in); break;
