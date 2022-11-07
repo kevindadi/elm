@@ -119,7 +119,9 @@ void CrashHandler::setup(void) {
 	sa.sa_flags = SA_SIGINFO | SA_RESETHAND;
 #else
 	sa.sa_flags = SA_SIGINFO | SA_ONESHOT;
-	sa.sa_restorer = 0;
+#	if !defined(__CYGWIN__)
+		sa.sa_restorer = 0;
+#	endif
 #endif
 
 	// set debug handlers
@@ -167,7 +169,8 @@ void CrashHandler::cleanup(void) {
 	// cleanup debug handlers
 	if(mode() & DEBUG) {
 		sa.sa_flags = SA_SIGINFO;
-#		if defined(__unix)
+//#		if defined(__unix)
+#		if !defined(__CYGWIN__)
 			sa.sa_restorer = 0;
 #		endif
 		sigaction(SIGSEGV, &sa, 0);

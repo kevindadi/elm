@@ -231,7 +231,7 @@ void Parser::parseValue(io::InStream& in, token_t t) {
 		switch(t) {
 		case LBRACE:	m.beginObject(); parseObject(in); return;
 		case LBRACK:	m.beginArray(); parseArray(in); return;
-		case _NULL:		m.onNull(); return;
+		case NULL_TOKEN:	m.onNull(); return;
 		case TRUE:		{ m.onValue(true); return; }
 		case FALSE:		{ m.onValue(false); return; }
 		case INT:		{ int i; text >> i; m.onValue(i); return; }
@@ -321,7 +321,7 @@ Parser::token_t Parser::next(io::InStream& in) {
 		case ' ':	break;
 		case '+':
 		case '-':	return parseNumber(in, c);
-		case 'n':	parseLitt(in, "null"); return _NULL;
+		case 'n':	parseLitt(in, "null"); return NULL_TOKEN;
 		case 't':	parseLitt(in, "true"); return TRUE;
 		case 'f':	parseLitt(in, "false"); return FALSE;
 		case '/':	parseComment(in); break;

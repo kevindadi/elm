@@ -58,7 +58,7 @@ private:
 		RBRACE,
 		LBRACK,
 		RBRACK,
-		_NULL,
+		NULL_TOKEN,
 		TRUE,
 		FALSE,
 		INT,
