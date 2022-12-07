@@ -170,7 +170,7 @@ void CrashHandler::cleanup(void) {
 	if(mode() & DEBUG) {
 		sa.sa_flags = SA_SIGINFO;
 //#		if defined(__unix)
-#		if !defined(__CYGWIN__)
+#		if !defined(__CYGWIN__) && !defined(__APPLE__)
 			sa.sa_restorer = 0;
 #		endif
 		sigaction(SIGSEGV, &sa, 0);
