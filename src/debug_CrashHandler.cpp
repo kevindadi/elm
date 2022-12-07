@@ -119,7 +119,7 @@ void CrashHandler::setup(void) {
 	sa.sa_flags = SA_SIGINFO | SA_RESETHAND;
 #else
 	sa.sa_flags = SA_SIGINFO | SA_ONESHOT;
-#	if !defined(__CYGWIN__)
+#	if !defined(__CYGWIN__) && !defined(__APPLE__)
 		sa.sa_restorer = 0;
 #	endif
 #endif
