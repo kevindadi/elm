@@ -95,7 +95,8 @@ set(TEST_SOURCES
 	"test_thread.cpp"
 	"test_utf8.cpp"
 	"test_util_array.cpp"
-    "test_wah"
+    "test_wah.cpp"
+    "test_with.cpp"
     "test_cleaner.cpp"
 )
 

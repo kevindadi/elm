@@ -127,6 +127,7 @@ set(LIBELM_LA_SOURCES
 	"util_VarArg.cpp"
 	"util_Version.cpp"
 	"util_WAHVector.cpp"
+	"util_With.cpp"
 	"utility.cpp"
 	"type_info.cpp"
 	)
