@@ -21,6 +21,7 @@
 #ifndef ELM_DATA_H_
 #define ELM_DATA_H_
 
+#include <elm/data/quicksort.h>
 #include <elm/data/util.h>
 
 namespace elm {
@@ -515,7 +516,7 @@ struct FunctionWithArg {
  * Sort the given array using quicksort algorithm (average complexity O(N log(N)) ).
  *
  * @param array		Array containing the values to sort.
- * @param c			Comparator to use (rely on ELM default comparator if not provided).
+ * @param c			Comparator to use (rely on ELM default comparator @ref Comparator if not provided).
  * @param T			Type of values.
  * @param A			Type of array (must implement @ref Array concept).
  * @param C			Type of comparator (must implement @ref Comparator or @ref Compare concept).

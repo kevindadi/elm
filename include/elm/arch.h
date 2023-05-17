@@ -19,6 +19,9 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef ELM_ARCH_H
+#define ELM_ARCH_H
+
 #define ELM_LITTLE_ENDIAN
 
 namespace elm { namespace t {
@@ -38,3 +41,5 @@ namespace elm { namespace t {
 	typedef uint64 intptr;
 
 } }	// elm::t
+
+#endif	// ELM_ARCH_H
