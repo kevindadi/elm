@@ -19,6 +19,7 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <elm/data/Vector.h>
 #include <elm/io.h>
 #include <elm/io/ansi.h>
 #include <elm/test.h>
@@ -26,6 +27,8 @@
 namespace elm {
 
 /**
+ * @defgroup test Testing
+ *
  * @def CHECK_BEGIN(name)
  * This is the first statement of a unit test case. Usually, a unit test case
  * is structured as below:
@@ -40,10 +43,15 @@ namespace elm {
  * and TEST_END a summary of the full test case. A test case defines also
  * an environment like in C blocks { ... }.
  * @param name	Name of the test case (string).
+ *
+ * In addition, all declared test cases are record in @ref TestSet::def.
+ * Testing may be embedded in a command using the macro @ref TEST_MAIN : no more
+ * need to define a main that calls all tests. In addition, @ref TEST_MAIN allows
+ * to select which tests to perform and to list available tests.
+ *
  * @note	These macros definition may be discarded defining the ELM_NO_SHORTCUT
  * identifier, for avoiding name clashes for example.
  *
- * @ingroup utility
  * @seealso @ref CHECK_END, @ref CHECK, @ref elm::TestCase, @ref elm::TestSet
  */
 
@@ -66,7 +74,7 @@ namespace elm {
  * 	TEST_END
  * @endcode
  * @param test	Name of the test (must be unquoted !).
- * @ingroup utility
+ * @ingroup test
  * @seealso @ref TEST_END, @ref CHECK, @ref elm::TestCase, @ref elm::TestSet
  */
 
@@ -74,15 +82,33 @@ namespace elm {
 /**
  * @def TEST_END
  * End a test declared with @ref TEST_BEGIN.
- * @ingroup utility
+ * @ingroup test
  * @seealso @ref TEST_BEGIN, @ref CHECK, @ref elm::TestCase, @ref elm::TestSet
  */
+
+
+/**
+ * @def TEST_MAIN
+ * Insert a main() function that scans the command parameters and launch
+ * corresponding tests.
+ * @ingroup test
+ * @seealso @ref ELM_TEST_MAIN, @ref TEST_BEGIN, @ref elm::TestSet
+ */
+
+
+/**
+ * @def ELM_TEST_MAIN
+ * Same as @ref TEST_MAIN.
+ * @ingroup test
+ * @seealso @ref TEST_MAIN
+ */
+
 
 /**
  * @def CHECK(test)
  * See @ref ELM_CHECK.
  * @param test	Test to check.
- * @ingroup utility
+ * @ingroup test
  * @seealso @ref ELM_CHECK, @ref REQUIRE, @ref CHECK_EQUAL, @ref CHECK_EXCEPTION, @ref FAIL_ON_EXCEPTION
  */
 
@@ -90,7 +116,7 @@ namespace elm {
 /**
  * @def CHECK_END
  * See @ref CHECK_END.
- * @ingroup utility
+ * @ingroup test
  * @seealso @ref CHECK_BEGIN, @ref CHECK, @ref elm::TestCase, @ref elm::TestSet
  */
 
@@ -98,21 +124,21 @@ namespace elm {
 /**
  * @def ELM_CHECK_BEGIN(name)
  * Same as @ref CHECK_BEGIN.
- * @ingroup utility
+ * @ingroup test
  */
 
 
 /**
  * @def ELM_CHECK(test)
  * Same as @ref CHECK.
- * @ingroup utility
+ * @ingroup test
  */
 
 
 /**
  * @def ELM_CHECK_END
  * Same as @ref CHECK_END
- * @ingroup utility
+ * @ingroup test
  */
 
 /**
@@ -120,7 +146,7 @@ namespace elm {
  * Test if the result of a test is equal to a reference value.
  * @param res	Result of the test.
  * @param ref	Reference value.
- * @ingroup utility
+ * @ingroup test
  * @seealso @ref CHECK, @ref REQUIRE, @ref CHECK_EXCEPTION, @ref FAIL_ON_EXCEPTION
  */
 
@@ -128,15 +154,15 @@ namespace elm {
 /**
  * @def CHECK_EQUAL(res, ref)
  * See ELM_CHECK_EQUAL.
- * @ingroup utility
+ * @ingroup test
  */
 
 
 /**
  * @class TestCase
  * This class is used for implementing macro for unit tests.
- * @ingroup utility
  * @seealso @ref TestSet, @ref CHECK, @ref TEST_BEGIN, @ref CHECK_BEGIN
+ * @ingroup test
  */
 
 
@@ -317,8 +343,8 @@ TestCase::~TestCase(void) {
 /**
  * @class TestSet
  * Singleton class containing all existing tests.
- * @ingroup utility
  * @seealso @ref elm::TestCase, @ref CHECK, @ref TEST_BEGIN
+ * @ingroup test
  */
 
 
@@ -328,6 +354,84 @@ TestCase::~TestCase(void) {
 void TestSet::perform(void) {
 	for(Iterator test(*this); test(); test++)
 		test->perform();
+}
+
+/**
+ * Execute the test as an application. argv is looked for tests to perform
+ * and, if empty, run all tests and display statistics. It may called from main()
+ * or by the macro @ TEST_MAIN.
+ * @param argc	argc as passed to main.
+ * @param argv	argv as passed to main.
+ * @return		Error code to return from main.
+ */
+int TestSet::run(int argc, const char **argv) {
+
+	// process the help
+	for(int i = 1; i < argc; i++)
+		if(string("-h") == argv[i] || string("--help") == argv[i]) {
+			cerr << io::BLUE << io::BOLD << "Modules:\n" << io::PLAIN;
+			for(TestSet::Iterator test(TestSet::def); test(); test++)
+				cerr << "\t" << test->name() << io::endl;
+			return 0;
+		}
+
+	// process the tests
+	Vector<TestCase *> tests;
+	for(int i = 1; i < argc; i++) {
+		bool found = false;
+
+		// look in the structure
+		for(TestSet::Iterator test(TestSet::def); test(); test++)
+			if(test->name() == argv[i]) {
+				tests.add(*test);
+				found = true;
+				break;
+			}
+
+		// not found: error
+		if(!found) {
+			cerr << io::RED << io::BOLD << "ERROR:" << io::PLAIN << " no test called \"" << argv[i] << "\"\n";
+			return 1;
+		}
+	}
+
+	// if none selected, test all
+	if(!tests)
+		for(TestSet::Iterator test(TestSet::def); test(); test++)
+			tests.add(*test);
+
+	// perform tests
+	bool failed = false;
+	for(Vector<TestCase *>::Iter test(tests); test(); test++) {
+		try {
+			test->perform();
+		}
+		catch(Exception& e) {
+			cerr << io::BOLD << io::RED << "FATAL: " << io::PLAIN << e.message() << io::endl;
+			return 2;
+		}
+		if(test->hasFailed())
+			failed = true;
+	}
+
+	// display summary
+	cout.flush();
+	if(!failed) {
+		cerr << io::BOLD << io::GREEN << "SUCCESS:" << io::PLAIN
+			 << " all test cases (" << tests.count() << ") successfully passed!\n";
+		return 0;
+	}
+	else {
+		cerr << io::BOLD << io::RED << "ERROR: " << io::PLAIN << "some tests failed:\n";
+		for(Vector<TestCase *>::Iter test(tests); test(); test++)
+			if(test->hasFailed())
+				cerr << "  * " << test->name() << io::endl;
+		return 1;
+	}
+
+	// success
+	return 0;
+
 }
 
 

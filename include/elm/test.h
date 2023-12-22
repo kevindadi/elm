@@ -69,7 +69,8 @@ class TestSet: private Initializer<TestCase> {
 public:
 	static TestSet def;
 
-	void perform(void);
+	void perform();
+	int run(int argc, const char **argv);
 
 	class Iterator: public List<TestCase *>::Iter {
 	public:
@@ -106,6 +107,7 @@ private:
 #define ELM_TEST_END \
 		} \
 	} __test;
+#define ELM_TEST_MAIN int main(int argc, const char **argv) { return TestSet::def.run(argc, argv); }
 
 // shortcuts
 #ifndef ELM_NO_SHORTCUT
@@ -120,6 +122,7 @@ private:
 #	define TEST_BEGIN(name) ELM_TEST_BEGIN(name)
 #	define TEST_END	 ELM_TEST_END
 #	define CHECK_RETURN	ELM_CHECK_RETURN
+#	define TEST_MAIN ELM_TEST_MAIN
 #endif
 
 } // elm
