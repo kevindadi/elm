@@ -49,10 +49,14 @@ public:
 
 	class Iterator: public map_t::PairIter {
 	public:
+		inline Iterator() {}
 		inline Iterator(Section *s): map_t::PairIter(s->values.pairs().begin()) { }
 		inline const string& key(void) const { return item().fst; }
 		inline const string& value(void) const { return item().snd; }
 	};
+
+	inline Iterator begin() { return Iterator(this); }
+	inline Iterator end() { return Iterator(); }
 
 private:
 	string _name;
@@ -73,8 +77,12 @@ public:
 
 	class Iterator: public map_t::Iter {
 	public:
+		inline Iterator() {  }
 		inline Iterator(File *file): map_t::Iter(file->sects) { }
 	};
+
+	inline Iterator begin() { return Iterator(this); }
+	inline Iterator end() { return Iterator(); }
 
 private:
 	Section *def;

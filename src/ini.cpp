@@ -90,17 +90,16 @@ namespace elm { namespace ini {
  * @return				Value transformed to integer.
  */
 int Section::getInt(const string& key, int def) {
-	string v = get(key);
+	auto v = get(key);
 	if(!v)
 		return def;
+	io::StringInput in(v);
 	int r;
-	try {
-		v >> r;
-	}
-	catch(io::IOException& e) {
+	in >> r;
+	if(in.ended())
+		return r;
+	else
 		return def;
-	}
-	return r;
 }
 
 

@@ -210,6 +210,23 @@ void TestCase::test(CString file, int line, CString text) {
 
 
 /**
+ * Display a performed action for test understanding.
+ * @param file		Source file path.
+ * @param line		Source line number.
+ * @param action	Identifier of the action.
+ */
+void TestCase::perform(cstring file, int line, cstring action) {
+	cout << io::BLUE << io::BOLD << "INFO: " << io::PLAIN << action << " (";
+	if(full_path)
+		cout << file;
+	else
+		cout << sys::Path(file).namePart();
+	cout << ':' << line << ')' << io::endl;
+}
+
+
+
+/**
  * Inform that the current test has failed.
  */
 void TestCase::failed(void) {

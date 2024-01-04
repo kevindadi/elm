@@ -148,20 +148,20 @@ void Input::back(int chr) {
  */
 
 /**
- * bool Input::failed() const;
+ * @fn bool Input::failed() const;
  * Test if the last operation failed. Failed means that there were a format
- * in the last read value.
+ * error in the last read value.
  * @return	True if the last operation failed.
  */
 
 /**
- * bool Input::error() const;
+ * @fn bool Input::error() const;
  * Test if there has been an input error from the underlying stream.
  * @return	True if there has been an input error.
  */
 
 /**
- * bool Input::ok() const;
+ * @fn bool Input::ok() const;
  * Test if the stream is ok (end not reached, no failed operation, no input
  * error).
  * @return	True if the input is ready to proceed.

@@ -38,6 +38,7 @@ public:
 	void initialize(void);
 	virtual ~TestCase(void);
 	inline cstring name(void) { return _name; }
+	void perform(cstring file, int line, cstring action);
 	void test(CString file, int line, CString text);
 	void failed(void);
 	void succeeded(void);
@@ -88,6 +89,7 @@ private:
 //#define ELM_CHECK_MAKE(name, actions) class name##Test: public { name##Test(void)
 #define ELM_CHECK_BEGIN(name)	{ elm::TestCase __case(name); __case.prepare();
 #define ELM_CHECK(tst)			__case.check(__FILE__, __LINE__, #tst, tst)
+#define ELM_PERFORM(action)		__case.perform(__FILE__, __LINE__, #action); action
 #define ELM_CHECK_MSG(msg, res)	__case.check(__FILE__, __LINE__, msg, res)
 #define ELM_CHECK_END 			__case.complete(); }
 #define ELM_CHECK_RETURN 		__case.complete(); if(__case.isSuccessful()) return 0; else return 1; }
@@ -113,6 +115,7 @@ private:
 #ifndef ELM_NO_SHORTCUT
 #	define CHECK_BEGIN(name) ELM_CHECK_BEGIN(name)
 #	define CHECK(tst) ELM_CHECK(tst)
+#	define PERFORM(action) ELM_PERFORM(action)
 #	define CHECK_MSG(msg, res) ELM_CHECK_MSG(msg, res)
 #	define REQUIRE(tst, action) ELM_REQUIRE(tst, action)
 #	define CHECK_EQUAL(res, ref) ELM_CHECK_EQUAL(res, ref)

@@ -6,9 +6,8 @@
  */
 
 #include <elm/ini.h>
-#include "../include/elm/test.h"
+#include <elm/test.h>
 
-#if 0
 using namespace elm;
 using namespace elm::ini;
 
@@ -19,14 +18,16 @@ TEST_BEGIN(ini)
 	FAIL_ON_EXCEPTION(ini::Exception, file = File::load("test.ini"));
 
 	// dump the content
-	for(File::Iterator s(file); s; s++) {
+	//for(File::Iterator s(file); s(); s++) {
+	for(auto s: *file) {
 		cerr << "[" << s->name() << "]\n";
-		for(Section::Iterator v(s); v; v++)
-			cerr << v.key() << "=" << v.value() << io::endl;
+		//for(Section::Iterator v(*s); v(); v++)
+		for(const auto& v: *s)
+			cerr << v.fst << "=" << v.snd << io::endl;
 	}
 
 	// look for sections
-	Section *s1 = file->get("s1");
+	PERFORM(Section *s1 = file->get("s1"));
 	CHECK(s1);
 	Section *plug = file->get("elm-plugin");
 	CHECK(plug);
@@ -44,7 +45,7 @@ TEST_BEGIN(ini)
 	CHECK_EQUAL(file->defaultSection()->getInt("val1", 111), 111);
 	CHECK_EQUAL(file->defaultSection()->getInt("val2", 0), 666);
 	CHECK_EQUAL(file->defaultSection()->getInt("val3", 333), 333);
-	genstruct::Vector<string> list;
+	Vector<string> list;
 	s1->getList("v2", list);
 	CHECK(list.length() == 4);
 	CHECK(list[0] == "1");
@@ -58,7 +59,5 @@ TEST_BEGIN(ini)
 	delete file;
 
 TEST_END
-
-#endif
 
 

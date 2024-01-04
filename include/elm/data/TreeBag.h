@@ -146,7 +146,7 @@ public:
 	}
 
 	template <class CC> void addAll (const CC &c)
-		{ for(const auto x: c) add(x); }
+		{ for(const auto& x: c) add(x); }
 	void remove(const T& x) {
 		Node *node = (Node *)root.root(), *parent = 0;
 		while(true) {

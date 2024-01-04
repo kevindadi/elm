@@ -33,7 +33,7 @@ namespace elm { namespace io {
 // Input class
 class Input {
 public:
-	Input(void);
+	Input();
 	Input(InStream& stream);
 	inline InStream& stream(void) const { return *strm; };
 	inline void setStream(InStream& stream) { strm = &stream; buf = -1; };
@@ -43,8 +43,8 @@ public:
 	inline bool ok() const { return state == 0; }
 	inline void resetState() { state &= ~(FAILED | IO_ERROR); }
 
-	bool scanBool(void);
-	char scanChar(void);
+	bool scanBool();
+	char scanChar();
 	t::uint32 scanULong(int base = 0);
 	t::int32 scanLong(int base = 0);
 	t::uint64 scanULLong(int base = 0);
@@ -111,7 +111,7 @@ public:
 
 
 private:
-	 [[noreturn]] static void unsupported(void);
+	 [[noreturn]] static void unsupported();
 	InStream *strm;
 	t::int16 buf;
 	t::uint16 state;

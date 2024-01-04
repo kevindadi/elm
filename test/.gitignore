@@ -1,4 +1,8 @@
 /test_bgc
 /test_sw
 /test_thread
+/test-types
 /dotest
+
+/out.xml
+/random_access.txt
