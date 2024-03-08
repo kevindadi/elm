@@ -26,6 +26,7 @@
 #include <elm/xom/Text.h>
 #include <elm/xom/Elements.h>
 #include <elm/xom/Attribute.h>
+#include <cstdlib>
 
 namespace elm { namespace xom {
 
