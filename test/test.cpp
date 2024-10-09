@@ -1,29 +1,83 @@
 /*
- *	Main entry point for ELM tests.
+ * $Id$
+ * Copyright (c) 2003-07 IRIT-UPS <casse@irit.fr>
  *
- *	This file is part of OTAWA
- *	Copyright (c) 2023, IRIT UPS.
- *
- *	OTAWA is free software; you can redistribute it and/or modify
- *	it under the terms of the GNU General Public License as published by
- *	the Free Software Foundation; either version 2 of the License, or
- *	(at your option) any later version.
- *
- *	OTAWA is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *	GNU General Public License for more details.
- *
- *	You should have received a copy of the GNU General Public License
- *	along with OTAWA; if not, write to the Free Software
- *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Unit tests
  */
 
-#include <elm/test.h>
+#include "../include/elm/test.h"
 
 #include <elm/io.h>
 #include <elm/data/Vector.h>
 
 using namespace elm;
 
-TEST_MAIN
+// Entry point
+int main(int argc, char *argv[]) {
+
+	// process the help
+	for(int i = 1; i < argc; i++)
+		if(string("-h") == argv[i] || string("--help") == argv[i]) {
+			cerr << "Modules:\n";
+			for(TestSet::Iterator test(TestSet::def); test(); test++)
+				cerr << "\t" << test->name() << io::endl;
+			return 0;
+		}
+
+	// process the tests
+	Vector<TestCase *> tests;
+	for(int i = 1; i < argc; i++) {
+		bool found = false;
+
+		// look in the structure
+		for(TestSet::Iterator test(TestSet::def); test(); test++)
+			if(test->name() == argv[i]) {
+				tests.add(*test);
+				found = true;
+				break;
+			}
+
+		// not found: error
+		if(!found) {
+			cerr << "ERROR: no test called \"" << argv[i] << "\"\n";
+			return 1;
+		}
+	}
+
+	// if none selected, test all
+	if(!tests)
+		for(TestSet::Iterator test(TestSet::def); test(); test++)
+			tests.add(*test);
+
+	// perform tests
+
+	bool failed = false;
+	for(Vector<TestCase *>::Iter test(tests); test(); test++) {
+		try {
+			test->perform();
+		}
+		catch(Exception& e) {
+			cerr << "FATAL: " << e.message() << io::endl;
+			return 2;
+		}
+		if(test->hasFailed())
+			failed = true;
+	}
+
+	// display summary
+	cout.flush();
+	if(!failed) {
+		cerr << "SUCCESS: all tests successfully passed!\n";
+		return 0;
+	}
+	else {
+		cerr << "ERROR: some tests failed:\n";
+		for(Vector<TestCase *>::Iter test(tests); test(); test++)
+			if(test->hasFailed())
+				cerr << "  * " << test->name() << io::endl;
+		return 1;
+	}
+
+	// success
+	return 0;
+}
