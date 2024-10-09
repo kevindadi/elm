@@ -102,7 +102,7 @@ public:
 	void addAll(const C<T> &items)
 		{ for(typename C<T>::Iterator i(items); i; i++) add(i); }
 	inline void remove(const T &item)
-		{ for(Iter i(*this); i; i++) if(i == item) { remove(i); break; } }
+		{ for(Iter i(*this); !i.ended(); i++) if(*i == item) { remove(i); break; } }
 	template <template <class _> class C >
 	void removeAll(const C<T> &items)
 		{ for(typename C<T>::Iterator i(items); i; i++) remove(i); }
