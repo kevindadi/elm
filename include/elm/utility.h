@@ -28,5 +28,11 @@
 #include <elm/util/MessageException.h>
 #include <elm/compare.h>
 #include "equiv.h"
+#include <elm/data/Vector.h>
+
+namespace elm {
+//defined in string_String.cpp
+Vector<String> split(const String &str, const String &delimiter);
+};
 
 #endif	// ELM_UTILITY_H

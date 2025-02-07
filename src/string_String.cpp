@@ -23,6 +23,8 @@
 #include <ctype.h>
 #include <elm/string.h>
 #include <elm/assert.h>
+#include <elm/data/Vector.h>
+#include <elm/string.h>
  
  namespace elm {
  
@@ -577,6 +579,33 @@ string String::replace(string pat, string sub) {
 	}
 	buf << c;
 	return buf.toString();
+}
+
+/**
+ * @fn Vector<String> split(const String& str, const String& delimiter)
+ * Split a string into multiple chunks according to a delimiter 
+ * Note: this function is not part of the class String as it is impossible
+ * to include the vector header into String.h due to some cyclic references
+ * which can't be broken as Vector is a template. Hence, the function is
+ * declared into elm/utility.h.
+ * 
+ * @param str the string to split
+ * @param delimiter the delimiter
+ * @return Vector<String> 
+ */
+Vector<String> split(const String& str, const String& delimiter) {
+  String copy_s(str);
+  Vector<String> tokens;
+  size_t pos = 0;
+  String token;
+  while((pos = copy_s.indexOf(delimiter)) != -1) {
+        token = copy_s.substring(0, pos);
+        tokens.add(token);
+        copy_s = copy_s.substring(pos + delimiter.length());
+    }
+    tokens.add(copy_s);
+
+    return tokens;
 }
 
 
