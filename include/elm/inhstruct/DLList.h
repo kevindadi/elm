@@ -29,7 +29,7 @@ namespace elm { namespace inhstruct {
 class DLList;
 class DLNode {
 	friend class DLList;
-	DLNode *nxt, *prv;
+	DLNode *nxt=nullptr, *prv=nullptr;
 public:
 	inline DLNode *next(void) const { return nxt; }
 	inline DLNode *previous(void) const { return prv; }
